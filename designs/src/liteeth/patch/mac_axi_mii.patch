@@ -1,0 +1,167 @@
+--- liteeth_mac_axi_mii.v
++++ liteeth_mac_axi_mii.v
+@@ -18,7 +18,7 @@
+ // Module
+ //------------------------------------------------------------------------------
+ 
+-module liteeth_core (
++module liteeth_mac_axi_mii (
+     input  wire   [31:0] bus_araddr,
+     input  wire    [2:0] bus_arprot,
+     output wire          bus_arready,
+@@ -4006,43 +4006,41 @@
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory mem: 383-words x 32-bit
++// Modified Memory mem: 384-words x 32-bit 
+ //------------------------------------------------------------------------------
+ // Port 0 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 32 
+ // Port 1 | Read: Sync  | Write: ---- | 
+-reg [31:0] mem[0:382];
+-reg [8:0] mem_adr0;
+-reg [31:0] mem_dat1;
+-always @(posedge sys_clk) begin
+-	if (wishbone_interface_writer_memory0_we)
+-		mem[wishbone_interface_writer_memory0_adr] <= wishbone_interface_writer_memory0_dat_w;
+-	mem_adr0 <= wishbone_interface_writer_memory0_adr;
+-end
+-always @(posedge sys_clk) begin
+-	mem_dat1 <= mem[wishbone_interface_sram0_adr];
+-end
+-assign wishbone_interface_writer_memory0_dat_r = mem[mem_adr0];
+-assign wishbone_interface_sram0_dat_r = mem_dat1;
++(* keep *) fakeram_1rw1r_32w384d_sram u_tx_buffer_0 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(wishbone_interface_writer_memory0_we),
++    .rw0_addr_in(wishbone_interface_writer_memory0_adr),
++    .rw0_wd_in(wishbone_interface_writer_memory0_dat_w),
++    .rw0_rd_out(wishbone_interface_writer_memory0_dat_r),    
++    .r0_clk(sys_clk),
++    .r0_ce_in(1'b1),
++    .r0_addr_in(wishbone_interface_sram0_adr),
++    .r0_rd_out(wishbone_interface_sram0_dat_r)
++);
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory mem_1: 383-words x 32-bit
++// Modified Memory mem_1: 384-words x 32-bit 
+ //------------------------------------------------------------------------------
+ // Port 0 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 32 
+ // Port 1 | Read: Sync  | Write: ---- | 
+-reg [31:0] mem_1[0:382];
+-reg [8:0] mem_1_adr0;
+-reg [31:0] mem_1_dat1;
+-always @(posedge sys_clk) begin
+-	if (wishbone_interface_writer_memory1_we)
+-		mem_1[wishbone_interface_writer_memory1_adr] <= wishbone_interface_writer_memory1_dat_w;
+-	mem_1_adr0 <= wishbone_interface_writer_memory1_adr;
+-end
+-always @(posedge sys_clk) begin
+-	mem_1_dat1 <= mem_1[wishbone_interface_sram1_adr];
+-end
+-assign wishbone_interface_writer_memory1_dat_r = mem_1[mem_1_adr0];
+-assign wishbone_interface_sram1_dat_r = mem_1_dat1;
++(* keep *) fakeram_1rw1r_32w384d_sram u_tx_buffer_1 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(wishbone_interface_writer_memory1_we),
++    .rw0_addr_in(wishbone_interface_writer_memory1_adr),
++    .rw0_wd_in(wishbone_interface_writer_memory1_dat_w),
++    .rw0_rd_out(wishbone_interface_writer_memory1_dat_r),    
++    .r0_clk(sys_clk),
++    .r0_ce_in(1'b1),
++    .r0_addr_in(wishbone_interface_sram1_adr),
++    .r0_rd_out(wishbone_interface_sram1_dat_r)
++);
+ 
+ 
+ //------------------------------------------------------------------------------
+@@ -4064,57 +4062,43 @@
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory mem_2: 383-words x 32-bit
++// Modified Memory mem_2: 384-words x 32-bit
+ //------------------------------------------------------------------------------
+ // Port 0 | Read: Sync  | Write: ---- | 
+ // Port 1 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 8 
+-reg [31:0] mem_2[0:382];
+-reg [31:0] mem_2_dat0;
+-reg [8:0] mem_2_adr1;
+-always @(posedge sys_clk) begin
+-	if (wishbone_interface_reader_memory0_re)
+-		mem_2_dat0 <= mem_2[wishbone_interface_reader_memory0_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (wishbone_interface_sram2_we[0])
+-		mem_2[wishbone_interface_sram2_adr][7:0] <= wishbone_interface_sram2_dat_w[7:0];
+-	if (wishbone_interface_sram2_we[1])
+-		mem_2[wishbone_interface_sram2_adr][15:8] <= wishbone_interface_sram2_dat_w[15:8];
+-	if (wishbone_interface_sram2_we[2])
+-		mem_2[wishbone_interface_sram2_adr][23:16] <= wishbone_interface_sram2_dat_w[23:16];
+-	if (wishbone_interface_sram2_we[3])
+-		mem_2[wishbone_interface_sram2_adr][31:24] <= wishbone_interface_sram2_dat_w[31:24];
+-	mem_2_adr1 <= wishbone_interface_sram2_adr;
+-end
+-assign wishbone_interface_reader_memory0_dat_r = mem_2_dat0;
+-assign wishbone_interface_sram2_dat_r = mem_2[mem_2_adr1];
++(* keep *) fakeram_1rw1r_32w384d_8wm_sram u_rx_buffer_0 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(wishbone_interface_sram2_we),
++    .rw0_wmask_in(wishbone_interface_sram2_we),
++    .rw0_addr_in(wishbone_interface_sram2_adr),
++    .rw0_wd_in(wishbone_interface_sram2_dat_w),
++    .rw0_rd_out(wishbone_interface_sram2_dat_r),
++    .r0_clk(sys_clk),
++    .r0_ce_in(wishbone_interface_reader_memory0_re),
++    .r0_addr_in(wishbone_interface_reader_memory0_adr),
++    .r0_rd_out(wishbone_interface_reader_memory0_dat_r)
++);
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory mem_3: 383-words x 32-bit
++// Modified Memory mem_3: 384-words x 32-bit
+ //------------------------------------------------------------------------------
+ // Port 0 | Read: Sync  | Write: ---- | 
+ // Port 1 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 8 
+-reg [31:0] mem_3[0:382];
+-reg [31:0] mem_3_dat0;
+-reg [8:0] mem_3_adr1;
+-always @(posedge sys_clk) begin
+-	if (wishbone_interface_reader_memory1_re)
+-		mem_3_dat0 <= mem_3[wishbone_interface_reader_memory1_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (wishbone_interface_sram3_we[0])
+-		mem_3[wishbone_interface_sram3_adr][7:0] <= wishbone_interface_sram3_dat_w[7:0];
+-	if (wishbone_interface_sram3_we[1])
+-		mem_3[wishbone_interface_sram3_adr][15:8] <= wishbone_interface_sram3_dat_w[15:8];
+-	if (wishbone_interface_sram3_we[2])
+-		mem_3[wishbone_interface_sram3_adr][23:16] <= wishbone_interface_sram3_dat_w[23:16];
+-	if (wishbone_interface_sram3_we[3])
+-		mem_3[wishbone_interface_sram3_adr][31:24] <= wishbone_interface_sram3_dat_w[31:24];
+-	mem_3_adr1 <= wishbone_interface_sram3_adr;
+-end
+-assign wishbone_interface_reader_memory1_dat_r = mem_3_dat0;
+-assign wishbone_interface_sram3_dat_r = mem_3[mem_3_adr1];
++(* keep *) fakeram_1rw1r_32w384d_8wm_sram u_rx_buffer_1 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(wishbone_interface_sram3_we),
++    .rw0_wmask_in(wishbone_interface_sram3_we),
++    .rw0_addr_in(wishbone_interface_sram3_adr),
++    .rw0_wd_in(wishbone_interface_sram3_dat_w),
++    .rw0_rd_out(wishbone_interface_sram3_dat_r),
++    .r0_clk(sys_clk),
++    .r0_ce_in(wishbone_interface_reader_memory1_re),
++    .r0_addr_in(wishbone_interface_reader_memory1_adr),
++    .r0_rd_out(wishbone_interface_reader_memory1_dat_r)
++);
+ 
+ 
+ (* ars_ff1 = "true", async_reg = "true" *)

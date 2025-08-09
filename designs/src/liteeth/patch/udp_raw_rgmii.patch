@@ -1,0 +1,215 @@
+--- liteeth_udp_raw_rgmii.v
++++ liteeth_udp_raw_rgmii.v
+@@ -18,7 +18,7 @@
+ // Module
+ //------------------------------------------------------------------------------
+ 
+-module liteeth_core (
++module liteeth_udp_raw_rgmii (
+     input  wire   [31:0] raw_sink_data,
+     input  wire   [15:0] raw_sink_dst_port,
+     input  wire   [31:0] raw_sink_ip_address,
+@@ -9134,24 +9134,22 @@
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_3: 128-words x 12-bit
++// Modified Memory storage_3: 128-words x 12-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 12 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [11:0] storage_3[0:127];
+-reg [11:0] storage_3_dat0;
+-reg [11:0] storage_3_dat1;
+-always @(posedge sys_clk) begin
+-	if (icmp_echo_payload_fifo_wrport_we)
+-		storage_3[icmp_echo_payload_fifo_wrport_adr] <= icmp_echo_payload_fifo_wrport_dat_w;
+-	storage_3_dat0 <= storage_3[icmp_echo_payload_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (icmp_echo_payload_fifo_rdport_re)
+-		storage_3_dat1 <= storage_3[icmp_echo_payload_fifo_rdport_adr];
+-end
+-assign icmp_echo_payload_fifo_wrport_dat_r = storage_3_dat0;
+-assign icmp_echo_payload_fifo_rdport_dat_r = storage_3_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 12 
++// Port 1 | Read: Sync | Write: ---- | 
++(* keep *) fakeram_1rw1r_12w128d_sram u_storage_12w128d_0 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(icmp_echo_payload_fifo_wrport_we),
++    .rw0_addr_in(icmp_echo_payload_fifo_wrport_adr),
++    .rw0_wd_in(icmp_echo_payload_fifo_wrport_dat_w),
++    .rw0_rd_out(icmp_echo_payload_fifo_wrport_dat_r),
++    .r0_clk(sys_clk),
++    .r0_ce_in(icmp_echo_payload_fifo_rdport_re),
++    .r0_addr_in(icmp_echo_payload_fifo_rdport_adr),
++    .r0_rd_out(icmp_echo_payload_fifo_rdport_dat_r)
++);
+ 
+ 
+ //------------------------------------------------------------------------------
+@@ -9176,87 +9174,96 @@
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_5: 64-words x 34-bit
++// Modified Memory storage_5: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+ // Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 34 
+ // Port 1 | Read: Sync  | Write: ---- | 
+-reg [33:0] storage_5[0:63];
+-reg [33:0] storage_5_dat0;
+-reg [33:0] storage_5_dat1;
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer0_tx_fifo_wrport_we)
+-		storage_5[liteethudpstreamer0_tx_fifo_wrport_adr] <= liteethudpstreamer0_tx_fifo_wrport_dat_w;
+-	storage_5_dat0 <= storage_5[liteethudpstreamer0_tx_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer0_tx_fifo_rdport_re)
+-		storage_5_dat1 <= storage_5[liteethudpstreamer0_tx_fifo_rdport_adr];
+-end
+-assign liteethudpstreamer0_tx_fifo_wrport_dat_r = storage_5_dat0;
+-assign liteethudpstreamer0_tx_fifo_rdport_dat_r = storage_5_dat1;
+-
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [63:0] storage_5_dat0;
++wire [63:0] storage_5_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_tx_buffer_64w64d_0 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(liteethudpstreamer0_tx_fifo_wrport_we),
++    .rw0_addr_in(liteethudpstreamer0_tx_fifo_wrport_adr),
++    .rw0_wd_in({30'b0, liteethudpstreamer0_tx_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_5_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(liteethudpstreamer0_tx_fifo_rdport_re),
++    .r0_addr_in(liteethudpstreamer0_tx_fifo_rdport_adr),
++    .r0_rd_out(storage_5_dat1)
++);
++assign liteethudpstreamer0_tx_fifo_wrport_dat_r = storage_5_dat0[33:0];
++assign liteethudpstreamer0_tx_fifo_rdport_dat_r = storage_5_dat1[33:0];
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_6: 64-words x 35-bit
++// Modified Memory storage_6: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 35 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [34:0] storage_6[0:63];
+-reg [34:0] storage_6_dat0;
+-reg [34:0] storage_6_dat1;
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer0_rx_fifo_wrport_we)
+-		storage_6[liteethudpstreamer0_rx_fifo_wrport_adr] <= liteethudpstreamer0_rx_fifo_wrport_dat_w;
+-	storage_6_dat0 <= storage_6[liteethudpstreamer0_rx_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer0_rx_fifo_rdport_re)
+-		storage_6_dat1 <= storage_6[liteethudpstreamer0_rx_fifo_rdport_adr];
+-end
+-assign liteethudpstreamer0_rx_fifo_wrport_dat_r = storage_6_dat0;
+-assign liteethudpstreamer0_rx_fifo_rdport_dat_r = storage_6_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [63:0] storage_6_dat0;
++wire [63:0] storage_6_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_rx_buffer_64w64d_0 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(liteethudpstreamer0_rx_fifo_wrport_we),
++    .rw0_addr_in(liteethudpstreamer0_rx_fifo_wrport_adr),
++    .rw0_wd_in({29'b0, liteethudpstreamer0_rx_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_6_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(liteethudpstreamer0_rx_fifo_rdport_re),
++    .r0_addr_in(liteethudpstreamer0_rx_fifo_rdport_adr),
++    .r0_rd_out(storage_6_dat1)
++);
++assign liteethudpstreamer0_rx_fifo_wrport_dat_r = storage_6_dat0[34:0];
++assign liteethudpstreamer0_rx_fifo_rdport_dat_r = storage_6_dat1[34:0];
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_7: 64-words x 34-bit
++// Modified Memory storage_7: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 34 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [33:0] storage_7[0:63];
+-reg [33:0] storage_7_dat0;
+-reg [33:0] storage_7_dat1;
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer1_tx_fifo_wrport_we)
+-		storage_7[liteethudpstreamer1_tx_fifo_wrport_adr] <= liteethudpstreamer1_tx_fifo_wrport_dat_w;
+-	storage_7_dat0 <= storage_7[liteethudpstreamer1_tx_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer1_tx_fifo_rdport_re)
+-		storage_7_dat1 <= storage_7[liteethudpstreamer1_tx_fifo_rdport_adr];
+-end
+-assign liteethudpstreamer1_tx_fifo_wrport_dat_r = storage_7_dat0;
+-assign liteethudpstreamer1_tx_fifo_rdport_dat_r = storage_7_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [63:0] storage_7_dat0;
++wire [63:0] storage_7_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_tx_buffer_64w64d_1 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(liteethudpstreamer1_tx_fifo_wrport_we),
++    .rw0_addr_in(liteethudpstreamer1_tx_fifo_wrport_adr),
++    .rw0_wd_in({30'b0, liteethudpstreamer1_tx_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_7_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(liteethudpstreamer1_tx_fifo_rdport_re),
++    .r0_addr_in(liteethudpstreamer1_tx_fifo_rdport_adr),
++    .r0_rd_out(storage_7_dat1)
++);
++assign liteethudpstreamer1_tx_fifo_wrport_dat_r = storage_7_dat0[33:0];
++assign liteethudpstreamer1_tx_fifo_rdport_dat_r = storage_7_dat1[33:0];
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_8: 64-words x 35-bit
++// Modified Memory storage_8: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 35 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [34:0] storage_8[0:63];
+-reg [34:0] storage_8_dat0;
+-reg [34:0] storage_8_dat1;
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer1_rx_fifo_wrport_we)
+-		storage_8[liteethudpstreamer1_rx_fifo_wrport_adr] <= liteethudpstreamer1_rx_fifo_wrport_dat_w;
+-	storage_8_dat0 <= storage_8[liteethudpstreamer1_rx_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (liteethudpstreamer1_rx_fifo_rdport_re)
+-		storage_8_dat1 <= storage_8[liteethudpstreamer1_rx_fifo_rdport_adr];
+-end
+-assign liteethudpstreamer1_rx_fifo_wrport_dat_r = storage_8_dat0;
+-assign liteethudpstreamer1_rx_fifo_rdport_dat_r = storage_8_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [63:0] storage_8_dat0;
++wire [63:0] storage_8_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_rx_buffer_64w64d_1 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(liteethudpstreamer1_rx_fifo_wrport_we),
++    .rw0_addr_in(liteethudpstreamer1_rx_fifo_wrport_adr),
++    .rw0_wd_in({29'b0, liteethudpstreamer1_rx_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_8_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(liteethudpstreamer1_rx_fifo_rdport_re),
++    .r0_addr_in(liteethudpstreamer1_rx_fifo_rdport_adr),
++    .r0_rd_out(storage_8_dat1)
++);
++assign liteethudpstreamer1_rx_fifo_wrport_dat_r = storage_8_dat0[34:0];
++assign liteethudpstreamer1_rx_fifo_rdport_dat_r = storage_8_dat1[34:0];
+ 
+ 
+ //------------------------------------------------------------------------------

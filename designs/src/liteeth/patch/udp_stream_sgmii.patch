@@ -1,0 +1,270 @@
+--- liteeth_udp_stream_sgmii.v
++++ liteeth_udp_stream_sgmii.v
+@@ -18,7 +18,7 @@
+ // Module
+ //------------------------------------------------------------------------------
+ 
+-module liteeth_core (
++module liteeth_udp_stream_sgmii (
+     output wire          dhcp_done,
+     output wire   [31:0] dhcp_ip_address,
+     input  wire          dhcp_start,
+@@ -10636,7 +10636,7 @@
+ //------------------------------------------------------------------------------
+ // Instance GTPE2_COMMON of GTPE2_COMMON Module.
+ //------------------------------------------------------------------------------
+-GTPE2_COMMON #(
++GTPE2_COMMON_DUMMY #(
+ 	// Parameters.
+ 	.PLL0_FBDIV      (3'd4),
+ 	.PLL0_FBDIV_45   (3'd4),
+@@ -10670,7 +10670,6 @@
+ // Port 0 | Read: Sync  | Write: ---- | 
+ reg [4:0] mem_6b5b[0:63];
+ initial begin
+-	$readmemh("liteeth_core_mem_6b5b.init", mem_6b5b);
+ end
+ reg [5:0] mem_6b5b_adr0;
+ always @(posedge eth_rx_clk) begin
+@@ -10747,43 +10746,51 @@
+ );
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage: 32-words x 42-bit
++// Modified Memory storage: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [41:0] storage[0:31];
+-reg [41:0] storage_dat0;
+-reg [41:0] storage_dat1;
+-always @(posedge sys_clk) begin
+-	if (core_mac_core_tx_cdc_cdc_wrport_we)
+-		storage[core_mac_core_tx_cdc_cdc_wrport_adr] <= core_mac_core_tx_cdc_cdc_wrport_dat_w;
+-	storage_dat0 <= storage[core_mac_core_tx_cdc_cdc_wrport_adr];
+-end
+-always @(posedge eth_tx_clk) begin
+-	storage_dat1 <= storage[core_mac_core_tx_cdc_cdc_rdport_adr];
+-end
+-assign core_mac_core_tx_cdc_cdc_wrport_dat_r = storage_dat0;
+-assign core_mac_core_tx_cdc_cdc_rdport_dat_r = storage_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [64:0] storage_dat0;
++wire [64:0] storage_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_0 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(core_mac_core_tx_cdc_cdc_wrport_we),
++    .rw0_addr_in(core_mac_core_tx_cdc_cdc_wrport_adr),
++    .rw0_wd_in({22'b0, core_mac_core_tx_cdc_cdc_wrport_dat_w}),
++    .rw0_rd_out(storage_dat0),
++    .r0_clk(eth_tx_clk),
++    .r0_ce_in(1'b1),
++    .r0_addr_in(core_mac_core_tx_cdc_cdc_rdport_adr),
++    .r0_rd_out(storage_dat1)
++);
++assign core_mac_core_tx_cdc_cdc_wrport_dat_r = storage_dat0[41:0];
++assign core_mac_core_tx_cdc_cdc_rdport_dat_r = storage_dat1[41:0];
++
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_1: 32-words x 42-bit
++// Modified Memory storage_1: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [41:0] storage_1[0:31];
+-reg [41:0] storage_1_dat0;
+-reg [41:0] storage_1_dat1;
+-always @(posedge eth_rx_clk) begin
+-	if (core_mac_core_rx_cdc_cdc_wrport_we)
+-		storage_1[core_mac_core_rx_cdc_cdc_wrport_adr] <= core_mac_core_rx_cdc_cdc_wrport_dat_w;
+-	storage_1_dat0 <= storage_1[core_mac_core_rx_cdc_cdc_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	storage_1_dat1 <= storage_1[core_mac_core_rx_cdc_cdc_rdport_adr];
+-end
+-assign core_mac_core_rx_cdc_cdc_wrport_dat_r = storage_1_dat0;
+-assign core_mac_core_rx_cdc_cdc_rdport_dat_r = storage_1_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [64:0] storage_1_dat0;
++wire [64:0] storage_1_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_1 (
++    .rw0_clk(eth_rx_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(core_mac_core_rx_cdc_cdc_wrport_we),
++    .rw0_addr_in(core_mac_core_rx_cdc_cdc_wrport_adr),
++    .rw0_wd_in({22'b0, core_mac_core_rx_cdc_cdc_wrport_dat_w}),
++    .rw0_rd_out(storage_1_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(1'b1),
++    .r0_addr_in(core_mac_core_rx_cdc_cdc_rdport_adr),
++    .r0_rd_out(storage_1_dat1)
++);
++assign core_mac_core_rx_cdc_cdc_wrport_dat_r = storage_1_dat0[41:0];
++assign core_mac_core_rx_cdc_cdc_rdport_dat_r = storage_1_dat1[41:0];
++
+ 
+ 
+ //------------------------------------------------------------------------------
+@@ -10823,24 +10830,27 @@
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_3: 32-words x 42-bit
++// Modified Memory storage_3: 64-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [41:0] storage_3[0:31];
+-reg [41:0] storage_3_dat0;
+-reg [41:0] storage_3_dat1;
+-always @(posedge sys_clk) begin
+-	if (core_icmp_echo_payload_fifo_wrport_we)
+-		storage_3[core_icmp_echo_payload_fifo_wrport_adr] <= core_icmp_echo_payload_fifo_wrport_dat_w;
+-	storage_3_dat0 <= storage_3[core_icmp_echo_payload_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (core_icmp_echo_payload_fifo_rdport_re)
+-		storage_3_dat1 <= storage_3[core_icmp_echo_payload_fifo_rdport_adr];
+-end
+-assign core_icmp_echo_payload_fifo_wrport_dat_r = storage_3_dat0;
+-assign core_icmp_echo_payload_fifo_rdport_dat_r = storage_3_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [64:0] storage_3_dat0;
++wire [64:0] storage_3_dat1;
++(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_3 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(core_icmp_echo_payload_fifo_wrport_we),
++    .rw0_addr_in(core_icmp_echo_payload_fifo_wrport_adr),
++    .rw0_wd_in({22'b0, core_icmp_echo_payload_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_3_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(core_icmp_echo_payload_fifo_rdport_re),
++    .r0_addr_in(core_icmp_echo_payload_fifo_rdport_adr),
++    .r0_rd_out(storage_3_dat1)
++);
++assign core_icmp_echo_payload_fifo_wrport_dat_r = storage_3_dat0[41:0];
++assign core_icmp_echo_payload_fifo_rdport_dat_r = storage_3_dat1[41:0];
++
+ 
+ 
+ //------------------------------------------------------------------------------
+@@ -10865,45 +10875,51 @@
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_5: 1024-words x 34-bit
++// Modified Memory storage_5: 1024-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 34 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [33:0] storage_5[0:1023];
+-reg [33:0] storage_5_dat0;
+-reg [33:0] storage_5_dat1;
+-always @(posedge sys_clk) begin
+-	if (udpcore_tx_fifo_wrport_we)
+-		storage_5[udpcore_tx_fifo_wrport_adr] <= udpcore_tx_fifo_wrport_dat_w;
+-	storage_5_dat0 <= storage_5[udpcore_tx_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (udpcore_tx_fifo_rdport_re)
+-		storage_5_dat1 <= storage_5[udpcore_tx_fifo_rdport_adr];
+-end
+-assign udpcore_tx_fifo_wrport_dat_r = storage_5_dat0;
+-assign udpcore_tx_fifo_rdport_dat_r = storage_5_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [63:0] storage_5_dat0;
++wire [63:0] storage_5_dat1;
++(* keep *) fakeram_1rw1r_64w1024d_sram u_storage_64w1024d_5 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(udpcore_tx_fifo_wrport_we),
++    .rw0_addr_in(udpcore_tx_fifo_wrport_adr),
++    .rw0_wd_in({30'b0, udpcore_tx_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_5_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(udpcore_tx_fifo_rdport_re),
++    .r0_addr_in(udpcore_tx_fifo_rdport_adr),
++    .r0_rd_out(storage_5_dat1)
++);
++assign udpcore_tx_fifo_wrport_dat_r = storage_5_dat0[33:0];
++assign udpcore_tx_fifo_rdport_dat_r = storage_5_dat1[33:0];
++
+ 
+ 
+ //------------------------------------------------------------------------------
+-// Memory storage_6: 1024-words x 35-bit
++// Modified Memory storage_6: 1024-words x 64-bit
+ //------------------------------------------------------------------------------
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 35 
+-// Port 1 | Read: Sync  | Write: ---- | 
+-reg [34:0] storage_6[0:1023];
+-reg [34:0] storage_6_dat0;
+-reg [34:0] storage_6_dat1;
+-always @(posedge sys_clk) begin
+-	if (udpcore_rx_fifo_wrport_we)
+-		storage_6[udpcore_rx_fifo_wrport_adr] <= udpcore_rx_fifo_wrport_dat_w;
+-	storage_6_dat0 <= storage_6[udpcore_rx_fifo_wrport_adr];
+-end
+-always @(posedge sys_clk) begin
+-	if (udpcore_rx_fifo_rdport_re)
+-		storage_6_dat1 <= storage_6[udpcore_rx_fifo_rdport_adr];
+-end
+-assign udpcore_rx_fifo_wrport_dat_r = storage_6_dat0;
+-assign udpcore_rx_fifo_rdport_dat_r = storage_6_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
++// Port 1 | Read: Sync | Write: ---- | 
++wire [63:0] storage_6_dat0;
++wire [63:0] storage_6_dat1;
++(* keep *) fakeram_1rw1r_64w1024d_sram u_storage_64w1024d_6 (
++    .rw0_clk(sys_clk),
++    .rw0_ce_in(1'b1),
++    .rw0_we_in(udpcore_rx_fifo_wrport_we),
++    .rw0_addr_in(udpcore_rx_fifo_wrport_adr),
++    .rw0_wd_in({29'b0, udpcore_rx_fifo_wrport_dat_w}),
++    .rw0_rd_out(storage_6_dat0),
++    .r0_clk(sys_clk),
++    .r0_ce_in(udpcore_rx_fifo_rdport_re),
++    .r0_addr_in(udpcore_rx_fifo_rdport_adr),
++    .r0_rd_out(storage_6_dat1)
++);
++assign udpcore_rx_fifo_wrport_dat_r = storage_6_dat0[34:0];
++assign udpcore_rx_fifo_rdport_dat_r = storage_6_dat1[34:0];
++
+ 
+ 
+ //------------------------------------------------------------------------------
+@@ -11021,7 +11037,7 @@
+ //------------------------------------------------------------------------------
+ // Instance MMCME2_ADV of MMCME2_ADV Module.
+ //------------------------------------------------------------------------------
+-MMCME2_ADV #(
++MMCME2_DUMMY #(
+ 	// Parameters.
+ 	.BANDWIDTH        ("OPTIMIZED"),
+ 	.CLKFBOUT_MULT_F  (5'd18),
+@@ -11161,7 +11177,7 @@
+ //------------------------------------------------------------------------------
+ // Instance MMCME2_ADV_1 of MMCME2_ADV Module.
+ //------------------------------------------------------------------------------
+-MMCME2_ADV #(
++MMCME2_DUMMY #(
+ 	// Parameters.
+ 	.BANDWIDTH        ("OPTIMIZED"),
+ 	.CLKFBOUT_MULT_F  (5'd18),
+@@ -11189,7 +11205,7 @@
+ //------------------------------------------------------------------------------
+ // Instance GTPE2_CHANNEL of GTPE2_CHANNEL Module.
+ //------------------------------------------------------------------------------
+-GTPE2_CHANNEL #(
++GTPE2_CHANNEL_DUMMY #(
+ 	// Parameters.
+ 	.ACJTAG_DEBUG_MODE          (1'd0),
+ 	.ACJTAG_MODE                (1'd0),
