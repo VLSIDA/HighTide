@@ -1,5 +1,5 @@
---- liteeth_udp_usp_gth_sgmii.v
-+++ liteeth_udp_usp_gth_sgmii.v
+--- liteeth_udp_usp_gth_sgmii.v.orig	2025-09-16 15:56:54.451298700 -0700
++++ liteeth_udp_usp_gth_sgmii.v	2025-09-16 16:00:57.633553900 -0700
 @@ -18,7 +18,7 @@
  // Module
  //------------------------------------------------------------------------------
@@ -9,7 +9,7 @@
      output wire          dhcp_done,
      output wire   [31:0] dhcp_ip_address,
      input  wire          dhcp_start,
-@@ -10368,7 +10368,7 @@
+@@ -10244,7 +10244,7 @@
  // Port 0 | Read: Sync  | Write: ---- | 
  reg [4:0] mem_6b5b[0:63];
  initial begin
@@ -18,7 +18,7 @@
  end
  reg [5:0] mem_6b5b_adr0;
  always @(posedge eth_rx_clk) begin
-@@ -10381,7 +10381,7 @@
+@@ -10257,7 +10257,7 @@
  //------------------------------------------------------------------------------
  // Instance GTHE4_CHANNEL of GTHE4_CHANNEL Module.
  //------------------------------------------------------------------------------
@@ -27,15 +27,18 @@
  	// Parameters.
  	.ACJTAG_DEBUG_MODE            (1'd0),
  	.ACJTAG_MODE                  (1'd0),
-@@ -11217,43 +11217,49 @@
+@@ -11092,44 +11092,51 @@
+ 	.O   (eth_rx_half_clk)
  );
  
++
  //------------------------------------------------------------------------------
 -// Memory storage: 32-words x 42-bit
 +// Modified Memory storage: 64-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [41:0] storage[0:31];
 -reg [41:0] storage_dat0;
 -reg [41:0] storage_dat1;
@@ -49,10 +52,8 @@
 -end
 -assign core_mac_core_tx_cdc_cdc_wrport_dat_r = storage_dat0;
 -assign core_mac_core_tx_cdc_cdc_rdport_dat_r = storage_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
-+wire [64:0] storage_dat0;
-+wire [64:0] storage_dat1;
++wire [63:0] storage_dat0;
++wire [63:0] storage_dat1;
 +(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_0 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
@@ -73,8 +74,9 @@
 -// Memory storage_1: 32-words x 42-bit
 +// Modified Memory storage_1: 64-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [41:0] storage_1[0:31];
 -reg [41:0] storage_1_dat0;
 -reg [41:0] storage_1_dat1;
@@ -88,10 +90,8 @@
 -end
 -assign core_mac_core_rx_cdc_cdc_wrport_dat_r = storage_1_dat0;
 -assign core_mac_core_rx_cdc_cdc_rdport_dat_r = storage_1_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
-+wire [64:0] storage_1_dat0;
-+wire [64:0] storage_1_dat1;
++wire [63:0] storage_1_dat0;
++wire [63:0] storage_1_dat1;
 +(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_1 (
 +    .rw0_clk(eth_rx_clk),
 +    .rw0_ce_in(1'b1),
@@ -109,15 +109,16 @@
  
  
  //------------------------------------------------------------------------------
-@@ -11293,24 +11299,26 @@
+@@ -11169,24 +11176,26 @@
  
  
  //------------------------------------------------------------------------------
 -// Memory storage_3: 32-words x 42-bit
 +// Modified Memory storage_3: 64-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [41:0] storage_3[0:31];
 -reg [41:0] storage_3_dat0;
 -reg [41:0] storage_3_dat1;
@@ -132,10 +133,8 @@
 -end
 -assign core_icmp_echo_payload_fifo_wrport_dat_r = storage_3_dat0;
 -assign core_icmp_echo_payload_fifo_rdport_dat_r = storage_3_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
-+wire [64:0] storage_3_dat0;
-+wire [64:0] storage_3_dat1;
++wire [63:0] storage_3_dat0;
++wire [63:0] storage_3_dat1;
 +(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_3 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
@@ -153,15 +152,16 @@
  
  
  //------------------------------------------------------------------------------
-@@ -11335,45 +11343,49 @@
+@@ -11211,45 +11220,49 @@
  
  
  //------------------------------------------------------------------------------
 -// Memory storage_5: 1024-words x 34-bit
 +// Modified Memory storage_5: 1024-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 34 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [33:0] storage_5[0:1023];
 -reg [33:0] storage_5_dat0;
 -reg [33:0] storage_5_dat1;
@@ -176,8 +176,6 @@
 -end
 -assign udpcore_tx_fifo_wrport_dat_r = storage_5_dat0;
 -assign udpcore_tx_fifo_rdport_dat_r = storage_5_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
 +wire [63:0] storage_5_dat0;
 +wire [63:0] storage_5_dat1;
 +(* keep *) fakeram_1rw1r_64w1024d_sram u_storage_64w1024d_5 (
@@ -200,8 +198,9 @@
 -// Memory storage_6: 1024-words x 35-bit
 +// Modified Memory storage_6: 1024-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 35 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [34:0] storage_6[0:1023];
 -reg [34:0] storage_6_dat0;
 -reg [34:0] storage_6_dat1;
@@ -216,8 +215,6 @@
 -end
 -assign udpcore_rx_fifo_wrport_dat_r = storage_6_dat0;
 -assign udpcore_rx_fifo_rdport_dat_r = storage_6_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
 +wire [63:0] storage_6_dat0;
 +wire [63:0] storage_6_dat1;
 +(* keep *) fakeram_1rw1r_64w1024d_sram u_storage_64w1024d_6 (

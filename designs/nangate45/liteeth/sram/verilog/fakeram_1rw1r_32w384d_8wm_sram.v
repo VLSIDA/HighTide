@@ -34,7 +34,7 @@ module fakeram_1rw1r_32w384d_8wm_sram
 
    always @(posedge r0_clk) begin
       if (r0_ce_in) begin
-         // Read-first
+         // Read Port
          r0_rd_out <= mem[r0_addr_in];
       end
       else begin
@@ -45,8 +45,6 @@ module fakeram_1rw1r_32w384d_8wm_sram
 
    always @(posedge rw0_clk) begin
       if (rw0_ce_in) begin
-         // Read-first
-         rw0_rd_out <= mem[rw0_addr_in];
          // Write Port
          if (corrupt_mem_on_X_p &&
              ((^rw0_we_in === 1'bx) || (^rw0_addr_in === 1'bx))) begin
@@ -66,6 +64,8 @@ module fakeram_1rw1r_32w384d_8wm_sram
             if (rw0_wmask_in[3])
                mem[rw0_addr_in][31:24] <= (rw0_wd_in[31:24]);
          end
+         // Read Port
+         rw0_rd_out <= mem[rw0_addr_in];
       end
       else begin
          // Make sure read fails if rw0_ce_in is low

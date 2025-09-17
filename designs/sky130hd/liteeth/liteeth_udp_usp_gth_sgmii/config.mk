@@ -33,8 +33,8 @@ export ADDITIONAL_LIBS = \
   $(PLATFORM_DESIGN_DIR)/sram/lib/fakeram_1rw1r_64w1024d_sram.lib
 
 export GDS_ALLOW_EMPTY=fakeram*
-export CORE_UTILIZATION = 35
+export CORE_UTILIZATION = 50
 export MACRO_PLACE_HALO = 30 30
-export PLACE_DENSITY = 0.1
+export PLACE_DENSITY = 0.4
 export ROUTING_LAYER_ADJUSTMENT = 0.2
 

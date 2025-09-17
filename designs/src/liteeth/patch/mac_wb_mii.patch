@@ -1,5 +1,5 @@
---- liteeth_mac_wb_mii.v
-+++ liteeth_mac_wb_mii.v
+--- liteeth_mac_wb_mii.v.orig	2025-09-16 15:03:57.271685200 -0700
++++ liteeth_mac_wb_mii.v	2025-09-16 15:06:32.548724800 -0700
 @@ -18,7 +18,7 @@
  // Module
  //------------------------------------------------------------------------------
@@ -9,28 +9,28 @@
      output wire          interrupt,
      input  wire          mii_clocks_rx,
      input  wire          mii_clocks_tx,
-@@ -3858,43 +3858,41 @@
+@@ -3851,43 +3851,41 @@
  
  
  //------------------------------------------------------------------------------
--// Memory mem: 383-words x 32-bit
-+// Modified Memory mem: 384-words x 32-bit 
+-// Memory mac_sram_writer_slot0: 383-words x 32-bit
++// Modified Memory mac_sram_writer_slot0: 384-words x 32-bit
  //------------------------------------------------------------------------------
- // Port 0 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 32 
+ // Port 0 | Read: Sync  | Write: Sync | Mode: Write-First
  // Port 1 | Read: Sync  | Write: ---- | 
--reg [31:0] mem[0:382];
--reg [8:0] mem_adr0;
--reg [31:0] mem_dat1;
+-reg [31:0] mac_sram_writer_slot0[0:382];
+-reg [8:0] mac_sram_writer_slot0_adr0;
+-reg [31:0] mac_sram_writer_slot0_dat1;
 -always @(posedge sys_clk) begin
 -	if (wishbone_interface_writer_memory0_we)
--		mem[wishbone_interface_writer_memory0_adr] <= wishbone_interface_writer_memory0_dat_w;
--	mem_adr0 <= wishbone_interface_writer_memory0_adr;
+-		mac_sram_writer_slot0[wishbone_interface_writer_memory0_adr] <= wishbone_interface_writer_memory0_dat_w;
+-	mac_sram_writer_slot0_adr0 <= wishbone_interface_writer_memory0_adr;
 -end
 -always @(posedge sys_clk) begin
--	mem_dat1 <= mem[wishbone_interface_sram0_adr];
+-	mac_sram_writer_slot0_dat1 <= mac_sram_writer_slot0[wishbone_interface_sram0_adr];
 -end
--assign wishbone_interface_writer_memory0_dat_r = mem[mem_adr0];
--assign wishbone_interface_sram0_dat_r = mem_dat1;
+-assign wishbone_interface_writer_memory0_dat_r = mac_sram_writer_slot0[mac_sram_writer_slot0_adr0];
+-assign wishbone_interface_sram0_dat_r = mac_sram_writer_slot0_dat1;
 +(* keep *) fakeram_1rw1r_32w384d_sram u_tx_buffer_0 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
@@ -46,68 +46,64 @@
  
  
  //------------------------------------------------------------------------------
--// Memory mem_1: 383-words x 32-bit
-+// Modified Memory mem_1: 384-words x 32-bit 
+-// Memory mac_sram_writer_slot1: 383-words x 32-bit
++// Modified Memory mac_sram_writer_slot1: 384-words x 32-bit
  //------------------------------------------------------------------------------
- // Port 0 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 32 
+ // Port 0 | Read: Sync  | Write: Sync | Mode: Write-First
  // Port 1 | Read: Sync  | Write: ---- | 
--reg [31:0] mem_1[0:382];
--reg [8:0] mem_1_adr0;
--reg [31:0] mem_1_dat1;
+-reg [31:0] mac_sram_writer_slot1[0:382];
+-reg [8:0] mac_sram_writer_slot1_adr0;
+-reg [31:0] mac_sram_writer_slot1_dat1;
 -always @(posedge sys_clk) begin
 -	if (wishbone_interface_writer_memory1_we)
--		mem_1[wishbone_interface_writer_memory1_adr] <= wishbone_interface_writer_memory1_dat_w;
--	mem_1_adr0 <= wishbone_interface_writer_memory1_adr;
+-		mac_sram_writer_slot1[wishbone_interface_writer_memory1_adr] <= wishbone_interface_writer_memory1_dat_w;
+-	mac_sram_writer_slot1_adr0 <= wishbone_interface_writer_memory1_adr;
 -end
 -always @(posedge sys_clk) begin
--	mem_1_dat1 <= mem_1[wishbone_interface_sram1_adr];
+-	mac_sram_writer_slot1_dat1 <= mac_sram_writer_slot1[wishbone_interface_sram1_adr];
 -end
--assign wishbone_interface_writer_memory1_dat_r = mem_1[mem_1_adr0];
--assign wishbone_interface_sram1_dat_r = mem_1_dat1;
+-assign wishbone_interface_writer_memory1_dat_r = mac_sram_writer_slot1[mac_sram_writer_slot1_adr0];
+-assign wishbone_interface_sram1_dat_r = mac_sram_writer_slot1_dat1;
 +(* keep *) fakeram_1rw1r_32w384d_sram u_tx_buffer_1 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
-+    .rw0_we_in(wishbone_interface_writer_memory1_we), 
++    .rw0_we_in(wishbone_interface_writer_memory1_we),
 +    .rw0_addr_in(wishbone_interface_writer_memory1_adr),
 +    .rw0_wd_in(wishbone_interface_writer_memory1_dat_w),
 +    .rw0_rd_out(wishbone_interface_writer_memory1_dat_r),    
 +    .r0_clk(sys_clk),
-+    .r0_ce_in(1'b1),                                   
++    .r0_ce_in(1'b1),
 +    .r0_addr_in(wishbone_interface_sram1_adr),
 +    .r0_rd_out(wishbone_interface_sram1_dat_r)
 +);
  
  
  //------------------------------------------------------------------------------
-@@ -3916,57 +3914,43 @@
+@@ -3909,49 +3907,43 @@
  
  
  //------------------------------------------------------------------------------
--// Memory mem_2: 383-words x 32-bit
-+// Modified Memory mem_2: 384-words x 32-bit 
+-// Memory mac_sram_reader_slot0: 383-words x 32-bit
++// Modified Memory mac_sram_reader_slot0: 384-words x 32-bit
  //------------------------------------------------------------------------------
  // Port 0 | Read: Sync  | Write: ---- | 
- // Port 1 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 8 
--reg [31:0] mem_2[0:382];
--reg [31:0] mem_2_dat0;
--reg [8:0] mem_2_adr1;
+ // Port 1 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 8
+-reg [31:0] mac_sram_reader_slot0[0:382];
+-reg [31:0] mac_sram_reader_slot0_dat0;
+-reg [8:0] mac_sram_reader_slot0_adr1;
 -always @(posedge sys_clk) begin
 -	if (wishbone_interface_reader_memory0_re)
--		mem_2_dat0 <= mem_2[wishbone_interface_reader_memory0_adr];
+-		mac_sram_reader_slot0_dat0 <= mac_sram_reader_slot0[wishbone_interface_reader_memory0_adr];
 -end
--always @(posedge sys_clk) begin
--	if (wishbone_interface_sram2_we[0])
--		mem_2[wishbone_interface_sram2_adr][7:0] <= wishbone_interface_sram2_dat_w[7:0];
--	if (wishbone_interface_sram2_we[1])
--		mem_2[wishbone_interface_sram2_adr][15:8] <= wishbone_interface_sram2_dat_w[15:8];
--	if (wishbone_interface_sram2_we[2])
--		mem_2[wishbone_interface_sram2_adr][23:16] <= wishbone_interface_sram2_dat_w[23:16];
--	if (wishbone_interface_sram2_we[3])
--		mem_2[wishbone_interface_sram2_adr][31:24] <= wishbone_interface_sram2_dat_w[31:24];
--	mem_2_adr1 <= wishbone_interface_sram2_adr;
+-always @(posedge sys_clk) begin : mem_write_block
+-	integer we_index;
+-	for(we_index = 0; we_index < 4; we_index=we_index+1)
+-		if (wishbone_interface_sram2_we[we_index])
+-			mac_sram_reader_slot0[wishbone_interface_sram2_adr][we_index*8 +: 8] <= wishbone_interface_sram2_dat_w[we_index*8 +: 8];
+-	mac_sram_reader_slot0_adr1 <= wishbone_interface_sram2_adr;
 -end
--assign wishbone_interface_reader_memory0_dat_r = mem_2_dat0;
--assign wishbone_interface_sram2_dat_r = mem_2[mem_2_adr1];
+-assign wishbone_interface_reader_memory0_dat_r = mac_sram_reader_slot0_dat0;
+-assign wishbone_interface_sram2_dat_r = mac_sram_reader_slot0[mac_sram_reader_slot0_adr1];
 +(* keep *) fakeram_1rw1r_32w384d_8wm_sram u_rx_buffer_0 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
@@ -124,31 +120,27 @@
  
  
  //------------------------------------------------------------------------------
--// Memory mem_3: 383-words x 32-bit
-+// Modified Memory mem_3: 384-words x 32-bit 
+-// Memory mac_sram_reader_slot1: 383-words x 32-bit
++// Modified Memory mac_sram_reader_slot1: 384-words x 32-bit
  //------------------------------------------------------------------------------
  // Port 0 | Read: Sync  | Write: ---- | 
- // Port 1 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 8 
--reg [31:0] mem_3[0:382];
--reg [31:0] mem_3_dat0;
--reg [8:0] mem_3_adr1;
+ // Port 1 | Read: Sync  | Write: Sync | Mode: Write-First | Write-Granularity: 8
+-reg [31:0] mac_sram_reader_slot1[0:382];
+-reg [31:0] mac_sram_reader_slot1_dat0;
+-reg [8:0] mac_sram_reader_slot1_adr1;
 -always @(posedge sys_clk) begin
 -	if (wishbone_interface_reader_memory1_re)
--		mem_3_dat0 <= mem_3[wishbone_interface_reader_memory1_adr];
+-		mac_sram_reader_slot1_dat0 <= mac_sram_reader_slot1[wishbone_interface_reader_memory1_adr];
 -end
--always @(posedge sys_clk) begin
--	if (wishbone_interface_sram3_we[0])
--		mem_3[wishbone_interface_sram3_adr][7:0] <= wishbone_interface_sram3_dat_w[7:0];
--	if (wishbone_interface_sram3_we[1])
--		mem_3[wishbone_interface_sram3_adr][15:8] <= wishbone_interface_sram3_dat_w[15:8];
--	if (wishbone_interface_sram3_we[2])
--		mem_3[wishbone_interface_sram3_adr][23:16] <= wishbone_interface_sram3_dat_w[23:16];
--	if (wishbone_interface_sram3_we[3])
--		mem_3[wishbone_interface_sram3_adr][31:24] <= wishbone_interface_sram3_dat_w[31:24];
--	mem_3_adr1 <= wishbone_interface_sram3_adr;
+-always @(posedge sys_clk) begin : mem_write_block_1
+-	integer we_index_1;
+-	for(we_index_1 = 0; we_index_1 < 4; we_index_1=we_index_1+1)
+-		if (wishbone_interface_sram3_we[we_index_1])
+-			mac_sram_reader_slot1[wishbone_interface_sram3_adr][we_index_1*8 +: 8] <= wishbone_interface_sram3_dat_w[we_index_1*8 +: 8];
+-	mac_sram_reader_slot1_adr1 <= wishbone_interface_sram3_adr;
 -end
--assign wishbone_interface_reader_memory1_dat_r = mem_3_dat0;
--assign wishbone_interface_sram3_dat_r = mem_3[mem_3_adr1];
+-assign wishbone_interface_reader_memory1_dat_r = mac_sram_reader_slot1_dat0;
+-assign wishbone_interface_sram3_dat_r = mac_sram_reader_slot1[mac_sram_reader_slot1_adr1];
 +(* keep *) fakeram_1rw1r_32w384d_8wm_sram u_rx_buffer_1 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),

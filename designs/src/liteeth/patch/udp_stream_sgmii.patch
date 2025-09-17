@@ -1,5 +1,8 @@
---- liteeth_udp_stream_sgmii.v
-+++ liteeth_udp_stream_sgmii.v
+--- liteeth_udp_stream_sgmii.v.orig	2025-09-16 15:39:31.435466600 -0700
++++ liteeth_udp_stream_sgmii.v	2025-09-16 15:39:15.069766200 -0700
+ //------------------------------------------------------------------------------
+ 
+ `timescale 1ns / 1ps
 @@ -18,7 +18,7 @@
  // Module
  //------------------------------------------------------------------------------
@@ -9,7 +12,7 @@
      output wire          dhcp_done,
      output wire   [31:0] dhcp_ip_address,
      input  wire          dhcp_start,
-@@ -10636,7 +10636,7 @@
+@@ -10512,7 +10512,7 @@
  //------------------------------------------------------------------------------
  // Instance GTPE2_COMMON of GTPE2_COMMON Module.
  //------------------------------------------------------------------------------
@@ -18,7 +21,7 @@
  	// Parameters.
  	.PLL0_FBDIV      (3'd4),
  	.PLL0_FBDIV_45   (3'd4),
-@@ -10670,7 +10670,6 @@
+@@ -10546,7 +10546,6 @@
  // Port 0 | Read: Sync  | Write: ---- | 
  reg [4:0] mem_6b5b[0:63];
  initial begin
@@ -26,14 +29,16 @@
  end
  reg [5:0] mem_6b5b_adr0;
  always @(posedge eth_rx_clk) begin
-@@ -10747,43 +10746,51 @@
+@@ -10622,44 +10621,51 @@
+ 	.O (udpcore_a7_1000basex_s7mmcm1_clkout_buf1)
  );
  
++
  //------------------------------------------------------------------------------
 -// Memory storage: 32-words x 42-bit
 +// Modified Memory storage: 64-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
 -// Port 1 | Read: Sync  | Write: ---- | 
 -reg [41:0] storage[0:31];
 -reg [41:0] storage_dat0;
@@ -48,10 +53,10 @@
 -end
 -assign core_mac_core_tx_cdc_cdc_wrport_dat_r = storage_dat0;
 -assign core_mac_core_tx_cdc_cdc_rdport_dat_r = storage_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
-+wire [64:0] storage_dat0;
-+wire [64:0] storage_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
++// Port 1 | Read: Sync  | Write: ---- |  
++wire [63:0] storage_dat0;
++wire [63:0] storage_dat1;
 +(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_0 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
@@ -66,15 +71,15 @@
 +);
 +assign core_mac_core_tx_cdc_cdc_wrport_dat_r = storage_dat0[41:0];
 +assign core_mac_core_tx_cdc_cdc_rdport_dat_r = storage_dat1[41:0];
-+
  
  
  //------------------------------------------------------------------------------
 -// Memory storage_1: 32-words x 42-bit
 +// Modified Memory storage_1: 64-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [41:0] storage_1[0:31];
 -reg [41:0] storage_1_dat0;
 -reg [41:0] storage_1_dat1;
@@ -88,10 +93,8 @@
 -end
 -assign core_mac_core_rx_cdc_cdc_wrport_dat_r = storage_1_dat0;
 -assign core_mac_core_rx_cdc_cdc_rdport_dat_r = storage_1_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
-+wire [64:0] storage_1_dat0;
-+wire [64:0] storage_1_dat1;
++wire [63:0] storage_1_dat0;
++wire [63:0] storage_1_dat1;
 +(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_1 (
 +    .rw0_clk(eth_rx_clk),
 +    .rw0_ce_in(1'b1),
@@ -106,18 +109,17 @@
 +);
 +assign core_mac_core_rx_cdc_cdc_wrport_dat_r = storage_1_dat0[41:0];
 +assign core_mac_core_rx_cdc_cdc_rdport_dat_r = storage_1_dat1[41:0];
-+
  
  
  //------------------------------------------------------------------------------
-@@ -10823,24 +10830,27 @@
+@@ -10699,24 +10705,26 @@
  
  
  //------------------------------------------------------------------------------
 -// Memory storage_3: 32-words x 42-bit
 +// Modified Memory storage_3: 64-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 42 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
 -// Port 1 | Read: Sync  | Write: ---- | 
 -reg [41:0] storage_3[0:31];
 -reg [41:0] storage_3_dat0;
@@ -133,10 +135,10 @@
 -end
 -assign core_icmp_echo_payload_fifo_wrport_dat_r = storage_3_dat0;
 -assign core_icmp_echo_payload_fifo_rdport_dat_r = storage_3_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
-+wire [64:0] storage_3_dat0;
-+wire [64:0] storage_3_dat1;
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
++// Port 1 | Read: Sync  | Write: ---- |  
++wire [63:0] storage_3_dat0;
++wire [63:0] storage_3_dat1;
 +(* keep *) fakeram_1rw1r_64w64d_sram u_storage_64w64d_3 (
 +    .rw0_clk(sys_clk),
 +    .rw0_ce_in(1'b1),
@@ -151,19 +153,19 @@
 +);
 +assign core_icmp_echo_payload_fifo_wrport_dat_r = storage_3_dat0[41:0];
 +assign core_icmp_echo_payload_fifo_rdport_dat_r = storage_3_dat1[41:0];
-+
  
  
  //------------------------------------------------------------------------------
-@@ -10865,45 +10875,51 @@
+@@ -10741,45 +10749,49 @@
  
  
  //------------------------------------------------------------------------------
 -// Memory storage_5: 1024-words x 34-bit
 +// Modified Memory storage_5: 1024-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 34 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [33:0] storage_5[0:1023];
 -reg [33:0] storage_5_dat0;
 -reg [33:0] storage_5_dat1;
@@ -178,8 +180,6 @@
 -end
 -assign udpcore_tx_fifo_wrport_dat_r = storage_5_dat0;
 -assign udpcore_tx_fifo_rdport_dat_r = storage_5_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
 +wire [63:0] storage_5_dat0;
 +wire [63:0] storage_5_dat1;
 +(* keep *) fakeram_1rw1r_64w1024d_sram u_storage_64w1024d_5 (
@@ -196,15 +196,15 @@
 +);
 +assign udpcore_tx_fifo_wrport_dat_r = storage_5_dat0[33:0];
 +assign udpcore_tx_fifo_rdport_dat_r = storage_5_dat1[33:0];
-+
  
  
  //------------------------------------------------------------------------------
 -// Memory storage_6: 1024-words x 35-bit
 +// Modified Memory storage_6: 1024-words x 64-bit
  //------------------------------------------------------------------------------
--// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First  | Write-Granularity: 35 
--// Port 1 | Read: Sync  | Write: ---- | 
+-// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First 
++// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First
+ // Port 1 | Read: Sync  | Write: ---- | 
 -reg [34:0] storage_6[0:1023];
 -reg [34:0] storage_6_dat0;
 -reg [34:0] storage_6_dat1;
@@ -219,8 +219,6 @@
 -end
 -assign udpcore_rx_fifo_wrport_dat_r = storage_6_dat0;
 -assign udpcore_rx_fifo_rdport_dat_r = storage_6_dat1;
-+// Port 0 | Read: Sync  | Write: Sync | Mode: Read-First | Write-Granularity: 64 
-+// Port 1 | Read: Sync | Write: ---- | 
 +wire [63:0] storage_6_dat0;
 +wire [63:0] storage_6_dat1;
 +(* keep *) fakeram_1rw1r_64w1024d_sram u_storage_64w1024d_6 (
@@ -237,11 +235,10 @@
 +);
 +assign udpcore_rx_fifo_wrport_dat_r = storage_6_dat0[34:0];
 +assign udpcore_rx_fifo_rdport_dat_r = storage_6_dat1[34:0];
-+
  
  
  //------------------------------------------------------------------------------
-@@ -11021,7 +11037,7 @@
+@@ -10897,7 +10909,7 @@
  //------------------------------------------------------------------------------
  // Instance MMCME2_ADV of MMCME2_ADV Module.
  //------------------------------------------------------------------------------
@@ -250,7 +247,7 @@
  	// Parameters.
  	.BANDWIDTH        ("OPTIMIZED"),
  	.CLKFBOUT_MULT_F  (5'd18),
-@@ -11161,7 +11177,7 @@
+@@ -11037,7 +11049,7 @@
  //------------------------------------------------------------------------------
  // Instance MMCME2_ADV_1 of MMCME2_ADV Module.
  //------------------------------------------------------------------------------
@@ -259,7 +256,7 @@
  	// Parameters.
  	.BANDWIDTH        ("OPTIMIZED"),
  	.CLKFBOUT_MULT_F  (5'd18),
-@@ -11189,7 +11205,7 @@
+@@ -11065,7 +11077,7 @@
  //------------------------------------------------------------------------------
  // Instance GTPE2_CHANNEL of GTPE2_CHANNEL Module.
  //------------------------------------------------------------------------------
