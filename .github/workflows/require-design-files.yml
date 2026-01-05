@@ -86,14 +86,14 @@ jobs:
 
           # REQUIRED files relative to designs/src/<design>/
           required_src=(
-            "file:verilog.mk",
-            "file:LICENSE",
+            "file:verilog.mk"
+            "file:LICENSE"
             "dir:dev"
           )
 
           # REQUIRED files relative to designs/<tech>/<design>/
           required_tech=(
-            "config.mk",
+            "config.mk"
             "constraint.sdc"
           )
 
