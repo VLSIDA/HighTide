@@ -1,0 +1,145 @@
+name: Validate PR designs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "designs/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate only designs updated in this PR
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_REF="origin/${{ github.base_ref }}"
+          HEAD_SHA="${{ github.sha }}"
+          git fetch origin "${{ github.base_ref }}" --no-tags --prune
+
+          techs=(sky130hd asap7 nangate45)
+
+          # Collect changed file paths for A/M (and treat R* as changed using new path field).
+          mapfile -t changed_paths < <(
+            git diff --name-status "${BASE_REF}...${HEAD_SHA}" \
+              | awk '
+                  $1=="A" || $1=="M" {print $2}
+                  $1 ~ /^R/ {print $3}
+                '
+          )
+
+          relevant_paths=()
+          for p in "${changed_paths[@]}"; do
+            if [[ "$p" =~ ^designs/src/[^/]+/ ]] || [[ "$p" =~ ^designs/[^/]+/[^/]+/ ]]; then
+              relevant_paths+=("$p")
+            fi
+          done
+
+          if (( ${#relevant_paths[@]} == 0 )); then
+            echo "No changes to designs/src/<design>/ or designs/<tech>/<design>/. Nothing to validate."
+            exit 0
+          fi
+
+          declare -A touched_src_design=()     # key: <design>
+          declare -A touched_tech_design=()    # key: <tech>/<design>
+
+          for p in "${changed_paths[@]}"; do
+            if [[ "$p" =~ ^designs/src/([^/]+)/ ]]; then
+              touched_src_design["${BASH_REMATCH[1]}"]=1
+              continue
+            fi
+
+            if [[ "$p" =~ ^designs/([^/]+)/([^/]+)/ ]]; then
+              t="${BASH_REMATCH[1]}"
+              d="${BASH_REMATCH[2]}"
+              for allowed in "${techs[@]}"; do
+                if [[ "$t" == "$allowed" ]]; then
+                  touched_tech_design["$t/$d"]=1
+                  break
+                fi
+              done
+            fi
+          done
+
+          echo "Touched src designs:"
+          if (( ${#touched_src_design[@]} == 0 )); then
+            echo " - (none)"
+          else
+            for d in "${!touched_src_design[@]}"; do echo " - $d"; done
+          fi
+
+          echo "Touched tech designs:"
+          if (( ${#touched_tech_design[@]} == 0 )); then
+            echo " - (none)"
+          else
+            for td in "${!touched_tech_design[@]}"; do echo " - $td"; done
+          fi
+
+          # REQUIRED files relative to designs/src/<design>/
+          required_src=(
+            "verilog.mk"
+          )
+
+          # REQUIRED files relative to designs/<tech>/<design>/
+          required_tech=(
+            "config.mk",
+            "constraint.sdc"
+          )
+
+          missing=0
+
+          # Enforce src rules ONLY for src designs touched by PR
+          for d in "${!touched_src_design[@]}"; do
+            src_root="designs/src/$d"
+
+            # Require the directory itself
+            if [[ ! -d "$src_root" ]]; then
+              echo "::error file=designs/src::$src_root/ is required (touched by PR) but is missing."
+              missing=1
+              continue
+            fi
+
+            # Require files inside it
+            for rel in "${required_src[@]}"; do
+              if [[ ! -f "$src_root/$rel" ]]; then
+                echo "::error file=$src_root/$rel::Missing required file: $src_root/$rel"
+                missing=1
+              fi
+            done
+          done
+
+          # Enforce tech rules ONLY for tech/design trees touched by PR
+          for td in "${!touched_tech_design[@]}"; do
+            t="${td%%/*}"
+            d="${td#*/}"
+            tech_root="designs/$t/$d"
+
+            if [[ ! -d "$tech_root" ]]; then
+              echo "::error file=designs/$t::$tech_root/ is touched by PR but directory is missing."
+              missing=1
+              continue
+            fi
+
+            for rel in "${required_tech[@]}"; do
+              if [[ ! -f "$tech_root/$rel" ]]; then
+                echo "::error file=$tech_root/$rel::Missing required file: $tech_root/$rel"
+                missing=1
+              fi
+            done
+          done
+
+          if (( missing )); then
+            echo "Validation failed."
+            exit 1
+          fi
+
+          echo "Validation passed."
