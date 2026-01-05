@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate only designs updated in this PR
+      - name: Validate required design files
         shell: bash
         run: |
           set -euo pipefail
@@ -70,14 +70,14 @@ jobs:
             fi
           done
 
-          echo "Touched src designs:"
+          echo "Design's with new or updated designs/src/ files:"
           if (( ${#touched_src_design[@]} == 0 )); then
             echo " - (none)"
           else
             for d in "${!touched_src_design[@]}"; do echo " - $d"; done
           fi
 
-          echo "Touched tech designs:"
+          echo "Design's with new/updated designs/<tech>/ files:"
           if (( ${#touched_tech_design[@]} == 0 )); then
             echo " - (none)"
           else
@@ -86,7 +86,9 @@ jobs:
 
           # REQUIRED files relative to designs/src/<design>/
           required_src=(
-            "verilog.mk"
+            "file:verilog.mk",
+            "file:LICENSE",
+            "dir:dev"
           )
 
           # REQUIRED files relative to designs/<tech>/<design>/
@@ -109,10 +111,20 @@ jobs:
             fi
 
             # Require files inside it
-            for rel in "${required_src[@]}"; do
-              if [[ ! -f "$src_root/$rel" ]]; then
-                echo "::error file=$src_root/$rel::Missing required file: $src_root/$rel"
-                missing=1
+            for req in "${required_src[@]}"; do
+              kind="${req%%:*}"
+              path="${req#*:}"
+
+              if [[ "$kind" == "file" ]]; then
+                if [[ ! -f "$src_root/$path" ]]; then
+                  echo "::error file=$src_root/$path::Missing required file: $src_root/$path"
+                  missing=1
+                fi
+              elif [[ "$kind" == "dir" ]]; then
+                if [[ ! -d "$src_root/$path" ]]; then
+                  echo "::error file=$src_root/$path::Missing required directory: $src_root/$path/"
+                  missing=1
+                fi
               fi
             done
           done
