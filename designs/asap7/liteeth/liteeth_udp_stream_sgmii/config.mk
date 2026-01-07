@@ -1,4 +1,5 @@
 export DESIGN_NAME = liteeth_udp_stream_sgmii
+export DESIGN_RESULTS_NAME = $(DESIGN_NAME)
 export DESIGN_NICKNAME = liteeth
 export PLATFORM    = asap7
 

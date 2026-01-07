@@ -1,4 +1,5 @@
 export DESIGN_NAME = liteeth_mac_wb_mii
+export DESIGN_RESULTS_NAME = $(DESIGN_NAME)
 export DESIGN_NICKNAME = liteeth
 export PLATFORM    = sky130hd
 
