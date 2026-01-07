@@ -2,7 +2,7 @@ library(fakeram_512x2048_1r1w) {
     technology (cmos);
     delay_model : table_lookup;
     revision : 1.0;
-    date : "2025-10-02 18:11:03Z";
+    date : "2026-01-05 00:10:33Z";
     comment : "SRAM";
     time_unit : "1ns";
     voltage_unit : "1V";
@@ -87,8 +87,16 @@ library(fakeram_512x2048_1r1w) {
         bit_to : 0 ;
         downto : true ;
     }
+    type (fakeram_512x2048_1r1w_WMASK) {
+        base_type : array ;
+        data_type : bit ;
+        bit_width : 64;
+        bit_from : 63;
+        bit_to : 0 ;
+        downto : true ;
+    }
 cell(fakeram_512x2048_1r1w) {
-    area : 44030.325;
+    area : 66613.347;
     interface_timing : true;
     memory() {
         type : ram;
@@ -329,6 +337,77 @@ cell(fakeram_512x2048_1r1w) {
         }
     }
     bus(w0_wd_in)   {
+        bus_type : fakeram_512x2048_1r1w_DATA;
+        memory_write() {
+            address : w0_addr_in;
+            clocked_on : "w0_clk";
+        }
+        direction : input;
+        capacitance : 0.005;
+        timing() {
+            related_pin     : w0_clk;
+            timing_type     : setup_rising ;
+            rise_constraint(fakeram_512x2048_1r1w_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(fakeram_512x2048_1r1w_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        } 
+        timing() {
+            related_pin     : w0_clk;
+            timing_type     : hold_rising ;
+            rise_constraint(fakeram_512x2048_1r1w_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+            fall_constraint(fakeram_512x2048_1r1w_constraint_template) {
+                index_1 ("0.009, 0.227");
+                index_2 ("0.009, 0.227");
+                values ( \
+                  "0.050, 0.050", \
+                  "0.050, 0.050" \
+                )
+            }
+        }
+        internal_power(){
+            when : "(! (w0_we_in) )";
+            rise_power(fakeram_512x2048_1r1w_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(fakeram_512x2048_1r1w_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+        internal_power(){
+            when : "(w0_we_in)";
+            rise_power(fakeram_512x2048_1r1w_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+            fall_power(fakeram_512x2048_1r1w_energy_template_sigslew) {
+                index_1 ("0.009, 0.227");
+                values ("0.013, 0.013")
+            }
+        }
+    }
+    bus(w0_wmask_in)   {
         bus_type : fakeram_512x2048_1r1w_DATA;
         memory_write() {
             address : w0_addr_in;
