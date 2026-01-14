@@ -9,6 +9,7 @@ fi
 
 YML_FILE="$1"
 GEN_CORE_NAME="${DESIGN_NAME}_build"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 echo "Setting up $DESIGN_NAME..."
 
@@ -20,13 +21,10 @@ source "$LITEETH_DIR/dev/.venv/bin/activate"
 
 python3 $LITEETH_DIR/dev/repo/liteeth/gen.py $YML_PATH/$YML_FILE && echo "Generating liteeth core..."
 
-cp $LITEETH_DIR/dev/build/gateware/liteeth_core.v $LITEETH_DIR/dev/$DESIGN_NAME.v && echo "Copying verilog files..."
+cp $LITEETH_DIR/dev/build/gateware/liteeth_core.v $LITEETH_DIR/$DESIGN_NAME.v && echo "Copying verilog files..."
 
-if [ ! -d $LITEETH_DIR/dev/$BUILD_DIR_NAME/$GEN_CORE_NAME ]; then
-    mkdir $LITEETH_DIR/dev/$BUILD_DIR_NAME && mkdir $LITEETH_DIR/dev/$BUILD_DIR_NAME/$GEN_CORE_NAME
-    cp -r $LITEETH_DIR/dev/build $LITEETH_DIR/dev/$BUILD_DIR_NAME/$GEN_CORE_NAME
-else
-    echo "Original build in $LITEETH_DIR/dev/$BUILD_DIR_NAME"
-fi
+ARCHIVE_DIR=$LITEETH_DIR/dev/$BUILD_DIR_NAME/${GEN_CORE_NAME}_${TIMESTAMP}
+mkdir -p $ARCHIVE_DIR
+cp -r $LITEETH_DIR/dev/build/* $ARCHIVE_DIR/ && echo "Build archived in $ARCHIVE_DIR"
 
 [ -d $LITEETH_DIR/dev/build ] && rm -rf build
