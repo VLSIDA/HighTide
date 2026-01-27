@@ -13,3 +13,6 @@
 [submodule "designs/src/liteeth/dev/liteeth"]
 	path = designs/src/liteeth/dev/repo
 	url = https://github.com/enjoy-digital/liteeth.git
+[submodule "designs/src/cnn/dev/repo"]
+	path = designs/src/cnn/dev/repo
+	url = https://github.com/NNgen/nngen
