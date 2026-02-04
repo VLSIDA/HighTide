@@ -2,13 +2,14 @@ export DESIGN_NICKNAME ?= cnn
 export DESIGN_NAME = cnn
 export PLATFORM    = asap7
 
+-include $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/verilog.mk
+
 #export SYNTH_HIERARCHICAL ?= 1
 
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_RPT_DIR = reports/$(PLATFORM)/cnn/base/rtlmp/
 #export SYNTH_MINIMUM_KEEP_SIZE ?= 10000
 
-export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/cnn/dev/cnn/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/cnn/constraint.sdc
 
 ifeq ($(BLOCKS),)

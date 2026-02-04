@@ -19,5 +19,3 @@ export PATH="$VENV_DIR/bin:$PATH"
 source "$VENV_DIR/bin/activate"
 
 python3 -m pip install --no-cache-dir -r requirements.txt
-
-./generate_cnn_verilog.sh
