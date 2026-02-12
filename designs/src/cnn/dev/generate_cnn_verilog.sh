@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DESIGN_SRC_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+cd -- "$SCRIPT_DIR"
 
 VENV_DIR="${VENV_DIR:-.venv}"
 
@@ -86,3 +89,45 @@ cp "$TARGET_DIR/cnn.v" cnn.v
 echo "CNN Verilog generated at ./cnn.v"
 deactivate
 ./replace_rams_with_fakerams.sh
+
+PACKAGE_DIR="${PACKAGE_DIR:-$SCRIPT_DIR/cnn}"
+if [[ "$PACKAGE_DIR" != /* ]]; then
+  PACKAGE_DIR="$SCRIPT_DIR/$PACKAGE_DIR"
+fi
+
+if [[ ! -f "$PACKAGE_DIR/cnn.v" ]]; then
+  echo "Error: packaged cnn.v not found at $PACKAGE_DIR/cnn.v" >&2
+  exit 1
+fi
+
+shopt -s nullglob
+PKG_VERILOG=("$PACKAGE_DIR"/fakeram_*.v)
+PKG_LEFS=("$PACKAGE_DIR"/fakeram_*.lef)
+PKG_LIBS=("$PACKAGE_DIR"/fakeram_*.lib)
+
+if (( ${#PKG_VERILOG[@]} == 0 )); then
+  echo "Error: no packaged fakeram Verilog files found in $PACKAGE_DIR" >&2
+  exit 1
+fi
+if (( ${#PKG_LEFS[@]} == 0 )); then
+  echo "Error: no packaged fakeram LEF files found in $PACKAGE_DIR" >&2
+  exit 1
+fi
+if (( ${#PKG_LIBS[@]} == 0 )); then
+  echo "Error: no packaged fakeram LIB files found in $PACKAGE_DIR" >&2
+  exit 1
+fi
+
+rm -f \
+  "$DESIGN_SRC_DIR/cnn.v" \
+  "$DESIGN_SRC_DIR"/fakeram_*.v \
+  "$DESIGN_SRC_DIR"/fakeram_*.lef \
+  "$DESIGN_SRC_DIR"/fakeram_*.lib
+
+cp "$PACKAGE_DIR/cnn.v" "$DESIGN_SRC_DIR/"
+cp "${PKG_VERILOG[@]}" "$DESIGN_SRC_DIR/"
+cp "${PKG_LEFS[@]}" "$DESIGN_SRC_DIR/"
+cp "${PKG_LIBS[@]}" "$DESIGN_SRC_DIR/"
+shopt -u nullglob
+
+echo "Promoted packaged CNN artifacts from $PACKAGE_DIR to $DESIGN_SRC_DIR"
