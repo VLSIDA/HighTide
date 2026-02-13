@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DESIGN_SRC_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+cd -- "$SCRIPT_DIR"
+
+VENV_DIR="${VENV_DIR:-.venv}"
+
+if [[ ! -x "$VENV_DIR/bin/python" ]]; then
+  echo "Venv not found" >&2
+  exit 1
+fi
+
+# Prepend venv bin to PATH for this process only
+export PATH="$VENV_DIR/bin:$PATH"
+source "$VENV_DIR/bin/activate"
+
+TARGET_DIR="${1:-repo}"
+VERILOG_OUT="${2:-cnn.v}"
+REQUIRED_PY_MODULES=(veriloggen numpy onnx)
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "Error: python3 is required but not found." >&2
+  exit 1
+fi
+
+check_python_modules() {
+  local missing_modules
+  missing_modules=$(python3 - "$@" <<'PY'
+import importlib.util
+import sys
+missing = [name for name in sys.argv[1:] if importlib.util.find_spec(name) is None]
+print(" ".join(missing))
+PY
+)
+  if [ -n "$missing_modules" ]; then
+    echo "Missing Python packages detected: $missing_modules" >&2
+    echo "Run ./setup.sh to install requirements." >&2
+    exit 1
+  fi
+}
+
+check_python_modules "${REQUIRED_PY_MODULES[@]}"
+
+if [ ! -d "$TARGET_DIR" ]; then
+  echo "Error: expected NNgen submodule at '$TARGET_DIR'." >&2
+  echo "Run: git submodule update --init designs/src/cnn/dev/repo" >&2
+  exit 1
+fi
+
+pushd "$TARGET_DIR" >/dev/null
+
+python3 - "$VERILOG_OUT" <<'PY'
+import glob
+import os
+import shutil
+import sys
+
+output_path = os.path.abspath(sys.argv[1])
+repo_root = os.path.abspath(os.path.dirname(__file__))
+
+if repo_root not in sys.path:
+    sys.path.insert(0, repo_root)
+
+from examples.cnn import cnn
+
+try:
+    cnn.run(simtype=None, silent=False, verilog_filename=output_path)
+except SystemExit as exc:
+    # NNgen examples exit early when simulation is disabled; treat code 0 as success.
+    if exc.code not in (None, 0):
+        raise
+
+verilog_candidates = glob.glob(os.path.join(repo_root, 'cnn_v*', 'hdl', 'cnn.v'))
+if not verilog_candidates:
+    raise FileNotFoundError('Unable to locate generated Verilog under cnn_v*/hdl/cnn.v')
+
+# Use the most recent match in case multiple runs exist.
+verilog_source = max(verilog_candidates, key=os.path.getmtime)
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
+shutil.copy2(verilog_source, output_path)
+
+print(f"Verilog RTL written to {output_path}")
+PY
+
+popd >/dev/null
+cp "$TARGET_DIR/cnn.v" cnn.v
+echo "CNN Verilog generated at ./cnn.v"
+deactivate
+./replace_rams_with_fakerams.sh
+
+PACKAGE_DIR="${PACKAGE_DIR:-$SCRIPT_DIR/cnn}"
+if [[ "$PACKAGE_DIR" != /* ]]; then
+  PACKAGE_DIR="$SCRIPT_DIR/$PACKAGE_DIR"
+fi
+
+if [[ ! -f "$PACKAGE_DIR/cnn.v" ]]; then
+  echo "Error: packaged cnn.v not found at $PACKAGE_DIR/cnn.v" >&2
+  exit 1
+fi
+
+shopt -s nullglob
+PKG_VERILOG=("$PACKAGE_DIR"/fakeram_*.v)
+PKG_LEFS=("$PACKAGE_DIR"/fakeram_*.lef)
+PKG_LIBS=("$PACKAGE_DIR"/fakeram_*.lib)
+
+if (( ${#PKG_VERILOG[@]} == 0 )); then
+  echo "Error: no packaged fakeram Verilog files found in $PACKAGE_DIR" >&2
+  exit 1
+fi
+if (( ${#PKG_LEFS[@]} == 0 )); then
+  echo "Error: no packaged fakeram LEF files found in $PACKAGE_DIR" >&2
+  exit 1
+fi
+if (( ${#PKG_LIBS[@]} == 0 )); then
+  echo "Error: no packaged fakeram LIB files found in $PACKAGE_DIR" >&2
+  exit 1
+fi
+
+rm -f \
+  "$DESIGN_SRC_DIR/cnn.v" \
+  "$DESIGN_SRC_DIR"/fakeram_*.v \
+  "$DESIGN_SRC_DIR"/fakeram_*.lef \
+  "$DESIGN_SRC_DIR"/fakeram_*.lib
+
+cp "$PACKAGE_DIR/cnn.v" "$DESIGN_SRC_DIR/"
+cp "${PKG_VERILOG[@]}" "$DESIGN_SRC_DIR/"
+cp "${PKG_LEFS[@]}" "$DESIGN_SRC_DIR/"
+cp "${PKG_LIBS[@]}" "$DESIGN_SRC_DIR/"
+shopt -u nullglob
+
+echo "Promoted packaged CNN artifacts from $PACKAGE_DIR to $DESIGN_SRC_DIR"
