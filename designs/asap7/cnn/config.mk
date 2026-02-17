@@ -18,8 +18,8 @@ ifeq ($(BLOCKS),)
 endif
 
 #export CORE_UTILIZATION       = 40
-export DIE_AREA = 0 0 500 500
-export CORE_AREA = 10 10 490 490 
+export DIE_AREA = 0 0 600 600
+export CORE_AREA = 10 10 590 590 
 #
 #export PLACE_DENSITY_LB_ADDON = 0.10
 
