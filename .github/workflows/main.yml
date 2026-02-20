@@ -1,0 +1,245 @@
+name: Push Workflow
+
+on:
+  push:
+
+jobs:
+  find-designs:
+    runs-on: ubuntu-latest
+    outputs:
+      designs: ${{ steps.set-matrix.outputs.designs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find design configurations
+        id: set-matrix
+        run: |
+          # Read designs from the configuration file, filtering out comments and empty lines
+          configs=$(grep -v '^#' designs_to_run.txt | grep -v '^$' | sort | jq -R -s -c 'split("\n")[:-1]')
+          echo "designs=$configs" >> "$GITHUB_OUTPUT"
+          echo "Found designs: $configs"
+          
+          # Also validate that the config files exist
+          echo "Validating design configurations..."
+          grep -v '^#' designs_to_run.txt | grep -v '^$' | while read config; do
+            if [ -f "$config" ]; then
+              echo "✓ Found: $config"
+            else
+              echo "✗ Missing: $config"
+            fi
+          done
+
+  build:
+    needs: find-designs
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        design: ${{ fromJson(needs.find-designs.outputs.designs) }}
+      fail-fast: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run setup script
+        run: ./setup.sh
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Determine ORFS tag
+        id: get_tag
+        run: |
+          cd OpenROAD-flow-scripts
+          tag=$(git describe --tags --abbrev=8 2>/dev/null || echo "latest")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Run ORFS for design
+        run: |
+            tag="${{ steps.get_tag.outputs.tag }}"
+            design="${{ matrix.design }}"
+            echo "Running design: $design"
+            
+            docker run --rm \
+            -v ${{ github.workspace }}/OpenROAD-flow-scripts/flow:/OpenROAD-flow-scripts/flow \
+            -v ${{ github.workspace }}:/OpenROAD-flow-scripts/UCSC_ML_suite \
+            -w /OpenROAD-flow-scripts \
+            openroad/orfs:$tag \
+            bash -c "
+                set -e
+                git config --global --add safe.directory '*'
+                
+                echo 'Installing sv2v...'
+                apt-get update && apt-get install -y wget
+                wget -q https://github.com/zachjs/sv2v/releases/download/v0.0.13/sv2v-Linux.zip -O /tmp/sv2v.zip
+                cd /tmp && unzip -q sv2v.zip
+                chmod +x sv2v
+                mv sv2v /usr/local/bin/
+                echo 'sv2v installed successfully'
+                sv2v --version
+                
+                cd /OpenROAD-flow-scripts/UCSC_ML_suite
+                echo 'Running design: $design'
+                make DESIGN_CONFIG='$design'
+            "
+
+      - name: Sanitize design name for artifact
+        id: sanitize
+        run: |
+          design="${{ matrix.design }}"
+          # Replace forward slashes with dashes and remove config.mk
+          sanitized=$(echo "$design" | sed 's|/|-|g' | sed 's|-config\.mk$||')
+          echo "sanitized_name=$sanitized" >> "$GITHUB_OUTPUT"
+          echo "Sanitized artifact name: $sanitized"
+
+      - name: Upload design logs for results
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-logs-${{ steps.sanitize.outputs.sanitized_name }}
+          path: |
+            logs/
+            reports/
+            results/
+          retention-days: 30
+        if: success() || failure()
+
+      - name: Prepare image for upload
+        run: |
+          # Find and copy the final_all.webp image to a flat location
+          mkdir -p image_output
+          image_file=$(find reports -name "final_all.webp" | head -1)
+          if [ -n "$image_file" ]; then
+            cp "$image_file" "image_output/final_all.webp"
+            echo "Image found and copied: $image_file"
+          else
+            echo "No final_all.webp image found"
+          fi
+        if: success() || failure()
+
+      - name: Upload design image
+        id: upload-image
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-image-${{ steps.sanitize.outputs.sanitized_name }}
+          path: image_output/final_all.webp
+          retention-days: 90
+        if: success() || failure()
+
+      - name: Save artifact info
+        run: |
+          # Create artifact info file with the design and artifact details
+          mkdir -p artifact_info
+          cat > artifact_info/${{ steps.sanitize.outputs.sanitized_name }}.json << EOF
+          {
+            "design": "${{ matrix.design }}",
+            "sanitized_name": "${{ steps.sanitize.outputs.sanitized_name }}",
+            "run_id": "${{ github.run_id }}",
+            "repo": "${{ github.repository }}"
+          }
+          EOF
+        if: success() || failure()
+
+      - name: Upload artifact info
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-info-${{ steps.sanitize.outputs.sanitized_name }}
+          path: artifact_info/
+          retention-days: 30
+        if: success() || failure()
+
+  collect-results:
+    needs: [find-designs, build]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Download logs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: design-logs-*
+          merge-multiple: true
+
+      - name: Download artifact info
+        uses: actions/download-artifact@v4
+        with:
+          pattern: artifact-info-*
+          merge-multiple: true
+
+      - name: Get artifact IDs and generate URLs
+        run: |
+          echo "Getting artifact IDs for image download URLs..."
+          
+          # Use GitHub API to get artifacts for this run
+          artifacts_response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts")
+          
+          echo "$artifacts_response" > artifacts.json
+          echo "Artifacts saved to artifacts.json for results script"
+
+      - name: Extract and update results
+        run: |
+            echo "Extracting results from OpenROAD runs..."
+            
+            # Check if the script exists
+            if [ ! -f "extract_results.py" ]; then
+                echo "Error: extract_results.py not found"
+                exit 1
+            fi
+            
+            # Run the extraction script with GitHub context
+            if python3 extract_results.py \
+                --base-dir . \
+                --output QOR.md \
+                --github-repo "${{ github.repository }}" \
+                --github-run-id "${{ github.run_id }}" \
+                --artifacts-file artifacts.json; then
+                echo "Results extraction completed successfully"
+            else
+                echo "Results extraction failed, but continuing with workflow"
+                echo "This may happen if no designs completed or there were format issues"
+            fi
+            
+            # Show a preview of the results
+            echo "Generated results table preview:"
+            if grep -A 10 "OpenROAD Flow Results" QOR.md; then
+                echo "Results table successfully updated"
+            else
+                echo "No results table found in QOR.md"
+            fi
+            
+            # Show summary statistics
+            if [ -d "logs" ]; then
+                total_reports=$(find logs -name "6_report.json" | wc -l)
+                echo "Found $total_reports completed design runs"
+            fi
+
+      - name: Commit and push results
+        run: |
+            echo "Current ref: ${{ github.ref }}"
+            echo "Branch: ${{ github.ref_name }}"
+            
+            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+                echo "Running on main branch - will commit results"
+                git config --local user.email "action@github.com"
+                git config --local user.name "GitHub Action"
+                
+                # Check if there are any changes to commit
+                if git diff --quiet; then
+                    echo "No changes to commit"
+                else
+                    git add QOR.md
+                    git commit -m "Update OpenROAD flow results [skip ci]" || echo "No changes to commit"
+                    git push
+                fi
+            else
+                echo "Skipping commit - not on main branch (current: ${{ github.ref }})"
+            fi

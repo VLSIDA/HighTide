@@ -1,0 +1,18 @@
+# LFSR designs
+designs/nangate45/lfsr_top/config.mk
+designs/asap7/lfsr_top/config.mk
+designs/sky130hd/lfsr_top/config.mk
+
+# Minimax designs
+designs/nangate45/minimax/config.mk
+designs/asap7/minimax/config.mk
+designs/sky130hd/minimax/config.mk
+
+# LiteEth designs
+designs/nangate45/liteeth/liteeth_mac_axi_mii/config.mk
+designs/nangate45/liteeth/liteeth_mac_wb_mii/config.mk
+designs/sky130hd/liteeth/liteeth_mac_axi_mii/config.mk
+designs/sky130hd/liteeth/liteeth_mac_wb_mii/config.mk
+
+# NyuziProcessor design
+# designs/nangate45/NyuziProcessor/config.mk
