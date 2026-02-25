@@ -7,8 +7,8 @@ export SYNTH_HIERARCHICAL = 1
 
 export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export CORE_AREA = 3 3 500 497
-export DIE_AREA  = 0 0 500 497
+export CORE_AREA = 3 3 500 500
+export DIE_AREA  = 0 0 503 503
 
 export PLACE_DENSITY_LB_ADDON = 0.22
 

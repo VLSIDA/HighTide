@@ -9,3 +9,14 @@ objects
 .venv
 sv2v
 **/dev/liteeth_builds
+**/srecord/
+**/bazel
+**/sv2v
+**/python-*/
+**/systemc-*/
+**/perl-*/
+**/_build*/
+**/openssl*/
+**/_installed/
+**/_tarballs/
+**/*.log

@@ -16,3 +16,9 @@
 [submodule "designs/src/cnn/dev/repo"]
 	path = designs/src/cnn/dev/repo
 	url = https://github.com/NNgen/nngen
+[submodule "designs/src/NVDLA/dev/repo"]
+	path = designs/src/NVDLA/dev/repo
+	url = https://github.com/nvdla/hw.git
+[submodule "designs/src/coralnpu/dev/repo"]
+	path = designs/src/coralnpu/dev/repo
+	url = https://github.com/google-coral/coralnpu.git

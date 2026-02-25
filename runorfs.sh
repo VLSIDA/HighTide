@@ -7,7 +7,7 @@ if [ -z "$tag" ]; then
 fi
 echo "Running OpenROAD flow with tag: ${tag}"
 docker run --rm -it \
-  -u $(id -u ${USER}):$(id -g ${USER}) \
+  -u $(id -u ${USER}):$(id -g ${USER}) --cpus=25 \
   -v $(pwd)/flow:/OpenROAD-flow-scripts/flow \
   -v $(pwd)/..:/OpenROAD-flow-scripts/UCSC_ML_suite \
   -w /OpenROAD-flow-scripts/UCSC_ML_suite \
@@ -16,4 +16,5 @@ docker run --rm -it \
   -v ${HOME}/.Xauthority:/.Xauthority \
   --network host \
   --security-opt seccomp=unconfined \
-  openroad/orfs:${tag}
+  openroad/orfs:${tag} \
+  bash -lc 'source /OpenROAD-flow-scripts/env.sh; exec bash' # Source env.sh
