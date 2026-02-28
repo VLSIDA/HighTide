@@ -8,6 +8,8 @@ export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/gemmini/constraint.sdc
 
 export CORE_UTILIZATION = 35
 
+export PDN_TCL = $(BENCH_DESIGN_HOME)/$(PLATFORM)/gemmini/pdn.tcl
+
 export IO_CONSTRAINTS = $(BENCH_DESIGN_HOME)/$(PLATFORM)/gemmini/io.tcl
 
 # FOOTPRINT_TCL causes io_placement.tcl to skip place_pins (which would
