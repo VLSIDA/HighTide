@@ -6,7 +6,11 @@ export PLATFORM    = asap7
 
 export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/gemmini/constraint.sdc
 
-export CORE_UTILIZATION = 50
+export CORE_UTILIZATION = 35
 
 export IO_CONSTRAINTS = $(BENCH_DESIGN_HOME)/$(PLATFORM)/gemmini/io.tcl
-export PLACE_PINS_ARGS = -min_distance 10 -min_distance_in_tracks
+
+# FOOTPRINT_TCL causes io_placement.tcl to skip place_pins (which would
+# reorder our manually-placed pins). Pins are placed by IO_CONSTRAINTS
+# during the floorplan step using place_pin (singular).
+export FOOTPRINT_TCL = $(BENCH_DESIGN_HOME)/$(PLATFORM)/gemmini/io.tcl
