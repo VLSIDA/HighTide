@@ -10,6 +10,7 @@
 # DESIGN_CONFIG=./designs/asap7/minimax/config.mk
 # DESIGN_CONFIG=./designs/asap7/lfsr_prbs_gen/config.mk
 # DESIGN_CONFIG=./designs/asap7/NyuziProcessor/config.mk
+# DESIGN_CONFIG=./designs/asap7/gemmini/config.mk
 
 DESIGN_CONFIG ?= ./designs/nangate45/lfsr_prbs_gen/config.mk
 -include OpenROAD-flow-scripts/flow/Makefile
