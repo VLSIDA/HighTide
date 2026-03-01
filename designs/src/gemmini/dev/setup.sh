@@ -48,4 +48,6 @@ if [ ! -f generated/gemmini.v ]; then
   exit 1
 fi
 
-echo "Verilog generation complete: generated/gemmini.v"
+# ── Promote to release location ───────────────────────────────────────
+cp generated/gemmini.v ../gemmini.v
+echo "Verilog generation complete: promoted to designs/src/gemmini/gemmini.v"
