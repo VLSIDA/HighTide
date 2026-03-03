@@ -16,3 +16,6 @@
 [submodule "designs/src/cnn/dev/repo"]
 	path = designs/src/cnn/dev/repo
 	url = https://github.com/NNgen/nngen
+[submodule "designs/src/gemmini/dev/repo"]
+	path = designs/src/gemmini/dev/repo
+	url = https://github.com/ucb-bar/gemmini.git

@@ -16,4 +16,5 @@ docker run --rm -it \
   -v ${HOME}/.Xauthority:/.Xauthority \
   --network host \
   --security-opt seccomp=unconfined \
-  openroad/orfs:${tag}
+  openroad/orfs:${tag} \
+  "$@"
