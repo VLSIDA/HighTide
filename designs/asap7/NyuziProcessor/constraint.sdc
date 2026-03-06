@@ -14,5 +14,5 @@ set non_clock_inputs [all_inputs -no_clocks]
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs 
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 
+
 set_false_path -from [get_ports reset]
-set_false_path -to [get_ports m_aclk]
