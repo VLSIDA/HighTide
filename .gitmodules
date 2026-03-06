@@ -19,3 +19,6 @@
 [submodule "designs/src/gemmini/dev/repo"]
 	path = designs/src/gemmini/dev/repo
 	url = https://github.com/ucb-bar/gemmini.git
+[submodule "designs/src/sha3/dev/repo"]
+	path = designs/src/sha3/dev/repo
+	url = https://github.com/ucb-bar/sha3
