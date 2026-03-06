@@ -13102,7 +13102,7 @@ module ClockGate (
 	assign clk_o = en_latch & clk_i;
 	initial _sv2v_0 = 0;
 endmodule
-module Aligner_8C133 (
+module Aligner_364EB (
 	valid_in,
 	data_in,
 	valid_out,
@@ -13205,7 +13205,7 @@ module Aligner_107_4 (
 	assign out_1_bits = data_out[107+:107];
 	assign out_2_bits = data_out[214+:107];
 	assign out_3_bits = data_out[321+:107];
-	Aligner_8C133 #(.N(4)) aligner(
+	Aligner_364EB #(.N(4)) aligner(
 		.valid_in(valid_in),
 		.data_in(data_in),
 		.valid_out(valid_out),
@@ -13251,11 +13251,11 @@ module lzc (
 			genvar _gv_j_1;
 			for (_gv_j_1 = 0; $unsigned(_gv_j_1) < WIDTH; _gv_j_1 = _gv_j_1 + 1) begin : g_index_lut
 				localparam j = _gv_j_1;
-				function automatic [NumLevels - 1:0] sv2v_cast_CD1FF;
+				function automatic [NumLevels - 1:0] sv2v_cast_677FF;
 					input reg [NumLevels - 1:0] inp;
-					sv2v_cast_CD1FF = inp;
+					sv2v_cast_677FF = inp;
 				endfunction
-				assign index_lut[j * NumLevels+:NumLevels] = sv2v_cast_CD1FF($unsigned(j));
+				assign index_lut[j * NumLevels+:NumLevels] = sv2v_cast_677FF($unsigned(j));
 			end
 			genvar _gv_level_1;
 			for (_gv_level_1 = 0; $unsigned(_gv_level_1) < NumLevels; _gv_level_1 = _gv_level_1 + 1) begin : g_levels
@@ -13293,7 +13293,7 @@ module lzc (
 	endgenerate
 	initial _sv2v_0 = 0;
 endmodule
-module rr_arb_tree_FF0CA_81131 (
+module rr_arb_tree_3ECCC_C4496 (
 	clk_i,
 	rst_ni,
 	flush_i,
@@ -13325,13 +13325,13 @@ module rr_arb_tree_FF0CA_81131 (
 	input wire gnt_i;
 	output wire [DataType_Width + 6:0] data_o;
 	output wire [IdxWidth - 1:0] idx_o;
-	function automatic [IdxWidth - 1:0] sv2v_cast_BCC4E;
+	function automatic [IdxWidth - 1:0] sv2v_cast_5FDFE;
 		input reg [IdxWidth - 1:0] inp;
-		sv2v_cast_BCC4E = inp;
+		sv2v_cast_5FDFE = inp;
 	endfunction
-	function automatic [((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)) - 1:0] sv2v_cast_72D16;
+	function automatic [((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)) - 1:0] sv2v_cast_5FCB8;
 		input reg [((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)) - 1:0] inp;
-		sv2v_cast_72D16 = inp;
+		sv2v_cast_5FCB8 = inp;
 	endfunction
 	generate
 		if (NumIn == $unsigned(1)) begin : gen_pass_through
@@ -13352,9 +13352,9 @@ module rr_arb_tree_FF0CA_81131 (
 			assign data_o = data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? 0 : (2 ** NumLevels) - 2) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))];
 			assign idx_o = index_nodes[(((2 ** NumLevels) - 2) >= 0 ? 0 : (2 ** NumLevels) - 2) * IdxWidth+:IdxWidth];
 			if (ExtPrio) begin : gen_ext_rr
-				wire [IdxWidth:1] sv2v_tmp_B41BF;
-				assign sv2v_tmp_B41BF = rr_i;
-				always @(*) rr_q = sv2v_tmp_B41BF;
+				wire [IdxWidth:1] sv2v_tmp_0900B;
+				assign sv2v_tmp_0900B = rr_i;
+				always @(*) rr_q = sv2v_tmp_0900B;
 				assign req_d = req_i;
 			end
 			else begin : gen_int_rr
@@ -13419,7 +13419,7 @@ module rr_arb_tree_FF0CA_81131 (
 					assign rr_d = (gnt_i && req_o ? next_idx : rr_q);
 				end
 				else begin : gen_unfair_arb
-					assign rr_d = (gnt_i && req_o ? (rr_q == sv2v_cast_BCC4E(NumIn - 1) ? {IdxWidth {1'sb0}} : rr_q + 1'b1) : rr_q);
+					assign rr_d = (gnt_i && req_o ? (rr_q == sv2v_cast_5FDFE(NumIn - 1) ? {IdxWidth {1'sb0}} : rr_q + 1'b1) : rr_q);
 				end
 				always @(posedge clk_i or negedge rst_ni) begin : p_rr_regs
 					if (!rst_ni)
@@ -13444,7 +13444,7 @@ module rr_arb_tree_FF0CA_81131 (
 						if (($unsigned(l) * 2) < (NumIn - 1)) begin : gen_reduce
 							assign req_nodes[Idx0] = req_d[l * 2] | req_d[(l * 2) + 1];
 							assign sel = ~req_d[l * 2] | (req_d[(l * 2) + 1] & rr_q[(NumLevels - 1) - level]);
-							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_BCC4E(sel);
+							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_5FDFE(sel);
 							assign data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))] = (sel ? data_i[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + (((l * 2) + 1) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))] : data_i[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((l * 2) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))]);
 							assign gnt_o[l * 2] = (gnt_nodes[Idx0] & (AxiVldRdy | req_d[l * 2])) & ~sel;
 							assign gnt_o[(l * 2) + 1] = (gnt_nodes[Idx0] & (AxiVldRdy | req_d[(l * 2) + 1])) & sel;
@@ -13457,14 +13457,14 @@ module rr_arb_tree_FF0CA_81131 (
 						end
 						if (($unsigned(l) * 2) > (NumIn - 1)) begin : gen_out_of_range
 							assign req_nodes[Idx0] = 1'b0;
-							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_BCC4E(1'sb0);
-							assign data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))] = sv2v_cast_72D16(1'sb0);
+							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_5FDFE(1'sb0);
+							assign data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))] = sv2v_cast_5FCB8(1'sb0);
 						end
 					end
 					else begin : gen_other_levels
 						assign req_nodes[Idx0] = req_nodes[Idx1] | req_nodes[Idx1 + 1];
 						assign sel = ~req_nodes[Idx1] | (req_nodes[Idx1 + 1] & rr_q[(NumLevels - 1) - level]);
-						assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = (sel ? sv2v_cast_BCC4E({1'b1, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 + 1 : ((2 ** NumLevels) - 2) - (Idx1 + 1)) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}) : sv2v_cast_BCC4E({1'b0, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 : ((2 ** NumLevels) - 2) - Idx1) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}));
+						assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = (sel ? sv2v_cast_5FDFE({1'b1, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 + 1 : ((2 ** NumLevels) - 2) - (Idx1 + 1)) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}) : sv2v_cast_5FDFE({1'b0, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 : ((2 ** NumLevels) - 2) - Idx1) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}));
 						assign data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))] = (sel ? data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? Idx1 + 1 : ((2 ** NumLevels) - 2) - (Idx1 + 1)) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))] : data_nodes[((DataType_Width + 6) >= 0 ? 0 : DataType_Width + 6) + ((((2 ** NumLevels) - 2) >= 0 ? Idx1 : ((2 ** NumLevels) - 2) - Idx1) * ((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6)))+:((DataType_Width + 6) >= 0 ? DataType_Width + 7 : 1 - (DataType_Width + 6))]);
 						assign gnt_nodes[Idx1] = gnt_nodes[Idx0] & ~sel;
 						assign gnt_nodes[Idx1 + 1] = gnt_nodes[Idx0] & sel;
@@ -13474,7 +13474,7 @@ module rr_arb_tree_FF0CA_81131 (
 		end
 	endgenerate
 endmodule
-module rr_arb_tree_D71DB_88D54 (
+module rr_arb_tree_A5EF3_ED1F7 (
 	clk_i,
 	rst_ni,
 	flush_i,
@@ -13506,13 +13506,13 @@ module rr_arb_tree_D71DB_88D54 (
 	input wire gnt_i;
 	output wire [DataType_WIDTH + 5:0] data_o;
 	output wire [IdxWidth - 1:0] idx_o;
-	function automatic [IdxWidth - 1:0] sv2v_cast_BCC4E;
+	function automatic [IdxWidth - 1:0] sv2v_cast_5FDFE;
 		input reg [IdxWidth - 1:0] inp;
-		sv2v_cast_BCC4E = inp;
+		sv2v_cast_5FDFE = inp;
 	endfunction
-	function automatic [((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)) - 1:0] sv2v_cast_90A84;
+	function automatic [((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)) - 1:0] sv2v_cast_7B119;
 		input reg [((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)) - 1:0] inp;
-		sv2v_cast_90A84 = inp;
+		sv2v_cast_7B119 = inp;
 	endfunction
 	generate
 		if (NumIn == $unsigned(1)) begin : gen_pass_through
@@ -13533,9 +13533,9 @@ module rr_arb_tree_D71DB_88D54 (
 			assign data_o = data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? 0 : (2 ** NumLevels) - 2) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))];
 			assign idx_o = index_nodes[(((2 ** NumLevels) - 2) >= 0 ? 0 : (2 ** NumLevels) - 2) * IdxWidth+:IdxWidth];
 			if (ExtPrio) begin : gen_ext_rr
-				wire [IdxWidth:1] sv2v_tmp_B41BF;
-				assign sv2v_tmp_B41BF = rr_i;
-				always @(*) rr_q = sv2v_tmp_B41BF;
+				wire [IdxWidth:1] sv2v_tmp_0900B;
+				assign sv2v_tmp_0900B = rr_i;
+				always @(*) rr_q = sv2v_tmp_0900B;
 				assign req_d = req_i;
 			end
 			else begin : gen_int_rr
@@ -13600,7 +13600,7 @@ module rr_arb_tree_D71DB_88D54 (
 					assign rr_d = (gnt_i && req_o ? next_idx : rr_q);
 				end
 				else begin : gen_unfair_arb
-					assign rr_d = (gnt_i && req_o ? (rr_q == sv2v_cast_BCC4E(NumIn - 1) ? {IdxWidth {1'sb0}} : rr_q + 1'b1) : rr_q);
+					assign rr_d = (gnt_i && req_o ? (rr_q == sv2v_cast_5FDFE(NumIn - 1) ? {IdxWidth {1'sb0}} : rr_q + 1'b1) : rr_q);
 				end
 				always @(posedge clk_i or negedge rst_ni) begin : p_rr_regs
 					if (!rst_ni)
@@ -13625,7 +13625,7 @@ module rr_arb_tree_D71DB_88D54 (
 						if (($unsigned(l) * 2) < (NumIn - 1)) begin : gen_reduce
 							assign req_nodes[Idx0] = req_d[l * 2] | req_d[(l * 2) + 1];
 							assign sel = ~req_d[l * 2] | (req_d[(l * 2) + 1] & rr_q[(NumLevels - 1) - level]);
-							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_BCC4E(sel);
+							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_5FDFE(sel);
 							assign data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))] = (sel ? data_i[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + (((l * 2) + 1) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))] : data_i[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((l * 2) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))]);
 							assign gnt_o[l * 2] = (gnt_nodes[Idx0] & (AxiVldRdy | req_d[l * 2])) & ~sel;
 							assign gnt_o[(l * 2) + 1] = (gnt_nodes[Idx0] & (AxiVldRdy | req_d[(l * 2) + 1])) & sel;
@@ -13638,14 +13638,14 @@ module rr_arb_tree_D71DB_88D54 (
 						end
 						if (($unsigned(l) * 2) > (NumIn - 1)) begin : gen_out_of_range
 							assign req_nodes[Idx0] = 1'b0;
-							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_BCC4E(1'sb0);
-							assign data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))] = sv2v_cast_90A84(1'sb0);
+							assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = sv2v_cast_5FDFE(1'sb0);
+							assign data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))] = sv2v_cast_7B119(1'sb0);
 						end
 					end
 					else begin : gen_other_levels
 						assign req_nodes[Idx0] = req_nodes[Idx1] | req_nodes[Idx1 + 1];
 						assign sel = ~req_nodes[Idx1] | (req_nodes[Idx1 + 1] & rr_q[(NumLevels - 1) - level]);
-						assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = (sel ? sv2v_cast_BCC4E({1'b1, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 + 1 : ((2 ** NumLevels) - 2) - (Idx1 + 1)) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}) : sv2v_cast_BCC4E({1'b0, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 : ((2 ** NumLevels) - 2) - Idx1) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}));
+						assign index_nodes[(((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * IdxWidth+:IdxWidth] = (sel ? sv2v_cast_5FDFE({1'b1, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 + 1 : ((2 ** NumLevels) - 2) - (Idx1 + 1)) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}) : sv2v_cast_5FDFE({1'b0, index_nodes[((((2 ** NumLevels) - 2) >= 0 ? Idx1 : ((2 ** NumLevels) - 2) - Idx1) * IdxWidth) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 2 : (((NumLevels - $unsigned(level)) - 2) + (((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))) - 1)-:(((NumLevels - $unsigned(level)) - 2) >= 0 ? (NumLevels - $unsigned(level)) - 1 : 3 - (NumLevels - $unsigned(level)))]}));
 						assign data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? Idx0 : ((2 ** NumLevels) - 2) - Idx0) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))] = (sel ? data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? Idx1 + 1 : ((2 ** NumLevels) - 2) - (Idx1 + 1)) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))] : data_nodes[((DataType_WIDTH + 5) >= 0 ? 0 : DataType_WIDTH + 5) + ((((2 ** NumLevels) - 2) >= 0 ? Idx1 : ((2 ** NumLevels) - 2) - Idx1) * ((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5)))+:((DataType_WIDTH + 5) >= 0 ? DataType_WIDTH + 6 : 1 - (DataType_WIDTH + 5))]);
 						assign gnt_nodes[Idx1] = gnt_nodes[Idx0] & ~sel;
 						assign gnt_nodes[Idx1 + 1] = gnt_nodes[Idx0] & sel;
@@ -13655,7 +13655,7 @@ module rr_arb_tree_D71DB_88D54 (
 		end
 	endgenerate
 endmodule
-module fpnew_cast_multi_3E15B_08E4E (
+module fpnew_cast_multi_2E827_67072 (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -13703,9 +13703,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 		input reg signed [31:0] b;
 		fpnew_pkg_maximum = (a > b ? a : b);
 	endfunction
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_max_fp_width;
 		input reg [0:4] cfg;
@@ -13716,26 +13716,26 @@ module fpnew_cast_multi_3E15B_08E4E (
 				reg [31:0] i;
 				for (i = 0; i < fpnew_pkg_NUM_FP_FORMATS; i = i + 1)
 					if (cfg[i])
-						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_9FB13(i))));
+						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_5D882(i))));
 			end
 			fpnew_pkg_max_fp_width = res;
 		end
 	endfunction
 	localparam [31:0] fpnew_pkg_INT_FORMAT_BITS = 2;
-	function automatic [1:0] sv2v_cast_2D3A8;
+	function automatic [1:0] sv2v_cast_CDB06;
 		input reg [1:0] inp;
-		sv2v_cast_2D3A8 = inp;
+		sv2v_cast_CDB06 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_int_width;
 		input reg [1:0] ifmt;
 		(* full_case, parallel_case *)
 		case (ifmt)
-			sv2v_cast_2D3A8(0): fpnew_pkg_int_width = 8;
-			sv2v_cast_2D3A8(1): fpnew_pkg_int_width = 16;
-			sv2v_cast_2D3A8(2): fpnew_pkg_int_width = 32;
-			sv2v_cast_2D3A8(3): fpnew_pkg_int_width = 64;
+			sv2v_cast_CDB06(0): fpnew_pkg_int_width = 8;
+			sv2v_cast_CDB06(1): fpnew_pkg_int_width = 16;
+			sv2v_cast_CDB06(2): fpnew_pkg_int_width = 32;
+			sv2v_cast_CDB06(3): fpnew_pkg_int_width = 64;
 			default: begin
-				fpnew_pkg_int_width = sv2v_cast_2D3A8(0);
+				fpnew_pkg_int_width = sv2v_cast_CDB06(0);
 			end
 		endcase
 	endfunction
@@ -13748,7 +13748,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 				reg signed [31:0] ifmt;
 				for (ifmt = 0; ifmt < fpnew_pkg_NUM_INT_FORMATS; ifmt = ifmt + 1)
 					if (cfg[ifmt])
-						res = fpnew_pkg_maximum(res, fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt)));
+						res = fpnew_pkg_maximum(res, fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt)));
 			end
 			fpnew_pkg_max_int_width = res;
 		end
@@ -13803,8 +13803,8 @@ module fpnew_cast_multi_3E15B_08E4E (
 				reg [31:0] fmt;
 				for (fmt = 0; fmt < fpnew_pkg_NUM_FP_FORMATS; fmt = fmt + 1)
 					if (cfg[fmt]) begin
-						res[63-:32] = $unsigned(fpnew_pkg_maximum(res[63-:32], fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt))));
-						res[31-:32] = $unsigned(fpnew_pkg_maximum(res[31-:32], fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt))));
+						res[63-:32] = $unsigned(fpnew_pkg_maximum(res[63-:32], fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt))));
+						res[31-:32] = $unsigned(fpnew_pkg_maximum(res[31-:32], fpnew_pkg_man_bits(sv2v_cast_5D882(fmt))));
 					end
 			end
 			fpnew_pkg_super_format = res;
@@ -13839,51 +13839,51 @@ module fpnew_cast_multi_3E15B_08E4E (
 	reg [(0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * AuxType_AUX_BITS) + ((NUM_INP_REGS * AuxType_AUX_BITS) - 1) : ((NUM_INP_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_INP_REGS ? NUM_INP_REGS * AuxType_AUX_BITS : 0)] inp_pipe_aux_q;
 	reg [0:NUM_INP_REGS] inp_pipe_valid_q;
 	wire [0:NUM_INP_REGS] inp_pipe_ready;
-	wire [WIDTH * 1:1] sv2v_tmp_51F1E;
-	assign sv2v_tmp_51F1E = operands_i;
-	always @(*) inp_pipe_operands_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * WIDTH+:WIDTH] = sv2v_tmp_51F1E;
-	wire [5:1] sv2v_tmp_1C07D;
-	assign sv2v_tmp_1C07D = is_boxed_i;
-	always @(*) inp_pipe_is_boxed_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS+:NUM_FORMATS] = sv2v_tmp_1C07D;
-	wire [3:1] sv2v_tmp_357FA;
-	assign sv2v_tmp_357FA = rnd_mode_i;
-	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_357FA;
-	wire [4:1] sv2v_tmp_F9118;
-	assign sv2v_tmp_F9118 = op_i;
-	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_F9118;
-	wire [1:1] sv2v_tmp_42D74;
-	assign sv2v_tmp_42D74 = op_mod_i;
-	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_42D74;
-	wire [3:1] sv2v_tmp_189D9;
-	assign sv2v_tmp_189D9 = src_fmt_i;
-	always @(*) inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_189D9;
-	wire [3:1] sv2v_tmp_E7E22;
-	assign sv2v_tmp_E7E22 = dst_fmt_i;
-	always @(*) inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_E7E22;
-	wire [2:1] sv2v_tmp_E89E3;
-	assign sv2v_tmp_E89E3 = int_fmt_i;
-	always @(*) inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] = sv2v_tmp_E89E3;
-	wire [1:1] sv2v_tmp_6A91A;
-	assign sv2v_tmp_6A91A = tag_i;
-	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_6A91A;
-	wire [1:1] sv2v_tmp_43EE3;
-	assign sv2v_tmp_43EE3 = mask_i;
-	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_43EE3;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_97D8E;
-	assign sv2v_tmp_97D8E = aux_i;
-	always @(*) inp_pipe_aux_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_97D8E;
-	wire [1:1] sv2v_tmp_9CFD6;
-	assign sv2v_tmp_9CFD6 = in_valid_i;
-	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_9CFD6;
+	wire [WIDTH * 1:1] sv2v_tmp_933AE;
+	assign sv2v_tmp_933AE = operands_i;
+	always @(*) inp_pipe_operands_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * WIDTH+:WIDTH] = sv2v_tmp_933AE;
+	wire [5:1] sv2v_tmp_7038A;
+	assign sv2v_tmp_7038A = is_boxed_i;
+	always @(*) inp_pipe_is_boxed_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS+:NUM_FORMATS] = sv2v_tmp_7038A;
+	wire [3:1] sv2v_tmp_AA272;
+	assign sv2v_tmp_AA272 = rnd_mode_i;
+	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_AA272;
+	wire [4:1] sv2v_tmp_14A3A;
+	assign sv2v_tmp_14A3A = op_i;
+	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_14A3A;
+	wire [1:1] sv2v_tmp_72E02;
+	assign sv2v_tmp_72E02 = op_mod_i;
+	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_72E02;
+	wire [3:1] sv2v_tmp_8EF42;
+	assign sv2v_tmp_8EF42 = src_fmt_i;
+	always @(*) inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_8EF42;
+	wire [3:1] sv2v_tmp_B0F12;
+	assign sv2v_tmp_B0F12 = dst_fmt_i;
+	always @(*) inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_B0F12;
+	wire [2:1] sv2v_tmp_C9BC4;
+	assign sv2v_tmp_C9BC4 = int_fmt_i;
+	always @(*) inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] = sv2v_tmp_C9BC4;
+	wire [1:1] sv2v_tmp_DE624;
+	assign sv2v_tmp_DE624 = tag_i;
+	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_DE624;
+	wire [1:1] sv2v_tmp_AE6A6;
+	assign sv2v_tmp_AE6A6 = mask_i;
+	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_AE6A6;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_47FF6;
+	assign sv2v_tmp_47FF6 = aux_i;
+	always @(*) inp_pipe_aux_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_47FF6;
+	wire [1:1] sv2v_tmp_CFC25;
+	assign sv2v_tmp_CFC25 = in_valid_i;
+	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_CFC25;
 	assign in_ready_o = inp_pipe_ready[0];
 	genvar _gv_i_2;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
-	function automatic [AuxType_AUX_BITS - 1:0] sv2v_cast_F912A;
+	function automatic [AuxType_AUX_BITS - 1:0] sv2v_cast_533F1;
 		input reg [AuxType_AUX_BITS - 1:0] inp;
-		sv2v_cast_F912A = inp;
+		sv2v_cast_533F1 = inp;
 	endfunction
 	generate
 		for (_gv_i_2 = 0; _gv_i_2 < NUM_INP_REGS; _gv_i_2 = _gv_i_2 + 1) begin : gen_input_pipeline
@@ -13913,7 +13913,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 					inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3] <= (reg_ena ? inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * 3+:3] : inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_7BCAE(0);
+					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_4CD2E(0);
 				else
 					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= (reg_ena ? inp_pipe_op_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] : inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -13923,17 +13923,17 @@ module fpnew_cast_multi_3E15B_08E4E (
 					inp_pipe_op_mod_q[i + 1] <= (reg_ena ? inp_pipe_op_mod_q[i] : inp_pipe_op_mod_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] <= sv2v_cast_2D3A8(0);
+					inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] <= sv2v_cast_CDB06(0);
 				else
 					inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] <= (reg_ena ? inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] : inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -13948,7 +13948,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 					inp_pipe_mask_q[i + 1] <= (reg_ena ? inp_pipe_mask_q[i] : inp_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -13961,8 +13961,8 @@ module fpnew_cast_multi_3E15B_08E4E (
 	assign int_fmt_q = inp_pipe_int_fmt_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS];
 	wire src_is_int;
 	wire dst_is_int;
-	assign src_is_int = inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] == sv2v_cast_7BCAE(12);
-	assign dst_is_int = inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] == sv2v_cast_7BCAE(11);
+	assign src_is_int = inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] == sv2v_cast_4CD2E(12);
+	assign dst_is_int = inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] == sv2v_cast_4CD2E(11);
 	wire [INT_MAN_WIDTH - 1:0] encoded_mant;
 	wire [4:0] fmt_sign;
 	wire signed [(NUM_FORMATS * INT_EXP_WIDTH) - 1:0] fmt_exponent;
@@ -13986,11 +13986,11 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_fmt_1 = 0; _gv_fmt_1 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_1 = _gv_fmt_1 + 1) begin : fmt_init_inputs
 			localparam fmt = _gv_fmt_1;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			if (FpFmtConfig[fmt]) begin : active_format
-				localparam [2:0] FpFormat = sv2v_cast_9FB13(fmt);
+				localparam [2:0] FpFormat = sv2v_cast_5D882(fmt);
 				fpnew_classifier #(
 					.FpFormat(FpFormat),
 					.NumOperands(1)
@@ -14021,7 +14021,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_ifmt_1 = 0; _gv_ifmt_1 < sv2v_cast_32_signed(NUM_INT_FORMATS); _gv_ifmt_1 = _gv_ifmt_1 + 1) begin : gen_sign_extend_int
 			localparam ifmt = _gv_ifmt_1;
-			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 			if (IntFmtConfig[ifmt]) begin : active_format
 				always @(*) begin : sign_ext_input
 					if (_sv2v_0)
@@ -14031,9 +14031,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [INT_MAN_WIDTH * 1:1] sv2v_tmp_EDEE4;
-				assign sv2v_tmp_EDEE4 = {INT_MAN_WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) ifmt_input_val[ifmt * INT_MAN_WIDTH+:INT_MAN_WIDTH] = sv2v_tmp_EDEE4;
+				wire [INT_MAN_WIDTH * 1:1] sv2v_tmp_F208D;
+				assign sv2v_tmp_F208D = {INT_MAN_WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) ifmt_input_val[ifmt * INT_MAN_WIDTH+:INT_MAN_WIDTH] = sv2v_tmp_F208D;
 			end
 		end
 	endgenerate
@@ -14108,57 +14108,57 @@ module fpnew_cast_multi_3E15B_08E4E (
 	reg [(0 >= NUM_MID_REGS ? ((1 - NUM_MID_REGS) * AuxType_AUX_BITS) + ((NUM_MID_REGS * AuxType_AUX_BITS) - 1) : ((NUM_MID_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_MID_REGS ? NUM_MID_REGS * AuxType_AUX_BITS : 0)] mid_pipe_aux_q;
 	reg [0:NUM_MID_REGS] mid_pipe_valid_q;
 	wire [0:NUM_MID_REGS] mid_pipe_ready;
-	wire [1:1] sv2v_tmp_F60A8;
-	assign sv2v_tmp_F60A8 = input_sign;
-	always @(*) mid_pipe_input_sign_q[0] = sv2v_tmp_F60A8;
-	wire [INT_EXP_WIDTH * 1:1] sv2v_tmp_2635B;
-	assign sv2v_tmp_2635B = input_exp;
-	always @(*) mid_pipe_input_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * INT_EXP_WIDTH+:INT_EXP_WIDTH] = sv2v_tmp_2635B;
-	wire [INT_MAN_WIDTH * 1:1] sv2v_tmp_4E2E6;
-	assign sv2v_tmp_4E2E6 = input_mant;
-	always @(*) mid_pipe_input_mant_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * INT_MAN_WIDTH+:INT_MAN_WIDTH] = sv2v_tmp_4E2E6;
-	wire [INT_EXP_WIDTH * 1:1] sv2v_tmp_5D87A;
-	assign sv2v_tmp_5D87A = destination_exp;
-	always @(*) mid_pipe_dest_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * INT_EXP_WIDTH+:INT_EXP_WIDTH] = sv2v_tmp_5D87A;
-	wire [1:1] sv2v_tmp_89756;
-	assign sv2v_tmp_89756 = src_is_int;
-	always @(*) mid_pipe_src_is_int_q[0] = sv2v_tmp_89756;
-	wire [1:1] sv2v_tmp_AD70F;
-	assign sv2v_tmp_AD70F = dst_is_int;
-	always @(*) mid_pipe_dst_is_int_q[0] = sv2v_tmp_AD70F;
-	wire [8:1] sv2v_tmp_6C4FE;
-	assign sv2v_tmp_6C4FE = info[src_fmt_q * 8+:8];
-	always @(*) mid_pipe_info_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 8+:8] = sv2v_tmp_6C4FE;
-	wire [1:1] sv2v_tmp_5718C;
-	assign sv2v_tmp_5718C = mant_is_zero;
-	always @(*) mid_pipe_mant_zero_q[0] = sv2v_tmp_5718C;
-	wire [1:1] sv2v_tmp_3B688;
-	assign sv2v_tmp_3B688 = op_mod_q;
-	always @(*) mid_pipe_op_mod_q[0] = sv2v_tmp_3B688;
-	wire [3:1] sv2v_tmp_06BE2;
-	assign sv2v_tmp_06BE2 = inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3];
-	always @(*) mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 3+:3] = sv2v_tmp_06BE2;
-	wire [3:1] sv2v_tmp_CBFB7;
-	assign sv2v_tmp_CBFB7 = src_fmt_q;
-	always @(*) mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_CBFB7;
-	wire [3:1] sv2v_tmp_884B7;
-	assign sv2v_tmp_884B7 = dst_fmt_q;
-	always @(*) mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_884B7;
-	wire [2:1] sv2v_tmp_A809A;
-	assign sv2v_tmp_A809A = int_fmt_q;
-	always @(*) mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] = sv2v_tmp_A809A;
-	wire [1:1] sv2v_tmp_C9632;
-	assign sv2v_tmp_C9632 = inp_pipe_tag_q[NUM_INP_REGS];
-	always @(*) mid_pipe_tag_q[0] = sv2v_tmp_C9632;
-	wire [1:1] sv2v_tmp_2E03C;
-	assign sv2v_tmp_2E03C = inp_pipe_mask_q[NUM_INP_REGS];
-	always @(*) mid_pipe_mask_q[0] = sv2v_tmp_2E03C;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_63481;
-	assign sv2v_tmp_63481 = inp_pipe_aux_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
-	always @(*) mid_pipe_aux_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_63481;
-	wire [1:1] sv2v_tmp_3D86F;
-	assign sv2v_tmp_3D86F = inp_pipe_valid_q[NUM_INP_REGS];
-	always @(*) mid_pipe_valid_q[0] = sv2v_tmp_3D86F;
+	wire [1:1] sv2v_tmp_73C39;
+	assign sv2v_tmp_73C39 = input_sign;
+	always @(*) mid_pipe_input_sign_q[0] = sv2v_tmp_73C39;
+	wire [INT_EXP_WIDTH * 1:1] sv2v_tmp_D63AF;
+	assign sv2v_tmp_D63AF = input_exp;
+	always @(*) mid_pipe_input_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * INT_EXP_WIDTH+:INT_EXP_WIDTH] = sv2v_tmp_D63AF;
+	wire [INT_MAN_WIDTH * 1:1] sv2v_tmp_CED01;
+	assign sv2v_tmp_CED01 = input_mant;
+	always @(*) mid_pipe_input_mant_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * INT_MAN_WIDTH+:INT_MAN_WIDTH] = sv2v_tmp_CED01;
+	wire [INT_EXP_WIDTH * 1:1] sv2v_tmp_5026E;
+	assign sv2v_tmp_5026E = destination_exp;
+	always @(*) mid_pipe_dest_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * INT_EXP_WIDTH+:INT_EXP_WIDTH] = sv2v_tmp_5026E;
+	wire [1:1] sv2v_tmp_6F1F9;
+	assign sv2v_tmp_6F1F9 = src_is_int;
+	always @(*) mid_pipe_src_is_int_q[0] = sv2v_tmp_6F1F9;
+	wire [1:1] sv2v_tmp_202B9;
+	assign sv2v_tmp_202B9 = dst_is_int;
+	always @(*) mid_pipe_dst_is_int_q[0] = sv2v_tmp_202B9;
+	wire [8:1] sv2v_tmp_C577A;
+	assign sv2v_tmp_C577A = info[src_fmt_q * 8+:8];
+	always @(*) mid_pipe_info_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 8+:8] = sv2v_tmp_C577A;
+	wire [1:1] sv2v_tmp_CCDAF;
+	assign sv2v_tmp_CCDAF = mant_is_zero;
+	always @(*) mid_pipe_mant_zero_q[0] = sv2v_tmp_CCDAF;
+	wire [1:1] sv2v_tmp_0DC3D;
+	assign sv2v_tmp_0DC3D = op_mod_q;
+	always @(*) mid_pipe_op_mod_q[0] = sv2v_tmp_0DC3D;
+	wire [3:1] sv2v_tmp_EC44B;
+	assign sv2v_tmp_EC44B = inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3];
+	always @(*) mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 3+:3] = sv2v_tmp_EC44B;
+	wire [3:1] sv2v_tmp_8D32D;
+	assign sv2v_tmp_8D32D = src_fmt_q;
+	always @(*) mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_8D32D;
+	wire [3:1] sv2v_tmp_9DD7D;
+	assign sv2v_tmp_9DD7D = dst_fmt_q;
+	always @(*) mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_9DD7D;
+	wire [2:1] sv2v_tmp_5CA4B;
+	assign sv2v_tmp_5CA4B = int_fmt_q;
+	always @(*) mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] = sv2v_tmp_5CA4B;
+	wire [1:1] sv2v_tmp_7259D;
+	assign sv2v_tmp_7259D = inp_pipe_tag_q[NUM_INP_REGS];
+	always @(*) mid_pipe_tag_q[0] = sv2v_tmp_7259D;
+	wire [1:1] sv2v_tmp_FAFEF;
+	assign sv2v_tmp_FAFEF = inp_pipe_mask_q[NUM_INP_REGS];
+	always @(*) mid_pipe_mask_q[0] = sv2v_tmp_FAFEF;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_E40B9;
+	assign sv2v_tmp_E40B9 = inp_pipe_aux_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
+	always @(*) mid_pipe_aux_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_E40B9;
+	wire [1:1] sv2v_tmp_C7159;
+	assign sv2v_tmp_C7159 = inp_pipe_valid_q[NUM_INP_REGS];
+	always @(*) mid_pipe_valid_q[0] = sv2v_tmp_C7159;
 	assign inp_pipe_ready[NUM_INP_REGS] = mid_pipe_ready[0];
 	genvar _gv_i_3;
 	generate
@@ -14224,17 +14224,17 @@ module fpnew_cast_multi_3E15B_08E4E (
 					mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * 3+:3] <= (reg_ena ? mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * 3+:3] : mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : mid_pipe_src_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] <= sv2v_cast_2D3A8(0);
+					mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] <= sv2v_cast_CDB06(0);
 				else
 					mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] <= (reg_ena ? mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS] : mid_pipe_int_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_INT_FORMAT_BITS+:fpnew_pkg_INT_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -14249,7 +14249,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 					mid_pipe_mask_q[i + 1] <= (reg_ena ? mid_pipe_mask_q[i] : mid_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -14345,8 +14345,8 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_fmt_2 = 0; _gv_fmt_2 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_2 = _gv_fmt_2 + 1) begin : gen_res_assemble
 			localparam fmt = _gv_fmt_2;
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			if (FpFmtConfig[fmt]) begin : active_format
 				always @(*) begin : assemble_result
 					if (_sv2v_0)
@@ -14355,9 +14355,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [WIDTH * 1:1] sv2v_tmp_B3A83;
-				assign sv2v_tmp_B3A83 = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) fmt_pre_round_abs[fmt * WIDTH+:WIDTH] = sv2v_tmp_B3A83;
+				wire [WIDTH * 1:1] sv2v_tmp_DA55D;
+				assign sv2v_tmp_DA55D = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) fmt_pre_round_abs[fmt * WIDTH+:WIDTH] = sv2v_tmp_DA55D;
 			end
 		end
 	endgenerate
@@ -14365,7 +14365,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_ifmt_2 = 0; _gv_ifmt_2 < sv2v_cast_32_signed(NUM_INT_FORMATS); _gv_ifmt_2 = _gv_ifmt_2 + 1) begin : gen_int_res_zero_ext
 			localparam ifmt = _gv_ifmt_2;
-			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 			if (IntFmtConfig[ifmt]) begin : active_format
 				always @(*) begin : assemble_result
 					if (_sv2v_0)
@@ -14375,9 +14375,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [WIDTH * 1:1] sv2v_tmp_E5CBE;
-				assign sv2v_tmp_E5CBE = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) ifmt_pre_round_abs[ifmt * WIDTH+:WIDTH] = sv2v_tmp_E5CBE;
+				wire [WIDTH * 1:1] sv2v_tmp_7C8AF;
+				assign sv2v_tmp_7C8AF = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) ifmt_pre_round_abs[ifmt * WIDTH+:WIDTH] = sv2v_tmp_7C8AF;
 			end
 		end
 	endgenerate
@@ -14397,9 +14397,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_fmt_3 = 0; _gv_fmt_3 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_3 = _gv_fmt_3 + 1) begin : gen_sign_inject
 			localparam fmt = _gv_fmt_3;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			if (FpFmtConfig[fmt]) begin : active_format
 				always @(*) begin : post_process
 					if (_sv2v_0)
@@ -14411,15 +14411,15 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [1:1] sv2v_tmp_DD825;
-				assign sv2v_tmp_DD825 = fpnew_pkg_DONT_CARE;
-				always @(*) fmt_uf_after_round[fmt] = sv2v_tmp_DD825;
-				wire [1:1] sv2v_tmp_358EF;
-				assign sv2v_tmp_358EF = fpnew_pkg_DONT_CARE;
-				always @(*) fmt_of_after_round[fmt] = sv2v_tmp_358EF;
-				wire [WIDTH * 1:1] sv2v_tmp_542A8;
-				assign sv2v_tmp_542A8 = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) fmt_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_542A8;
+				wire [1:1] sv2v_tmp_4C394;
+				assign sv2v_tmp_4C394 = fpnew_pkg_DONT_CARE;
+				always @(*) fmt_uf_after_round[fmt] = sv2v_tmp_4C394;
+				wire [1:1] sv2v_tmp_5852E;
+				assign sv2v_tmp_5852E = fpnew_pkg_DONT_CARE;
+				always @(*) fmt_of_after_round[fmt] = sv2v_tmp_5852E;
+				wire [WIDTH * 1:1] sv2v_tmp_F321A;
+				assign sv2v_tmp_F321A = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) fmt_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_F321A;
 			end
 		end
 	endgenerate
@@ -14428,7 +14428,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_ifmt_3 = 0; _gv_ifmt_3 < sv2v_cast_32_signed(NUM_INT_FORMATS); _gv_ifmt_3 = _gv_ifmt_3 + 1) begin : gen_int_res_sign_ext
 			localparam ifmt = _gv_ifmt_3;
-			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 			if (IntFmtConfig[ifmt]) begin : active_format
 				always @(*) begin : assemble_result
 					if (_sv2v_0)
@@ -14438,9 +14438,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [WIDTH * 1:1] sv2v_tmp_EEB7E;
-				assign sv2v_tmp_EEB7E = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) ifmt_rounded_signed_res[ifmt * WIDTH+:WIDTH] = sv2v_tmp_EEB7E;
+				wire [WIDTH * 1:1] sv2v_tmp_79864;
+				assign sv2v_tmp_79864 = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) ifmt_rounded_signed_res[ifmt * WIDTH+:WIDTH] = sv2v_tmp_79864;
 			end
 		end
 	endgenerate
@@ -14450,7 +14450,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_ifmt_4 = 0; _gv_ifmt_4 < sv2v_cast_32_signed(NUM_INT_FORMATS); _gv_ifmt_4 = _gv_ifmt_4 + 1) begin : gen_int_overflow
 			localparam ifmt = _gv_ifmt_4;
-			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 			if (IntFmtConfig[ifmt]) begin : active_format
 				always @(*) begin : detect_overflow
 					if (_sv2v_0)
@@ -14461,9 +14461,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [1:1] sv2v_tmp_264CE;
-				assign sv2v_tmp_264CE = fpnew_pkg_DONT_CARE;
-				always @(*) ifmt_of_after_round[ifmt] = sv2v_tmp_264CE;
+				wire [1:1] sv2v_tmp_13A6C;
+				assign sv2v_tmp_13A6C = fpnew_pkg_DONT_CARE;
+				always @(*) ifmt_of_after_round[ifmt] = sv2v_tmp_13A6C;
 			end
 		end
 	endgenerate
@@ -14477,9 +14477,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_fmt_4 = 0; _gv_fmt_4 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_4 = _gv_fmt_4 + 1) begin : gen_special_results
 			localparam fmt = _gv_fmt_4;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			localparam [EXP_BITS - 1:0] QNAN_EXPONENT = 1'sb1;
 			localparam [MAN_BITS - 1:0] QNAN_MANTISSA = 2 ** (MAN_BITS - 1);
 			if (FpFmtConfig[fmt]) begin : active_format
@@ -14493,9 +14493,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [WIDTH * 1:1] sv2v_tmp_12E08;
-				assign sv2v_tmp_12E08 = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) fmt_special_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_12E08;
+				wire [WIDTH * 1:1] sv2v_tmp_294DC;
+				assign sv2v_tmp_294DC = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) fmt_special_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_294DC;
 			end
 		end
 	endgenerate
@@ -14510,7 +14510,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 	generate
 		for (_gv_ifmt_5 = 0; _gv_ifmt_5 < sv2v_cast_32_signed(NUM_INT_FORMATS); _gv_ifmt_5 = _gv_ifmt_5 + 1) begin : gen_special_results_int
 			localparam ifmt = _gv_ifmt_5;
-			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+			localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 			if (IntFmtConfig[ifmt]) begin : active_format
 				always @(*) begin : special_results
 					reg [INT_WIDTH - 1:0] special_res;
@@ -14525,9 +14525,9 @@ module fpnew_cast_multi_3E15B_08E4E (
 				end
 			end
 			else begin : inactive_format
-				wire [WIDTH * 1:1] sv2v_tmp_B2A82;
-				assign sv2v_tmp_B2A82 = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) ifmt_special_result[ifmt * WIDTH+:WIDTH] = sv2v_tmp_B2A82;
+				wire [WIDTH * 1:1] sv2v_tmp_577FA;
+				assign sv2v_tmp_577FA = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) ifmt_special_result[ifmt * WIDTH+:WIDTH] = sv2v_tmp_577FA;
 			end
 		end
 	endgenerate
@@ -14564,27 +14564,27 @@ module fpnew_cast_multi_3E15B_08E4E (
 	reg [(0 >= NUM_OUT_REGS ? ((1 - NUM_OUT_REGS) * AuxType_AUX_BITS) + ((NUM_OUT_REGS * AuxType_AUX_BITS) - 1) : ((NUM_OUT_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_OUT_REGS ? NUM_OUT_REGS * AuxType_AUX_BITS : 0)] out_pipe_aux_q;
 	reg [0:NUM_OUT_REGS] out_pipe_valid_q;
 	wire [0:NUM_OUT_REGS] out_pipe_ready;
-	wire [WIDTH * 1:1] sv2v_tmp_CEC39;
-	assign sv2v_tmp_CEC39 = result_d;
-	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * WIDTH+:WIDTH] = sv2v_tmp_CEC39;
-	wire [5:1] sv2v_tmp_7F116;
-	assign sv2v_tmp_7F116 = status_d;
-	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_7F116;
-	wire [1:1] sv2v_tmp_D2DFA;
-	assign sv2v_tmp_D2DFA = extension_bit;
-	always @(*) out_pipe_ext_bit_q[0] = sv2v_tmp_D2DFA;
-	wire [1:1] sv2v_tmp_D3F91;
-	assign sv2v_tmp_D3F91 = mid_pipe_tag_q[NUM_MID_REGS];
-	always @(*) out_pipe_tag_q[0] = sv2v_tmp_D3F91;
-	wire [1:1] sv2v_tmp_F68B4;
-	assign sv2v_tmp_F68B4 = mid_pipe_mask_q[NUM_MID_REGS];
-	always @(*) out_pipe_mask_q[0] = sv2v_tmp_F68B4;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_24F69;
-	assign sv2v_tmp_24F69 = mid_pipe_aux_q[(0 >= NUM_MID_REGS ? NUM_MID_REGS : NUM_MID_REGS - NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
-	always @(*) out_pipe_aux_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_24F69;
-	wire [1:1] sv2v_tmp_39CE2;
-	assign sv2v_tmp_39CE2 = mid_pipe_valid_q[NUM_MID_REGS];
-	always @(*) out_pipe_valid_q[0] = sv2v_tmp_39CE2;
+	wire [WIDTH * 1:1] sv2v_tmp_6C5BE;
+	assign sv2v_tmp_6C5BE = result_d;
+	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * WIDTH+:WIDTH] = sv2v_tmp_6C5BE;
+	wire [5:1] sv2v_tmp_D9FFA;
+	assign sv2v_tmp_D9FFA = status_d;
+	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_D9FFA;
+	wire [1:1] sv2v_tmp_F04C7;
+	assign sv2v_tmp_F04C7 = extension_bit;
+	always @(*) out_pipe_ext_bit_q[0] = sv2v_tmp_F04C7;
+	wire [1:1] sv2v_tmp_1CCC3;
+	assign sv2v_tmp_1CCC3 = mid_pipe_tag_q[NUM_MID_REGS];
+	always @(*) out_pipe_tag_q[0] = sv2v_tmp_1CCC3;
+	wire [1:1] sv2v_tmp_D6E81;
+	assign sv2v_tmp_D6E81 = mid_pipe_mask_q[NUM_MID_REGS];
+	always @(*) out_pipe_mask_q[0] = sv2v_tmp_D6E81;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_77E30;
+	assign sv2v_tmp_77E30 = mid_pipe_aux_q[(0 >= NUM_MID_REGS ? NUM_MID_REGS : NUM_MID_REGS - NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
+	always @(*) out_pipe_aux_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_77E30;
+	wire [1:1] sv2v_tmp_E45E7;
+	assign sv2v_tmp_E45E7 = mid_pipe_valid_q[NUM_MID_REGS];
+	always @(*) out_pipe_valid_q[0] = sv2v_tmp_E45E7;
 	assign mid_pipe_ready[NUM_MID_REGS] = out_pipe_ready[0];
 	genvar _gv_i_4;
 	generate
@@ -14625,7 +14625,7 @@ module fpnew_cast_multi_3E15B_08E4E (
 					out_pipe_mask_q[i + 1] <= (reg_ena ? out_pipe_mask_q[i] : out_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i : NUM_OUT_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -14663,11 +14663,11 @@ module fpnew_classifier (
 	reg _sv2v_0;
 	localparam [31:0] fpnew_pkg_NUM_FP_FORMATS = 5;
 	localparam [31:0] fpnew_pkg_FP_FORMAT_BITS = 3;
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
-	parameter [2:0] FpFormat = sv2v_cast_9FB13(0);
+	parameter [2:0] FpFormat = sv2v_cast_5D882(0);
 	parameter [31:0] NumOperands = 1;
 	localparam [319:0] fpnew_pkg_FP_ENCODINGS = 320'h8000000170000000b00000034000000050000000a00000005000000020000000800000007;
 	function automatic [31:0] fpnew_pkg_fp_width;
@@ -17218,7 +17218,7 @@ module pa_fpu_src_type (
 	assign src_inf = (src_expn_max && src_frac_zero) && !src_cnan;
 	assign src_norm = (!(src_expn_zero && src_frac_zero) && !src_expn_max) && !src_cnan;
 endmodule
-module fpnew_divsqrt_th_32_A4710_B4B7A (
+module fpnew_divsqrt_th_32_3DF01_FC8AC (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -17289,44 +17289,44 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 	reg [(0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * AuxType_AUX_BITS) + ((NUM_INP_REGS * AuxType_AUX_BITS) - 1) : ((NUM_INP_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_INP_REGS ? NUM_INP_REGS * AuxType_AUX_BITS : 0)] inp_pipe_aux_q;
 	reg [0:NUM_INP_REGS] inp_pipe_valid_q;
 	reg [0:NUM_INP_REGS] inp_pipe_ready;
-	wire [64:1] sv2v_tmp_6F60A;
-	assign sv2v_tmp_6F60A = operands_i;
-	always @(*) inp_pipe_operands_q[32 * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1)))+:64] = sv2v_tmp_6F60A;
-	wire [3:1] sv2v_tmp_D397D;
-	assign sv2v_tmp_D397D = rnd_mode_i;
-	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_D397D;
-	wire [4:1] sv2v_tmp_C61AC;
-	assign sv2v_tmp_C61AC = op_i;
-	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_C61AC;
-	wire [1:1] sv2v_tmp_6A91A;
-	assign sv2v_tmp_6A91A = tag_i;
-	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_6A91A;
-	wire [1:1] sv2v_tmp_43EE3;
-	assign sv2v_tmp_43EE3 = mask_i;
-	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_43EE3;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_010F0;
-	assign sv2v_tmp_010F0 = aux_i;
-	always @(*) inp_pipe_aux_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_010F0;
-	wire [1:1] sv2v_tmp_9CFD6;
-	assign sv2v_tmp_9CFD6 = in_valid_i;
-	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_9CFD6;
+	wire [64:1] sv2v_tmp_D1F38;
+	assign sv2v_tmp_D1F38 = operands_i;
+	always @(*) inp_pipe_operands_q[32 * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1)))+:64] = sv2v_tmp_D1F38;
+	wire [3:1] sv2v_tmp_A5988;
+	assign sv2v_tmp_A5988 = rnd_mode_i;
+	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_A5988;
+	wire [4:1] sv2v_tmp_76106;
+	assign sv2v_tmp_76106 = op_i;
+	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_76106;
+	wire [1:1] sv2v_tmp_DE624;
+	assign sv2v_tmp_DE624 = tag_i;
+	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_DE624;
+	wire [1:1] sv2v_tmp_AE6A6;
+	assign sv2v_tmp_AE6A6 = mask_i;
+	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_AE6A6;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_B1FC2;
+	assign sv2v_tmp_B1FC2 = aux_i;
+	always @(*) inp_pipe_aux_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_B1FC2;
+	wire [1:1] sv2v_tmp_CFC25;
+	assign sv2v_tmp_CFC25 = in_valid_i;
+	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_CFC25;
 	assign in_ready_o = inp_pipe_ready[0];
 	genvar _gv_i_5;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
-	function automatic [AuxType_AUX_BITS - 1:0] sv2v_cast_F912A;
+	function automatic [AuxType_AUX_BITS - 1:0] sv2v_cast_533F1;
 		input reg [AuxType_AUX_BITS - 1:0] inp;
-		sv2v_cast_F912A = inp;
+		sv2v_cast_533F1 = inp;
 	endfunction
 	generate
 		for (_gv_i_5 = 0; _gv_i_5 < NUM_INP_REGS; _gv_i_5 = _gv_i_5 + 1) begin : gen_input_pipeline
 			localparam i = _gv_i_5;
 			wire reg_ena;
-			wire [1:1] sv2v_tmp_BD88A;
-			assign sv2v_tmp_BD88A = inp_pipe_ready[i + 1] | ~inp_pipe_valid_q[i + 1];
-			always @(*) inp_pipe_ready[i] = sv2v_tmp_BD88A;
+			wire [1:1] sv2v_tmp_FF0D2;
+			assign sv2v_tmp_FF0D2 = inp_pipe_ready[i + 1] | ~inp_pipe_valid_q[i + 1];
+			always @(*) inp_pipe_ready[i] = sv2v_tmp_FF0D2;
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
 					inp_pipe_valid_q[i + 1] <= 1'b0;
@@ -17345,7 +17345,7 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 					inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3] <= (reg_ena ? inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * 3+:3] : inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_7BCAE(0);
+					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_4CD2E(0);
 				else
 					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= (reg_ena ? inp_pipe_op_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] : inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -17360,7 +17360,7 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 					inp_pipe_mask_q[i + 1] <= (reg_ena ? inp_pipe_mask_q[i] : inp_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -17382,8 +17382,8 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 	reg unit_busy;
 	reg [1:0] state_q;
 	reg [1:0] state_d;
-	assign div_op = ((in_valid_q & (op_q == sv2v_cast_7BCAE(4))) & in_ready) & ~flush_i;
-	assign sqrt_op = ((in_valid_q & (op_q == sv2v_cast_7BCAE(5))) & in_ready) & ~flush_i;
+	assign div_op = ((in_valid_q & (op_q == sv2v_cast_4CD2E(4))) & in_ready) & ~flush_i;
+	assign sqrt_op = ((in_valid_q & (op_q == sv2v_cast_4CD2E(5))) & in_ready) & ~flush_i;
 	assign op_starting = div_op | sqrt_op;
 	wire fdsu_fpu_ex1_stall;
 	reg fdsu_fpu_ex1_stall_q;
@@ -17666,24 +17666,24 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 	reg [0:NUM_OUT_REGS] out_pipe_mask_q;
 	reg [0:NUM_OUT_REGS] out_pipe_valid_q;
 	wire [0:NUM_OUT_REGS] out_pipe_ready;
-	wire [32:1] sv2v_tmp_252A0;
-	assign sv2v_tmp_252A0 = result_d;
-	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * WIDTH+:WIDTH] = sv2v_tmp_252A0;
-	wire [5:1] sv2v_tmp_C3491;
-	assign sv2v_tmp_C3491 = status_d;
-	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_C3491;
-	wire [1:1] sv2v_tmp_2AD04;
-	assign sv2v_tmp_2AD04 = result_tag_q;
-	always @(*) out_pipe_tag_q[0] = sv2v_tmp_2AD04;
-	wire [1:1] sv2v_tmp_1AD5F;
-	assign sv2v_tmp_1AD5F = result_mask_q;
-	always @(*) out_pipe_mask_q[0] = sv2v_tmp_1AD5F;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_B78E5;
-	assign sv2v_tmp_B78E5 = result_aux_q;
-	always @(*) out_pipe_aux_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_B78E5;
-	wire [1:1] sv2v_tmp_000CD;
-	assign sv2v_tmp_000CD = out_valid;
-	always @(*) out_pipe_valid_q[0] = sv2v_tmp_000CD;
+	wire [32:1] sv2v_tmp_F1632;
+	assign sv2v_tmp_F1632 = result_d;
+	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * WIDTH+:WIDTH] = sv2v_tmp_F1632;
+	wire [5:1] sv2v_tmp_03440;
+	assign sv2v_tmp_03440 = status_d;
+	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_03440;
+	wire [1:1] sv2v_tmp_AFEEA;
+	assign sv2v_tmp_AFEEA = result_tag_q;
+	always @(*) out_pipe_tag_q[0] = sv2v_tmp_AFEEA;
+	wire [1:1] sv2v_tmp_0A048;
+	assign sv2v_tmp_0A048 = result_mask_q;
+	always @(*) out_pipe_mask_q[0] = sv2v_tmp_0A048;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_EB2CC;
+	assign sv2v_tmp_EB2CC = result_aux_q;
+	always @(*) out_pipe_aux_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_EB2CC;
+	wire [1:1] sv2v_tmp_F96BC;
+	assign sv2v_tmp_F96BC = out_valid;
+	always @(*) out_pipe_valid_q[0] = sv2v_tmp_F96BC;
 	assign out_ready = out_pipe_ready[0];
 	genvar _gv_i_6;
 	generate
@@ -17719,7 +17719,7 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 					out_pipe_mask_q[i + 1] <= (reg_ena ? out_pipe_mask_q[i] : out_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i : NUM_OUT_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -17746,7 +17746,7 @@ module fpnew_divsqrt_th_32_A4710_B4B7A (
 	endgenerate
 	initial _sv2v_0 = 0;
 endmodule
-module fpnew_fma_90763 (
+module fpnew_fma_EA93F (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -17775,11 +17775,11 @@ module fpnew_fma_90763 (
 	reg _sv2v_0;
 	localparam [31:0] fpnew_pkg_NUM_FP_FORMATS = 5;
 	localparam [31:0] fpnew_pkg_FP_FORMAT_BITS = 3;
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
-	parameter [2:0] FpFormat = sv2v_cast_9FB13(0);
+	parameter [2:0] FpFormat = sv2v_cast_5D882(0);
 	parameter [31:0] NumPipeRegs = 0;
 	parameter [1:0] PipeConfig = 2'd0;
 	localparam [319:0] fpnew_pkg_FP_ENCODINGS = 320'h8000000170000000b00000034000000050000000a00000005000000020000000800000007;
@@ -17852,38 +17852,38 @@ module fpnew_fma_90763 (
 	reg [0:NUM_INP_REGS] inp_pipe_aux_q;
 	reg [0:NUM_INP_REGS] inp_pipe_valid_q;
 	wire [0:NUM_INP_REGS] inp_pipe_ready;
-	wire [3 * WIDTH:1] sv2v_tmp_B135A;
-	assign sv2v_tmp_B135A = operands_i;
-	always @(*) inp_pipe_operands_q[WIDTH * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1)))+:WIDTH * 3] = sv2v_tmp_B135A;
-	wire [3:1] sv2v_tmp_15896;
-	assign sv2v_tmp_15896 = is_boxed_i;
-	always @(*) inp_pipe_is_boxed_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_15896;
-	wire [3:1] sv2v_tmp_26D09;
-	assign sv2v_tmp_26D09 = rnd_mode_i;
-	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_26D09;
-	wire [4:1] sv2v_tmp_F5BC4;
-	assign sv2v_tmp_F5BC4 = op_i;
-	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_F5BC4;
-	wire [1:1] sv2v_tmp_42D74;
-	assign sv2v_tmp_42D74 = op_mod_i;
-	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_42D74;
-	wire [1:1] sv2v_tmp_6A91A;
-	assign sv2v_tmp_6A91A = tag_i;
-	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_6A91A;
-	wire [1:1] sv2v_tmp_43EE3;
-	assign sv2v_tmp_43EE3 = mask_i;
-	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_43EE3;
-	wire [1:1] sv2v_tmp_E1D93;
-	assign sv2v_tmp_E1D93 = aux_i;
-	always @(*) inp_pipe_aux_q[0] = sv2v_tmp_E1D93;
-	wire [1:1] sv2v_tmp_9CFD6;
-	assign sv2v_tmp_9CFD6 = in_valid_i;
-	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_9CFD6;
+	wire [3 * WIDTH:1] sv2v_tmp_15914;
+	assign sv2v_tmp_15914 = operands_i;
+	always @(*) inp_pipe_operands_q[WIDTH * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1)))+:WIDTH * 3] = sv2v_tmp_15914;
+	wire [3:1] sv2v_tmp_3D994;
+	assign sv2v_tmp_3D994 = is_boxed_i;
+	always @(*) inp_pipe_is_boxed_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_3D994;
+	wire [3:1] sv2v_tmp_85314;
+	assign sv2v_tmp_85314 = rnd_mode_i;
+	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_85314;
+	wire [4:1] sv2v_tmp_D905E;
+	assign sv2v_tmp_D905E = op_i;
+	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_D905E;
+	wire [1:1] sv2v_tmp_72E02;
+	assign sv2v_tmp_72E02 = op_mod_i;
+	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_72E02;
+	wire [1:1] sv2v_tmp_DE624;
+	assign sv2v_tmp_DE624 = tag_i;
+	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_DE624;
+	wire [1:1] sv2v_tmp_AE6A6;
+	assign sv2v_tmp_AE6A6 = mask_i;
+	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_AE6A6;
+	wire [1:1] sv2v_tmp_683C4;
+	assign sv2v_tmp_683C4 = aux_i;
+	always @(*) inp_pipe_aux_q[0] = sv2v_tmp_683C4;
+	wire [1:1] sv2v_tmp_CFC25;
+	assign sv2v_tmp_CFC25 = in_valid_i;
+	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_CFC25;
 	assign in_ready_o = inp_pipe_ready[0];
 	genvar _gv_i_7;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
 	generate
 		for (_gv_i_7 = 0; _gv_i_7 < NUM_INP_REGS; _gv_i_7 = _gv_i_7 + 1) begin : gen_input_pipeline
@@ -17913,7 +17913,7 @@ module fpnew_fma_90763 (
 					inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3] <= (reg_ena ? inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * 3+:3] : inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_7BCAE(0);
+					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_4CD2E(0);
 				else
 					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= (reg_ena ? inp_pipe_op_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] : inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -17954,21 +17954,21 @@ module fpnew_fma_90763 (
 	reg [7:0] info_b;
 	reg [7:0] info_c;
 	localparam [0:0] fpnew_pkg_DONT_CARE = 1'b1;
-	function automatic [EXP_BITS - 1:0] sv2v_cast_DBE99;
+	function automatic [EXP_BITS - 1:0] sv2v_cast_51E93;
 		input reg [EXP_BITS - 1:0] inp;
-		sv2v_cast_DBE99 = inp;
+		sv2v_cast_51E93 = inp;
 	endfunction
-	function automatic [MAN_BITS - 1:0] sv2v_cast_AD1B9;
+	function automatic [MAN_BITS - 1:0] sv2v_cast_78D38;
 		input reg [MAN_BITS - 1:0] inp;
-		sv2v_cast_AD1B9 = inp;
+		sv2v_cast_78D38 = inp;
 	endfunction
-	function automatic [EXP_BITS - 1:0] sv2v_cast_E64C3;
+	function automatic [EXP_BITS - 1:0] sv2v_cast_89227;
 		input reg [EXP_BITS - 1:0] inp;
-		sv2v_cast_E64C3 = inp;
+		sv2v_cast_89227 = inp;
 	endfunction
-	function automatic [MAN_BITS - 1:0] sv2v_cast_33A5C;
+	function automatic [MAN_BITS - 1:0] sv2v_cast_D5F4C;
 		input reg [MAN_BITS - 1:0] inp;
-		sv2v_cast_33A5C = inp;
+		sv2v_cast_D5F4C = inp;
 	endfunction
 	always @(*) begin : op_select
 		if (_sv2v_0)
@@ -17982,24 +17982,24 @@ module fpnew_fma_90763 (
 		operand_c[1 + (EXP_BITS + (MAN_BITS - 1))] = operand_c[1 + (EXP_BITS + (MAN_BITS - 1))] ^ inp_pipe_op_mod_q[NUM_INP_REGS];
 		(* full_case, parallel_case *)
 		case (inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS])
-			sv2v_cast_7BCAE(0):
+			sv2v_cast_4CD2E(0):
 				;
-			sv2v_cast_7BCAE(1): operand_a[1 + (EXP_BITS + (MAN_BITS - 1))] = ~operand_a[1 + (EXP_BITS + (MAN_BITS - 1))];
-			sv2v_cast_7BCAE(2), sv2v_cast_7BCAE(15): begin
-				operand_a = {1'b0, sv2v_cast_DBE99(BIAS), sv2v_cast_AD1B9(1'sb0)};
+			sv2v_cast_4CD2E(1): operand_a[1 + (EXP_BITS + (MAN_BITS - 1))] = ~operand_a[1 + (EXP_BITS + (MAN_BITS - 1))];
+			sv2v_cast_4CD2E(2), sv2v_cast_4CD2E(15): begin
+				operand_a = {1'b0, sv2v_cast_51E93(BIAS), sv2v_cast_78D38(1'sb0)};
 				info_a = 8'b10000001;
 			end
-			sv2v_cast_7BCAE(3): begin
+			sv2v_cast_4CD2E(3): begin
 				if (inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3] == 3'b010)
-					operand_c = {1'b0, sv2v_cast_E64C3(1'sb0), sv2v_cast_AD1B9(1'sb0)};
+					operand_c = {1'b0, sv2v_cast_89227(1'sb0), sv2v_cast_78D38(1'sb0)};
 				else
-					operand_c = {1'b1, sv2v_cast_E64C3(1'sb0), sv2v_cast_AD1B9(1'sb0)};
+					operand_c = {1'b1, sv2v_cast_89227(1'sb0), sv2v_cast_78D38(1'sb0)};
 				info_c = 8'b00100001;
 			end
 			default: begin
-				operand_a = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
-				operand_b = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
-				operand_c = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
+				operand_a = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
+				operand_b = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
+				operand_c = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
 				info_a = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
 				info_b = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
 				info_c = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
@@ -18022,7 +18022,7 @@ module fpnew_fma_90763 (
 	always @(*) begin : special_cases
 		if (_sv2v_0)
 			;
-		special_result = {1'b0, sv2v_cast_E64C3(1'sb1), sv2v_cast_33A5C(2 ** (MAN_BITS - 1))};
+		special_result = {1'b0, sv2v_cast_89227(1'sb1), sv2v_cast_D5F4C(2 ** (MAN_BITS - 1))};
 		special_status = 1'sb0;
 		result_is_special = 1'b0;
 		if ((info_a[4] && info_b[5]) || (info_a[5] && info_b[4])) begin
@@ -18038,9 +18038,9 @@ module fpnew_fma_90763 (
 			if (((info_a[4] || info_b[4]) && info_c[4]) && effective_subtraction)
 				special_status[4] = 1'b1;
 			else if (info_a[4] || info_b[4])
-				special_result = {operand_a[1 + (EXP_BITS + (MAN_BITS - 1))] ^ operand_b[1 + (EXP_BITS + (MAN_BITS - 1))], sv2v_cast_E64C3(1'sb1), sv2v_cast_AD1B9(1'sb0)};
+				special_result = {operand_a[1 + (EXP_BITS + (MAN_BITS - 1))] ^ operand_b[1 + (EXP_BITS + (MAN_BITS - 1))], sv2v_cast_89227(1'sb1), sv2v_cast_78D38(1'sb0)};
 			else if (info_c[4])
-				special_result = {operand_c[1 + (EXP_BITS + (MAN_BITS - 1))], sv2v_cast_E64C3(1'sb1), sv2v_cast_AD1B9(1'sb0)};
+				special_result = {operand_c[1 + (EXP_BITS + (MAN_BITS - 1))], sv2v_cast_89227(1'sb1), sv2v_cast_78D38(1'sb0)};
 		end
 	end
 	wire signed [EXP_WIDTH - 1:0] exponent_a;
@@ -18126,54 +18126,54 @@ module fpnew_fma_90763 (
 	reg [0:NUM_MID_REGS] mid_pipe_aux_q;
 	reg [0:NUM_MID_REGS] mid_pipe_valid_q;
 	wire [0:NUM_MID_REGS] mid_pipe_ready;
-	wire [1:1] sv2v_tmp_72F3C;
-	assign sv2v_tmp_72F3C = effective_subtraction;
-	always @(*) mid_pipe_eff_sub_q[0] = sv2v_tmp_72F3C;
-	wire [EXP_WIDTH * 1:1] sv2v_tmp_51634;
-	assign sv2v_tmp_51634 = exponent_product;
-	always @(*) mid_pipe_exp_prod_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_51634;
-	wire [EXP_WIDTH * 1:1] sv2v_tmp_7826E;
-	assign sv2v_tmp_7826E = exponent_difference;
-	always @(*) mid_pipe_exp_diff_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_7826E;
-	wire [EXP_WIDTH * 1:1] sv2v_tmp_BEF1B;
-	assign sv2v_tmp_BEF1B = tentative_exponent;
-	always @(*) mid_pipe_tent_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_BEF1B;
-	wire [SHIFT_AMOUNT_WIDTH * 1:1] sv2v_tmp_BA51C;
-	assign sv2v_tmp_BA51C = addend_shamt;
-	always @(*) mid_pipe_add_shamt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * SHIFT_AMOUNT_WIDTH+:SHIFT_AMOUNT_WIDTH] = sv2v_tmp_BA51C;
-	wire [1:1] sv2v_tmp_D9513;
-	assign sv2v_tmp_D9513 = sticky_before_add;
-	always @(*) mid_pipe_sticky_q[0] = sv2v_tmp_D9513;
-	wire [(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)) * 1:1] sv2v_tmp_6102F;
-	assign sv2v_tmp_6102F = sum;
-	always @(*) mid_pipe_sum_q[(((3 * PRECISION_BITS) + 3) >= 0 ? 0 : (3 * PRECISION_BITS) + 3) + ((0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * (((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)))+:(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3))] = sv2v_tmp_6102F;
-	wire [1:1] sv2v_tmp_E5D4B;
-	assign sv2v_tmp_E5D4B = final_sign;
-	always @(*) mid_pipe_final_sign_q[0] = sv2v_tmp_E5D4B;
-	wire [3:1] sv2v_tmp_D5331;
-	assign sv2v_tmp_D5331 = inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3];
-	always @(*) mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 3+:3] = sv2v_tmp_D5331;
-	wire [1:1] sv2v_tmp_7E156;
-	assign sv2v_tmp_7E156 = result_is_special;
-	always @(*) mid_pipe_res_is_spec_q[0] = sv2v_tmp_7E156;
-	wire [((1 + EXP_BITS) + MAN_BITS) * 1:1] sv2v_tmp_45CEC;
-	assign sv2v_tmp_45CEC = special_result;
-	always @(*) mid_pipe_spec_res_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * ((1 + EXP_BITS) + MAN_BITS)+:(1 + EXP_BITS) + MAN_BITS] = sv2v_tmp_45CEC;
-	wire [5:1] sv2v_tmp_06630;
-	assign sv2v_tmp_06630 = special_status;
-	always @(*) mid_pipe_spec_stat_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 5+:5] = sv2v_tmp_06630;
-	wire [1:1] sv2v_tmp_C9632;
-	assign sv2v_tmp_C9632 = inp_pipe_tag_q[NUM_INP_REGS];
-	always @(*) mid_pipe_tag_q[0] = sv2v_tmp_C9632;
-	wire [1:1] sv2v_tmp_2E03C;
-	assign sv2v_tmp_2E03C = inp_pipe_mask_q[NUM_INP_REGS];
-	always @(*) mid_pipe_mask_q[0] = sv2v_tmp_2E03C;
-	wire [1:1] sv2v_tmp_769AB;
-	assign sv2v_tmp_769AB = inp_pipe_aux_q[NUM_INP_REGS];
-	always @(*) mid_pipe_aux_q[0] = sv2v_tmp_769AB;
-	wire [1:1] sv2v_tmp_3D86F;
-	assign sv2v_tmp_3D86F = inp_pipe_valid_q[NUM_INP_REGS];
-	always @(*) mid_pipe_valid_q[0] = sv2v_tmp_3D86F;
+	wire [1:1] sv2v_tmp_301F1;
+	assign sv2v_tmp_301F1 = effective_subtraction;
+	always @(*) mid_pipe_eff_sub_q[0] = sv2v_tmp_301F1;
+	wire [EXP_WIDTH * 1:1] sv2v_tmp_27C8D;
+	assign sv2v_tmp_27C8D = exponent_product;
+	always @(*) mid_pipe_exp_prod_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_27C8D;
+	wire [EXP_WIDTH * 1:1] sv2v_tmp_DEAE0;
+	assign sv2v_tmp_DEAE0 = exponent_difference;
+	always @(*) mid_pipe_exp_diff_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_DEAE0;
+	wire [EXP_WIDTH * 1:1] sv2v_tmp_530A2;
+	assign sv2v_tmp_530A2 = tentative_exponent;
+	always @(*) mid_pipe_tent_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_530A2;
+	wire [SHIFT_AMOUNT_WIDTH * 1:1] sv2v_tmp_12F7F;
+	assign sv2v_tmp_12F7F = addend_shamt;
+	always @(*) mid_pipe_add_shamt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * SHIFT_AMOUNT_WIDTH+:SHIFT_AMOUNT_WIDTH] = sv2v_tmp_12F7F;
+	wire [1:1] sv2v_tmp_6A24C;
+	assign sv2v_tmp_6A24C = sticky_before_add;
+	always @(*) mid_pipe_sticky_q[0] = sv2v_tmp_6A24C;
+	wire [(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)) * 1:1] sv2v_tmp_A48E2;
+	assign sv2v_tmp_A48E2 = sum;
+	always @(*) mid_pipe_sum_q[(((3 * PRECISION_BITS) + 3) >= 0 ? 0 : (3 * PRECISION_BITS) + 3) + ((0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * (((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)))+:(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3))] = sv2v_tmp_A48E2;
+	wire [1:1] sv2v_tmp_9C379;
+	assign sv2v_tmp_9C379 = final_sign;
+	always @(*) mid_pipe_final_sign_q[0] = sv2v_tmp_9C379;
+	wire [3:1] sv2v_tmp_C990F;
+	assign sv2v_tmp_C990F = inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3];
+	always @(*) mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 3+:3] = sv2v_tmp_C990F;
+	wire [1:1] sv2v_tmp_08378;
+	assign sv2v_tmp_08378 = result_is_special;
+	always @(*) mid_pipe_res_is_spec_q[0] = sv2v_tmp_08378;
+	wire [((1 + EXP_BITS) + MAN_BITS) * 1:1] sv2v_tmp_8913F;
+	assign sv2v_tmp_8913F = special_result;
+	always @(*) mid_pipe_spec_res_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * ((1 + EXP_BITS) + MAN_BITS)+:(1 + EXP_BITS) + MAN_BITS] = sv2v_tmp_8913F;
+	wire [5:1] sv2v_tmp_9D338;
+	assign sv2v_tmp_9D338 = special_status;
+	always @(*) mid_pipe_spec_stat_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 5+:5] = sv2v_tmp_9D338;
+	wire [1:1] sv2v_tmp_7259D;
+	assign sv2v_tmp_7259D = inp_pipe_tag_q[NUM_INP_REGS];
+	always @(*) mid_pipe_tag_q[0] = sv2v_tmp_7259D;
+	wire [1:1] sv2v_tmp_FAFEF;
+	assign sv2v_tmp_FAFEF = inp_pipe_mask_q[NUM_INP_REGS];
+	always @(*) mid_pipe_mask_q[0] = sv2v_tmp_FAFEF;
+	wire [1:1] sv2v_tmp_8CE3D;
+	assign sv2v_tmp_8CE3D = inp_pipe_aux_q[NUM_INP_REGS];
+	always @(*) mid_pipe_aux_q[0] = sv2v_tmp_8CE3D;
+	wire [1:1] sv2v_tmp_C7159;
+	assign sv2v_tmp_C7159 = inp_pipe_valid_q[NUM_INP_REGS];
+	always @(*) mid_pipe_valid_q[0] = sv2v_tmp_C7159;
 	assign inp_pipe_ready[NUM_INP_REGS] = mid_pipe_ready[0];
 	genvar _gv_i_8;
 	generate
@@ -18385,24 +18385,24 @@ module fpnew_fma_90763 (
 	reg [0:NUM_OUT_REGS] out_pipe_aux_q;
 	reg [0:NUM_OUT_REGS] out_pipe_valid_q;
 	wire [0:NUM_OUT_REGS] out_pipe_ready;
-	wire [((1 + EXP_BITS) + MAN_BITS) * 1:1] sv2v_tmp_93831;
-	assign sv2v_tmp_93831 = result_d;
-	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * ((1 + EXP_BITS) + MAN_BITS)+:(1 + EXP_BITS) + MAN_BITS] = sv2v_tmp_93831;
-	wire [5:1] sv2v_tmp_C58FF;
-	assign sv2v_tmp_C58FF = status_d;
-	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_C58FF;
-	wire [1:1] sv2v_tmp_D3F91;
-	assign sv2v_tmp_D3F91 = mid_pipe_tag_q[NUM_MID_REGS];
-	always @(*) out_pipe_tag_q[0] = sv2v_tmp_D3F91;
-	wire [1:1] sv2v_tmp_F68B4;
-	assign sv2v_tmp_F68B4 = mid_pipe_mask_q[NUM_MID_REGS];
-	always @(*) out_pipe_mask_q[0] = sv2v_tmp_F68B4;
-	wire [1:1] sv2v_tmp_F447E;
-	assign sv2v_tmp_F447E = mid_pipe_aux_q[NUM_MID_REGS];
-	always @(*) out_pipe_aux_q[0] = sv2v_tmp_F447E;
-	wire [1:1] sv2v_tmp_39CE2;
-	assign sv2v_tmp_39CE2 = mid_pipe_valid_q[NUM_MID_REGS];
-	always @(*) out_pipe_valid_q[0] = sv2v_tmp_39CE2;
+	wire [((1 + EXP_BITS) + MAN_BITS) * 1:1] sv2v_tmp_4232B;
+	assign sv2v_tmp_4232B = result_d;
+	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * ((1 + EXP_BITS) + MAN_BITS)+:(1 + EXP_BITS) + MAN_BITS] = sv2v_tmp_4232B;
+	wire [5:1] sv2v_tmp_07934;
+	assign sv2v_tmp_07934 = status_d;
+	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_07934;
+	wire [1:1] sv2v_tmp_1CCC3;
+	assign sv2v_tmp_1CCC3 = mid_pipe_tag_q[NUM_MID_REGS];
+	always @(*) out_pipe_tag_q[0] = sv2v_tmp_1CCC3;
+	wire [1:1] sv2v_tmp_D6E81;
+	assign sv2v_tmp_D6E81 = mid_pipe_mask_q[NUM_MID_REGS];
+	always @(*) out_pipe_mask_q[0] = sv2v_tmp_D6E81;
+	wire [1:1] sv2v_tmp_F4A83;
+	assign sv2v_tmp_F4A83 = mid_pipe_aux_q[NUM_MID_REGS];
+	always @(*) out_pipe_aux_q[0] = sv2v_tmp_F4A83;
+	wire [1:1] sv2v_tmp_E45E7;
+	assign sv2v_tmp_E45E7 = mid_pipe_valid_q[NUM_MID_REGS];
+	always @(*) out_pipe_valid_q[0] = sv2v_tmp_E45E7;
 	assign mid_pipe_ready[NUM_MID_REGS] = out_pipe_ready[0];
 	genvar _gv_i_9;
 	generate
@@ -18468,7 +18468,7 @@ module fpnew_fma_90763 (
 	endgenerate
 	initial _sv2v_0 = 0;
 endmodule
-module fpnew_fma_multi_CA122_A2E8D (
+module fpnew_fma_multi_B5D6B_2D261 (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -18514,9 +18514,9 @@ module fpnew_fma_multi_CA122_A2E8D (
 		input reg signed [31:0] b;
 		fpnew_pkg_maximum = (a > b ? a : b);
 	endfunction
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_max_fp_width;
 		input reg [0:4] cfg;
@@ -18527,7 +18527,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 				reg [31:0] i;
 				for (i = 0; i < fpnew_pkg_NUM_FP_FORMATS; i = i + 1)
 					if (cfg[i])
-						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_9FB13(i))));
+						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_5D882(i))));
 			end
 			fpnew_pkg_max_fp_width = res;
 		end
@@ -18580,8 +18580,8 @@ module fpnew_fma_multi_CA122_A2E8D (
 				reg [31:0] fmt;
 				for (fmt = 0; fmt < fpnew_pkg_NUM_FP_FORMATS; fmt = fmt + 1)
 					if (cfg[fmt]) begin
-						res[63-:32] = $unsigned(fpnew_pkg_maximum(res[63-:32], fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt))));
-						res[31-:32] = $unsigned(fpnew_pkg_maximum(res[31-:32], fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt))));
+						res[63-:32] = $unsigned(fpnew_pkg_maximum(res[63-:32], fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt))));
+						res[31-:32] = $unsigned(fpnew_pkg_maximum(res[31-:32], fpnew_pkg_man_bits(sv2v_cast_5D882(fmt))));
 					end
 			end
 			fpnew_pkg_super_format = res;
@@ -18615,51 +18615,51 @@ module fpnew_fma_multi_CA122_A2E8D (
 	reg [(0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * AuxType_AUX_BITS) + ((NUM_INP_REGS * AuxType_AUX_BITS) - 1) : ((NUM_INP_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_INP_REGS ? NUM_INP_REGS * AuxType_AUX_BITS : 0)] inp_pipe_aux_q;
 	reg [0:NUM_INP_REGS] inp_pipe_valid_q;
 	wire [0:NUM_INP_REGS] inp_pipe_ready;
-	wire [3 * WIDTH:1] sv2v_tmp_65236;
-	assign sv2v_tmp_65236 = operands_i;
-	always @(*) inp_pipe_operands_q[WIDTH * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1)))+:WIDTH * 3] = sv2v_tmp_65236;
-	wire [15:1] sv2v_tmp_03F0C;
-	assign sv2v_tmp_03F0C = is_boxed_i;
-	always @(*) inp_pipe_is_boxed_q[3 * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS) + 4) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS) + 4) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1)))+:15] = sv2v_tmp_03F0C;
-	wire [3:1] sv2v_tmp_E41A9;
-	assign sv2v_tmp_E41A9 = rnd_mode_i;
-	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_E41A9;
-	wire [4:1] sv2v_tmp_AA02B;
-	assign sv2v_tmp_AA02B = op_i;
-	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_AA02B;
-	wire [1:1] sv2v_tmp_42D74;
-	assign sv2v_tmp_42D74 = op_mod_i;
-	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_42D74;
-	wire [3:1] sv2v_tmp_DA568;
-	assign sv2v_tmp_DA568 = src_fmt_i;
-	always @(*) inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_DA568;
-	wire [3:1] sv2v_tmp_8D503;
-	assign sv2v_tmp_8D503 = src2_fmt_i;
-	always @(*) inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_8D503;
-	wire [3:1] sv2v_tmp_70747;
-	assign sv2v_tmp_70747 = dst_fmt_i;
-	always @(*) inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_70747;
-	wire [1:1] sv2v_tmp_6A91A;
-	assign sv2v_tmp_6A91A = tag_i;
-	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_6A91A;
-	wire [1:1] sv2v_tmp_43EE3;
-	assign sv2v_tmp_43EE3 = mask_i;
-	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_43EE3;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_B7273;
-	assign sv2v_tmp_B7273 = aux_i;
-	always @(*) inp_pipe_aux_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_B7273;
-	wire [1:1] sv2v_tmp_9CFD6;
-	assign sv2v_tmp_9CFD6 = in_valid_i;
-	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_9CFD6;
+	wire [3 * WIDTH:1] sv2v_tmp_2F660;
+	assign sv2v_tmp_2F660 = operands_i;
+	always @(*) inp_pipe_operands_q[WIDTH * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 3 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3) + 2) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 3) + ((NUM_INP_REGS * 3) - 1) : ((NUM_INP_REGS + 1) * 3) - 1)))+:WIDTH * 3] = sv2v_tmp_2F660;
+	wire [15:1] sv2v_tmp_F6596;
+	assign sv2v_tmp_F6596 = is_boxed_i;
+	always @(*) inp_pipe_is_boxed_q[3 * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS) + 4) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * NUM_FORMATS : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * NUM_FORMATS) + 4) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * NUM_FORMATS) + ((NUM_INP_REGS * NUM_FORMATS) - 1) : ((NUM_INP_REGS + 1) * NUM_FORMATS) - 1)))+:15] = sv2v_tmp_F6596;
+	wire [3:1] sv2v_tmp_D6AA0;
+	assign sv2v_tmp_D6AA0 = rnd_mode_i;
+	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_D6AA0;
+	wire [4:1] sv2v_tmp_99256;
+	assign sv2v_tmp_99256 = op_i;
+	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_99256;
+	wire [1:1] sv2v_tmp_72E02;
+	assign sv2v_tmp_72E02 = op_mod_i;
+	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_72E02;
+	wire [3:1] sv2v_tmp_97D9E;
+	assign sv2v_tmp_97D9E = src_fmt_i;
+	always @(*) inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_97D9E;
+	wire [3:1] sv2v_tmp_64EC0;
+	assign sv2v_tmp_64EC0 = src2_fmt_i;
+	always @(*) inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_64EC0;
+	wire [3:1] sv2v_tmp_C878E;
+	assign sv2v_tmp_C878E = dst_fmt_i;
+	always @(*) inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_C878E;
+	wire [1:1] sv2v_tmp_DE624;
+	assign sv2v_tmp_DE624 = tag_i;
+	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_DE624;
+	wire [1:1] sv2v_tmp_AE6A6;
+	assign sv2v_tmp_AE6A6 = mask_i;
+	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_AE6A6;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_0E322;
+	assign sv2v_tmp_0E322 = aux_i;
+	always @(*) inp_pipe_aux_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_0E322;
+	wire [1:1] sv2v_tmp_CFC25;
+	assign sv2v_tmp_CFC25 = in_valid_i;
+	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_CFC25;
 	assign in_ready_o = inp_pipe_ready[0];
 	genvar _gv_i_10;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
-	function automatic [AuxType_AUX_BITS - 1:0] sv2v_cast_F912A;
+	function automatic [AuxType_AUX_BITS - 1:0] sv2v_cast_533F1;
 		input reg [AuxType_AUX_BITS - 1:0] inp;
-		sv2v_cast_F912A = inp;
+		sv2v_cast_533F1 = inp;
 	endfunction
 	generate
 		for (_gv_i_10 = 0; _gv_i_10 < NUM_INP_REGS; _gv_i_10 = _gv_i_10 + 1) begin : gen_input_pipeline
@@ -18689,7 +18689,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 					inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3] <= (reg_ena ? inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * 3+:3] : inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_7BCAE(0);
+					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_4CD2E(0);
 				else
 					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= (reg_ena ? inp_pipe_op_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] : inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -18699,17 +18699,17 @@ module fpnew_fma_multi_CA122_A2E8D (
 					inp_pipe_op_mod_q[i + 1] <= (reg_ena ? inp_pipe_op_mod_q[i] : inp_pipe_op_mod_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : inp_pipe_src_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : inp_pipe_src2_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : inp_pipe_dst_fmt_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -18724,7 +18724,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 					inp_pipe_mask_q[i + 1] <= (reg_ena ? inp_pipe_mask_q[i] : inp_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : inp_pipe_aux_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -18743,13 +18743,13 @@ module fpnew_fma_multi_CA122_A2E8D (
 		input reg [7:0] inp;
 		sv2v_cast_8 = inp;
 	endfunction
-	function automatic signed [SUPER_EXP_BITS - 1:0] sv2v_cast_C9DEC_signed;
+	function automatic signed [SUPER_EXP_BITS - 1:0] sv2v_cast_994BB_signed;
 		input reg signed [SUPER_EXP_BITS - 1:0] inp;
-		sv2v_cast_C9DEC_signed = inp;
+		sv2v_cast_994BB_signed = inp;
 	endfunction
-	function automatic [SUPER_MAN_BITS - 1:0] sv2v_cast_75D45;
+	function automatic [SUPER_MAN_BITS - 1:0] sv2v_cast_3FC64;
 		input reg [SUPER_MAN_BITS - 1:0] inp;
-		sv2v_cast_75D45 = inp;
+		sv2v_cast_3FC64 = inp;
 	endfunction
 	function automatic signed [31:0] sv2v_cast_32_signed;
 		input reg signed [31:0] inp;
@@ -18758,11 +18758,11 @@ module fpnew_fma_multi_CA122_A2E8D (
 	generate
 		for (_gv_fmt_5 = 0; _gv_fmt_5 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_5 = _gv_fmt_5 + 1) begin : fmt_init_inputs
 			localparam fmt = _gv_fmt_5;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			if (FpFmtConfig[fmt]) begin : active_format
-				localparam [2:0] FpFormat = sv2v_cast_9FB13(fmt);
+				localparam [2:0] FpFormat = sv2v_cast_5D882(fmt);
 				wire [(3 * FP_WIDTH) - 1:0] trimmed_ops;
 				fpnew_classifier #(
 					.FpFormat(FpFormat),
@@ -18775,7 +18775,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 				genvar _gv_op_2;
 				for (_gv_op_2 = 0; _gv_op_2 < 3; _gv_op_2 = _gv_op_2 + 1) begin : gen_operands
 					localparam op = _gv_op_2;
-					assign trimmed_ops[op * fpnew_pkg_fp_width(sv2v_cast_9FB13(_gv_fmt_5))+:fpnew_pkg_fp_width(sv2v_cast_9FB13(_gv_fmt_5))] = operands_q[(op * WIDTH) + (FP_WIDTH - 1)-:FP_WIDTH];
+					assign trimmed_ops[op * fpnew_pkg_fp_width(sv2v_cast_5D882(_gv_fmt_5))+:fpnew_pkg_fp_width(sv2v_cast_5D882(_gv_fmt_5))] = operands_q[(op * WIDTH) + (FP_WIDTH - 1)-:FP_WIDTH];
 					assign fmt_sign[(fmt * 3) + op] = operands_q[(op * WIDTH) + (FP_WIDTH - 1)];
 					assign fmt_exponent[((fmt * 3) + op) * SUPER_EXP_BITS+:SUPER_EXP_BITS] = $signed({1'b0, operands_q[(op * WIDTH) + MAN_BITS+:EXP_BITS]});
 					assign fmt_mantissa[((fmt * 3) + op) * SUPER_MAN_BITS+:SUPER_MAN_BITS] = {info_q[(((fmt * 3) + op) * 8) + 7], operands_q[(op * WIDTH) + (MAN_BITS - 1)-:MAN_BITS]} << (SUPER_MAN_BITS - MAN_BITS);
@@ -18784,8 +18784,8 @@ module fpnew_fma_multi_CA122_A2E8D (
 			else begin : inactive_format
 				assign info_q[8 * (fmt * 3)+:24] = {3 {sv2v_cast_8(fpnew_pkg_DONT_CARE)}};
 				assign fmt_sign[fmt * 3+:3] = fpnew_pkg_DONT_CARE;
-				assign fmt_exponent[SUPER_EXP_BITS * (fmt * 3)+:SUPER_EXP_BITS * 3] = {3 {sv2v_cast_C9DEC_signed(fpnew_pkg_DONT_CARE)}};
-				assign fmt_mantissa[SUPER_MAN_BITS * (fmt * 3)+:SUPER_MAN_BITS * 3] = {3 {sv2v_cast_75D45(fpnew_pkg_DONT_CARE)}};
+				assign fmt_exponent[SUPER_EXP_BITS * (fmt * 3)+:SUPER_EXP_BITS * 3] = {3 {sv2v_cast_994BB_signed(fpnew_pkg_DONT_CARE)}};
+				assign fmt_mantissa[SUPER_MAN_BITS * (fmt * 3)+:SUPER_MAN_BITS * 3] = {3 {sv2v_cast_3FC64(fpnew_pkg_DONT_CARE)}};
 			end
 		end
 	endgenerate
@@ -18799,17 +18799,17 @@ module fpnew_fma_multi_CA122_A2E8D (
 		input reg [2:0] fmt;
 		fpnew_pkg_bias = $unsigned((2 ** (fpnew_pkg_FP_ENCODINGS[((4 - fmt) * 64) + 63-:32] - 1)) - 1);
 	endfunction
-	function automatic [SUPER_EXP_BITS - 1:0] sv2v_cast_C9DEC;
+	function automatic [SUPER_EXP_BITS - 1:0] sv2v_cast_994BB;
 		input reg [SUPER_EXP_BITS - 1:0] inp;
-		sv2v_cast_C9DEC = inp;
+		sv2v_cast_994BB = inp;
 	endfunction
-	function automatic [SUPER_MAN_BITS - 1:0] sv2v_cast_4DDC9;
+	function automatic [SUPER_MAN_BITS - 1:0] sv2v_cast_2F96C;
 		input reg [SUPER_MAN_BITS - 1:0] inp;
-		sv2v_cast_4DDC9 = inp;
+		sv2v_cast_2F96C = inp;
 	endfunction
-	function automatic [SUPER_EXP_BITS - 1:0] sv2v_cast_8433E;
+	function automatic [SUPER_EXP_BITS - 1:0] sv2v_cast_1FC93;
 		input reg [SUPER_EXP_BITS - 1:0] inp;
-		sv2v_cast_8433E = inp;
+		sv2v_cast_1FC93 = inp;
 	endfunction
 	always @(*) begin : op_select
 		if (_sv2v_0)
@@ -18823,24 +18823,24 @@ module fpnew_fma_multi_CA122_A2E8D (
 		operand_c[1 + (SUPER_EXP_BITS + (SUPER_MAN_BITS - 1))] = operand_c[1 + (SUPER_EXP_BITS + (SUPER_MAN_BITS - 1))] ^ inp_pipe_op_mod_q[NUM_INP_REGS];
 		(* full_case, parallel_case *)
 		case (inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS])
-			sv2v_cast_7BCAE(0):
+			sv2v_cast_4CD2E(0):
 				;
-			sv2v_cast_7BCAE(1): operand_a[1 + (SUPER_EXP_BITS + (SUPER_MAN_BITS - 1))] = ~operand_a[1 + (SUPER_EXP_BITS + (SUPER_MAN_BITS - 1))];
-			sv2v_cast_7BCAE(2), sv2v_cast_7BCAE(15): begin
-				operand_a = {1'b0, sv2v_cast_C9DEC(fpnew_pkg_bias(src_fmt_q)), sv2v_cast_4DDC9(1'sb0)};
+			sv2v_cast_4CD2E(1): operand_a[1 + (SUPER_EXP_BITS + (SUPER_MAN_BITS - 1))] = ~operand_a[1 + (SUPER_EXP_BITS + (SUPER_MAN_BITS - 1))];
+			sv2v_cast_4CD2E(2), sv2v_cast_4CD2E(15): begin
+				operand_a = {1'b0, sv2v_cast_994BB(fpnew_pkg_bias(src_fmt_q)), sv2v_cast_2F96C(1'sb0)};
 				info_a = 8'b10000001;
 			end
-			sv2v_cast_7BCAE(3): begin
+			sv2v_cast_4CD2E(3): begin
 				if (inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3] == 3'b010)
-					operand_c = {1'b0, sv2v_cast_8433E(1'sb0), sv2v_cast_4DDC9(1'sb0)};
+					operand_c = {1'b0, sv2v_cast_1FC93(1'sb0), sv2v_cast_2F96C(1'sb0)};
 				else
-					operand_c = {1'b1, sv2v_cast_8433E(1'sb0), sv2v_cast_4DDC9(1'sb0)};
+					operand_c = {1'b1, sv2v_cast_1FC93(1'sb0), sv2v_cast_2F96C(1'sb0)};
 				info_c = 8'b00100001;
 			end
 			default: begin
-				operand_a = {fpnew_pkg_DONT_CARE, sv2v_cast_C9DEC(fpnew_pkg_DONT_CARE), sv2v_cast_75D45(fpnew_pkg_DONT_CARE)};
-				operand_b = {fpnew_pkg_DONT_CARE, sv2v_cast_C9DEC(fpnew_pkg_DONT_CARE), sv2v_cast_75D45(fpnew_pkg_DONT_CARE)};
-				operand_c = {fpnew_pkg_DONT_CARE, sv2v_cast_C9DEC(fpnew_pkg_DONT_CARE), sv2v_cast_75D45(fpnew_pkg_DONT_CARE)};
+				operand_a = {fpnew_pkg_DONT_CARE, sv2v_cast_994BB(fpnew_pkg_DONT_CARE), sv2v_cast_3FC64(fpnew_pkg_DONT_CARE)};
+				operand_b = {fpnew_pkg_DONT_CARE, sv2v_cast_994BB(fpnew_pkg_DONT_CARE), sv2v_cast_3FC64(fpnew_pkg_DONT_CARE)};
+				operand_c = {fpnew_pkg_DONT_CARE, sv2v_cast_994BB(fpnew_pkg_DONT_CARE), sv2v_cast_3FC64(fpnew_pkg_DONT_CARE)};
 				info_a = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
 				info_b = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
 				info_c = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
@@ -18867,9 +18867,9 @@ module fpnew_fma_multi_CA122_A2E8D (
 	generate
 		for (_gv_fmt_6 = 0; _gv_fmt_6 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_6 = _gv_fmt_6 + 1) begin : gen_special_results
 			localparam fmt = _gv_fmt_6;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			localparam [EXP_BITS - 1:0] QNAN_EXPONENT = 1'sb1;
 			localparam [MAN_BITS - 1:0] QNAN_MANTISSA = 2 ** (MAN_BITS - 1);
 			localparam [MAN_BITS - 1:0] ZERO_MANTISSA = 1'sb0;
@@ -18903,15 +18903,15 @@ module fpnew_fma_multi_CA122_A2E8D (
 				end
 			end
 			else begin : inactive_format
-				wire [WIDTH * 1:1] sv2v_tmp_948B8;
-				assign sv2v_tmp_948B8 = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) fmt_special_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_948B8;
-				wire [5:1] sv2v_tmp_0DB31;
-				assign sv2v_tmp_0DB31 = 1'sb0;
-				always @(*) fmt_special_status[fmt * 5+:5] = sv2v_tmp_0DB31;
-				wire [1:1] sv2v_tmp_6249C;
-				assign sv2v_tmp_6249C = 1'b0;
-				always @(*) fmt_result_is_special[fmt] = sv2v_tmp_6249C;
+				wire [WIDTH * 1:1] sv2v_tmp_D05EE;
+				assign sv2v_tmp_D05EE = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) fmt_special_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_D05EE;
+				wire [5:1] sv2v_tmp_0AFA1;
+				assign sv2v_tmp_0AFA1 = 1'sb0;
+				always @(*) fmt_special_status[fmt * 5+:5] = sv2v_tmp_0AFA1;
+				wire [1:1] sv2v_tmp_EE036;
+				assign sv2v_tmp_EE036 = 1'b0;
+				always @(*) fmt_result_is_special[fmt] = sv2v_tmp_EE036;
 			end
 		end
 	endgenerate
@@ -19027,57 +19027,57 @@ module fpnew_fma_multi_CA122_A2E8D (
 	reg [(0 >= NUM_MID_REGS ? ((1 - NUM_MID_REGS) * AuxType_AUX_BITS) + ((NUM_MID_REGS * AuxType_AUX_BITS) - 1) : ((NUM_MID_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_MID_REGS ? NUM_MID_REGS * AuxType_AUX_BITS : 0)] mid_pipe_aux_q;
 	reg [0:NUM_MID_REGS] mid_pipe_valid_q;
 	wire [0:NUM_MID_REGS] mid_pipe_ready;
-	wire [1:1] sv2v_tmp_72F3C;
-	assign sv2v_tmp_72F3C = effective_subtraction;
-	always @(*) mid_pipe_eff_sub_q[0] = sv2v_tmp_72F3C;
-	wire [EXP_WIDTH * 1:1] sv2v_tmp_33460;
-	assign sv2v_tmp_33460 = exponent_product;
-	always @(*) mid_pipe_exp_prod_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_33460;
-	wire [EXP_WIDTH * 1:1] sv2v_tmp_D58F0;
-	assign sv2v_tmp_D58F0 = exponent_difference;
-	always @(*) mid_pipe_exp_diff_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_D58F0;
-	wire [EXP_WIDTH * 1:1] sv2v_tmp_36F3A;
-	assign sv2v_tmp_36F3A = tentative_exponent;
-	always @(*) mid_pipe_tent_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_36F3A;
-	wire [SHIFT_AMOUNT_WIDTH * 1:1] sv2v_tmp_9D3A3;
-	assign sv2v_tmp_9D3A3 = addend_shamt + addend_normalize_shamt;
-	always @(*) mid_pipe_add_shamt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * SHIFT_AMOUNT_WIDTH+:SHIFT_AMOUNT_WIDTH] = sv2v_tmp_9D3A3;
-	wire [1:1] sv2v_tmp_D9513;
-	assign sv2v_tmp_D9513 = sticky_before_add;
-	always @(*) mid_pipe_sticky_q[0] = sv2v_tmp_D9513;
-	wire [(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)) * 1:1] sv2v_tmp_7FA5A;
-	assign sv2v_tmp_7FA5A = sum;
-	always @(*) mid_pipe_sum_q[(((3 * PRECISION_BITS) + 3) >= 0 ? 0 : (3 * PRECISION_BITS) + 3) + ((0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * (((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)))+:(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3))] = sv2v_tmp_7FA5A;
-	wire [1:1] sv2v_tmp_E5D4B;
-	assign sv2v_tmp_E5D4B = final_sign;
-	always @(*) mid_pipe_final_sign_q[0] = sv2v_tmp_E5D4B;
-	wire [3:1] sv2v_tmp_24A07;
-	assign sv2v_tmp_24A07 = inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3];
-	always @(*) mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 3+:3] = sv2v_tmp_24A07;
-	wire [3:1] sv2v_tmp_B536C;
-	assign sv2v_tmp_B536C = dst_fmt_q;
-	always @(*) mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_B536C;
-	wire [1:1] sv2v_tmp_7E156;
-	assign sv2v_tmp_7E156 = result_is_special;
-	always @(*) mid_pipe_res_is_spec_q[0] = sv2v_tmp_7E156;
-	wire [((1 + SUPER_EXP_BITS) + SUPER_MAN_BITS) * 1:1] sv2v_tmp_D459F;
-	assign sv2v_tmp_D459F = special_result;
-	always @(*) mid_pipe_spec_res_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * ((1 + SUPER_EXP_BITS) + SUPER_MAN_BITS)+:(1 + SUPER_EXP_BITS) + SUPER_MAN_BITS] = sv2v_tmp_D459F;
-	wire [5:1] sv2v_tmp_AC961;
-	assign sv2v_tmp_AC961 = special_status;
-	always @(*) mid_pipe_spec_stat_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 5+:5] = sv2v_tmp_AC961;
-	wire [1:1] sv2v_tmp_C9632;
-	assign sv2v_tmp_C9632 = inp_pipe_tag_q[NUM_INP_REGS];
-	always @(*) mid_pipe_tag_q[0] = sv2v_tmp_C9632;
-	wire [1:1] sv2v_tmp_2E03C;
-	assign sv2v_tmp_2E03C = inp_pipe_mask_q[NUM_INP_REGS];
-	always @(*) mid_pipe_mask_q[0] = sv2v_tmp_2E03C;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_1BDCC;
-	assign sv2v_tmp_1BDCC = inp_pipe_aux_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
-	always @(*) mid_pipe_aux_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_1BDCC;
-	wire [1:1] sv2v_tmp_3D86F;
-	assign sv2v_tmp_3D86F = inp_pipe_valid_q[NUM_INP_REGS];
-	always @(*) mid_pipe_valid_q[0] = sv2v_tmp_3D86F;
+	wire [1:1] sv2v_tmp_301F1;
+	assign sv2v_tmp_301F1 = effective_subtraction;
+	always @(*) mid_pipe_eff_sub_q[0] = sv2v_tmp_301F1;
+	wire [EXP_WIDTH * 1:1] sv2v_tmp_C29F5;
+	assign sv2v_tmp_C29F5 = exponent_product;
+	always @(*) mid_pipe_exp_prod_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_C29F5;
+	wire [EXP_WIDTH * 1:1] sv2v_tmp_24DD8;
+	assign sv2v_tmp_24DD8 = exponent_difference;
+	always @(*) mid_pipe_exp_diff_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_24DD8;
+	wire [EXP_WIDTH * 1:1] sv2v_tmp_6091A;
+	assign sv2v_tmp_6091A = tentative_exponent;
+	always @(*) mid_pipe_tent_exp_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * EXP_WIDTH+:EXP_WIDTH] = sv2v_tmp_6091A;
+	wire [SHIFT_AMOUNT_WIDTH * 1:1] sv2v_tmp_25D5D;
+	assign sv2v_tmp_25D5D = addend_shamt + addend_normalize_shamt;
+	always @(*) mid_pipe_add_shamt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * SHIFT_AMOUNT_WIDTH+:SHIFT_AMOUNT_WIDTH] = sv2v_tmp_25D5D;
+	wire [1:1] sv2v_tmp_6A24C;
+	assign sv2v_tmp_6A24C = sticky_before_add;
+	always @(*) mid_pipe_sticky_q[0] = sv2v_tmp_6A24C;
+	wire [(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)) * 1:1] sv2v_tmp_6ABE6;
+	assign sv2v_tmp_6ABE6 = sum;
+	always @(*) mid_pipe_sum_q[(((3 * PRECISION_BITS) + 3) >= 0 ? 0 : (3 * PRECISION_BITS) + 3) + ((0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * (((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3)))+:(((3 * PRECISION_BITS) + 3) >= 0 ? (3 * PRECISION_BITS) + 4 : 1 - ((3 * PRECISION_BITS) + 3))] = sv2v_tmp_6ABE6;
+	wire [1:1] sv2v_tmp_9C379;
+	assign sv2v_tmp_9C379 = final_sign;
+	always @(*) mid_pipe_final_sign_q[0] = sv2v_tmp_9C379;
+	wire [3:1] sv2v_tmp_68647;
+	assign sv2v_tmp_68647 = inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3];
+	always @(*) mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 3+:3] = sv2v_tmp_68647;
+	wire [3:1] sv2v_tmp_59791;
+	assign sv2v_tmp_59791 = dst_fmt_q;
+	always @(*) mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] = sv2v_tmp_59791;
+	wire [1:1] sv2v_tmp_08378;
+	assign sv2v_tmp_08378 = result_is_special;
+	always @(*) mid_pipe_res_is_spec_q[0] = sv2v_tmp_08378;
+	wire [((1 + SUPER_EXP_BITS) + SUPER_MAN_BITS) * 1:1] sv2v_tmp_3E0BB;
+	assign sv2v_tmp_3E0BB = special_result;
+	always @(*) mid_pipe_spec_res_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * ((1 + SUPER_EXP_BITS) + SUPER_MAN_BITS)+:(1 + SUPER_EXP_BITS) + SUPER_MAN_BITS] = sv2v_tmp_3E0BB;
+	wire [5:1] sv2v_tmp_80D24;
+	assign sv2v_tmp_80D24 = special_status;
+	always @(*) mid_pipe_spec_stat_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * 5+:5] = sv2v_tmp_80D24;
+	wire [1:1] sv2v_tmp_7259D;
+	assign sv2v_tmp_7259D = inp_pipe_tag_q[NUM_INP_REGS];
+	always @(*) mid_pipe_tag_q[0] = sv2v_tmp_7259D;
+	wire [1:1] sv2v_tmp_FAFEF;
+	assign sv2v_tmp_FAFEF = inp_pipe_mask_q[NUM_INP_REGS];
+	always @(*) mid_pipe_mask_q[0] = sv2v_tmp_FAFEF;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_45511;
+	assign sv2v_tmp_45511 = inp_pipe_aux_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
+	always @(*) mid_pipe_aux_q[(0 >= NUM_MID_REGS ? 0 : NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_45511;
+	wire [1:1] sv2v_tmp_C7159;
+	assign sv2v_tmp_C7159 = inp_pipe_valid_q[NUM_INP_REGS];
+	always @(*) mid_pipe_valid_q[0] = sv2v_tmp_C7159;
 	assign inp_pipe_ready[NUM_INP_REGS] = mid_pipe_ready[0];
 	genvar _gv_i_11;
 	generate
@@ -19138,7 +19138,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 					mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * 3+:3] <= (reg_ena ? mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * 3+:3] : mid_pipe_rnd_mode_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_9FB13(0);
+					mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= sv2v_cast_5D882(0);
 				else
 					mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] <= (reg_ena ? mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS] : mid_pipe_dst_fmt_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * fpnew_pkg_FP_FORMAT_BITS+:fpnew_pkg_FP_FORMAT_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -19168,7 +19168,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 					mid_pipe_mask_q[i + 1] <= (reg_ena ? mid_pipe_mask_q[i] : mid_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i : NUM_MID_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : mid_pipe_aux_q[(0 >= NUM_MID_REGS ? i + 1 : NUM_MID_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -19265,13 +19265,13 @@ module fpnew_fma_multi_CA122_A2E8D (
 	generate
 		for (_gv_fmt_7 = 0; _gv_fmt_7 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_7 = _gv_fmt_7 + 1) begin : gen_res_assemble
 			localparam fmt = _gv_fmt_7;
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			wire [EXP_BITS - 1:0] pre_round_exponent;
 			wire [MAN_BITS - 1:0] pre_round_mantissa;
 			if (FpFmtConfig[fmt]) begin : active_format
 				assign pre_round_exponent = (of_before_round ? (2 ** EXP_BITS) - 2 : final_exponent[EXP_BITS - 1:0]);
-				assign pre_round_mantissa = (of_before_round ? {fpnew_pkg_man_bits(sv2v_cast_9FB13(_gv_fmt_7)) {1'sb1}} : final_mantissa[SUPER_MAN_BITS-:MAN_BITS]);
+				assign pre_round_mantissa = (of_before_round ? {fpnew_pkg_man_bits(sv2v_cast_5D882(_gv_fmt_7)) {1'sb1}} : final_mantissa[SUPER_MAN_BITS-:MAN_BITS]);
 				assign fmt_pre_round_abs[fmt * (SUPER_EXP_BITS + SUPER_MAN_BITS)+:SUPER_EXP_BITS + SUPER_MAN_BITS] = {pre_round_exponent, pre_round_mantissa};
 				assign fmt_round_sticky_bits[(fmt * 2) + 1] = final_mantissa[SUPER_MAN_BITS - MAN_BITS] | of_before_round;
 				if (MAN_BITS < SUPER_MAN_BITS) begin : narrow_sticky
@@ -19305,9 +19305,9 @@ module fpnew_fma_multi_CA122_A2E8D (
 	generate
 		for (_gv_fmt_8 = 0; _gv_fmt_8 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_8 = _gv_fmt_8 + 1) begin : gen_sign_inject
 			localparam fmt = _gv_fmt_8;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
-			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_9FB13(fmt));
-			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
+			localparam [31:0] EXP_BITS = fpnew_pkg_exp_bits(sv2v_cast_5D882(fmt));
+			localparam [31:0] MAN_BITS = fpnew_pkg_man_bits(sv2v_cast_5D882(fmt));
 			if (FpFmtConfig[fmt]) begin : active_format
 				always @(*) begin : post_process
 					if (_sv2v_0)
@@ -19319,15 +19319,15 @@ module fpnew_fma_multi_CA122_A2E8D (
 				end
 			end
 			else begin : inactive_format
-				wire [1:1] sv2v_tmp_DD825;
-				assign sv2v_tmp_DD825 = fpnew_pkg_DONT_CARE;
-				always @(*) fmt_uf_after_round[fmt] = sv2v_tmp_DD825;
-				wire [1:1] sv2v_tmp_358EF;
-				assign sv2v_tmp_358EF = fpnew_pkg_DONT_CARE;
-				always @(*) fmt_of_after_round[fmt] = sv2v_tmp_358EF;
-				wire [WIDTH * 1:1] sv2v_tmp_C89CB;
-				assign sv2v_tmp_C89CB = {WIDTH {fpnew_pkg_DONT_CARE}};
-				always @(*) fmt_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_C89CB;
+				wire [1:1] sv2v_tmp_4C394;
+				assign sv2v_tmp_4C394 = fpnew_pkg_DONT_CARE;
+				always @(*) fmt_uf_after_round[fmt] = sv2v_tmp_4C394;
+				wire [1:1] sv2v_tmp_5852E;
+				assign sv2v_tmp_5852E = fpnew_pkg_DONT_CARE;
+				always @(*) fmt_of_after_round[fmt] = sv2v_tmp_5852E;
+				wire [WIDTH * 1:1] sv2v_tmp_49668;
+				assign sv2v_tmp_49668 = {WIDTH {fpnew_pkg_DONT_CARE}};
+				always @(*) fmt_result[fmt * WIDTH+:WIDTH] = sv2v_tmp_49668;
 			end
 		end
 	endgenerate
@@ -19352,24 +19352,24 @@ module fpnew_fma_multi_CA122_A2E8D (
 	reg [(0 >= NUM_OUT_REGS ? ((1 - NUM_OUT_REGS) * AuxType_AUX_BITS) + ((NUM_OUT_REGS * AuxType_AUX_BITS) - 1) : ((NUM_OUT_REGS + 1) * AuxType_AUX_BITS) - 1):(0 >= NUM_OUT_REGS ? NUM_OUT_REGS * AuxType_AUX_BITS : 0)] out_pipe_aux_q;
 	reg [0:NUM_OUT_REGS] out_pipe_valid_q;
 	wire [0:NUM_OUT_REGS] out_pipe_ready;
-	wire [WIDTH * 1:1] sv2v_tmp_8CCB4;
-	assign sv2v_tmp_8CCB4 = result_d;
-	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * WIDTH+:WIDTH] = sv2v_tmp_8CCB4;
-	wire [5:1] sv2v_tmp_1B7C7;
-	assign sv2v_tmp_1B7C7 = status_d;
-	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_1B7C7;
-	wire [1:1] sv2v_tmp_D3F91;
-	assign sv2v_tmp_D3F91 = mid_pipe_tag_q[NUM_MID_REGS];
-	always @(*) out_pipe_tag_q[0] = sv2v_tmp_D3F91;
-	wire [1:1] sv2v_tmp_F68B4;
-	assign sv2v_tmp_F68B4 = mid_pipe_mask_q[NUM_MID_REGS];
-	always @(*) out_pipe_mask_q[0] = sv2v_tmp_F68B4;
-	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_8420F;
-	assign sv2v_tmp_8420F = mid_pipe_aux_q[(0 >= NUM_MID_REGS ? NUM_MID_REGS : NUM_MID_REGS - NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
-	always @(*) out_pipe_aux_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_8420F;
-	wire [1:1] sv2v_tmp_39CE2;
-	assign sv2v_tmp_39CE2 = mid_pipe_valid_q[NUM_MID_REGS];
-	always @(*) out_pipe_valid_q[0] = sv2v_tmp_39CE2;
+	wire [WIDTH * 1:1] sv2v_tmp_469C2;
+	assign sv2v_tmp_469C2 = result_d;
+	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * WIDTH+:WIDTH] = sv2v_tmp_469C2;
+	wire [5:1] sv2v_tmp_A6238;
+	assign sv2v_tmp_A6238 = status_d;
+	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_A6238;
+	wire [1:1] sv2v_tmp_1CCC3;
+	assign sv2v_tmp_1CCC3 = mid_pipe_tag_q[NUM_MID_REGS];
+	always @(*) out_pipe_tag_q[0] = sv2v_tmp_1CCC3;
+	wire [1:1] sv2v_tmp_D6E81;
+	assign sv2v_tmp_D6E81 = mid_pipe_mask_q[NUM_MID_REGS];
+	always @(*) out_pipe_mask_q[0] = sv2v_tmp_D6E81;
+	wire [AuxType_AUX_BITS * 1:1] sv2v_tmp_1BC38;
+	assign sv2v_tmp_1BC38 = mid_pipe_aux_q[(0 >= NUM_MID_REGS ? NUM_MID_REGS : NUM_MID_REGS - NUM_MID_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS];
+	always @(*) out_pipe_aux_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * AuxType_AUX_BITS+:AuxType_AUX_BITS] = sv2v_tmp_1BC38;
+	wire [1:1] sv2v_tmp_E45E7;
+	assign sv2v_tmp_E45E7 = mid_pipe_valid_q[NUM_MID_REGS];
+	always @(*) out_pipe_valid_q[0] = sv2v_tmp_E45E7;
 	assign mid_pipe_ready[NUM_MID_REGS] = out_pipe_ready[0];
 	genvar _gv_i_12;
 	generate
@@ -19405,7 +19405,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 					out_pipe_mask_q[i + 1] <= (reg_ena ? out_pipe_mask_q[i] : out_pipe_mask_q[i + 1]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_F912A(1'sb0);
+					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= sv2v_cast_533F1(1'sb0);
 				else
 					out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS] <= (reg_ena ? out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i : NUM_OUT_REGS - i) * AuxType_AUX_BITS+:AuxType_AUX_BITS] : out_pipe_aux_q[(0 >= NUM_OUT_REGS ? i + 1 : NUM_OUT_REGS - (i + 1)) * AuxType_AUX_BITS+:AuxType_AUX_BITS]);
 		end
@@ -19435,7 +19435,7 @@ module fpnew_fma_multi_CA122_A2E8D (
 	endgenerate
 	initial _sv2v_0 = 0;
 endmodule
-module fpnew_noncomp_C2090 (
+module fpnew_noncomp_DE16F (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -19466,11 +19466,11 @@ module fpnew_noncomp_C2090 (
 	reg _sv2v_0;
 	localparam [31:0] fpnew_pkg_NUM_FP_FORMATS = 5;
 	localparam [31:0] fpnew_pkg_FP_FORMAT_BITS = 3;
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
-	parameter [2:0] FpFormat = sv2v_cast_9FB13(0);
+	parameter [2:0] FpFormat = sv2v_cast_5D882(0);
 	parameter [31:0] NumPipeRegs = 0;
 	parameter [1:0] PipeConfig = 2'd0;
 	localparam [319:0] fpnew_pkg_FP_ENCODINGS = 320'h8000000170000000b00000034000000050000000a00000005000000020000000800000007;
@@ -19529,38 +19529,38 @@ module fpnew_noncomp_C2090 (
 	reg [0:NUM_INP_REGS] inp_pipe_aux_q;
 	reg [0:NUM_INP_REGS] inp_pipe_valid_q;
 	wire [0:NUM_INP_REGS] inp_pipe_ready;
-	wire [2 * WIDTH:1] sv2v_tmp_F8807;
-	assign sv2v_tmp_F8807 = operands_i;
-	always @(*) inp_pipe_operands_q[WIDTH * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1)))+:WIDTH * 2] = sv2v_tmp_F8807;
-	wire [2:1] sv2v_tmp_CD89A;
-	assign sv2v_tmp_CD89A = is_boxed_i;
-	always @(*) inp_pipe_is_boxed_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2+:2] = sv2v_tmp_CD89A;
-	wire [3:1] sv2v_tmp_6B838;
-	assign sv2v_tmp_6B838 = rnd_mode_i;
-	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_6B838;
-	wire [4:1] sv2v_tmp_D9BC9;
-	assign sv2v_tmp_D9BC9 = op_i;
-	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_D9BC9;
-	wire [1:1] sv2v_tmp_42D74;
-	assign sv2v_tmp_42D74 = op_mod_i;
-	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_42D74;
-	wire [1:1] sv2v_tmp_6A91A;
-	assign sv2v_tmp_6A91A = tag_i;
-	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_6A91A;
-	wire [1:1] sv2v_tmp_43EE3;
-	assign sv2v_tmp_43EE3 = mask_i;
-	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_43EE3;
-	wire [1:1] sv2v_tmp_E1D93;
-	assign sv2v_tmp_E1D93 = aux_i;
-	always @(*) inp_pipe_aux_q[0] = sv2v_tmp_E1D93;
-	wire [1:1] sv2v_tmp_9CFD6;
-	assign sv2v_tmp_9CFD6 = in_valid_i;
-	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_9CFD6;
+	wire [2 * WIDTH:1] sv2v_tmp_E768C;
+	assign sv2v_tmp_E768C = operands_i;
+	always @(*) inp_pipe_operands_q[WIDTH * ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? ((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) : (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) - (((0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1) >= (0 >= NUM_INP_REGS ? NUM_INP_REGS * 2 : 0) ? (0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2 : ((0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2) + 1) - (0 >= NUM_INP_REGS ? ((1 - NUM_INP_REGS) * 2) + ((NUM_INP_REGS * 2) - 1) : ((NUM_INP_REGS + 1) * 2) - 1)))+:WIDTH * 2] = sv2v_tmp_E768C;
+	wire [2:1] sv2v_tmp_9866C;
+	assign sv2v_tmp_9866C = is_boxed_i;
+	always @(*) inp_pipe_is_boxed_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 2+:2] = sv2v_tmp_9866C;
+	wire [3:1] sv2v_tmp_B26FC;
+	assign sv2v_tmp_B26FC = rnd_mode_i;
+	always @(*) inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * 3+:3] = sv2v_tmp_B26FC;
+	wire [4:1] sv2v_tmp_6E66E;
+	assign sv2v_tmp_6E66E = op_i;
+	always @(*) inp_pipe_op_q[(0 >= NUM_INP_REGS ? 0 : NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] = sv2v_tmp_6E66E;
+	wire [1:1] sv2v_tmp_72E02;
+	assign sv2v_tmp_72E02 = op_mod_i;
+	always @(*) inp_pipe_op_mod_q[0] = sv2v_tmp_72E02;
+	wire [1:1] sv2v_tmp_DE624;
+	assign sv2v_tmp_DE624 = tag_i;
+	always @(*) inp_pipe_tag_q[0] = sv2v_tmp_DE624;
+	wire [1:1] sv2v_tmp_AE6A6;
+	assign sv2v_tmp_AE6A6 = mask_i;
+	always @(*) inp_pipe_mask_q[0] = sv2v_tmp_AE6A6;
+	wire [1:1] sv2v_tmp_683C4;
+	assign sv2v_tmp_683C4 = aux_i;
+	always @(*) inp_pipe_aux_q[0] = sv2v_tmp_683C4;
+	wire [1:1] sv2v_tmp_CFC25;
+	assign sv2v_tmp_CFC25 = in_valid_i;
+	always @(*) inp_pipe_valid_q[0] = sv2v_tmp_CFC25;
 	assign in_ready_o = inp_pipe_ready[0];
 	genvar _gv_i_13;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
 	generate
 		for (_gv_i_13 = 0; _gv_i_13 < NUM_INP_REGS; _gv_i_13 = _gv_i_13 + 1) begin : gen_input_pipeline
@@ -19590,7 +19590,7 @@ module fpnew_noncomp_C2090 (
 					inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3] <= (reg_ena ? inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * 3+:3] : inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * 3+:3]);
 			always @(posedge clk_i or negedge rst_ni)
 				if (!rst_ni)
-					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_7BCAE(0);
+					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= sv2v_cast_4CD2E(0);
 				else
 					inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] <= (reg_ena ? inp_pipe_op_q[(0 >= NUM_INP_REGS ? i : NUM_INP_REGS - i) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] : inp_pipe_op_q[(0 >= NUM_INP_REGS ? i + 1 : NUM_INP_REGS - (i + 1)) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS]);
 			always @(posedge clk_i or negedge rst_ni)
@@ -19646,17 +19646,17 @@ module fpnew_noncomp_C2090 (
 	wire [4:0] sgnj_status;
 	wire sgnj_extension_bit;
 	localparam [0:0] fpnew_pkg_DONT_CARE = 1'b1;
-	function automatic [EXP_BITS - 1:0] sv2v_cast_641B7;
+	function automatic [EXP_BITS - 1:0] sv2v_cast_8D8F7;
 		input reg [EXP_BITS - 1:0] inp;
-		sv2v_cast_641B7 = inp;
+		sv2v_cast_8D8F7 = inp;
 	endfunction
-	function automatic [MAN_BITS - 1:0] sv2v_cast_33A5C;
+	function automatic [MAN_BITS - 1:0] sv2v_cast_D5F4C;
 		input reg [MAN_BITS - 1:0] inp;
-		sv2v_cast_33A5C = inp;
+		sv2v_cast_D5F4C = inp;
 	endfunction
-	function automatic [EXP_BITS - 1:0] sv2v_cast_DBE99;
+	function automatic [EXP_BITS - 1:0] sv2v_cast_51E93;
 		input reg [EXP_BITS - 1:0] inp;
-		sv2v_cast_DBE99 = inp;
+		sv2v_cast_51E93 = inp;
 	endfunction
 	always @(*) begin : sign_injections
 		reg sign_a;
@@ -19665,7 +19665,7 @@ module fpnew_noncomp_C2090 (
 			;
 		sgnj_result = operand_a;
 		if (!info_a[0])
-			sgnj_result = {1'b0, sv2v_cast_641B7(1'sb1), sv2v_cast_33A5C(2 ** (MAN_BITS - 1))};
+			sgnj_result = {1'b0, sv2v_cast_8D8F7(1'sb1), sv2v_cast_D5F4C(2 ** (MAN_BITS - 1))};
 		sign_a = operand_a[1 + (EXP_BITS + (MAN_BITS - 1))] & info_a[0];
 		sign_b = operand_b[1 + (EXP_BITS + (MAN_BITS - 1))] & info_b[0];
 		(* full_case, parallel_case *)
@@ -19674,7 +19674,7 @@ module fpnew_noncomp_C2090 (
 			3'b001: sgnj_result[1 + (EXP_BITS + (MAN_BITS - 1))] = ~sign_b;
 			3'b010: sgnj_result[1 + (EXP_BITS + (MAN_BITS - 1))] = sign_a ^ sign_b;
 			3'b011: sgnj_result = operand_a;
-			default: sgnj_result = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
+			default: sgnj_result = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
 		endcase
 	end
 	assign sgnj_status = 1'sb0;
@@ -19688,7 +19688,7 @@ module fpnew_noncomp_C2090 (
 		minmax_status = 1'sb0;
 		minmax_status[4] = signalling_nan;
 		if (info_a[3] && info_b[3])
-			minmax_result = {1'b0, sv2v_cast_641B7(1'sb1), sv2v_cast_33A5C(2 ** (MAN_BITS - 1))};
+			minmax_result = {1'b0, sv2v_cast_8D8F7(1'sb1), sv2v_cast_D5F4C(2 ** (MAN_BITS - 1))};
 		else if (info_a[3])
 			minmax_result = operand_b;
 		else if (info_b[3])
@@ -19698,7 +19698,7 @@ module fpnew_noncomp_C2090 (
 			case (inp_pipe_rnd_mode_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * 3+:3])
 				3'b000: minmax_result = (operand_a_smaller ? operand_a : operand_b);
 				3'b001: minmax_result = (operand_a_smaller ? operand_b : operand_a);
-				default: minmax_result = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
+				default: minmax_result = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
 			endcase
 	end
 	assign minmax_extension_bit = 1'b1;
@@ -19732,7 +19732,7 @@ module fpnew_noncomp_C2090 (
 						cmp_result = inp_pipe_op_mod_q[NUM_INP_REGS];
 					else
 						cmp_result = operands_equal ^ inp_pipe_op_mod_q[NUM_INP_REGS];
-				default: cmp_result = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
+				default: cmp_result = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
 			endcase
 	end
 	assign cmp_extension_bit = 1'b0;
@@ -19766,34 +19766,34 @@ module fpnew_noncomp_C2090 (
 			;
 		(* full_case, parallel_case *)
 		case (inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS])
-			sv2v_cast_7BCAE(6): begin
+			sv2v_cast_4CD2E(6): begin
 				result_d = sgnj_result;
 				status_d = sgnj_status;
 				extension_bit_d = sgnj_extension_bit;
 			end
-			sv2v_cast_7BCAE(7): begin
+			sv2v_cast_4CD2E(7): begin
 				result_d = minmax_result;
 				status_d = minmax_status;
 				extension_bit_d = minmax_extension_bit;
 			end
-			sv2v_cast_7BCAE(8): begin
+			sv2v_cast_4CD2E(8): begin
 				result_d = cmp_result;
 				status_d = cmp_status;
 				extension_bit_d = cmp_extension_bit;
 			end
-			sv2v_cast_7BCAE(9): begin
-				result_d = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
+			sv2v_cast_4CD2E(9): begin
+				result_d = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
 				status_d = class_status;
 				extension_bit_d = class_extension_bit;
 			end
 			default: begin
-				result_d = {fpnew_pkg_DONT_CARE, sv2v_cast_DBE99(fpnew_pkg_DONT_CARE), sv2v_cast_33A5C(fpnew_pkg_DONT_CARE)};
+				result_d = {fpnew_pkg_DONT_CARE, sv2v_cast_51E93(fpnew_pkg_DONT_CARE), sv2v_cast_D5F4C(fpnew_pkg_DONT_CARE)};
 				status_d = {fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE, fpnew_pkg_DONT_CARE};
 				extension_bit_d = fpnew_pkg_DONT_CARE;
 			end
 		endcase
 	end
-	assign is_class_d = inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] == sv2v_cast_7BCAE(9);
+	assign is_class_d = inp_pipe_op_q[(0 >= NUM_INP_REGS ? NUM_INP_REGS : NUM_INP_REGS - NUM_INP_REGS) * fpnew_pkg_OP_BITS+:fpnew_pkg_OP_BITS] == sv2v_cast_4CD2E(9);
 	reg [(0 >= NUM_OUT_REGS ? ((1 - NUM_OUT_REGS) * ((1 + EXP_BITS) + MAN_BITS)) + ((NUM_OUT_REGS * ((1 + EXP_BITS) + MAN_BITS)) - 1) : ((NUM_OUT_REGS + 1) * ((1 + EXP_BITS) + MAN_BITS)) - 1):(0 >= NUM_OUT_REGS ? NUM_OUT_REGS * ((1 + EXP_BITS) + MAN_BITS) : 0)] out_pipe_result_q;
 	reg [(0 >= NUM_OUT_REGS ? ((1 - NUM_OUT_REGS) * 5) + ((NUM_OUT_REGS * 5) - 1) : ((NUM_OUT_REGS + 1) * 5) - 1):(0 >= NUM_OUT_REGS ? NUM_OUT_REGS * 5 : 0)] out_pipe_status_q;
 	reg [0:NUM_OUT_REGS] out_pipe_extension_bit_q;
@@ -19804,33 +19804,33 @@ module fpnew_noncomp_C2090 (
 	reg [0:NUM_OUT_REGS] out_pipe_aux_q;
 	reg [0:NUM_OUT_REGS] out_pipe_valid_q;
 	wire [0:NUM_OUT_REGS] out_pipe_ready;
-	wire [((1 + EXP_BITS) + MAN_BITS) * 1:1] sv2v_tmp_BDBA0;
-	assign sv2v_tmp_BDBA0 = result_d;
-	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * ((1 + EXP_BITS) + MAN_BITS)+:(1 + EXP_BITS) + MAN_BITS] = sv2v_tmp_BDBA0;
-	wire [5:1] sv2v_tmp_F85FB;
-	assign sv2v_tmp_F85FB = status_d;
-	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_F85FB;
-	wire [1:1] sv2v_tmp_43031;
-	assign sv2v_tmp_43031 = extension_bit_d;
-	always @(*) out_pipe_extension_bit_q[0] = sv2v_tmp_43031;
-	wire [10:1] sv2v_tmp_8049D;
-	assign sv2v_tmp_8049D = class_mask_d;
-	always @(*) out_pipe_class_mask_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 10+:10] = sv2v_tmp_8049D;
-	wire [1:1] sv2v_tmp_7DA92;
-	assign sv2v_tmp_7DA92 = is_class_d;
-	always @(*) out_pipe_is_class_q[0] = sv2v_tmp_7DA92;
-	wire [1:1] sv2v_tmp_FFBE4;
-	assign sv2v_tmp_FFBE4 = inp_pipe_tag_q[NUM_INP_REGS];
-	always @(*) out_pipe_tag_q[0] = sv2v_tmp_FFBE4;
-	wire [1:1] sv2v_tmp_A9F63;
-	assign sv2v_tmp_A9F63 = inp_pipe_mask_q[NUM_INP_REGS];
-	always @(*) out_pipe_mask_q[0] = sv2v_tmp_A9F63;
-	wire [1:1] sv2v_tmp_024FB;
-	assign sv2v_tmp_024FB = inp_pipe_aux_q[NUM_INP_REGS];
-	always @(*) out_pipe_aux_q[0] = sv2v_tmp_024FB;
-	wire [1:1] sv2v_tmp_23287;
-	assign sv2v_tmp_23287 = inp_pipe_valid_q[NUM_INP_REGS];
-	always @(*) out_pipe_valid_q[0] = sv2v_tmp_23287;
+	wire [((1 + EXP_BITS) + MAN_BITS) * 1:1] sv2v_tmp_35063;
+	assign sv2v_tmp_35063 = result_d;
+	always @(*) out_pipe_result_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * ((1 + EXP_BITS) + MAN_BITS)+:(1 + EXP_BITS) + MAN_BITS] = sv2v_tmp_35063;
+	wire [5:1] sv2v_tmp_036FC;
+	assign sv2v_tmp_036FC = status_d;
+	always @(*) out_pipe_status_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 5+:5] = sv2v_tmp_036FC;
+	wire [1:1] sv2v_tmp_C9204;
+	assign sv2v_tmp_C9204 = extension_bit_d;
+	always @(*) out_pipe_extension_bit_q[0] = sv2v_tmp_C9204;
+	wire [10:1] sv2v_tmp_0A406;
+	assign sv2v_tmp_0A406 = class_mask_d;
+	always @(*) out_pipe_class_mask_q[(0 >= NUM_OUT_REGS ? 0 : NUM_OUT_REGS) * 10+:10] = sv2v_tmp_0A406;
+	wire [1:1] sv2v_tmp_C899A;
+	assign sv2v_tmp_C899A = is_class_d;
+	always @(*) out_pipe_is_class_q[0] = sv2v_tmp_C899A;
+	wire [1:1] sv2v_tmp_13053;
+	assign sv2v_tmp_13053 = inp_pipe_tag_q[NUM_INP_REGS];
+	always @(*) out_pipe_tag_q[0] = sv2v_tmp_13053;
+	wire [1:1] sv2v_tmp_CF9A1;
+	assign sv2v_tmp_CF9A1 = inp_pipe_mask_q[NUM_INP_REGS];
+	always @(*) out_pipe_mask_q[0] = sv2v_tmp_CF9A1;
+	wire [1:1] sv2v_tmp_571F3;
+	assign sv2v_tmp_571F3 = inp_pipe_aux_q[NUM_INP_REGS];
+	always @(*) out_pipe_aux_q[0] = sv2v_tmp_571F3;
+	wire [1:1] sv2v_tmp_B2A17;
+	assign sv2v_tmp_B2A17 = inp_pipe_valid_q[NUM_INP_REGS];
+	always @(*) out_pipe_valid_q[0] = sv2v_tmp_B2A17;
 	assign inp_pipe_ready[NUM_INP_REGS] = out_pipe_ready[0];
 	genvar _gv_i_14;
 	generate
@@ -19910,7 +19910,7 @@ module fpnew_noncomp_C2090 (
 	endgenerate
 	initial _sv2v_0 = 0;
 endmodule
-module fpnew_opgroup_block_28857 (
+module fpnew_opgroup_block_37AAD (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -19973,9 +19973,9 @@ module fpnew_opgroup_block_28857 (
 		input reg signed [31:0] b;
 		fpnew_pkg_maximum = (a > b ? a : b);
 	endfunction
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_max_fp_width;
 		input reg [0:4] cfg;
@@ -19986,7 +19986,7 @@ module fpnew_opgroup_block_28857 (
 				reg [31:0] i;
 				for (i = 0; i < fpnew_pkg_NUM_FP_FORMATS; i = i + 1)
 					if (cfg[i])
-						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_9FB13(i))));
+						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_5D882(i))));
 			end
 			fpnew_pkg_max_fp_width = res;
 		end
@@ -20056,7 +20056,7 @@ module fpnew_opgroup_block_28857 (
 	function automatic fpnew_pkg_any_enabled_multi;
 		input reg [9:0] types;
 		input reg [0:4] cfg;
-		reg [1:0] _sv2v_jump;
+		reg [0:1] _sv2v_jump;
 		begin
 			_sv2v_jump = 2'b00;
 			begin : sv2v_autoblock_5
@@ -20087,7 +20087,7 @@ module fpnew_opgroup_block_28857 (
 	function automatic [2:0] fpnew_pkg_get_first_enabled_multi;
 		input reg [9:0] types;
 		input reg [0:4] cfg;
-		reg [1:0] _sv2v_jump;
+		reg [0:1] _sv2v_jump;
 		begin
 			_sv2v_jump = 2'b00;
 			begin : sv2v_autoblock_7
@@ -20098,7 +20098,7 @@ module fpnew_opgroup_block_28857 (
 						if (_sv2v_jump < 2'b10) begin
 							_sv2v_jump = 2'b00;
 							if (cfg[i] && (types[(4 - i) * 2+:2] == 2'd2)) begin
-								fpnew_pkg_get_first_enabled_multi = sv2v_cast_9FB13(i);
+								fpnew_pkg_get_first_enabled_multi = sv2v_cast_5D882(i);
 								_sv2v_jump = 2'b11;
 							end
 							_sv2v_value_on_break = i;
@@ -20110,7 +20110,7 @@ module fpnew_opgroup_block_28857 (
 				end
 			end
 			if (_sv2v_jump == 2'b00) begin
-				fpnew_pkg_get_first_enabled_multi = sv2v_cast_9FB13(0);
+				fpnew_pkg_get_first_enabled_multi = sv2v_cast_5D882(0);
 				_sv2v_jump = 2'b11;
 			end
 		end
@@ -20119,7 +20119,7 @@ module fpnew_opgroup_block_28857 (
 		input reg [2:0] fmt;
 		input reg [9:0] types;
 		input reg [0:4] cfg;
-		reg [1:0] _sv2v_jump;
+		reg [0:1] _sv2v_jump;
 		begin
 			_sv2v_jump = 2'b00;
 			begin : sv2v_autoblock_9
@@ -20130,7 +20130,7 @@ module fpnew_opgroup_block_28857 (
 						if (_sv2v_jump < 2'b10) begin
 							_sv2v_jump = 2'b00;
 							if (cfg[i] && (types[(4 - i) * 2+:2] == 2'd2)) begin
-								fpnew_pkg_is_first_enabled_multi = sv2v_cast_9FB13(i) == fmt;
+								fpnew_pkg_is_first_enabled_multi = sv2v_cast_5D882(i) == fmt;
 								_sv2v_jump = 2'b11;
 							end
 							_sv2v_value_on_break = i;
@@ -20165,12 +20165,12 @@ module fpnew_opgroup_block_28857 (
 		for (_gv_fmt_9 = 0; _gv_fmt_9 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_9 = _gv_fmt_9 + 1) begin : gen_parallel_slices
 			localparam fmt = _gv_fmt_9;
 			localparam [0:0] ANY_MERGED = fpnew_pkg_any_enabled_multi(FmtUnitTypes, FpFmtMask);
-			localparam [0:0] IS_FIRST_MERGED = fpnew_pkg_is_first_enabled_multi(sv2v_cast_9FB13(fmt), FmtUnitTypes, FpFmtMask);
+			localparam [0:0] IS_FIRST_MERGED = fpnew_pkg_is_first_enabled_multi(sv2v_cast_5D882(fmt), FmtUnitTypes, FpFmtMask);
 			if (FpFmtMask[fmt] && (FmtUnitTypes[(4 - fmt) * 2+:2] == 2'd1)) begin : active_format
-				localparam [2:0] FpFormat = sv2v_cast_9FB13(fmt);
+				localparam [2:0] FpFormat = sv2v_cast_5D882(fmt);
 				wire in_valid;
 				assign in_valid = in_valid_i & (dst_fmt_i == fmt);
-				localparam [31:0] INTERNAL_LANES = fpnew_pkg_num_lanes(Width, sv2v_cast_9FB13(fmt), EnableVectors);
+				localparam [31:0] INTERNAL_LANES = fpnew_pkg_num_lanes(Width, sv2v_cast_5D882(fmt), EnableVectors);
 				reg [INTERNAL_LANES - 1:0] mask_slice;
 				always @(*) begin : sv2v_autoblock_11
 					reg signed [31:0] b;
@@ -20182,7 +20182,7 @@ module fpnew_opgroup_block_28857 (
 				localparam [31:0] sv2v_uu_i_fmt_slice_NumPipeRegs = FmtPipeRegs[(4 - fmt) * 32+:32];
 				localparam [31:0] sv2v_uu_i_fmt_slice_ExtRegEnaWidth = (sv2v_uu_i_fmt_slice_NumPipeRegs == 0 ? 1 : sv2v_uu_i_fmt_slice_NumPipeRegs);
 				localparam [sv2v_cast_32((sv2v_cast_32(FmtPipeRegs[(4 - _gv_fmt_9) * 32+:32]) == 0 ? 1 : sv2v_cast_32(FmtPipeRegs[(4 - _gv_fmt_9) * 32+:32]))) - 1:0] sv2v_uu_i_fmt_slice_ext_reg_ena_i_0 = 1'sb0;
-				fpnew_opgroup_fmt_slice_B0DD3 #(
+				fpnew_opgroup_fmt_slice_07650 #(
 					.OpGroup(OpGroup),
 					.FpFormat(FpFormat),
 					.Width(Width),
@@ -20263,7 +20263,7 @@ module fpnew_opgroup_block_28857 (
 			localparam [31:0] sv2v_uu_i_multifmt_slice_NumPipeRegs = REG;
 			localparam [31:0] sv2v_uu_i_multifmt_slice_ExtRegEnaWidth = (sv2v_uu_i_multifmt_slice_NumPipeRegs == 0 ? 1 : sv2v_uu_i_multifmt_slice_NumPipeRegs);
 			localparam [sv2v_uu_i_multifmt_slice_ExtRegEnaWidth - 1:0] sv2v_uu_i_multifmt_slice_ext_reg_ena_i_0 = 1'sb0;
-			fpnew_opgroup_multifmt_slice_B17D8 #(
+			fpnew_opgroup_multifmt_slice_23084 #(
 				.OpGroup(OpGroup),
 				.Width(Width),
 				.FpFmtConfig(FpFmtMask),
@@ -20305,7 +20305,7 @@ module fpnew_opgroup_block_28857 (
 	localparam [31:0] sv2v_uu_i_arbiter_NumIn = NUM_FORMATS;
 	localparam [31:0] sv2v_uu_i_arbiter_IdxWidth = $unsigned(3);
 	localparam [sv2v_uu_i_arbiter_IdxWidth - 1:0] sv2v_uu_i_arbiter_ext_rr_i_0 = 1'sb0;
-	rr_arb_tree_FF0CA_81131 #(
+	rr_arb_tree_3ECCC_C4496 #(
 		.DataType_Width(Width),
 		.NumIn(NUM_FORMATS),
 		.AxiVldRdy(1'b1)
@@ -20330,7 +20330,7 @@ module fpnew_opgroup_block_28857 (
 	assign busy_o = |fmt_busy;
 	initial _sv2v_0 = 0;
 endmodule
-module fpnew_opgroup_fmt_slice_B0DD3 (
+module fpnew_opgroup_fmt_slice_07650 (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -20358,11 +20358,11 @@ module fpnew_opgroup_fmt_slice_B0DD3 (
 	parameter [1:0] OpGroup = 2'd0;
 	localparam [31:0] fpnew_pkg_NUM_FP_FORMATS = 5;
 	localparam [31:0] fpnew_pkg_FP_FORMAT_BITS = 3;
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
-	parameter [2:0] FpFormat = sv2v_cast_9FB13(0);
+	parameter [2:0] FpFormat = sv2v_cast_5D882(0);
 	parameter [31:0] Width = 32;
 	parameter [0:0] EnableVectors = 1'b1;
 	parameter [31:0] NumPipeRegs = 0;
@@ -20467,7 +20467,7 @@ module fpnew_opgroup_fmt_slice_B0DD3 (
 					end
 				end
 				if (OpGroup == 2'd0) begin : lane_instance
-					fpnew_fma_90763 #(
+					fpnew_fma_EA93F #(
 						.FpFormat(FpFormat),
 						.NumPipeRegs(NumPipeRegs),
 						.PipeConfig(PipeConfig)
@@ -20504,7 +20504,7 @@ module fpnew_opgroup_fmt_slice_B0DD3 (
 					;
 				end
 				else if (OpGroup == 2'd2) begin : lane_instance
-					fpnew_noncomp_C2090 #(
+					fpnew_noncomp_DE16F #(
 						.FpFormat(FpFormat),
 						.NumPipeRegs(NumPipeRegs),
 						.PipeConfig(PipeConfig)
@@ -20593,7 +20593,7 @@ module fpnew_opgroup_fmt_slice_B0DD3 (
 	end
 	initial _sv2v_0 = 0;
 endmodule
-module fpnew_opgroup_multifmt_slice_B17D8 (
+module fpnew_opgroup_multifmt_slice_23084 (
 	clk_i,
 	rst_ni,
 	operands_i,
@@ -20656,9 +20656,9 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 		input reg signed [31:0] b;
 		fpnew_pkg_maximum = (a > b ? a : b);
 	endfunction
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_max_fp_width;
 		input reg [0:4] cfg;
@@ -20669,7 +20669,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				reg [31:0] i;
 				for (i = 0; i < fpnew_pkg_NUM_FP_FORMATS; i = i + 1)
 					if (cfg[i])
-						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_9FB13(i))));
+						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_5D882(i))));
 			end
 			fpnew_pkg_max_fp_width = res;
 		end
@@ -20741,20 +20741,20 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 		end
 	endgenerate
 	localparam [31:0] MAX_FP_WIDTH = fpnew_pkg_max_fp_width(FpFmtConfig);
-	function automatic [1:0] sv2v_cast_2D3A8;
+	function automatic [1:0] sv2v_cast_CDB06;
 		input reg [1:0] inp;
-		sv2v_cast_2D3A8 = inp;
+		sv2v_cast_CDB06 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_int_width;
 		input reg [1:0] ifmt;
 		(* full_case, parallel_case *)
 		case (ifmt)
-			sv2v_cast_2D3A8(0): fpnew_pkg_int_width = 8;
-			sv2v_cast_2D3A8(1): fpnew_pkg_int_width = 16;
-			sv2v_cast_2D3A8(2): fpnew_pkg_int_width = 32;
-			sv2v_cast_2D3A8(3): fpnew_pkg_int_width = 64;
+			sv2v_cast_CDB06(0): fpnew_pkg_int_width = 8;
+			sv2v_cast_CDB06(1): fpnew_pkg_int_width = 16;
+			sv2v_cast_CDB06(2): fpnew_pkg_int_width = 32;
+			sv2v_cast_CDB06(3): fpnew_pkg_int_width = 64;
 			default: begin
-				fpnew_pkg_int_width = sv2v_cast_2D3A8(0);
+				fpnew_pkg_int_width = sv2v_cast_CDB06(0);
 			end
 		endcase
 	endfunction
@@ -20767,7 +20767,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				reg signed [31:0] ifmt;
 				for (ifmt = 0; ifmt < fpnew_pkg_NUM_INT_FORMATS; ifmt = ifmt + 1)
 					if (cfg[ifmt])
-						res = fpnew_pkg_maximum(res, fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt)));
+						res = fpnew_pkg_maximum(res, fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt)));
 			end
 			fpnew_pkg_max_int_width = res;
 		end
@@ -20783,7 +20783,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				reg [31:0] i;
 				for (i = 0; i < fpnew_pkg_NUM_FP_FORMATS; i = i + 1)
 					if (cfg[i])
-						res = $unsigned(fpnew_pkg_minimum(res, fpnew_pkg_fp_width(sv2v_cast_9FB13(i))));
+						res = $unsigned(fpnew_pkg_minimum(res, fpnew_pkg_fp_width(sv2v_cast_5D882(i))));
 			end
 			fpnew_pkg_min_fp_width = res;
 		end
@@ -20836,13 +20836,13 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 	wire simd_synch_done;
 	assign in_ready_o = lane_in_ready[0];
 	assign vectorial_op = vectorial_op_i & EnableVectors;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
-	assign dst_fmt_is_int = (OpGroup == 2'd3) & (op_i == sv2v_cast_7BCAE(11));
-	assign dst_is_cpk = (OpGroup == 2'd3) & ((op_i == sv2v_cast_7BCAE(13)) || (op_i == sv2v_cast_7BCAE(14)));
-	assign dst_vec_op = (OpGroup == 2'd3) & {op_i == sv2v_cast_7BCAE(14), op_mod_i};
+	assign dst_fmt_is_int = (OpGroup == 2'd3) & (op_i == sv2v_cast_4CD2E(11));
+	assign dst_is_cpk = (OpGroup == 2'd3) & ((op_i == sv2v_cast_4CD2E(13)) || (op_i == sv2v_cast_4CD2E(14)));
+	assign dst_vec_op = (OpGroup == 2'd3) & {op_i == sv2v_cast_4CD2E(14), op_mod_i};
 	assign is_up_cast = fpnew_pkg_fp_width(dst_fmt_i) > fpnew_pkg_fp_width(src_fmt_i);
 	assign is_down_cast = fpnew_pkg_fp_width(dst_fmt_i) < fpnew_pkg_fp_width(src_fmt_i);
 	assign dst_fmt = (dst_fmt_is_int ? int_fmt_i : dst_fmt_i);
@@ -20881,7 +20881,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 			begin : sv2v_autoblock_8
 				reg [31:0] fmt;
 				for (fmt = 0; fmt < fpnew_pkg_NUM_FP_FORMATS; fmt = fmt + 1)
-					res[fmt] = cfg[fmt] && (((width / fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt))) > lane_no) || (fpnew_pkg_CPK_FORMATS[fmt] && (lane_no < 2)));
+					res[fmt] = cfg[fmt] && (((width / fpnew_pkg_fp_width(sv2v_cast_5D882(fmt))) > lane_no) || (fpnew_pkg_CPK_FORMATS[fmt] && (lane_no < 2)));
 			end
 			fpnew_pkg_get_conv_lane_formats = res;
 		end
@@ -20902,7 +20902,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 					begin : sv2v_autoblock_10
 						reg [31:0] fmt;
 						for (fmt = 0; fmt < fpnew_pkg_NUM_FP_FORMATS; fmt = fmt + 1)
-							res[ifmt] = res[ifmt] | ((icfg[ifmt] && lanefmts[fmt]) && (fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt)) == fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt))));
+							res[ifmt] = res[ifmt] | ((icfg[ifmt] && lanefmts[fmt]) && (fpnew_pkg_fp_width(sv2v_cast_5D882(fmt)) == fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt))));
 					end
 			end
 			fpnew_pkg_get_conv_lane_int_formats = res;
@@ -20917,7 +20917,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 			begin : sv2v_autoblock_11
 				reg [31:0] fmt;
 				for (fmt = 0; fmt < fpnew_pkg_NUM_FP_FORMATS; fmt = fmt + 1)
-					res[fmt] = cfg[fmt] & ((width / fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt))) > lane_no);
+					res[fmt] = cfg[fmt] & ((width / fpnew_pkg_fp_width(sv2v_cast_5D882(fmt))) > lane_no);
 			end
 			fpnew_pkg_get_lane_formats = res;
 		end
@@ -20938,7 +20938,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 					begin : sv2v_autoblock_13
 						reg [31:0] fmt;
 						for (fmt = 0; fmt < fpnew_pkg_NUM_FP_FORMATS; fmt = fmt + 1)
-							if (fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt)) == fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt)))
+							if (fpnew_pkg_fp_width(sv2v_cast_5D882(fmt)) == fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt)))
 								res[ifmt] = res[ifmt] | (icfg[ifmt] && lanefmts[fmt]);
 					end
 			end
@@ -20949,9 +20949,9 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 		input reg [31:0] inp;
 		sv2v_cast_32 = inp;
 	endfunction
-	function automatic [4:0] sv2v_cast_D5AB9;
+	function automatic [4:0] sv2v_cast_F930B;
 		input reg [4:0] inp;
-		sv2v_cast_D5AB9 = inp;
+		sv2v_cast_F930B = inp;
 	endfunction
 	function automatic signed [31:0] sv2v_cast_32_signed;
 		input reg signed [31:0] inp;
@@ -20985,14 +20985,14 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 						reg [31:0] i;
 						for (i = 0; i < NUM_OPERANDS; i = i + 1)
 							if (i == 2)
-								local_operands[i * (OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))+:(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))] = operands_i[i * Width+:Width] >> (LANE * fpnew_pkg_fp_width((op_i == sv2v_cast_7BCAE(15) ? src_fmt_i : dst_fmt_i)));
+								local_operands[i * (OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))+:(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))] = operands_i[i * Width+:Width] >> (LANE * fpnew_pkg_fp_width((op_i == sv2v_cast_4CD2E(15) ? src_fmt_i : dst_fmt_i)));
 							else
 								local_operands[i * (OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))+:(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))] = operands_i[i * Width+:Width] >> (LANE * fpnew_pkg_fp_width(src_fmt_i));
 					end
 					if (OpGroup == 2'd3) begin
-						if (op_i == sv2v_cast_7BCAE(12))
+						if (op_i == sv2v_cast_4CD2E(12))
 							local_operands[0+:(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))] = operands_i[0+:Width] >> (LANE * fpnew_pkg_int_width(int_fmt_i));
-						else if (op_i == sv2v_cast_7BCAE(10)) begin
+						else if (op_i == sv2v_cast_4CD2E(10)) begin
 							if ((vectorial_op && op_mod_i) && is_up_cast)
 								local_operands[0+:(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))) : fpnew_pkg_max_fp_width(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))] = operands_i[0+:Width] >> ((LANE * fpnew_pkg_fp_width(src_fmt_i)) + (MAX_FP_WIDTH / 2));
 						end
@@ -21003,7 +21003,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 					end
 				end
 				if (OpGroup == 2'd0) begin : lane_instance
-					fpnew_fma_multi_CA122_A2E8D #(
+					fpnew_fma_multi_B5D6B_2D261 #(
 						.AuxType_AUX_BITS(AUX_BITS),
 						.FpFmtConfig(LANE_FORMATS),
 						.NumPipeRegs(NumPipeRegs),
@@ -21017,7 +21017,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 						.op_i(op_i),
 						.op_mod_i(op_mod_i),
 						.src_fmt_i(src_fmt_i),
-						.src2_fmt_i((op_i == sv2v_cast_7BCAE(15) ? src_fmt_i : dst_fmt_i)),
+						.src2_fmt_i((op_i == sv2v_cast_4CD2E(15) ? src_fmt_i : dst_fmt_i)),
 						.dst_fmt_i(dst_fmt_i),
 						.tag_i(tag_i),
 						.mask_i(simd_mask_i[lane]),
@@ -21040,7 +21040,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				end
 				else if (OpGroup == 2'd1) begin : lane_instance
 					if (((DivSqrtSel == 2'd1) && LANE_FORMATS[0]) && (LANE_FORMATS[1:4] == {4 {1'sb0}})) begin : gen_th32_e906_divsqrt
-						fpnew_divsqrt_th_32_A4710_B4B7A #(
+						fpnew_divsqrt_th_32_3DF01_FC8AC #(
 							.AuxType_AUX_BITS(AUX_BITS),
 							.NumPipeRegs(NumPipeRegs),
 							.PipeConfig(PipeConfig)
@@ -21071,7 +21071,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 						);
 					end
 					else if (DivSqrtSel == 2'd2) begin : gen_thmulti_c910_divsqrt
-						fpnew_divsqrt_th_64_multi_84E3C_38E6A #(
+						fpnew_divsqrt_th_64_multi_6575A_19233 #(
 							.AuxType_AUX_BITS(AUX_BITS),
 							.FpFmtConfig(LANE_FORMATS),
 							.NumPipeRegs(NumPipeRegs),
@@ -21109,7 +21109,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 						);
 					end
 					else begin : gen_pulp_divsqrt
-						fpnew_divsqrt_multi_4A1A6_75781 #(
+						fpnew_divsqrt_multi_E225A_B8CF6 #(
 							.AuxType_AUX_BITS(AUX_BITS),
 							.FpFmtConfig(LANE_FORMATS),
 							.NumPipeRegs(NumPipeRegs),
@@ -21151,7 +21151,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 					;
 				end
 				else if (OpGroup == 2'd3) begin : lane_instance
-					fpnew_cast_multi_3E15B_08E4E #(
+					fpnew_cast_multi_2E827_67072 #(
 						.AuxType_AUX_BITS(AUX_BITS),
 						.FpFmtConfig(LANE_FORMATS),
 						.IntFmtConfig(CONV_INT_FORMATS),
@@ -21189,7 +21189,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				end
 				assign out_ready = out_ready_i & ((lane == 0) | result_is_vector);
 				assign lane_out_valid[lane] = out_valid & ((lane == 0) | result_is_vector);
-				assign local_result = (lane_out_valid[lane] | ExtRegEna ? op_result : {(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(sv2v_cast_D5AB9(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2))))) : fpnew_pkg_max_fp_width(sv2v_cast_D5AB9(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))) {lane_ext_bit[0]}});
+				assign local_result = (lane_out_valid[lane] | ExtRegEna ? op_result : {(OpGroup == 2'd3 ? fpnew_pkg_max_fp_width(sv2v_cast_F930B(fpnew_pkg_get_conv_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2))))) : fpnew_pkg_max_fp_width(sv2v_cast_F930B(fpnew_pkg_get_lane_formats(Width, FpFmtConfig, sv2v_cast_32($unsigned(_gv_lane_2)))))) {lane_ext_bit[0]}});
 				assign lane_status[lane * 5+:5] = (lane_out_valid[lane] | ExtRegEna ? op_status : {5 {1'sb0}});
 			end
 			else begin : inactive_lane
@@ -21208,7 +21208,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 			genvar _gv_fmt_10;
 			for (_gv_fmt_10 = 0; _gv_fmt_10 < NUM_FORMATS; _gv_fmt_10 = _gv_fmt_10 + 1) begin : pack_fp_result
 				localparam fmt = _gv_fmt_10;
-				localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
+				localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
 				if (ACTIVE_FORMATS[fmt]) begin : genblk1
 					assign fmt_slice_result[(fmt * Width) + ((((LANE + 1) * FP_WIDTH) - 1) >= (LANE * FP_WIDTH) ? ((LANE + 1) * FP_WIDTH) - 1 : ((((LANE + 1) * FP_WIDTH) - 1) + ((((LANE + 1) * FP_WIDTH) - 1) >= (LANE * FP_WIDTH) ? ((((LANE + 1) * FP_WIDTH) - 1) - (LANE * FP_WIDTH)) + 1 : ((LANE * FP_WIDTH) - (((LANE + 1) * FP_WIDTH) - 1)) + 1)) - 1)-:((((LANE + 1) * FP_WIDTH) - 1) >= (LANE * FP_WIDTH) ? ((((LANE + 1) * FP_WIDTH) - 1) - (LANE * FP_WIDTH)) + 1 : ((LANE * FP_WIDTH) - (((LANE + 1) * FP_WIDTH) - 1)) + 1)] = local_result[FP_WIDTH - 1:0];
 				end
@@ -21223,7 +21223,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				genvar _gv_ifmt_6;
 				for (_gv_ifmt_6 = 0; _gv_ifmt_6 < NUM_INT_FORMATS; _gv_ifmt_6 = _gv_ifmt_6 + 1) begin : pack_int_result
 					localparam ifmt = _gv_ifmt_6;
-					localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+					localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 					if (ACTIVE_INT_FORMATS[ifmt]) begin : genblk1
 						assign ifmt_slice_result[(ifmt * Width) + ((((LANE + 1) * INT_WIDTH) - 1) >= (LANE * INT_WIDTH) ? ((LANE + 1) * INT_WIDTH) - 1 : ((((LANE + 1) * INT_WIDTH) - 1) + ((((LANE + 1) * INT_WIDTH) - 1) >= (LANE * INT_WIDTH) ? ((((LANE + 1) * INT_WIDTH) - 1) - (LANE * INT_WIDTH)) + 1 : ((LANE * INT_WIDTH) - (((LANE + 1) * INT_WIDTH) - 1)) + 1)) - 1)-:((((LANE + 1) * INT_WIDTH) - 1) >= (LANE * INT_WIDTH) ? ((((LANE + 1) * INT_WIDTH) - 1) - (LANE * INT_WIDTH)) + 1 : ((LANE * INT_WIDTH) - (((LANE + 1) * INT_WIDTH) - 1)) + 1)] = local_result[INT_WIDTH - 1:0];
 					end
@@ -21241,7 +21241,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 	generate
 		for (_gv_fmt_11 = 0; _gv_fmt_11 < NUM_FORMATS; _gv_fmt_11 = _gv_fmt_11 + 1) begin : extend_fp_result
 			localparam fmt = _gv_fmt_11;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
 			if ((NUM_LANES * FP_WIDTH) < Width) begin : genblk1
 				assign fmt_slice_result[(fmt * Width) + ((Width - 1) >= (NUM_LANES * FP_WIDTH) ? Width - 1 : ((Width - 1) + ((Width - 1) >= (NUM_LANES * FP_WIDTH) ? ((Width - 1) - (NUM_LANES * FP_WIDTH)) + 1 : ((NUM_LANES * FP_WIDTH) - (Width - 1)) + 1)) - 1)-:((Width - 1) >= (NUM_LANES * FP_WIDTH) ? ((Width - 1) - (NUM_LANES * FP_WIDTH)) + 1 : ((NUM_LANES * FP_WIDTH) - (Width - 1)) + 1)] = {((Width - 1) >= (NUM_LANES * FP_WIDTH) ? ((Width - 1) - (NUM_LANES * FP_WIDTH)) + 1 : ((NUM_LANES * FP_WIDTH) - (Width - 1)) + 1) {lane_ext_bit[0]}};
 			end
@@ -21255,7 +21255,7 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 				assign ifmt_slice_result[ifmt * Width+:Width] = 1'sb0;
 			end
 			else begin : extend_int_result
-				localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_2D3A8(ifmt));
+				localparam [31:0] INT_WIDTH = fpnew_pkg_int_width(sv2v_cast_CDB06(ifmt));
 				if ((NUM_LANES * INT_WIDTH) < Width) begin : genblk1
 					assign ifmt_slice_result[(ifmt * Width) + ((Width - 1) >= (NUM_LANES * INT_WIDTH) ? Width - 1 : ((Width - 1) + ((Width - 1) >= (NUM_LANES * INT_WIDTH) ? ((Width - 1) - (NUM_LANES * INT_WIDTH)) + 1 : ((NUM_LANES * INT_WIDTH) - (Width - 1)) + 1)) - 1)-:((Width - 1) >= (NUM_LANES * INT_WIDTH) ? ((Width - 1) - (NUM_LANES * INT_WIDTH)) + 1 : ((NUM_LANES * INT_WIDTH) - (Width - 1)) + 1)] = 1'sb0;
 				end
@@ -21266,15 +21266,15 @@ module fpnew_opgroup_multifmt_slice_B17D8 (
 			reg [(0 >= NumPipeRegs ? ((1 - NumPipeRegs) * 3) + ((NumPipeRegs * 3) - 1) : ((NumPipeRegs + 1) * 3) - 1):(0 >= NumPipeRegs ? NumPipeRegs * 3 : 0)] byp_pipe_aux_q;
 			reg [0:NumPipeRegs] byp_pipe_valid_q;
 			wire [0:NumPipeRegs] byp_pipe_ready;
-			wire [Width * 1:1] sv2v_tmp_77847;
-			assign sv2v_tmp_77847 = conv_target_d;
-			always @(*) byp_pipe_target_q[(0 >= NumPipeRegs ? 0 : NumPipeRegs) * Width+:Width] = sv2v_tmp_77847;
-			wire [3:1] sv2v_tmp_2A1F7;
-			assign sv2v_tmp_2A1F7 = target_aux_d;
-			always @(*) byp_pipe_aux_q[(0 >= NumPipeRegs ? 0 : NumPipeRegs) * 3+:3] = sv2v_tmp_2A1F7;
-			wire [1:1] sv2v_tmp_5453C;
-			assign sv2v_tmp_5453C = in_valid_i & vectorial_op;
-			always @(*) byp_pipe_valid_q[0] = sv2v_tmp_5453C;
+			wire [Width * 1:1] sv2v_tmp_341F5;
+			assign sv2v_tmp_341F5 = conv_target_d;
+			always @(*) byp_pipe_target_q[(0 >= NumPipeRegs ? 0 : NumPipeRegs) * Width+:Width] = sv2v_tmp_341F5;
+			wire [3:1] sv2v_tmp_5E9D8;
+			assign sv2v_tmp_5E9D8 = target_aux_d;
+			always @(*) byp_pipe_aux_q[(0 >= NumPipeRegs ? 0 : NumPipeRegs) * 3+:3] = sv2v_tmp_5E9D8;
+			wire [1:1] sv2v_tmp_967FD;
+			assign sv2v_tmp_967FD = in_valid_i & vectorial_op;
+			always @(*) byp_pipe_valid_q[0] = sv2v_tmp_967FD;
 			genvar _gv_i_15;
 			for (_gv_i_15 = 0; _gv_i_15 < NumPipeRegs; _gv_i_15 = _gv_i_15 + 1) begin : gen_bypass_pipeline
 				localparam i = _gv_i_15;
@@ -21413,19 +21413,19 @@ module fpnew_top (
 	localparam [42:0] fpnew_pkg_RV64D_Xsflt = 43'h000000207ff;
 	parameter [42:0] Features = fpnew_pkg_RV64D_Xsflt;
 	localparam [31:0] fpnew_pkg_NUM_OPGROUPS = 4;
-	function automatic [159:0] sv2v_cast_A9CF0;
+	function automatic [159:0] sv2v_cast_C3475;
 		input reg [159:0] inp;
-		sv2v_cast_A9CF0 = inp;
+		sv2v_cast_C3475 = inp;
 	endfunction
-	function automatic [((32'd4 * 32'd5) * 32) - 1:0] sv2v_cast_9CB06;
+	function automatic [((32'd4 * 32'd5) * 32) - 1:0] sv2v_cast_52F10;
 		input reg [((32'd4 * 32'd5) * 32) - 1:0] inp;
-		sv2v_cast_9CB06 = inp;
+		sv2v_cast_52F10 = inp;
 	endfunction
-	function automatic [((32'd4 * 32'd5) * 2) - 1:0] sv2v_cast_2DA10;
+	function automatic [((32'd4 * 32'd5) * 2) - 1:0] sv2v_cast_18D94;
 		input reg [((32'd4 * 32'd5) * 2) - 1:0] inp;
-		sv2v_cast_2DA10 = inp;
+		sv2v_cast_18D94 = inp;
 	endfunction
-	localparam [(((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 32) + ((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 2)) + 1:0] fpnew_pkg_DEFAULT_NOREGS = {sv2v_cast_9CB06({fpnew_pkg_NUM_OPGROUPS {sv2v_cast_A9CF0(0)}}), sv2v_cast_2DA10({{fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}, {fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}}), 2'd0};
+	localparam [(((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 32) + ((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 2)) + 1:0] fpnew_pkg_DEFAULT_NOREGS = {sv2v_cast_52F10({fpnew_pkg_NUM_OPGROUPS {sv2v_cast_C3475(0)}}), sv2v_cast_18D94({{fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}, {fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}}), 2'd0};
 	parameter [(((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 32) + ((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 2)) + 1:0] Implementation = fpnew_pkg_DEFAULT_NOREGS;
 	parameter [1:0] DivSqrtSel = 2'd2;
 	parameter [31:0] TrueSIMDClass = 0;
@@ -21441,9 +21441,9 @@ module fpnew_top (
 		input reg signed [31:0] b;
 		fpnew_pkg_maximum = (a > b ? a : b);
 	endfunction
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
 	function automatic [31:0] fpnew_pkg_max_fp_width;
 		input reg [0:4] cfg;
@@ -21454,7 +21454,7 @@ module fpnew_top (
 				reg [31:0] i;
 				for (i = 0; i < fpnew_pkg_NUM_FP_FORMATS; i = i + 1)
 					if (cfg[i])
-						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_9FB13(i))));
+						res = $unsigned(fpnew_pkg_maximum(res, fpnew_pkg_fp_width(sv2v_cast_5D882(i))));
 			end
 			fpnew_pkg_max_fp_width = res;
 		end
@@ -21522,18 +21522,18 @@ module fpnew_top (
 	wire [3:0] opgrp_early_valid;
 	wire [((WIDTH + 5) >= 0 ? (4 * (WIDTH + 6)) - 1 : (4 * (1 - (WIDTH + 5))) + (WIDTH + 4)):((WIDTH + 5) >= 0 ? 0 : WIDTH + 5)] opgrp_outputs;
 	wire [(NUM_FORMATS * NUM_OPERANDS) - 1:0] is_boxed;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
 	function automatic [1:0] fpnew_pkg_get_opgroup;
 		input reg [3:0] op;
 		(* full_case, parallel_case *)
 		case (op)
-			sv2v_cast_7BCAE(0), sv2v_cast_7BCAE(1), sv2v_cast_7BCAE(2), sv2v_cast_7BCAE(15), sv2v_cast_7BCAE(3): fpnew_pkg_get_opgroup = 2'd0;
-			sv2v_cast_7BCAE(4), sv2v_cast_7BCAE(5): fpnew_pkg_get_opgroup = 2'd1;
-			sv2v_cast_7BCAE(6), sv2v_cast_7BCAE(7), sv2v_cast_7BCAE(8), sv2v_cast_7BCAE(9): fpnew_pkg_get_opgroup = 2'd2;
-			sv2v_cast_7BCAE(10), sv2v_cast_7BCAE(11), sv2v_cast_7BCAE(12), sv2v_cast_7BCAE(13), sv2v_cast_7BCAE(14): fpnew_pkg_get_opgroup = 2'd3;
+			sv2v_cast_4CD2E(0), sv2v_cast_4CD2E(1), sv2v_cast_4CD2E(2), sv2v_cast_4CD2E(15), sv2v_cast_4CD2E(3): fpnew_pkg_get_opgroup = 2'd0;
+			sv2v_cast_4CD2E(4), sv2v_cast_4CD2E(5): fpnew_pkg_get_opgroup = 2'd1;
+			sv2v_cast_4CD2E(6), sv2v_cast_4CD2E(7), sv2v_cast_4CD2E(8), sv2v_cast_4CD2E(9): fpnew_pkg_get_opgroup = 2'd2;
+			sv2v_cast_4CD2E(10), sv2v_cast_4CD2E(11), sv2v_cast_4CD2E(12), sv2v_cast_4CD2E(13), sv2v_cast_4CD2E(14): fpnew_pkg_get_opgroup = 2'd3;
 			default: fpnew_pkg_get_opgroup = 2'd2;
 		endcase
 	endfunction
@@ -21546,7 +21546,7 @@ module fpnew_top (
 	generate
 		for (_gv_fmt_12 = 0; _gv_fmt_12 < sv2v_cast_32_signed(NUM_FORMATS); _gv_fmt_12 = _gv_fmt_12 + 1) begin : gen_nanbox_check
 			localparam fmt = _gv_fmt_12;
-			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_9FB13(fmt));
+			localparam [31:0] FP_WIDTH = fpnew_pkg_fp_width(sv2v_cast_5D882(fmt));
 			if (Features[9] && (FP_WIDTH < WIDTH)) begin : check
 				genvar _gv_op_3;
 				for (_gv_op_3 = 0; _gv_op_3 < sv2v_cast_32_signed(NUM_OPERANDS); _gv_op_3 = _gv_op_3 + 1) begin : operands
@@ -21604,7 +21604,7 @@ module fpnew_top (
 						input_boxed[fmt * fpnew_pkg_num_operands(sv2v_cast_2(_gv_opgrp_1))+:fpnew_pkg_num_operands(sv2v_cast_2(_gv_opgrp_1))] = is_boxed[(fmt * NUM_OPERANDS) + (NUM_OPS - 1)-:NUM_OPS];
 				end
 			end
-			fpnew_opgroup_block_28857 #(
+			fpnew_opgroup_block_37AAD #(
 				.OpGroup(OpGroup),
 				.Width(WIDTH),
 				.EnableVectors(EnableVectors),
@@ -21647,7 +21647,7 @@ module fpnew_top (
 	localparam [31:0] sv2v_uu_i_arbiter_NumIn = NUM_OPGROUPS;
 	localparam [31:0] sv2v_uu_i_arbiter_IdxWidth = $unsigned(2);
 	localparam [sv2v_uu_i_arbiter_IdxWidth - 1:0] sv2v_uu_i_arbiter_ext_rr_i_0 = 1'sb0;
-	rr_arb_tree_D71DB_88D54 #(
+	rr_arb_tree_A5EF3_ED1F7 #(
 		.DataType_WIDTH(WIDTH),
 		.NumIn(NUM_OPGROUPS),
 		.AxiVldRdy(1'b1)
@@ -21727,35 +21727,35 @@ module FloatCoreWrapper (
 	assign status_o_4 = status_o_pkg[4];
 	localparam [31:0] fpnew_pkg_NUM_OPGROUPS = 4;
 	localparam [31:0] fpnew_pkg_NUM_FP_FORMATS = 5;
-	function automatic [159:0] sv2v_cast_A9CF0;
+	function automatic [159:0] sv2v_cast_C3475;
 		input reg [159:0] inp;
-		sv2v_cast_A9CF0 = inp;
+		sv2v_cast_C3475 = inp;
 	endfunction
-	function automatic [((32'd4 * 32'd5) * 32) - 1:0] sv2v_cast_9CB06;
+	function automatic [((32'd4 * 32'd5) * 32) - 1:0] sv2v_cast_52F10;
 		input reg [((32'd4 * 32'd5) * 32) - 1:0] inp;
-		sv2v_cast_9CB06 = inp;
+		sv2v_cast_52F10 = inp;
 	endfunction
-	function automatic [((32'd4 * 32'd5) * 2) - 1:0] sv2v_cast_2DA10;
+	function automatic [((32'd4 * 32'd5) * 2) - 1:0] sv2v_cast_18D94;
 		input reg [((32'd4 * 32'd5) * 2) - 1:0] inp;
-		sv2v_cast_2DA10 = inp;
+		sv2v_cast_18D94 = inp;
 	endfunction
-	localparam [(((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 32) + ((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 2)) + 1:0] impl = {sv2v_cast_9CB06({fpnew_pkg_NUM_OPGROUPS {sv2v_cast_A9CF0('d3)}}), sv2v_cast_2DA10({{fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}, {fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}}), 2'd3};
+	localparam [(((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 32) + ((fpnew_pkg_NUM_OPGROUPS * fpnew_pkg_NUM_FP_FORMATS) * 2)) + 1:0] impl = {sv2v_cast_52F10({fpnew_pkg_NUM_OPGROUPS {sv2v_cast_C3475('d3)}}), sv2v_cast_18D94({{fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}, {fpnew_pkg_NUM_FP_FORMATS {2'd1}}, {fpnew_pkg_NUM_FP_FORMATS {2'd2}}}), 2'd3};
 	localparam [31:0] fpnew_pkg_FP_FORMAT_BITS = 3;
 	localparam [31:0] fpnew_pkg_NUM_INT_FORMATS = 4;
 	localparam [31:0] fpnew_pkg_INT_FORMAT_BITS = 2;
 	localparam [42:0] fpnew_pkg_RV32F = 43'h00000010302;
 	localparam [31:0] fpnew_pkg_OP_BITS = 4;
-	function automatic [3:0] sv2v_cast_7BCAE;
+	function automatic [3:0] sv2v_cast_4CD2E;
 		input reg [3:0] inp;
-		sv2v_cast_7BCAE = inp;
+		sv2v_cast_4CD2E = inp;
 	endfunction
-	function automatic [2:0] sv2v_cast_9FB13;
+	function automatic [2:0] sv2v_cast_5D882;
 		input reg [2:0] inp;
-		sv2v_cast_9FB13 = inp;
+		sv2v_cast_5D882 = inp;
 	endfunction
-	function automatic [1:0] sv2v_cast_2D3A8;
+	function automatic [1:0] sv2v_cast_CDB06;
 		input reg [1:0] inp;
-		sv2v_cast_2D3A8 = inp;
+		sv2v_cast_CDB06 = inp;
 	endfunction
 	fpnew_top #(
 		.Features(fpnew_pkg_RV32F),
@@ -21766,11 +21766,11 @@ module FloatCoreWrapper (
 		.rst_ni(rst_ni),
 		.operands_i(operands_i),
 		.rnd_mode_i(rnd_mode_i),
-		.op_i(sv2v_cast_7BCAE(op_i)),
+		.op_i(sv2v_cast_4CD2E(op_i)),
 		.op_mod_i(op_mod_i),
-		.src_fmt_i(sv2v_cast_9FB13('d0)),
-		.dst_fmt_i(sv2v_cast_9FB13('d0)),
-		.int_fmt_i(sv2v_cast_2D3A8(2)),
+		.src_fmt_i(sv2v_cast_5D882('d0)),
+		.dst_fmt_i(sv2v_cast_5D882('d0)),
+		.int_fmt_i(sv2v_cast_CDB06(2)),
 		.vectorial_op_i(1'b0),
 		.tag_i(1'b0),
 		.simd_mask_i(1'b0),

@@ -1,5 +1,6 @@
 export DESIGN_NAME = CoreMiniAxi
 export PLATFORM    = asap7
+export DESIGN_NICKNAME = coralnpu
 export DESIGN_RESULTS_NAME = coralnpu
 
 -include $(BENCH_DESIGN_HOME)/src/coralnpu/verilog.mk

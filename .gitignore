@@ -20,3 +20,4 @@ sv2v
 **/_installed/
 **/_tarballs/
 **/*.log
+**/packages/

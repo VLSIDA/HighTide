@@ -13,7 +13,7 @@ cd "$DIR"
 cd ..
 
 PYTHON_VERSION="3.10.9"
-INSTALL_DIR="$(pwd)/python-${PYTHON_VERSION}"
+INSTALL_DIR="$(pwd)/packages/python-${PYTHON_VERSION}"
 PYTHON_BIN="${INSTALL_DIR}/bin/python3"
 
 SOURCE_URL="https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"
@@ -83,8 +83,10 @@ echo ""
 echo "Building Python ${PYTHON_VERSION}..."
 echo ""
 
+unset MAKEFLAGS MFLAGS MAKELEVEL
+
 JOBS="$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 2)"
-make -j"${JOBS}" --quiet
+make -j"${JOBS}" LDFLAGS="-lgcov" --quiet
 
 echo ""
 echo "Installing to ${INSTALL_DIR}..."
@@ -100,12 +102,6 @@ else
   echo "Version mismatch — expected ${PYTHON_VERSION}, got ${INSTALLED_VERSION}"
   exit 1
 fi
-
-# Upgrade pip?
-# echo ""
-# echo "Upgrading pip..."
-# "${INSTALL_DIR}/bin/pip3" install --quiet --upgrade pip
-# echo "pip upgraded to $("${INSTALL_DIR}/bin/pip3" --version | awk '{print $2}')"
 
 # Remove build directory
 echo ""

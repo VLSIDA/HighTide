@@ -2,7 +2,7 @@ current_design CoreMiniAxi
 
 set clk_name  io_aclk
 set clk_port_name io_aclk
-set clk_period 3000
+set clk_period 2500
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_name]

@@ -5,6 +5,8 @@ set -euo pipefail
 DIR="$(dirname $(readlink -f $0))"
 cd "$DIR"
 
+mkdir -p packages
+
 # Prerequisite Setup
 bash "$(pwd)/install/install_bazel_7_4_1.sh"
 bash "$(pwd)/install/install_py_3_10_9.sh"
@@ -25,7 +27,7 @@ if [ "$HOME" = "/" ]; then
 fi
 
 
-"./../bazel" \
+"./../packages/bazel" \
   --output_base=/tmp/bazel_root \
   --install_base=/tmp/bazel_install \
   build \
@@ -35,7 +37,7 @@ fi
 cd ..
 
 # Generate Verilog from generated SV
-"$(pwd)/sv2v" -D SYNTHESIS -D layers_CoreMiniAxi_Verification_Assert -D VERILATOR "$(pwd)/repo/bazel-bin/hdl/chisel/src/coralnpu/CoreMiniAxi.sv" > "$(pwd)/../CoreMiniAxi.v"
+"$(pwd)/packages/sv2v" -D SYNTHESIS -D layers_CoreMiniAxi_Verification_Assert -D VERILATOR "$(pwd)/repo/bazel-bin/hdl/chisel/src/coralnpu/CoreMiniAxi.sv" > "$(pwd)/../CoreMiniAxi.v"
 
 
 # Remove debug/slog logic and any conditions that they belong in (not necessary for non-validation silicon)

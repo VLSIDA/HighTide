@@ -1,11 +1,12 @@
 #!/bin/bash
 cd OpenROAD-flow-scripts
-tag=$(git describe --tags --abbrev=9 2>/dev/null)
-if [ -z "$tag" ]; then
-  echo "Warning: Commit is not on an exact tag."
-  tag="v3.0-4393-g23879130f" # fallback tag or handle error
+ORFS_TAG="26Q1-510-g44e0991fc"
+LOCAL_TAG=$(git describe --tags --abbrev=9 2>/dev/null)
+if [[ "$LOCAL_TAG" != "$ORFS_TAG" ]]; then
+  echo "Warning: Commit is not on correct tag. Local tag is $LOCAL_TAG"
+  LOCAL_TAG=$ORFS_TAG # fallback tag or handle error
 fi
-echo "Running OpenROAD flow with tag: ${tag}"
+echo "Running OpenROAD flow with tag: ${LOCAL_TAG}"
 docker run --rm -it \
   -u $(id -u ${USER}):$(id -g ${USER}) --cpus=25 \
   -v $(pwd)/flow:/OpenROAD-flow-scripts/flow \
@@ -16,5 +17,4 @@ docker run --rm -it \
   -v ${HOME}/.Xauthority:/.Xauthority \
   --network host \
   --security-opt seccomp=unconfined \
-  openroad/orfs:${tag} \
-  bash -lc 'source /OpenROAD-flow-scripts/env.sh; exec bash' # Source env.sh
+  openroad/orfs:${LOCAL_TAG}

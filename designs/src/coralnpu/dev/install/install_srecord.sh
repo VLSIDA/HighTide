@@ -14,7 +14,7 @@ cd ..
 
 SRECORD_VERSION="1.65"
 SRECORD_NAME="1.65.0-Linux"
-INSTALL_DIR="$(pwd)/srecord"
+INSTALL_DIR="$(pwd)/packages/srecord"
 BUILD_DIR="$(pwd)/srecord-build"
 
 SOURCE_URL="https://sourceforge.net/projects/srecord/files/srecord/${SRECORD_VERSION}/srecord-${SRECORD_NAME}.tar.gz/download"

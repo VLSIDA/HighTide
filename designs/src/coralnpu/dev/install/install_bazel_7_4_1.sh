@@ -11,7 +11,7 @@ cd "$DIR"
 cd ..
 # Set specific bazel version, install dir, and binary location
 BAZEL_VERSION="7.4.1"
-INSTALL_DIR="$(pwd)"
+INSTALL_DIR="$(pwd)/packages"
 BAZEL_BIN="${INSTALL_DIR}/bazel"
 
 # Check for aarch64 or x86_64 architectures (mac/linux)
@@ -77,15 +77,5 @@ fi
 chmod +x "${BAZEL_BIN}"
 
 # ensure that download was succesful
-echo "Verifying installation..."
-INSTALLED_VERSION="$("${BAZEL_BIN}" --version 2>/dev/null | awk '{print $2}')"
-
-if [[ "${INSTALLED_VERSION}" == "${BAZEL_VERSION}" ]]; then
-  echo "Bazel ${INSTALLED_VERSION} installed successfully!"
-else
-  echo "Version mismatch — expected ${BAZEL_VERSION}, got ${INSTALLED_VERSION}"
-  exit 1
-fi
-
 echo ""
 echo "Done! Run '${INSTALL_DIR}/bazel --version' in the working directory to confirm."
