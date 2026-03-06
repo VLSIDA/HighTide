@@ -1,0 +1,240 @@
+library(fakeram_128x8_1rw) {
+    technology (cmos);
+    delay_model : table_lookup;
+    revision : 1.0;
+    date : "2025-01-01 00:00:00Z";
+    comment : "SRAM";
+    time_unit : "1ns";
+    voltage_unit : "1V";
+    current_unit : "1uA";
+    leakage_power_unit : "1uW";
+    nom_process : 1;
+    nom_temperature : 25.000;
+    nom_voltage : 0.7;
+    capacitive_load_unit (1,pf);
+    pulling_resistance_unit : "1kohm";
+    operating_conditions(tt_0.7_25.0) {
+        process : 1;
+        temperature : 25.000;
+        voltage : 0.7;
+        tree_type : balanced_tree;
+    }
+    default_cell_leakage_power : 0;
+    default_fanout_load : 1;
+    default_inout_pin_cap : 0.0;
+    default_input_pin_cap : 0.0;
+    default_output_pin_cap : 0.0;
+    default_max_transition : 0.227;
+    default_operating_conditions : tt_0.7_25.0;
+    default_leakage_power_density : 0.0;
+    slew_derate_from_library : 1.000;
+    slew_lower_threshold_pct_fall : 20.000;
+    slew_upper_threshold_pct_fall : 80.000;
+    slew_lower_threshold_pct_rise : 20.000;
+    slew_upper_threshold_pct_rise : 80.000;
+    input_threshold_pct_fall : 50.000;
+    input_threshold_pct_rise : 50.000;
+    output_threshold_pct_fall : 50.000;
+    output_threshold_pct_rise : 50.000;
+    lu_table_template(fakeram_128x8_1rw_delay) {
+        variable_1 : input_net_transition;
+        variable_2 : total_output_net_capacitance;
+            index_1 ("1000, 1001");
+            index_2 ("1000, 1001");
+    }
+    lu_table_template(fakeram_128x8_1rw_slew) {
+        variable_1 : total_output_net_capacitance;
+            index_1 ("1000, 1001");
+    }
+    lu_table_template(fakeram_128x8_1rw_constraint) {
+        variable_1 : related_pin_transition;
+        variable_2 : constrained_pin_transition;
+            index_1 ("1000, 1001");
+            index_2 ("1000, 1001");
+    }
+    library_features(report_delay_calculation);
+    type (fakeram_128x8_1rw_DATA) {
+        base_type : array; data_type : bit;
+        bit_width : 8; bit_from : 7; bit_to : 0; downto : true;
+    }
+    type (fakeram_128x8_1rw_ADDR) {
+        base_type : array; data_type : bit;
+        bit_width : 7; bit_from : 6; bit_to : 0; downto : true;
+    }
+    cell(fakeram_128x8_1rw) {
+        area : 518.756;
+        interface_timing : true;
+        dont_use : true;
+        dont_touch : true;
+        pin(clk) { direction : input; capacitance : 0.0214; clock : true; }
+        pin(ce_in) {
+            direction : input;
+            capacitance : 0.0035;
+            timing() {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+            }
+            timing() {
+                related_pin : "clk";
+                timing_type : hold_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+            }
+        }
+        pin(we_in) {
+            direction : input;
+            capacitance : 0.0035;
+            timing() {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+            }
+            timing() {
+                related_pin : "clk";
+                timing_type : hold_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+            }
+        }
+        bus(addr_in) {
+            bus_type : fakeram_128x8_1rw_ADDR;
+            direction : input;
+            capacitance : 0.0035;
+            timing() {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+            }
+            timing() {
+                related_pin : "clk";
+                timing_type : hold_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+            }
+        }
+        bus(wd_in) {
+            bus_type : fakeram_128x8_1rw_DATA;
+            direction : input;
+            capacitance : 0.0035;
+            memory_write() { address : addr_in; clocked_on : "clk"; }
+            timing() {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+            }
+            timing() {
+                related_pin : "clk";
+                timing_type : hold_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+            }
+        }
+        bus(w_mask_in) {
+            bus_type : fakeram_128x8_1rw_DATA;
+            direction : input;
+            capacitance : 0.0035;
+            timing() {
+                related_pin : "clk";
+                timing_type : setup_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.050, 0.050", "0.050, 0.050");
+                }
+            }
+            timing() {
+                related_pin : "clk";
+                timing_type : hold_rising;
+                rise_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+                fall_constraint(fakeram_128x8_1rw_constraint) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.010, 0.100");
+                    values("0.005, 0.005", "0.005, 0.005");
+                }
+            }
+        }
+        bus(rd_out) {
+            bus_type : fakeram_128x8_1rw_DATA;
+            direction : output;
+            max_capacitance : 0.500;
+            memory_read() { address : addr_in; }
+            timing() {
+                related_pin : "clk";
+                timing_type : rising_edge;
+                timing_sense : non_unate;
+                cell_rise(fakeram_128x8_1rw_delay) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.0005, 0.500");
+                    values("0.200, 0.800", "0.250, 0.850");
+                }
+                cell_fall(fakeram_128x8_1rw_delay) {
+                    index_1 ("0.010, 0.100"); index_2 ("0.0005, 0.500");
+                    values("0.200, 0.800", "0.250, 0.850");
+                }
+                rise_transition(fakeram_128x8_1rw_slew) {
+                    index_1 ("0.0005, 0.500"); values("0.015, 0.300");
+                }
+                fall_transition(fakeram_128x8_1rw_slew) {
+                    index_1 ("0.0005, 0.500"); values("0.015, 0.300");
+                }
+            }
+        }
+    }
+}

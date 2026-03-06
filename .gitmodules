@@ -19,3 +19,6 @@
 [submodule "designs/src/gemmini/dev/repo"]
 	path = designs/src/gemmini/dev/repo
 	url = https://github.com/ucb-bar/gemmini.git
+[submodule "designs/src/bp_processor/dev/repo"]
+	path = designs/src/bp_processor/dev/repo
+	url = https://github.com/black-parrot/black-parrot.git
