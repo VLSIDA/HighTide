@@ -25,3 +25,12 @@
 [submodule "designs/src/sha3/dev/repo"]
 	path = designs/src/sha3/dev/repo
 	url = https://github.com/ucb-bar/sha3
+[submodule "designs/src/floonoc/dev/repo"]
+	path = designs/src/floonoc/dev/repo
+	url = https://github.com/pulp-platform/FlooNoC.git
+[submodule "designs/src/snitch_cluster/dev/repo"]
+	path = designs/src/snitch_cluster/dev/repo
+	url = https://github.com/pulp-platform/snitch_cluster.git
+[submodule "tools/bsg_fakeram"]
+	path = tools/bsg_fakeram
+	url = https://github.com/VLSIDA/bsg_fakeram.git
