@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Build script for FlooNoC (PULP Platform Network-on-Chip).
-# Uses FlooGen to generate a 6x8 narrow-wide mesh topology (48 cluster endpoints),
+# Uses FlooGen to generate a narrow-wide mesh topology from mesh_config.yml,
 # Bender for dependency management, and outputs SystemVerilog file lists for
 # yosys-slang (no sv2v conversion needed).
-# Top module: floo_floonoc_mesh_noc (generated 6x8 NW mesh with 48 routers + chimneys).
+# Top module: floo_floonoc_mesh_noc
 
 set -euo pipefail
 
@@ -70,7 +70,7 @@ if ! command -v floogen >/dev/null 2>&1; then
     pip install --quiet "$REPO"
 fi
 
-echo "Generating 6x8 narrow-wide mesh topology with floogen..."
+echo "Generating narrow-wide mesh topology with floogen..."
 mkdir -p generated
 floogen rtl -c "$DIR/mesh_config.yml" -o generated/ --no-format 2>&1 | tee generated/floogen.log
 
