@@ -19,3 +19,6 @@
 [submodule "designs/src/gemmini/dev/repo"]
 	path = designs/src/gemmini/dev/repo
 	url = https://github.com/ucb-bar/gemmini.git
+[submodule "designs/src/floonoc/dev/repo"]
+	path = designs/src/floonoc/dev/repo
+	url = https://github.com/pulp-platform/FlooNoC.git
