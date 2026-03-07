@@ -1,8 +1,8 @@
-# 48-node narrow-wide mesh for FlooNoC benchmark
-# Based on Occamy's mesh topology: 48 Snitch-style cluster endpoints
+# 16-node narrow-wide mesh for FlooNoC benchmark
+# 4x4 mesh with 16 cluster endpoints + 4 HBM
 # connected via narrow (64-bit) + wide (512-bit) AXI channels
 name: floonoc_mesh
-description: "6x8 narrow-wide mesh with 48 cluster endpoints"
+description: "4x4 narrow-wide mesh with 16 cluster endpoints"
 network_type: "narrow-wide"
 
 routing:
@@ -41,7 +41,7 @@ protocols:
 
 endpoints:
   - name: "cluster"
-    array: [6, 8]
+    array: [4, 4]
     addr_range:
       base: 0x0000_1000_0000
       size: 0x0000_0004_0000
@@ -52,7 +52,7 @@ endpoints:
       - "narrow_out"
       - "wide_out"
   - name: "hbm"
-    array: [8]
+    array: [4]
     addr_range:
       base: 0x0000_8000_0000
       size: 0x0000_4000_0000
@@ -62,24 +62,24 @@ endpoints:
 
 routers:
   - name: "router"
-    array: [6, 8]
+    array: [4, 4]
     degree: 5
 
 connections:
   - src: "cluster"
     dst: "router"
     src_range:
-    - [0, 5]
-    - [0, 7]
+    - [0, 3]
+    - [0, 3]
     dst_range:
-    - [0, 5]
-    - [0, 7]
+    - [0, 3]
+    - [0, 3]
     dst_dir: "Eject"
   - src: "hbm"
     dst: "router"
     src_range:
-    - [0, 7]
+    - [0, 3]
     dst_range:
     - [0, 0]
-    - [0, 7]
+    - [0, 3]
     dst_dir: "West"
