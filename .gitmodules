@@ -29,3 +29,6 @@
 [submodule "designs/src/sha3/dev/repo"]
 	path = designs/src/sha3/dev/repo
 	url = https://github.com/ucb-bar/sha3
+[submodule "FakeRAM"]
+	path = FakeRAM
+	url = https://github.com/VLSIDA/bsg_fakeram.git
