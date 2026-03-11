@@ -9,8 +9,7 @@ export SYNTH_HIERARCHICAL = 1
 
 export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/coralnpu/constraint.sdc
 
-export CORE_AREA = 3 3 460 320
-export DIE_AREA  = 0 0 463 323
+export CORE_UTILIZATION = 57
 
 export PLACE_DENSITY_LB_ADDON = 0.25
 

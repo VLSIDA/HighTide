@@ -5,7 +5,7 @@ export DESIGN_RESULTS_NAME = NVDLA_partition_c
 
 -include $(BENCH_DESIGN_HOME)/src/NVDLA/verilog.mk
 
-export SYNTH_HIERARCHICAL = 0
+export SYNTH_HIERARCHICAL = 1
 
 export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/NVDLA/partition_c/constraint.sdc
 
@@ -23,8 +23,8 @@ export ADDITIONAL_LIBS = $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/sra
 
 export CORE_UTILIZATION = 40
 
-export PLACE_DENSITY_LB_ADDON = 0.33
+export PLACE_DENSITY_LB_ADDON = 0.15
 
-export MACRO_PLACE_HALO    = 6 6
+export MACRO_PLACE_HALO    = 4 4
 
 export TNS_END_PERCENT     = 100

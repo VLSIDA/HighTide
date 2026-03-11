@@ -11,7 +11,7 @@ export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/NVDLA/partition_m/constr
 
 export CORE_UTILIZATION = 55
 
-export PLACE_DENSITY_LB_ADDON = 0.25
+export PLACE_DENSITY_LB_ADDON = 0.2
 
 export MACRO_PLACE_HALO    = 5 5
 

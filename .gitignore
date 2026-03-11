@@ -11,7 +11,7 @@ sv2v
 **/dev/liteeth_builds
 **/srecord/
 **/bazel
-**/sv2v
+**/sv2v*/
 **/python-*/
 **/systemc-*/
 **/perl-*/
@@ -21,3 +21,4 @@ sv2v
 **/_tarballs/
 **/*.log
 **/packages/
+**/generated/

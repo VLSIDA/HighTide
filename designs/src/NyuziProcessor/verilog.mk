@@ -18,15 +18,13 @@ export ADDITIONAL_LIBS = $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/li
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_7x256_1r1w.lib \
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_16x52_1r1w.lib \
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_20x64_1r1w.lib \
-						            $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_18x256_1r1w.lib \
+						             $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_18x256_1r1w.lib \
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_20x64_2r1w.lib \
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_32x128_2r1w.lib \
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_512x256_1r1w.lib \
                          $(BENCH_DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/sram/lib/fakeram_512x2048_1r1w.lib 
 						 
-ifneq ($(wildcard $(DEV_FLAG)),)
-export DEV_SRC = $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/dev/nyuziTop.v \
-				 $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/dev/repo
+ifeq ($(DO_UPDATE),1)
 REPO_SRC_DIR    = $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/dev/repo/hardware/core
 ALL_REPO_FILES  = $(wildcard $(REPO_SRC_DIR)/*.sv) \
 				  $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/dev/nyuziTop.sv

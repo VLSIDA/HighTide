@@ -20736,7 +20736,7 @@ module fpnew_opgroup_multifmt_slice_23084 (
 				end
 			end
 			else if ((DivSqrtSel == 2'd2) && (FpFmtConfig[3] == 1'b1)) begin : genblk1
-				initial $display("Warning [elaboration] /OpenROAD-flow-scripts/UCSC_ML_suite/designs/src/coralnpu/dev/repo/bazel-bin/hdl/chisel/src/coralnpu/CoreMiniAxi.sv:31271:7 - fpnew_opgroup_multifmt_slice.genblk1.genblk1\n msg: ", "The DivSqrt unit of C910 (instantiated by DivSqrtSel = THMULTI) does not support FP8. Please use the PULP DivSqrt unit when in need of div/sqrt operations on FP8.");
+				initial $display("Warning [elaboration] /OpenROAD-flow-scripts/HighTide/designs/src/coralnpu/dev/repo/bazel-bin/hdl/chisel/src/coralnpu/CoreMiniAxi.sv:31271:7 - fpnew_opgroup_multifmt_slice.genblk1.genblk1\n msg: ", "The DivSqrt unit of C910 (instantiated by DivSqrtSel = THMULTI) does not support FP8. Please use the PULP DivSqrt unit when in need of div/sqrt operations on FP8.");
 			end
 		end
 	endgenerate

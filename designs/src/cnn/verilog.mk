@@ -8,9 +8,8 @@ CNN_RELEASE_RTL := $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/cnn.v
 CNN_RELEASE_FAKE_RTL = $(sort $(wildcard $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/fakeram_*.v))
 
 # Allow clean_design to prune dev-generated artifacts when desired.
-export DEV_SRC := $(CNN_BUILD_DIR)
 
-ifneq ($(wildcard $(DEV_FLAG)),)
+ifeq ($(DO_UPDATE),1)
 $(CNN_DEV_RTL): $(CNN_GEN_SCRIPT)
 	@echo "Generating CNN RTL via $(CNN_GEN_SCRIPT)"
 	@cd $(CNN_DEV_DIR) && ./generate_cnn_verilog.sh

@@ -1,5 +1,5 @@
 export VERILOG_FILES = $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/$(DESIGN_NAME).v
-ifneq ($(wildcard $(DEV_FLAG)),)
+ifeq ($(DO_UPDATE),1)
 REPO_FILES = $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/dev/repo/rtl/$(DESIGN_NAME).v
 
 $(VERILOG_FILES): $(REPO_FILES)

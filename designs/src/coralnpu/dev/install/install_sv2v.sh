@@ -109,7 +109,7 @@ if [ ! -f "${INSTALL_PATH}/sv2v" ]; then
             "https://github.com/zachjs/sv2v/releases/download/v0.0.13/sv2v-Linux.zip"
         unzip -o "$SV2V_ZIP" -d sv2v_extract
         cp sv2v_extract/sv2v-Linux/sv2v "${INSTALL_PATH}/sv2v"
-        chmod +x ./sv2v
+        chmod +x "${INSTALL_PATH}/sv2v"
         rm -rf "$SV2V_ZIP" sv2v_extract
         echo "sv2v binary downloaded successfully!"
 else
