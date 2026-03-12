@@ -32,3 +32,6 @@
 [submodule "FakeRAM"]
 	path = FakeRAM
 	url = https://github.com/VLSIDA/bsg_fakeram.git
+[submodule "designs/src/vortex/dev/repo"]
+	path = designs/src/vortex/dev/repo
+	url = https://github.com/vortexgpgpu/vortex.git
