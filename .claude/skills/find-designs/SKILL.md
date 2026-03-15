@@ -10,9 +10,10 @@ Search for interesting open-source hardware designs that would be good additions
 
 ## Selection Criteria
 
-A good candidate design must be:
-- **Open-source** — Publicly available on GitHub with a permissive or copyleft license
+A good candidate design must meet ALL of these:
+- **Open-source license** — Publicly available on GitHub with a permissive or copyleft license (MIT, Apache 2.0, BSD, GPL, LGPL, etc.)
 - **Synthesizable RTL** — Verilog, SystemVerilog, Chisel, LiteX/Migen, Veriloggen, SpinalHDL, Amaranth, or another HDL convertible to plain Verilog
+- **Verification framework** — Must have a testbench or verification environment (e.g., cocotb, UVM, verilator sim, formal proofs, or at least a basic testbench) so that we can verify post-synthesis functionality
 
 And should meet at least one of these motivations:
 1. **Active development** — The project is actively maintained with recent commits, indicating a living design that the suite should track
@@ -59,6 +60,7 @@ gh issue list --state open --limit 50
    - Top-level module ports (clock, reset, data buses) — is it self-contained enough to run through ORFS?
    - Memory usage — does it have large SRAMs that would need FakeRAM?
    - Approximate size/complexity
+   - Verification: what test/verification framework is available (cocotb, UVM, verilator, formal, basic testbench, etc.)
 
 3. **Check for duplicates** against both the existing designs in the repo AND open GitHub issues.
 
@@ -85,6 +87,9 @@ gh issue create --title "Add <design-name>" --label "enhancement" --body "$(cat 
 - **Gate count:** <rough estimate if available: small/medium/large>
 - **Memories:** <does it use SRAMs/register files that need FakeRAM?>
 - **IO count:** <low/medium/high>
+
+### Verification
+<What verification framework is available — e.g., "cocotb testbench with CI", "verilator simulation with test suite", "UVM testbench", "basic iverilog testbench", "formal verification with SymbiYosys", etc.>
 
 ### Conversion notes
 <What's needed to get plain Verilog — e.g., "pure Verilog, no conversion needed", "SystemVerilog, needs sv2v or yosys-slang", "Chisel, needs JDK + sbt", etc.>
