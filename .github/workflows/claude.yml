@@ -1,0 +1,21 @@
+name: Claude Code
+
+on:
+  workflow_dispatch:
+  # Uncomment to respond to @claude mentions in issues/PRs:
+  # issue_comment:
+  #   types: [created]
+  # pull_request_review_comment:
+  #   types: [created]
+
+jobs:
+  claude:
+    if: false  # Disabled — remove this line to enable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

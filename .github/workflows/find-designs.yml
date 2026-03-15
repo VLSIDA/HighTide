@@ -1,0 +1,21 @@
+name: Find New Designs
+
+on:
+  workflow_dispatch:
+  # Uncomment to run weekly:
+  # schedule:
+  #   - cron: "0 9 * * 1"  # Every Monday at 9 AM
+
+jobs:
+  find-designs:
+    if: false  # Disabled — remove this line to enable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/find-designs"
+          claude_args: "--max-turns 10"
