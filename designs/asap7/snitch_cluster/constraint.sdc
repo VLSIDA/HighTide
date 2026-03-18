@@ -1,4 +1,4 @@
-current_design floonoc_mesh_top
+current_design snitch_cluster_wrapper
 
 set clk_name  clk
 set clk_port_name clk_i

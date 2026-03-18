@@ -252,3 +252,5 @@ repo/hw/floo_axi_router.sv
 repo/hw/floo_nw_router.sv
 generated/floo_floonoc_mesh_noc_pkg.sv
 generated/floo_floonoc_mesh_noc.sv
+generated/cluster_blackbox.sv
+generated/floonoc_mesh_top.sv
