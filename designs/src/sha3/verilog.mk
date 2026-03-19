@@ -3,11 +3,7 @@ SHA3_DEV_RTL := $(SHA3_DEV_DIR)/generated/$(DESIGN_NAME).v
 
 SHA3_RELEASE_RTL := $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/$(DESIGN_NAME).v
 
-ifneq ($(wildcard $(DEV_FLAG)),)
-$(SHA3_DEV_RTL): $(SHA3_DEV_DIR)/setup.sh
-	@echo "Generating SHA3 RTL via setup.sh"
-	@cd $(SHA3_DEV_DIR) && bash setup.sh
-
+ifeq ($(DO_UPDATE),1)
 export VERILOG_FILES = $(SHA3_DEV_RTL)
 else
 # Prefer checked-in RTL; fall back to dev output if it has not been promoted yet.

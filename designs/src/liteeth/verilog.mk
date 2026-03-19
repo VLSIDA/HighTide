@@ -27,7 +27,7 @@ endif
 VERILOG_FILES += $(TARGET_FILE) $(LITEETH_DIR)/macros.v
 
 ifeq ($(MAKELEVEL),1)
-ifneq ($(wildcard $(DEV_FLAG)),)
+ifeq ($(DO_UPDATE),1)
 ifeq ($(DESIGN_NAME),liteeth_mac_axi_mii)
     YAML_FILE = axi-lite-mii.yml
     PATCH_FILE = mac_axi_mii.patch

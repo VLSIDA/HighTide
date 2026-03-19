@@ -7,15 +7,19 @@
 [submodule "designs/src/minimax/dev/repo"]
 	path = designs/src/minimax/dev/repo
 	url = https://github.com/gsmecher/minimax.git
-[submodule "designs/src/NyuziProcessor/dev/repo"]
-	path = designs/src/NyuziProcessor/dev/repo
-	url = https://github.com/jbush001/NyuziProcessor.git
 [submodule "designs/src/liteeth/dev/liteeth"]
 	path = designs/src/liteeth/dev/repo
 	url = https://github.com/enjoy-digital/liteeth.git
 [submodule "designs/src/cnn/dev/repo"]
 	path = designs/src/cnn/dev/repo
 	url = https://github.com/NNgen/nngen
+[submodule "designs/src/NVDLA/dev/repo"]
+	path = designs/src/NVDLA/dev/repo
+	url = https://github.com/nvdla/hw.git
+	branch = nv_small
+[submodule "designs/src/coralnpu/dev/repo"]
+	path = designs/src/coralnpu/dev/repo
+	url = https://github.com/google-coral/coralnpu.git
 [submodule "designs/src/gemmini/dev/repo"]
 	path = designs/src/gemmini/dev/repo
 	url = https://github.com/ucb-bar/gemmini.git
@@ -25,3 +29,9 @@
 [submodule "designs/src/sha3/dev/repo"]
 	path = designs/src/sha3/dev/repo
 	url = https://github.com/ucb-bar/sha3
+[submodule "FakeRAM"]
+	path = FakeRAM
+	url = https://github.com/VLSIDA/bsg_fakeram.git
+[submodule "designs/src/vortex/dev/repo"]
+	path = designs/src/vortex/dev/repo
+	url = https://github.com/vortexgpgpu/vortex.git
