@@ -1,6 +1,6 @@
 #!/bin/bash
 cd OpenROAD-flow-scripts
-ORFS_TAG="26Q1-510-g44e0991fc"
+ORFS_TAG="26Q1-380-g9a13bc567"
 LOCAL_TAG=$(git describe --tags --abbrev=9 2>/dev/null)
 if [[ "$LOCAL_TAG" != "$ORFS_TAG" ]]; then
   echo "Warning: Commit is not on correct tag. Local tag is $LOCAL_TAG"

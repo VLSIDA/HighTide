@@ -9,10 +9,9 @@ export SYNTH_HIERARCHICAL = 1
 
 export SDC_FILE      = $(BENCH_DESIGN_HOME)/$(PLATFORM)/coralnpu/constraint.sdc
 
-export CORE_UTILIZATION = 57
+export CORE_UTILIZATION = 50
+export PLACE_DENSITY_LB_ADDON = 0.20
 
-export PLACE_DENSITY_LB_ADDON = 0.25
-
-export MACRO_PLACE_HALO    = 5 5
+export MACRO_PLACE_HALO    = 6 6
 
 export TNS_END_PERCENT     = 100

@@ -14,12 +14,12 @@ set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_name]
 
-create_clock -name $clk_name -period 3300  -waveform {0 1650}  $clk_port
+create_clock -name $clk_name -period 1500  -waveform {0 750}  $clk_port
 
 set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 
-set_input_delay [expr 3300 * $clk_io_pct] -clock $clk_name $non_clock_inputs
-set_output_delay [expr 3300 * $clk_io_pct] -clock $clk_name [all_outputs]
+set_input_delay [expr 1500 * $clk_io_pct] -clock $clk_name $non_clock_inputs
+set_output_delay [expr 1500 * $clk_io_pct] -clock $clk_name [all_outputs]
 
 set_clock_transition  -rise -min 0.1 [get_clocks {nvdla_core_clk}]
 set_clock_transition  -rise -max 0.1 [get_clocks {nvdla_core_clk}]

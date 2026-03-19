@@ -103,7 +103,7 @@ module VX_sp_ram #(
 `ifdef SYNTHESIS
     localparam FORCE_BRAM = !LUTRAM && `FORCE_BRAM(SIZE, DATAW);
     if (DATAW == 32 && SIZE == 1024) begin : g_fakeram
-        fakeram_32x1024_1rw fakeram_inst (
+        fakeram_32x1024_1rw fakeram_32x1024 (
             .rw0_clk     (clk),
             .rw0_ce_in   (read || write),
             .rw0_we_in   (write),
@@ -113,7 +113,17 @@ module VX_sp_ram #(
             .rw0_rd_out  (rdata)
         );
     end else if (DATAW == 512 && SIZE == 64) begin : g_fakeram
-        fakeram_512x64_1rw fakeram_inst (
+        fakeram_512x64_1rw fakeram_512x64 (
+            .rw0_clk     (clk),
+            .rw0_ce_in   (read || write),
+            .rw0_we_in   (write),
+            .rw0_addr_in (addr),
+            .rw0_wd_in   (wdata),
+            .rw0_wmask_in(wren),
+            .rw0_rd_out  (rdata)
+        );
+    end else if (DATAW == 128 && SIZE == 256) begin : g_fakeram
+        fakeram_128x256_1rw fakeram_128x256 (
             .rw0_clk     (clk),
             .rw0_ce_in   (read || write),
             .rw0_we_in   (write),

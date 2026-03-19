@@ -11,8 +11,7 @@ export VERILOG_INCLUDE_DIRS = \
   $(HW)/interfaces \
   $(HW)/libs \
   $(HW)/mem
-
-export VERILOG_DEFINES = -DSYNTHESIS -DSV_DPI
+export VERILOG_DEFINES = -DSYNTHESIS -DSV_DPI -DMEM_BLOCK_SIZE=16 -DMAX_FANOUT=32 -DLATENCY_IMUL=5
 # Ordering: packages → interfaces → libs → design modules → top
 #
 # Excluded directories:
