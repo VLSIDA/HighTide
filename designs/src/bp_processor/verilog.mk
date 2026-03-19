@@ -9,7 +9,7 @@ BP_RELEASE_RTL := $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/$(DESIGN_NAME).v
 # Use 'rm -rf designs/src/bp_processor/dev/generated' to manually clean.
 export DEV_SRC :=
 
-ifneq ($(wildcard $(DEV_FLAG)),)
+ifeq ($(DO_UPDATE),1)
 $(BP_DEV_RTL): $(BP_DEV_DIR)/setup.sh
 	@echo "Generating Black-Parrot RTL via setup.sh"
 	@cd $(BP_DEV_DIR) && bash setup.sh
