@@ -86,7 +86,7 @@ By default, the suite will run using verilog that has already been generated fro
 - `make update_rtl` will perform Verilog RTL generation from a design's source (setting up any necessary prerequisite installation as well).
 - The development folder for each design can be found under `src/<DESIGN_NAME>/dev`
 
-This option can also be used by those in the open-source community interested in adding a design to the suite. More information about adding a design using `update_rtl`, can be found in the [`u` design document](docs/devdesign.md).
+This option can also be used by those in the open-source community interested in adding a design to the suite. More information about adding a design using `update_rtl`, can be found in the [design document](docs/updatedesign.md).
 
 
 
