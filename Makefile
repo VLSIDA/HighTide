@@ -1,6 +1,5 @@
 ###            Comprehensive Design List (nangate45, sky130hd, asap7)            ###
 #
-
 # DESIGN_CONFIG=./designs/nangate45/minimax/config.mk
 # DESIGN_CONFIG=./designs/nangate45/NyuziProcessor/config.mk
 # 
@@ -18,6 +17,8 @@
 # DESIGN_CONFIG=./designs/asap7/NyuziProcessor/config.mk
 
 DESIGN_CONFIG ?= ./designs/asap7/sha3/config.mk
+=======
+# DESIGN_CONFIG=./designs/asap7/bp_processor/bp_quad/config.mk
 
 -include OpenROAD-flow-scripts/flow/Makefile
 .PHONY: update_rtl
@@ -28,7 +29,6 @@ update_rtl:
 do-update:
 	git submodule init $(BENCH_DESIGN_HOME)/src/$(DEV_DESIGN_HOME)/repo
 	git submodule update $(BENCH_DESIGN_HOME)/src/$(DEV_DESIGN_HOME)/repo
-    # Check if a setup.sh script exists for the current design
 	@if [ -f "$(BENCH_DESIGN_HOME)/src/$(DEV_DESIGN_HOME)/setup.sh" ]; then \
 		bash $(BENCH_DESIGN_HOME)/src/$(DEV_DESIGN_HOME)/setup.sh; \
 	fi
