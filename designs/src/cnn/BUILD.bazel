@@ -29,7 +29,7 @@ genrule(
 alias(
     name = "rtl",
     actual = select({
-        "//:dev": ":rtl_dev_gen",
+        "//:update_rtl": ":rtl_dev_gen",
         "//conditions:default": ":rtl_release",
     }),
     visibility = ["//visibility:public"],

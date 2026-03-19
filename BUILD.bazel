@@ -1,10 +1,10 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
 
-# Config setting for dev RTL generation mode.
-# Usage: bazel build --define dev=true //designs/...
+# Config setting for RTL regeneration from source repos.
+# Usage: bazel build --define update_rtl=true //designs/...
 config_setting(
-    name = "dev",
-    define_values = {"dev": "true"},
+    name = "update_rtl",
+    define_values = {"update_rtl": "true"},
     visibility = ["//visibility:public"],
 )
 

@@ -40,7 +40,7 @@ bazel build //designs/asap7/...
 bazel build //designs/...
 
 # Build with dev RTL generation (requires submodule init + tools)
-bazel build --define dev=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build --define update_rtl=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
 
 # Build individual stages (target suffixes: _synth, _floorplan, _place, _cts, _route, _final)
 bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_synth
@@ -85,7 +85,7 @@ make DESIGN_CONFIG=... clean_all      # Full cleanup
 
 - **`MODULE.bazel`** — Declares dependencies on `bazel-orfs` (via `git_override`) and configures the ORFS Docker image for tool extraction
 - **`defs.bzl`** — `hightide_design()` macro wrapping `orfs_flow()` with common defaults (`GDS_ALLOW_EMPTY`, platform-to-PDK mapping)
-- **`BUILD.bazel`** (root) — Defines `//:dev` config setting and nangate45 `orfs_pdk` (not in ORFS's defaults)
+- **`BUILD.bazel`** (root) — Defines `//:update_rtl` config setting and nangate45 `orfs_pdk` (not in ORFS's defaults)
 - Each design has a `BUILD.bazel` calling `hightide_design()` with parameters mirroring its `config.mk`
 - RTL sources at `designs/src/<design>/BUILD.bazel` use `select()` to switch between release and dev RTL
 
@@ -112,9 +112,9 @@ Each design's `verilog.mk` selects between dev-generated RTL (when `.dev-run-*` 
 **Bazel flow:** Each `designs/src/<design>/BUILD.bazel` defines:
 - `rtl_release` filegroup — pre-generated Verilog files
 - `rtl_dev_gen` genrule — runs setup.sh/sv2v to generate from source
-- `rtl` alias — uses `select({"//:dev": ..., "//conditions:default": ...})` to pick
+- `rtl` alias — uses `select({"//:update_rtl": ..., "//conditions:default": ...})` to pick
 
-Dev mode requires: `git submodule update --init designs/src/<design>/dev/repo` before `bazel build --define dev=true`.
+Dev mode requires: `git submodule update --init designs/src/<design>/dev/repo` before `bazel build --define update_rtl=true`.
 
 ### Platforms
 

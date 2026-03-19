@@ -17,7 +17,7 @@ filegroup(
 alias(
     name = "rtl",
     actual = select({
-        "//:dev": ":rtl_dev",
+        "//:update_rtl": ":rtl_dev",
         "//conditions:default": ":rtl_release",
     }),
     visibility = ["//visibility:public"],

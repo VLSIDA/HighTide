@@ -65,7 +65,7 @@ git submodule update --init designs/src/<design>/dev/repo
 
 2. Build with dev mode enabled:
 ```bash
-bazel build --define dev=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build --define update_rtl=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
 ```
 
 Some designs require additional tools (sv2v, sbt, litex) on PATH for dev generation.
