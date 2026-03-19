@@ -15,7 +15,7 @@ export VERILOG_FILES = $(GEMMINI_DEV_RTL)
 else
 # Prefer checked-in RTL; fall back to dev output if it has not been promoted yet.
 ifeq ($(wildcard $(GEMMINI_RELEASE_RTL)),)
-$(warning $(GEMMINI_RELEASE_RTL) is missing; using dev RTL. Run 'make dev' to regenerate and promote.)
+$(warning $(GEMMINI_RELEASE_RTL) is missing; using dev RTL. Run 'make update-rtl' to regenerate and promote.)
 export VERILOG_FILES = $(GEMMINI_DEV_RTL)
 else
 export VERILOG_FILES = $(GEMMINI_RELEASE_RTL)

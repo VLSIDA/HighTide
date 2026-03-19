@@ -12,7 +12,7 @@ export VERILOG_FILES = $(SHA3_DEV_RTL)
 else
 # Prefer checked-in RTL; fall back to dev output if it has not been promoted yet.
 ifeq ($(wildcard $(SHA3_RELEASE_RTL)),)
-$(warning $(SHA3_RELEASE_RTL) is missing; using dev RTL. Run 'make dev' to regenerate and promote.)
+$(warning $(SHA3_RELEASE_RTL) is missing; using dev RTL. Run 'make update-rtl' to regenerate and promote.)
 export VERILOG_FILES = $(SHA3_DEV_RTL)
 else
 export VERILOG_FILES = $(SHA3_RELEASE_RTL)

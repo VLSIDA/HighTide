@@ -1,0 +1,37 @@
+# bp_processor has no pre-generated release RTL.
+# To create release RTL: run update-rtl flow, then copy output here.
+
+filegroup(
+    name = "rtl_release",
+    srcs = glob(["bp_processor.v"]),
+)
+
+# update-rtl mode: init submodule + generate Black Parrot RTL via sv2v.
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(
+        ["dev/**"],
+        exclude = ["dev/generated/**"],
+    ),
+    outs = ["bp_processor_gen.v"],
+    local = True,
+    cmd = """
+        bash $(location //:tools/update_rtl.sh) \
+            designs/src/bp_processor/dev/repo \
+            $(location dev/setup.sh) && \
+        cp $$(dirname $$(readlink -f $(location dev/setup.sh)))/generated/bp_processor.v $(OUTS)
+    """,
+    tools = [
+        "dev/setup.sh",
+        "//:tools/update_rtl.sh",
+    ],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:update_rtl": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)

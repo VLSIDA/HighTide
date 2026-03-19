@@ -1,0 +1,64 @@
+filegroup(
+    name = "rtl_release",
+    srcs = [
+        "cnn.v",
+        "fakeram_w16_l32768.v",
+        "fakeram_w16_l512.v",
+        "fakeram_w16_l8192.v",
+        "fakeram_w64_l256.v",
+    ],
+)
+
+# update-rtl mode: init submodule + generate CNN RTL via Python/nngen.
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(
+        ["dev/**"],
+        exclude = ["dev/cnn/**"],
+    ),
+    outs = [
+        "cnn_gen.v",
+        "fakeram_w16_l32768_gen.v",
+        "fakeram_w16_l512_gen.v",
+        "fakeram_w16_l8192_gen.v",
+        "fakeram_w64_l256_gen.v",
+    ],
+    local = True,
+    cmd = """
+        bash $(location //:tools/update_rtl.sh) \
+            designs/src/cnn/dev/repo \
+            $(location dev/generate_cnn_verilog.sh) && \
+        DEV_DIR=$$(dirname $$(readlink -f $(location dev/generate_cnn_verilog.sh))) && \
+        cp $$DEV_DIR/cnn/cnn.v $(location cnn_gen.v) && \
+        cp $$DEV_DIR/cnn/fakeram_w16_l32768.v $(location fakeram_w16_l32768_gen.v) && \
+        cp $$DEV_DIR/cnn/fakeram_w16_l512.v $(location fakeram_w16_l512_gen.v) && \
+        cp $$DEV_DIR/cnn/fakeram_w16_l8192.v $(location fakeram_w16_l8192_gen.v) && \
+        cp $$DEV_DIR/cnn/fakeram_w64_l256.v $(location fakeram_w64_l256_gen.v)
+    """,
+    tools = [
+        "dev/generate_cnn_verilog.sh",
+        "//:tools/update_rtl.sh",
+    ],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:update_rtl": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+# FakeRAM LEF/LIB files used by the cnn design (referenced from design BUILD files)
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["fakeram_*.lef"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["fakeram_*.lib"]),
+    visibility = ["//visibility:public"],
+)

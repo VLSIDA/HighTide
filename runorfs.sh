@@ -1,11 +1,16 @@
 #!/bin/bash
-cd OpenROAD-flow-scripts
-tag=$(git describe --tags --abbrev=8 2>/dev/null)
-if [ -z "$tag" ]; then
-  echo "Warning: Commit is not on an exact tag."
-  tag="v3.0-3201-gf53fbce7" # fallback tag or handle error
+
+# Extract Docker image from MODULE.bazel (single source of truth)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DOCKER_IMAGE=$(grep -oP 'image\s*=\s*"\K[^"]+' "$SCRIPT_DIR/MODULE.bazel")
+
+if [ -z "$DOCKER_IMAGE" ]; then
+  echo "ERROR: Could not extract Docker image from MODULE.bazel"
+  exit 1
 fi
-echo "Running OpenROAD flow with tag: ${tag}"
+
+echo "Running OpenROAD flow with image: ${DOCKER_IMAGE}"
+cd OpenROAD-flow-scripts
 docker run --rm -it \
   -u $(id -u ${USER}):$(id -g ${USER}) \
   -v $(pwd)/flow:/OpenROAD-flow-scripts/flow \
@@ -16,5 +21,5 @@ docker run --rm -it \
   -v ${HOME}/.Xauthority:/.Xauthority \
   --network host \
   --security-opt seccomp=unconfined \
-  openroad/orfs:${tag} \
+  ${DOCKER_IMAGE} \
   "$@"

@@ -16,16 +16,16 @@
 DESIGN_CONFIG ?= ./designs/nangate45/lfsr_prbs_gen/config.mk
 -include OpenROAD-flow-scripts/flow/Makefile
 # Designs with RAM macros use FakeRAM (LEF generated for pins, no internal logic)
-# Check if calling "dev" with an ORFS command or by itself.
+# Check if calling "update-rtl" with an ORFS command or by itself.
 DEV_RUN_TAG?=x
-.PHONY: dev
-ifeq ($(firstword $(MAKECMDGOALS)),dev)
+.PHONY: update-rtl
+ifeq ($(firstword $(MAKECMDGOALS)),update-rtl)
 DEV_RUN_TAG:=$(shell date +%s%N)$(shell bash -c "echo $$RANDOM")
-ifneq ($(lastword $(MAKECMDGOALS)),dev)
-dev: ;@:
+ifneq ($(lastword $(MAKECMDGOALS)),update-rtl)
+update-rtl: ;@:
 else
-$(info Starting dev run)
-dev: .dev-run-$(DESIGN_NAME)-$(DEV_RUN_TAG)
+$(info Starting update-rtl run)
+update-rtl: .dev-run-$(DESIGN_NAME)-$(DEV_RUN_TAG)
 endif
 endif
 export DEV_RUN_TAG

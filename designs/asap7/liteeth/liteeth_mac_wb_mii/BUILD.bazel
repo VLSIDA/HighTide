@@ -1,0 +1,18 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "liteeth_mac_wb_mii",
+    platform = "asap7",
+    verilog_files = ["//designs/src/liteeth:liteeth_mac_wb_mii_rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/asap7/liteeth:sram_lefs_mac"],
+        "ADDITIONAL_LIBS": ["//designs/asap7/liteeth:sram_libs_mac"],
+    },
+    arguments = {
+        "VERILOG_DEFINES": "-D USE_ASAP7_CELLS",
+        "CORE_UTILIZATION": "30",
+        "PLACE_DENSITY": "0.4",
+        "MACRO_PLACE_HALO": "5 5",
+    },
+)
