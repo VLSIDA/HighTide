@@ -3,15 +3,19 @@ filegroup(
     srcs = ["minimax.v"],
 )
 
-# Dev mode: convert SystemVerilog to Verilog via sv2v.
-# Requires: git submodule update --init designs/src/minimax/dev/repo
-#           sv2v must be on PATH
+# update-rtl mode: init submodule + convert SystemVerilog via sv2v.
 genrule(
     name = "rtl_dev_gen",
-    srcs = glob(["dev/repo/rtl/minimax.v"]),
-    outs = ["dev/minimax_gen.v"],
-    cmd = "$(location dev/sv2v) -w $@ $(SRCS)",
-    tools = ["dev/sv2v"],
+    srcs = [],
+    outs = ["minimax_gen.v"],
+    local = True,
+    cmd = """
+        WORKSPACE_ROOT=$$(readlink -f $(location //:tools/update_rtl.sh) | sed 's|/tools/update_rtl.sh||')
+        cd $$WORKSPACE_ROOT
+        git submodule update --init designs/src/minimax/dev/repo >&2
+        designs/src/minimax/dev/sv2v -w $$OLDPWD/$(OUTS) designs/src/minimax/dev/repo/rtl/minimax.v
+    """,
+    tools = ["//:tools/update_rtl.sh"],
 )
 
 alias(

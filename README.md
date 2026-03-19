@@ -54,21 +54,16 @@ bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_cts
 bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_route
 ```
 
-### Dev RTL Generation (Bazel)
+### RTL Regeneration (Bazel)
 
 By default, designs use pre-generated Verilog. To regenerate RTL from source repositories:
 
-1. Initialize the design's submodule:
-```bash
-git submodule update --init designs/src/<design>/dev/repo
-```
-
-2. Build with dev mode enabled:
 ```bash
 bazel build --define update_rtl=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
 ```
 
-Some designs require additional tools (sv2v, sbt, litex) on PATH for dev generation.
+This automatically initializes the git submodule and runs the design's generation script.
+Some designs require additional tools (sv2v, sbt, litex) on PATH.
 
 ## Make Flow (legacy)
 

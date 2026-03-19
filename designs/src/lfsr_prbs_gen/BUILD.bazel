@@ -7,17 +7,31 @@ filegroup(
     ],
 )
 
-# Dev mode: use RTL from the verilog-lfsr submodule.
-# Requires: git submodule update --init designs/src/lfsr_prbs_gen/dev/repo
-filegroup(
-    name = "rtl_dev",
-    srcs = glob(["dev/repo/rtl/*.v"]),
+# update-rtl mode: init submodule + copy RTL from verilog-lfsr repo.
+genrule(
+    name = "rtl_dev_gen",
+    srcs = [],
+    outs = [
+        "dev_lfsr.v",
+        "dev_lfsr_prbs_check.v",
+        "dev_lfsr_prbs_gen.v",
+    ],
+    local = True,
+    cmd = """
+        WORKSPACE_ROOT=$$(readlink -f $(location //:tools/update_rtl.sh) | sed 's|/tools/update_rtl.sh||')
+        cd $$WORKSPACE_ROOT
+        git submodule update --init designs/src/lfsr_prbs_gen/dev/repo >&2
+        cp designs/src/lfsr_prbs_gen/dev/repo/rtl/lfsr.v $(location dev_lfsr.v)
+        cp designs/src/lfsr_prbs_gen/dev/repo/rtl/lfsr_prbs_check.v $(location dev_lfsr_prbs_check.v)
+        cp designs/src/lfsr_prbs_gen/dev/repo/rtl/lfsr_prbs_gen.v $(location dev_lfsr_prbs_gen.v)
+    """,
+    tools = ["//:tools/update_rtl.sh"],
 )
 
 alias(
     name = "rtl",
     actual = select({
-        "//:update_rtl": ":rtl_dev",
+        "//:update_rtl": ":rtl_dev_gen",
         "//conditions:default": ":rtl_release",
     }),
     visibility = ["//visibility:public"],

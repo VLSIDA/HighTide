@@ -1,5 +1,7 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
 
+exports_files(["tools/update_rtl.sh"])
+
 # Config setting for RTL regeneration from source repos.
 # Usage: bazel build --define update_rtl=true //designs/...
 config_setting(

@@ -6,25 +6,25 @@ filegroup(
     ],
 )
 
-# Dev mode: convert SystemVerilog to Verilog via sv2v.
-# Requires: git submodule update --init designs/src/NyuziProcessor/dev/repo
-#           sv2v binary at dev/sv2v
+# update-rtl mode: init submodule + convert SystemVerilog via sv2v.
 genrule(
     name = "rtl_dev_gen",
-    srcs = glob(
-        ["dev/repo/hardware/core/*.sv"],
-        exclude = [
-            "dev/repo/hardware/core/sram_1r1w.sv",
-            "dev/repo/hardware/core/sram_2r1w.sv",
-        ],
-    ) + glob(["dev/repo/hardware/core/*.svh"]) + ["dev/nyuziTop.sv"],
-    outs = ["dev/NyuziProcessor_gen.v"],
+    srcs = ["dev/nyuziTop.sv"],
+    outs = ["NyuziProcessor_gen.v"],
+    local = True,
     cmd = """
-        $(location dev/sv2v) --top NyuziProcessor -w $@ \
-            -I $$(dirname $(location dev/repo/hardware/core/defines.svh)) \
-            $(SRCS)
+        WORKSPACE_ROOT=$$(readlink -f $(location //:tools/update_rtl.sh) | sed 's|/tools/update_rtl.sh||')
+        cd $$WORKSPACE_ROOT
+        git submodule update --init designs/src/NyuziProcessor/dev/repo >&2
+        SRC_DIR=designs/src/NyuziProcessor
+        CORE_DIR=$$SRC_DIR/dev/repo/hardware/core
+        SRCS=$$(ls $$CORE_DIR/*.sv | grep -v sram_1r1w.sv | grep -v sram_2r1w.sv)
+        $$SRC_DIR/dev/sv2v --top NyuziProcessor \
+            -w $$OLDPWD/$(OUTS) \
+            -I $$CORE_DIR \
+            $$SRCS $$SRC_DIR/dev/nyuziTop.sv
     """,
-    tools = ["dev/sv2v"],
+    tools = ["//:tools/update_rtl.sh"],
 )
 
 filegroup(

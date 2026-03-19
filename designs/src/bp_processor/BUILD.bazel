@@ -6,8 +6,7 @@ filegroup(
     srcs = glob(["bp_processor.v"]),
 )
 
-# Requires: git submodule update --init designs/src/bp_processor/dev/repo
-#           sv2v must be on PATH
+# update-rtl mode: init submodule + generate Black Parrot RTL via sv2v.
 genrule(
     name = "rtl_dev_gen",
     srcs = glob(
@@ -15,8 +14,17 @@ genrule(
         exclude = ["dev/generated/**"],
     ),
     outs = ["bp_processor_gen.v"],
-    cmd = "cd $$(dirname $(location dev/setup.sh)) && bash setup.sh && cp generated/bp_processor.v $(OUTS)",
-    tools = ["dev/setup.sh"],
+    local = True,
+    cmd = """
+        bash $(location //:tools/update_rtl.sh) \
+            designs/src/bp_processor/dev/repo \
+            $(location dev/setup.sh) && \
+        cp $$(dirname $$(readlink -f $(location dev/setup.sh)))/generated/bp_processor.v $(OUTS)
+    """,
+    tools = [
+        "dev/setup.sh",
+        "//:tools/update_rtl.sh",
+    ],
 )
 
 alias(
