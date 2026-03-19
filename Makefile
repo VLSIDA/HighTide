@@ -14,7 +14,6 @@
 # DESIGN_CONFIG=./designs/asap7/NVDLA/NVDLA_partition_p/config.mk
 # DESIGN_CONFIG=./designs/asap7/coralnpu/config.mk
 # DESIGN_CONFIG=./designs/asap7/minimax/config.mk
-# DESIGN_CONFIG=./designs/asap7/NyuziProcessor/config.mk
 # DESIGN_CONFIG=./designs/asap7/gemmini/config.mk
 # DESIGN_CONFIG=./designs/asap7/bp_processor/bp_quad/config.mk
 
