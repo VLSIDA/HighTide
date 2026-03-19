@@ -1,0 +1,24 @@
+filegroup(
+    name = "rtl_release",
+    srcs = [
+        "lfsr.v",
+        "lfsr_prbs_check.v",
+        "lfsr_prbs_gen.v",
+    ],
+)
+
+# Dev mode: use RTL from the verilog-lfsr submodule.
+# Requires: git submodule update --init designs/src/lfsr_prbs_gen/dev/repo
+filegroup(
+    name = "rtl_dev",
+    srcs = glob(["dev/repo/rtl/*.v"]),
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:dev": ":rtl_dev",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)

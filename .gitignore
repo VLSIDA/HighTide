@@ -8,4 +8,5 @@ objects
 .dev*
 .venv
 sv2v
-**/dev/liteeth_builds
+**/dev/liteeth_buildsbazel-*
+MODULE.bazel.lock

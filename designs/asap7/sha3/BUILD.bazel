@@ -1,0 +1,12 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "sha3",
+    platform = "asap7",
+    verilog_files = ["//designs/src/sha3:rtl"],
+    sources = {"SDC_FILE": [":constraint.sdc"]},
+    arguments = {
+        "CORE_UTILIZATION": "70",
+        "PLACE_DENSITY": "0.75",
+    },
+)

@@ -1,0 +1,14 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "minimax",
+    platform = "asap7",
+    verilog_files = ["//designs/src/minimax:rtl"],
+    sources = {"SDC_FILE": [":constraint.sdc"]},
+    arguments = {
+        "PLACE_DENSITY": "0.7",
+        "CORE_UTILIZATION": "65",
+        "CORE_ASPECT_RATIO": "1.0",
+        "CORE_MARGIN": "4",
+    },
+)

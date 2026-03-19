@@ -1,0 +1,16 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "gemmini",
+    platform = "asap7",
+    verilog_files = ["//designs/src/gemmini:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "PDN_TCL": [":pdn.tcl"],
+        "IO_CONSTRAINTS": [":io.tcl"],
+        "FOOTPRINT_TCL": [":io.tcl"],
+    },
+    arguments = {
+        "CORE_UTILIZATION": "35",
+    },
+)

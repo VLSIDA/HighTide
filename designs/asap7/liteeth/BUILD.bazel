@@ -1,0 +1,52 @@
+package(default_visibility = ["//designs/asap7/liteeth:__subpackages__"])
+
+# SRAM files for mac_axi_mii and mac_wb_mii
+filegroup(
+    name = "sram_lefs_mac",
+    srcs = [
+        "sram/lef/fakeram_1rw1r_32w384d_sram.lef",
+        "sram/lef/fakeram_1rw1r_32w384d_8wm_sram.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs_mac",
+    srcs = [
+        "sram/lib/fakeram_1rw1r_32w384d_sram.lib",
+        "sram/lib/fakeram_1rw1r_32w384d_8wm_sram.lib",
+    ],
+)
+
+# SRAM files for udp_raw_rgmii and udp_stream_rgmii
+filegroup(
+    name = "sram_lefs_udp_rgmii",
+    srcs = [
+        "sram/lef/fakeram_1rw1r_12w128d_sram.lef",
+        "sram/lef/fakeram_1rw1r_64w64d_sram.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs_udp_rgmii",
+    srcs = [
+        "sram/lib/fakeram_1rw1r_12w128d_sram.lib",
+        "sram/lib/fakeram_1rw1r_64w64d_sram.lib",
+    ],
+)
+
+# SRAM files for udp_stream_sgmii and udp_usp_gth_sgmii
+filegroup(
+    name = "sram_lefs_udp_sgmii",
+    srcs = [
+        "sram/lef/fakeram_1rw1r_64w64d_sram.lef",
+        "sram/lef/fakeram_1rw1r_64w1024d_sram.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs_udp_sgmii",
+    srcs = [
+        "sram/lib/fakeram_1rw1r_64w64d_sram.lib",
+        "sram/lib/fakeram_1rw1r_64w1024d_sram.lib",
+    ],
+)

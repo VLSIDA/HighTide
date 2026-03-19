@@ -1,0 +1,45 @@
+filegroup(
+    name = "rtl_release",
+    srcs = [
+        "NyuziProcessor.v",
+        "macros.v",
+    ],
+)
+
+# Dev mode: convert SystemVerilog to Verilog via sv2v.
+# Requires: git submodule update --init designs/src/NyuziProcessor/dev/repo
+#           sv2v binary at dev/sv2v
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(
+        ["dev/repo/hardware/core/*.sv"],
+        exclude = [
+            "dev/repo/hardware/core/sram_1r1w.sv",
+            "dev/repo/hardware/core/sram_2r1w.sv",
+        ],
+    ) + glob(["dev/repo/hardware/core/*.svh"]) + ["dev/nyuziTop.sv"],
+    outs = ["dev/NyuziProcessor_gen.v"],
+    cmd = """
+        $(location dev/sv2v) --top NyuziProcessor -w $@ \
+            -I $$(dirname $(location dev/repo/hardware/core/defines.svh)) \
+            $(SRCS)
+    """,
+    tools = ["dev/sv2v"],
+)
+
+filegroup(
+    name = "rtl_dev",
+    srcs = [
+        ":rtl_dev_gen",
+        "macros.v",
+    ],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:dev": ":rtl_dev",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)

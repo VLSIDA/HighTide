@@ -1,0 +1,49 @@
+filegroup(
+    name = "rtl_release",
+    srcs = [
+        "cnn.v",
+        "fakeram_w16_l32768.v",
+        "fakeram_w16_l512.v",
+        "fakeram_w16_l8192.v",
+        "fakeram_w64_l256.v",
+    ],
+)
+
+# Dev mode: generate CNN RTL via Python/nngen.
+# Requires: git submodule update --init designs/src/cnn/dev/repo
+#           Python + nngen must be available
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(["dev/**"]),
+    outs = [
+        "dev/cnn/cnn.v",
+        "dev/cnn/fakeram_w16_l32768.v",
+        "dev/cnn/fakeram_w16_l512.v",
+        "dev/cnn/fakeram_w16_l8192.v",
+        "dev/cnn/fakeram_w64_l256.v",
+    ],
+    cmd = "cd $$(dirname $(location dev/generate_cnn_verilog.sh)) && ./generate_cnn_verilog.sh",
+    tools = ["dev/generate_cnn_verilog.sh"],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:dev": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+# FakeRAM LEF/LIB files used by the cnn design (referenced from design BUILD files)
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["fakeram_*.lef"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["fakeram_*.lib"]),
+    visibility = ["//visibility:public"],
+)

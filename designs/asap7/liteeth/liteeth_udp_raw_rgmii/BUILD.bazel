@@ -1,0 +1,19 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "liteeth_udp_raw_rgmii",
+    platform = "asap7",
+    verilog_files = ["//designs/src/liteeth:liteeth_udp_raw_rgmii_rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/asap7/liteeth:sram_lefs_udp_rgmii"],
+        "ADDITIONAL_LIBS": ["//designs/asap7/liteeth:sram_libs_udp_rgmii"],
+    },
+    arguments = {
+        "VERILOG_DEFINES": "-D USE_ASAP7_CELLS",
+        "SYNTH_HIERARCHICAL": "1",
+        "CORE_UTILIZATION": "35",
+        "PLACE_DENSITY": "0.3",
+        "MACRO_PLACE_HALO": "5 5",
+    },
+)

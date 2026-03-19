@@ -1,0 +1,27 @@
+# bp_processor has no pre-generated release RTL.
+# Dev mode generates it via setup.sh (requires sv2v).
+# To create release RTL: run dev flow, then copy dev/generated/bp_processor.v here.
+
+filegroup(
+    name = "rtl_release",
+    srcs = glob(["bp_processor.v"]),
+)
+
+# Dev mode: generate Black Parrot RTL via sv2v.
+# Requires: git submodule update --init designs/src/bp_processor/dev/repo
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(["dev/**"]),
+    outs = ["dev/generated/bp_processor.v"],
+    cmd = "cd $$(dirname $(location dev/setup.sh)) && bash setup.sh",
+    tools = ["dev/setup.sh"],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:dev": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)

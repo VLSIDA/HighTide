@@ -1,0 +1,58 @@
+# Vendor library filegroups
+filegroup(
+    name = "xilinx_libs",
+    srcs = glob(["libraries/xilinx/*.v"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "lattice_libs",
+    srcs = glob(["libraries/lattice/*.v"]),
+    visibility = ["//visibility:public"],
+)
+
+# Per-variant RTL filegroups (variant .v + macros.v + vendor libs).
+# In dev mode, the .v files are regenerated via gen.sh + patch.
+# Dev generation requires: git submodule update --init designs/src/liteeth/dev/repo
+#                          litex Python library on PATH
+
+# --- Helper: variant .v file definitions ---
+# Release RTL is pre-generated; dev mode regenerates from YAML configs.
+
+# Xilinx variants
+filegroup(
+    name = "liteeth_mac_axi_mii_rtl",
+    srcs = [":xilinx_libs", "liteeth_mac_axi_mii.v", "macros.v"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "liteeth_mac_wb_mii_rtl",
+    srcs = [":xilinx_libs", "liteeth_mac_wb_mii.v", "macros.v"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "liteeth_udp_stream_rgmii_rtl",
+    srcs = [":xilinx_libs", "liteeth_udp_stream_rgmii.v", "macros.v"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "liteeth_udp_stream_sgmii_rtl",
+    srcs = [":xilinx_libs", "liteeth_udp_stream_sgmii.v", "macros.v"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "liteeth_udp_usp_gth_sgmii_rtl",
+    srcs = [":xilinx_libs", "liteeth_udp_usp_gth_sgmii.v", "macros.v"],
+    visibility = ["//visibility:public"],
+)
+
+# Lattice variant
+filegroup(
+    name = "liteeth_udp_raw_rgmii_rtl",
+    srcs = [":lattice_libs", "liteeth_udp_raw_rgmii.v", "macros.v"],
+    visibility = ["//visibility:public"],
+)

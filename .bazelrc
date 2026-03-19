@@ -1,0 +1,8 @@
+# Use disk cache for faster rebuilds
+build --disk_cache=~/.cache/bazel-disk-cache
+
+# bazel-orfs pip dependencies require Python 3.13
+build --@rules_python//python/config_settings:python_version=3.13
+
+# Show test output
+test --test_output=errors
