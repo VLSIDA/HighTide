@@ -1,4 +1,4 @@
-# HighTide -  a High-Performance Benchmark Suite for Tracking, Integration, and Design Evaluation
+![HighTide-logo](docs/images/HighTideLogo.png)
 
 ## About
 
@@ -95,5 +95,3 @@ This option can also be used by those in the open-source community interested in
 For more information regarding per-snapshot design statistics, changelogs, and extra suite information, visit [the HighTide suite HomePage](). 
 
 -->
-
-![HighTide-logo](docs/images/lighthouse.png)
