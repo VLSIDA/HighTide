@@ -92,11 +92,9 @@ jobs:
           )
  
           # REQUIRED files relative to designs/<tech>/<design>/
-          # Note: config.mk is checked separately with a recursive search (below),
-          # so it is intentionally omitted from this list.
-          required_tech=(
-            "constraint.sdc"
-          )
+          # Both config.mk and constraint.sdc are checked recursively (see below),
+          # so this list is intentionally empty but kept for future flat-check additions.
+          required_tech=()
  
           missing=0
  
@@ -142,11 +140,13 @@ jobs:
               continue
             fi
  
-            # Check config.mk recursively — it may live directly in <design>/ or in any subdir.
-            if ! find "$tech_root" -name "config.mk" -type f -print -quit | grep -q .; then
-              echo "::error file=$tech_root::Missing required file: config.mk (expected anywhere under $tech_root/)"
-              missing=1
-            fi
+            # Check required files recursively — each may live directly in <design>/ or in any subdir.
+            for req_file in config.mk constraint.sdc; do
+              if ! find "$tech_root" -name "$req_file" -type f -print -quit | grep -q .; then
+                echo "::error file=$tech_root::Missing required file: $req_file (expected anywhere under $tech_root/)"
+                missing=1
+              fi
+            done
  
             for rel in "${required_tech[@]}"; do
               if [[ ! -f "$tech_root/$rel" ]]; then
