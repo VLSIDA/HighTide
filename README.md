@@ -1,4 +1,5 @@
-![HighTide-logo](docs/images/HighTideLogo.png)
+<img src="docs/images/HighTideLogo.svg" width="900"/>
+
 
 ## About
 
@@ -49,7 +50,7 @@ make
       <td>Compressed-first, micro-coded RISC-V CPU</td>
     </tr>
     <tr>
-      <td><a href="https://nvdla.org/"><b>NVDLA</b></a></td>
+      <td><a href="https://nvdla.org/"><b>NVDLA-small</b></a></td>
       <td>Scalable and configurable deep learning accelerator</td>
     </tr>
     <tr>
