@@ -21,8 +21,8 @@ DESIGN_CONFIG ?= ./designs/asap7/lfsr_prbs_gen/config.mk
 
 -include OpenROAD-flow-scripts/flow/Makefile
 
-.PHONY: update-rtl
-update-rtl:
+.PHONY: update_rtl
+update_rtl:
 	@$(MAKE) do-update
 
 .PHONY: do-update
