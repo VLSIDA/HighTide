@@ -23,7 +23,7 @@ DESIGN_CONFIG ?= ./designs/asap7/lfsr_prbs_gen/config.mk
 
 .PHONY: update-rtl
 update-rtl:
-	@$(MAKE) DO_UPDATE=1 do-update
+	@$(MAKE) do-update
 
 .PHONY: do-update
 do-update:

@@ -78,3 +78,70 @@ else
 fi
 
 echo "Finished Initial Setup"
+
+if [ -n "$DESIGN_NAME" ]; then
+    LITEETH_DIR="$(dirname "$LITEETH_DIR")"   # step up from dev/ to liteeth/
+    YML_PATH="${LITEETH_DIR}/dev/repo/examples"
+    TARGET_FILE="${LITEETH_DIR}/${DESIGN_NAME}.v"
+
+    case "$DESIGN_NAME" in
+        liteeth_mac_axi_mii)
+            YAML_FILE="axi-lite-mii.yml"
+            PATCH_FILE="mac_axi_mii.patch"
+            ;;
+        liteeth_mac_wb_mii)
+            YAML_FILE="wishbone_mii.yml"
+            PATCH_FILE="mac_wb_mii.patch"
+            ;;
+        liteeth_udp_raw_rgmii)
+            YAML_FILE="udp_raw_ecp5rgmii.yml"
+            PATCH_FILE="udp_raw_rgmii.patch"
+            ;;
+        liteeth_udp_stream_rgmii)
+            YAML_FILE="udp_s7phyrgmii.yml"
+            PATCH_FILE="udp_stream_rgmii.patch"
+            ;;
+        liteeth_udp_stream_sgmii)
+            YAML_FILE="udp_a7_gtp_sgmii.yml"
+            PATCH_FILE="udp_stream_sgmii.patch"
+            ;;
+        liteeth_udp_usp_gth_sgmii)
+            YAML_FILE="udp_usp_gth_sgmii.yml"
+            PATCH_FILE="udp_usp_gth_sgmii.patch"
+            ;;
+        *)
+            echo "[ERROR] Unknown DESIGN_NAME: ${DESIGN_NAME}" >&2
+            usage
+            exit 1
+            ;;
+    esac
+
+    TARGET_YML="${YML_PATH}/${YAML_FILE}"
+    PATCH_FILE_PATH="${LITEETH_DIR}/dev/patch/${PATCH_FILE}"
+    GEN_CORE_NAME="${DESIGN_NAME}_build"
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    BUILD_DIR_NAME="archive"
+
+    echo "Regenerating ${DESIGN_NAME}..."
+    echo "${LITEETH_DIR}"
+    echo "Setting up ${DESIGN_NAME}..."
+
+    cd "${LITEETH_DIR}/dev"
+
+    [ -d "${LITEETH_DIR}/dev/build" ] && rm -rf build && echo "Cleaning previous build..."
+
+    python3 "${LITEETH_DIR}/dev/repo/liteeth/gen.py" "${TARGET_YML}" && echo "Generating liteeth core..."
+
+    cp "${LITEETH_DIR}/dev/build/gateware/liteeth_core.v" "${TARGET_FILE}" && echo "Copying verilog files..."
+
+    ARCHIVE_DIR="${LITEETH_DIR}/dev/${BUILD_DIR_NAME}/${GEN_CORE_NAME}_${TIMESTAMP}"
+    mkdir -p "${ARCHIVE_DIR}"
+    cp -r "${LITEETH_DIR}/dev/build/"* "${ARCHIVE_DIR}/" && echo "Build archived"
+
+    [ -d "${LITEETH_DIR}/dev/build" ] && rm -rf build
+
+    patch --silent -N -l "${TARGET_FILE}" < "${PATCH_FILE_PATH}" || true
+    echo "Done."
+else
+    echo "No --design-name specified, skipping RTL generation."
+fi

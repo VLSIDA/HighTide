@@ -24,3 +24,6 @@ sv2v
 **/generated/
 bazel-*
 MODULE.bazel.lock
+**/main/scala/
+**/target/
+**/sbt/

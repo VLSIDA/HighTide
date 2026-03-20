@@ -41,25 +41,8 @@ The setup.sh must install all dependencies needed to convert the source HDL to p
 
 ### 4. Create `designs/src/$0/verilog.mk`
 
-This file controls RTL selection between dev-generated and release Verilog. Use one of these patterns:
+This file controls RTL selection, freeing up clutter in per-technology `config.mk` files.
 
-**Simple single-file design:**
-```makefile
-ifneq ($(wildcard $(DEV_FLAG)),)
-export VERILOG_FILES = $(BENCH_DESIGN_HOME)/src/$0/dev/generated/$0.v
-else
-export VERILOG_FILES = $(BENCH_DESIGN_HOME)/src/$0/$0.v
-endif
-```
-
-**Multi-file design (wildcard):**
-```makefile
-ifneq ($(wildcard $(DEV_FLAG)),)
-export VERILOG_FILES = $(wildcard $(BENCH_DESIGN_HOME)/src/$0/dev/repo/rtl/*.v)
-else
-export VERILOG_FILES = $(wildcard $(BENCH_DESIGN_HOME)/src/$0/*.v)
-endif
-```
 
 ### 5. Identify and create FakeRAM black-box memories
 

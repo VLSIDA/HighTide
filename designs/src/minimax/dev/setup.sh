@@ -125,4 +125,18 @@ else
         echo "sv2v already present in directory"     
 fi
 
+SCRIPT_DIR="$(dirname $(readlink -f $0))"            # .../designs/src/minimax/dev
+BENCH_DESIGN_HOME="$(realpath "${SCRIPT_DIR}/../../../")"  # .../designs
+DESIGN_NAME="minimax"
 
+VERILOG_FILES="${BENCH_DESIGN_HOME}/src/${DESIGN_NAME}/${DESIGN_NAME}.v"
+REPO_FILES="${BENCH_DESIGN_HOME}/src/${DESIGN_NAME}/dev/repo/rtl/${DESIGN_NAME}.v"
+
+# Only rebuild if target is missing or source is newer
+if [ ! -f "${VERILOG_FILES}" ] || [ "${REPO_FILES}" -nt "${VERILOG_FILES}" ]; then
+    echo "Translating ${REPO_FILES}  ->  ${VERILOG_FILES}"
+    "${INSTALL_PATH}/sv2v" -w "${VERILOG_FILES}" "${REPO_FILES}"
+    echo "Done."
+else
+    echo "${VERILOG_FILES} is up to date, skipping translation."
+fi
