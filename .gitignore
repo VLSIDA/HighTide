@@ -27,3 +27,4 @@ MODULE.bazel.lock
 **/main/scala/
 **/target/
 **/sbt/
+.bazelrc.user
