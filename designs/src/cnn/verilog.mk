@@ -18,7 +18,7 @@ export VERILOG_FILES = $(CNN_DEV_RTL) $(CNN_DEV_FAKE_RTL)
 else
 # Prefer checked-in RTL; fall back to dev output if it has not been promoted yet.
 ifeq ($(wildcard $(CNN_RELEASE_RTL)),)
-$(warning $(CNN_RELEASE_RTL) is missing; using dev RTL. Run 'make dev' to regenerate and promote.)
+$(warning $(CNN_RELEASE_RTL) is missing; using dev RTL. Run 'make update-rtl' to regenerate and promote.)
 export VERILOG_FILES = $(CNN_DEV_RTL) $(CNN_DEV_FAKE_RTL)
 else
 export VERILOG_FILES = $(CNN_RELEASE_RTL) $(CNN_RELEASE_FAKE_RTL)

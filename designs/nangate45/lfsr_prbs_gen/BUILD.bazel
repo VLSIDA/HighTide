@@ -1,0 +1,13 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "lfsr_prbs_gen",
+    platform = "nangate45",
+    verilog_files = ["//designs/src/lfsr_prbs_gen:rtl"],
+    sources = {"SDC_FILE": [":constraint.sdc"]},
+    arguments = {
+        "CORE_UTILIZATION": "20",
+        "PLACE_DENSITY_LB_ADDON": "0.20",
+        "TNS_END_PERCENT": "100",
+    },
+)

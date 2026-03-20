@@ -1,0 +1,31 @@
+load("//:defs.bzl", "hightide_design")
+
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["sram/lef/*.lef"]),
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["sram/lib/*.lib"]),
+)
+
+hightide_design(
+    name = "NyuziProcessor",
+    platform = "nangate45",
+    verilog_files = ["//designs/src/NyuziProcessor:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+        "FASTROUTE_TCL": [":fastroute.tcl"],
+    },
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        "ABC_AREA": "1",
+        "CORE_UTILIZATION": "49",
+        "PLACE_DENSITY_LB_ADDON": "0.1",
+        "MACRO_PLACE_HALO": "40 40",
+        "TNS_END_PERCENT": "100",
+    },
+)

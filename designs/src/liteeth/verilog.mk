@@ -55,7 +55,7 @@ endif
 # Inputs (pick the one you actually use)
 export TARGET_YML      = $(YML_PATH)/$(YAML_FILE)
 export PATCH_FILE_PATH = $(LITEETH_DIR)/patch/$(PATCH_FILE)
-# Re-generate whenever make dev is called
+# Re-generate whenever make update-rtl is called
 .PHONY: $(TARGET_FILE)
 $(TARGET_FILE): $(TARGET_YML) $(PATCH_FILE_PATH)
 	@echo "Regenerating $(DESIGN_NAME)..."

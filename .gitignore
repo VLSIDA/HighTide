@@ -22,3 +22,5 @@ sv2v
 **/*.log
 **/packages/
 **/generated/
+bazel-*
+MODULE.bazel.lock

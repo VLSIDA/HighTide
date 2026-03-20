@@ -1,0 +1,21 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
+
+exports_files(["tools/update_rtl.sh"])
+
+# Config setting for RTL regeneration from source repos.
+# Usage: bazel build --define update_rtl=true //designs/...
+config_setting(
+    name = "update_rtl",
+    define_values = {"update_rtl": "true"},
+    visibility = ["//visibility:public"],
+)
+
+# nangate45 PDK definition (not included in ORFS's default Bazel targets).
+# References platform files extracted from the ORFS Docker image.
+# NOTE: nangate45 is not shipped with bazel-orfs by default. This may need
+# adjustment once we verify the docker_orfs repo structure for nangate45.
+orfs_pdk(
+    name = "nangate45",
+    config = "@docker_orfs//:flow/platforms/nangate45/config.mk",
+    visibility = ["//visibility:public"],
+)

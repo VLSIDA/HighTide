@@ -1,0 +1,16 @@
+package(default_visibility = ["//designs/asap7/bp_processor:__subpackages__"])
+
+filegroup(
+    name = "macros",
+    srcs = ["macros.v"],
+)
+
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["sram/lef/*.lef"]),
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["sram/lib/*.lib"]),
+)

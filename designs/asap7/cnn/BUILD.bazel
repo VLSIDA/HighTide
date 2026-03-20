@@ -1,0 +1,20 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "cnn",
+    platform = "asap7",
+    verilog_files = ["//designs/src/cnn:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/src/cnn:sram_lefs"],
+        "ADDITIONAL_LIBS": ["//designs/src/cnn:sram_libs"],
+    },
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        "DIE_AREA": "0 0 600 600",
+        "CORE_AREA": "10 10 590 590",
+        "PLACE_PINS_ARGS": "-min_distance 30 -min_distance_in_tracks",
+        "MACRO_PLACE_HALO": "6 6",
+        "MACRO_BLOCKAGE_HALO": "0.5",
+    },
+)

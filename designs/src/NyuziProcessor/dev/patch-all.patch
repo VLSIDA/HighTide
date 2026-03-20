@@ -1,0 +1,266 @@
+--- cache_lru.sv	2025-07-09 22:39:35.321468016 +0000
++++ cache_lru_fix.sv	2025-07-09 22:41:13.034912461 +0000
+@@ -112,7 +112,7 @@
+     // be evicted. A strict LRU would take three cycles for the node to move to the
+     // LRU. So, this is close enough to LRU to work well, but much simpler to implement.
+     //
+-    sram_1r1w #(
++    fakeram_1r1w_3x1 #(
+         .DATA_WIDTH(LRU_FLAG_BITS),
+         .SIZE(NUM_SETS),
+         .READ_DURING_WRITE("NEW_DATA")
+--- dcache_data_stage.sv	2025-07-09 22:42:54.320385140 +0000
++++ dcache_data_stage_fix.sv	2025-07-09 22:42:52.093373519 +0000
+@@ -472,7 +472,7 @@
+         .one_hot(way_hit_oh),
+         .index(way_hit_idx));
+ 
+-    sram_1r1w #(
++    fakeram_1r1w_512x256 #(
+         .DATA_WIDTH(CACHE_LINE_BITS),
+         .SIZE(`L1D_WAYS * `L1D_SETS),
+         .READ_DURING_WRITE("NEW_DATA")
+--- dcache_tag_stage.sv	2025-07-09 22:44:07.942766681 +0000
++++ dcache_tag_stage_fix.sv	2025-07-09 22:43:50.793678251 +0000
+@@ -177,7 +177,7 @@
+             // to all be cleared on reset.
+             logic line_valid[`L1D_SETS];
+ 
+-            sram_2r1w #(
++            fakeram_2r1w_20x64 #(
+                 .DATA_WIDTH($bits(l1d_tag_t)),
+                 .SIZE(`L1D_SETS),
+                 .READ_DURING_WRITE("NEW_DATA")
+--- ifetch_data_stage.sv	2025-07-09 22:14:25.832128443 +0000
++++ ifetch_data_stage_fix.sv	2025-07-09 22:16:31.971567357 +0000
+@@ -152,7 +152,7 @@
+     //
+     // Cache data
+     //
+-    sram_1r1w #(
++    fakeram_1r1w_512x256 #(
+         .DATA_WIDTH(CACHE_LINE_BITS),
+         .SIZE(`L1I_WAYS * `L1I_SETS),
+         .READ_DURING_WRITE("NEW_DATA")
+--- ifetch_tag_stage.sv	2025-07-09 22:50:10.217586731 +0000
++++ ifetch_tag_stage_fix.sv	2025-07-09 22:49:59.507533958 +0000
+@@ -179,7 +179,7 @@
+             // to simultaneously be cleared on reset.
+             logic line_valid[`L1I_SETS];
+ 
+-            sram_1r1w #(
++            fakeram_1r1w_20x64 #(
+                 .DATA_WIDTH($bits(l1i_tag_t)),
+                 .SIZE(`L1I_SETS),
+                 .READ_DURING_WRITE("NEW_DATA")
+--- int_execute_stage.sv	2025-07-09 01:05:59.672070430 +0000
++++ int_execute_stage_fix.sv	2025-07-09 19:58:46.419523214 +0000
+@@ -101,87 +101,40 @@
+             assign zero = difference == 0;
+             assign signed_gtr = overflow == negative;
+ 
+-            // Count leading zeroes
+-            always_comb
+-            begin
+-                unique casez (lane_operand2)
+-                    32'b1???????????????????????????????: lz = 0;
+-                    32'b01??????????????????????????????: lz = 1;
+-                    32'b001?????????????????????????????: lz = 2;
+-                    32'b0001????????????????????????????: lz = 3;
+-                    32'b00001???????????????????????????: lz = 4;
+-                    32'b000001??????????????????????????: lz = 5;
+-                    32'b0000001?????????????????????????: lz = 6;
+-                    32'b00000001????????????????????????: lz = 7;
+-                    32'b000000001???????????????????????: lz = 8;
+-                    32'b0000000001??????????????????????: lz = 9;
+-                    32'b00000000001?????????????????????: lz = 10;
+-                    32'b000000000001????????????????????: lz = 11;
+-                    32'b0000000000001???????????????????: lz = 12;
+-                    32'b00000000000001??????????????????: lz = 13;
+-                    32'b000000000000001?????????????????: lz = 14;
+-                    32'b0000000000000001????????????????: lz = 15;
+-                    32'b00000000000000001???????????????: lz = 16;
+-                    32'b000000000000000001??????????????: lz = 17;
+-                    32'b0000000000000000001?????????????: lz = 18;
+-                    32'b00000000000000000001????????????: lz = 19;
+-                    32'b000000000000000000001???????????: lz = 20;
+-                    32'b0000000000000000000001??????????: lz = 21;
+-                    32'b00000000000000000000001?????????: lz = 22;
+-                    32'b000000000000000000000001????????: lz = 23;
+-                    32'b0000000000000000000000001???????: lz = 24;
+-                    32'b00000000000000000000000001??????: lz = 25;
+-                    32'b000000000000000000000000001?????: lz = 26;
+-                    32'b0000000000000000000000000001????: lz = 27;
+-                    32'b00000000000000000000000000001???: lz = 28;
+-                    32'b000000000000000000000000000001??: lz = 29;
+-                    32'b0000000000000000000000000000001?: lz = 30;
+-                    32'b00000000000000000000000000000001: lz = 31;
+-                    32'b00000000000000000000000000000000: lz = 32;
+-                    default: lz = 0;
+-                endcase
+-            end
++            function automatic [5:0] count_lz;
++				input [31:0] val;
++				integer i;
++				reg found;
++				begin
++					count_lz = 32;
++					found = 0;
++					for (i = 31; i >= 0; i = i - 1) begin
++						if (!found && val[i]) begin
++							count_lz = 31 - i;
++							found = 1;
++						end
++					end
++				end
++			endfunction
+ 
+-            // Count trailing zeroes
+-            always_comb
+-            begin
+-                unique casez (lane_operand2)
+-                    32'b00000000000000000000000000000000: tz = 32;
+-                    32'b10000000000000000000000000000000: tz = 31;
+-                    32'b?1000000000000000000000000000000: tz = 30;
+-                    32'b??100000000000000000000000000000: tz = 29;
+-                    32'b???10000000000000000000000000000: tz = 28;
+-                    32'b????1000000000000000000000000000: tz = 27;
+-                    32'b?????100000000000000000000000000: tz = 26;
+-                    32'b??????10000000000000000000000000: tz = 25;
+-                    32'b???????1000000000000000000000000: tz = 24;
+-                    32'b????????100000000000000000000000: tz = 23;
+-                    32'b?????????10000000000000000000000: tz = 22;
+-                    32'b??????????1000000000000000000000: tz = 21;
+-                    32'b???????????100000000000000000000: tz = 20;
+-                    32'b????????????10000000000000000000: tz = 19;
+-                    32'b?????????????1000000000000000000: tz = 18;
+-                    32'b??????????????100000000000000000: tz = 17;
+-                    32'b???????????????10000000000000000: tz = 16;
+-                    32'b????????????????1000000000000000: tz = 15;
+-                    32'b?????????????????100000000000000: tz = 14;
+-                    32'b??????????????????10000000000000: tz = 13;
+-                    32'b???????????????????1000000000000: tz = 12;
+-                    32'b????????????????????100000000000: tz = 11;
+-                    32'b?????????????????????10000000000: tz = 10;
+-                    32'b??????????????????????1000000000: tz = 9;
+-                    32'b???????????????????????100000000: tz = 8;
+-                    32'b????????????????????????10000000: tz = 7;
+-                    32'b?????????????????????????1000000: tz = 6;
+-                    32'b??????????????????????????100000: tz = 5;
+-                    32'b???????????????????????????10000: tz = 4;
+-                    32'b????????????????????????????1000: tz = 3;
+-                    32'b?????????????????????????????100: tz = 2;
+-                    32'b??????????????????????????????10: tz = 1;
+-                    32'b???????????????????????????????1: tz = 0;
+-                    default: tz = 0;
+-                endcase
+-            end
++			function automatic [5:0] count_tz;
++				input [31:0] val;
++				integer i;
++				reg found;
++				begin
++					count_tz = 32;
++					found = 0;
++					for (i = 0; i < 32; i = i + 1) begin
++						if (!found && val[i]) begin
++							count_tz = i;
++							found = 1;
++						end
++					end
++				end
++			endfunction
++
++			assign lz = count_lz(lane_operand2);
++			assign tz = count_tz(lane_operand2);
+ 
+             // Right shift
+             assign shift_in_sign = of_instruction.alu_op == OP_ASHR ? lane_operand1[31] : 1'd0;
+--- l2_cache_read_stage.sv	2025-07-09 22:52:04.261145832 +0000
++++ l2_cache_read_stage_fix.sv	2025-07-09 22:51:12.391892153 +0000
+@@ -143,7 +143,7 @@
+     //
+     // Cache memory
+     //
+-    sram_1r1w #(
++    fakeram_1r1w_512x2048 #(
+         .DATA_WIDTH(CACHE_LINE_BITS),
+         .SIZE(`L2_WAYS * `L2_SETS),
+         .READ_DURING_WRITE("NEW_DATA")
+--- l2_cache_tag_stage.sv	2025-07-09 22:53:16.175496050 +0000
++++ l2_cache_tag_stage_fix.sv	2025-07-09 22:53:08.300457778 +0000
+@@ -84,7 +84,7 @@
+         begin : way_tags_gen
+             logic line_valid[`L2_SETS];
+ 
+-            sram_1r1w #(
++            fakeram_1r1w_18x256 #(
+                 .DATA_WIDTH($bits(l2_tag_t)),
+                 .SIZE(`L2_SETS),
+                 .READ_DURING_WRITE("NEW_DATA")
+@@ -97,7 +97,7 @@
+                 .write_data(l2r_update_tag_value),
+                 .*);
+ 
+-            sram_1r1w #(
++            fakeram_1r1w_1x256 #(
+                 .DATA_WIDTH(1),
+                 .SIZE(`L2_SETS),
+                 .READ_DURING_WRITE("NEW_DATA")
+--- operand_fetch_stage.sv	2025-07-09 22:45:53.872307594 +0000
++++ operand_fetch_stage_fix.sv	2025-07-09 22:54:32.955868282 +0000
+@@ -58,7 +58,7 @@
+     vector_t vector_val1;
+     vector_t vector_val2;
+ 
+-    sram_2r1w #(
++    fakeram_2r1w_32x128 #(
+         .DATA_WIDTH($bits(scalar_t)),
+         .SIZE(32 * `THREADS_PER_CORE),
+         .READ_DURING_WRITE("DONT_CARE")
+@@ -78,7 +78,7 @@
+     generate
+         for (lane = 0; lane < NUM_VECTOR_LANES; lane++)
+         begin : vector_lane_gen
+-            sram_2r1w #(
++            fakeram_2r1w_32x128 #(
+                 .DATA_WIDTH($bits(scalar_t)),
+                 .SIZE(32 * `THREADS_PER_CORE),
+                 .READ_DURING_WRITE("DONT_CARE")
+--- rr_arbiter.sv	2025-07-09 01:05:59.698070566 +0000
++++ rr_arbiter_fixed.sv	2025-07-09 20:02:02.221433548 +0000
+@@ -48,8 +48,8 @@
+                 logic granted;
+ 
+                 granted = request[grant_idx] & priority_oh[priority_idx];
+-                for (logic[BIT_IDX_WIDTH - 1:0] bit_idx = priority_idx[BIT_IDX_WIDTH - 1:0];
+-                    bit_idx != grant_idx[BIT_IDX_WIDTH - 1:0]; bit_idx++)
++                for (logic[BIT_IDX_WIDTH - 1:0] bit_idx = priority_idx[BIT_IDX_WIDTH - 1:0] % NUM_REQUESTERS;
++                    bit_idx != grant_idx[BIT_IDX_WIDTH - 1:0]; bit_idx= (bit_idx + 1) % NUM_REQUESTERS)
+                 begin
+                     granted &= !request[bit_idx];
+                 end
+--- sync_fifo.sv	2025-07-09 22:58:56.848137411 +0000
++++ sync_fifo_fix.sv	2025-07-09 22:58:48.638098119 +0000
+@@ -134,10 +134,5 @@
+         end
+     end
+ 
+-    initial
+-    begin
+-        if ($test$plusargs("dumpmems") != 0)
+-            $display("sync_fifo %d %d", WIDTH, SIZE);
+-    end
+ `endif
+ endmodule
+--- tlb.sv	2025-07-09 22:48:59.312236398 +0000
++++ tlb_fix.sv	2025-07-09 22:48:52.022200246 +0000
+@@ -93,7 +93,7 @@
+             logic[ASID_WIDTH - 1:0] way_asid;
+             logic way_global;
+ 
+-            sram_1r1w #(
++            fakeram_1r1w_16x52 #(
+                 .SIZE(NUM_SETS),
+                 .DATA_WIDTH(PAGE_NUM_BITS * 2 + 4 + ASID_WIDTH),
+                 .READ_DURING_WRITE("NEW_DATA")

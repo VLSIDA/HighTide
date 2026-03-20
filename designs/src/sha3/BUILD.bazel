@@ -1,0 +1,37 @@
+# sha3 has no pre-generated release RTL.
+# To create release RTL: run update-rtl flow, then copy output here.
+
+filegroup(
+    name = "rtl_release",
+    srcs = glob(["sha3.v"]),
+)
+
+# update-rtl mode: init submodule + generate SHA3 RTL via Chisel/sbt.
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(
+        ["dev/**"],
+        exclude = ["dev/generated/**"],
+    ),
+    outs = ["sha3_gen.v"],
+    local = True,
+    cmd = """
+        bash $(location //:tools/update_rtl.sh) \
+            designs/src/sha3/dev/repo \
+            $(location dev/setup.sh) && \
+        cp $$(dirname $$(readlink -f $(location dev/setup.sh)))/generated/sha3.v $(OUTS)
+    """,
+    tools = [
+        "dev/setup.sh",
+        "//:tools/update_rtl.sh",
+    ],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:update_rtl": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)

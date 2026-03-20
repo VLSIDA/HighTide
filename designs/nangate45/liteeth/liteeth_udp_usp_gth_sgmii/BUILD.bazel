@@ -1,0 +1,19 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "liteeth_udp_usp_gth_sgmii",
+    platform = "nangate45",
+    verilog_files = ["//designs/src/liteeth:liteeth_udp_usp_gth_sgmii_rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/nangate45/liteeth:sram_lefs_udp_sgmii"],
+        "ADDITIONAL_LIBS": ["//designs/nangate45/liteeth:sram_libs_udp_sgmii"],
+    },
+    arguments = {
+        "VERILOG_DEFINES": "-D USE_NANGATE45_CELLS",
+        "SYNTH_HIERARCHICAL": "1",
+        "CORE_UTILIZATION": "45",
+        "PLACE_DENSITY": "0.4",
+        "ROUTING_LAYER_ADJUSTMENT": "0.2",
+    },
+)

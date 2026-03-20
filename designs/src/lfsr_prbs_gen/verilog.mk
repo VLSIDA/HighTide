@@ -1,0 +1,1 @@
+export VERILOG_FILES = $(wildcard $(BENCH_DESIGN_HOME)/src/$(DESIGN_NAME)/*.v)

@@ -1,12 +1,15 @@
 #!/bin/bash
-cd OpenROAD-flow-scripts
-ORFS_TAG="26Q1-380-g9a13bc567"
-LOCAL_TAG=$(git describe --tags --abbrev=9 2>/dev/null)
-if [[ "$LOCAL_TAG" != "$ORFS_TAG" ]]; then
-  echo "Warning: Commit is not on correct tag. Local tag is $LOCAL_TAG"
-  LOCAL_TAG=$ORFS_TAG # fallback tag or handle error
+# Extract Docker image from MODULE.bazel (single source of truth)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DOCKER_IMAGE=$(grep -oP 'image\s*=\s*"\K[^"]+' "$SCRIPT_DIR/MODULE.bazel")
+
+if [ -z "$DOCKER_IMAGE" ]; then
+  echo "ERROR: Could not extract Docker image from MODULE.bazel"
+  exit 1
 fi
-echo "Running OpenROAD flow with tag: ${LOCAL_TAG}"
+
+echo "Running OpenROAD flow with image: ${DOCKER_IMAGE}"
+cd OpenROAD-flow-scripts
 docker run --rm -it \
   -u $(id -u ${USER}):$(id -g ${USER}) \
   -v $(pwd)/flow:/OpenROAD-flow-scripts/flow \
@@ -17,5 +20,5 @@ docker run --rm -it \
   -v ${HOME}/.Xauthority:/.Xauthority \
   --network host \
   --security-opt seccomp=unconfined \
-  openroad/orfs:${LOCAL_TAG}
+  ${DOCKER_IMAGE} \
   "$@"

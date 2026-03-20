@@ -1,0 +1,34 @@
+filegroup(
+    name = "rtl_release",
+    srcs = ["gemmini.v"],
+)
+
+# update-rtl mode: init submodule + generate Gemmini RTL via Chisel/sbt.
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(
+        ["dev/**"],
+        exclude = ["dev/generated/**"],
+    ),
+    outs = ["gemmini_gen.v"],
+    local = True,
+    cmd = """
+        bash $(location //:tools/update_rtl.sh) \
+            designs/src/gemmini/dev/repo \
+            $(location dev/setup.sh) && \
+        cp $$(dirname $$(readlink -f $(location dev/setup.sh)))/generated/gemmini.v $(OUTS)
+    """,
+    tools = [
+        "dev/setup.sh",
+        "//:tools/update_rtl.sh",
+    ],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:update_rtl": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)

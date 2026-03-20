@@ -19,7 +19,7 @@ export VERILOG_FILES = $(BP_DEV_RTL) \
 else
 # Prefer checked-in RTL; fall back to dev output if it has not been promoted yet.
 ifeq ($(wildcard $(BP_RELEASE_RTL)),)
-$(warning $(BP_RELEASE_RTL) is missing; using dev RTL. Run 'make dev' to regenerate and promote.)
+$(warning $(BP_RELEASE_RTL) is missing; using dev RTL. Run 'make update-rtl' to regenerate and promote.)
 export VERILOG_FILES = $(BP_DEV_RTL) \
                        $(PLATFORM_DESIGN_DIR)/macros.v
 else

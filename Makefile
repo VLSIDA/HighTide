@@ -17,11 +17,12 @@
 # DESIGN_CONFIG=./designs/asap7/gemmini/config.mk
 # DESIGN_CONFIG=./designs/asap7/bp_processor/bp_quad/config.mk
 
-DESIGN_CONFIG ?= ./designs/asap7/sha3/config.mk
+DESIGN_CONFIG ?= ./designs/asap7/lfsr_prbs_gen/config.mk
 
 -include OpenROAD-flow-scripts/flow/Makefile
-.PHONY: update_rtl
-update_rtl:
+
+.PHONY: update-rtl
+update-rtl:
 	@$(MAKE) DO_UPDATE=1 do-update
 
 .PHONY: do-update
