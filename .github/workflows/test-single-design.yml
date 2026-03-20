@@ -1,0 +1,115 @@
+name: Test Single Design
+
+on:
+  workflow_dispatch:
+    inputs:
+      design_config:
+        description: 'Design config file to run (e.g., designs/nangate45/lfsr_top/config.mk)'
+        required: true
+        type: string
+
+jobs:
+  test-design:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run setup script
+        run: ./setup.sh
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Determine ORFS tag
+        id: get_tag
+        run: |
+          cd OpenROAD-flow-scripts
+          tag=$(git describe --tags --abbrev=8 2>/dev/null || echo "latest")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Validate design config
+        run: |
+          design_config="${{ github.event.inputs.design_config }}"
+          echo "Validating design config: $design_config"
+          
+          if [ ! -f "$design_config" ]; then
+            echo "Error: Design config file '$design_config' not found"
+            echo "Available design configs:"
+            find designs -name "config.mk" | sort
+            exit 1
+          fi
+          
+          echo "Design config exists: $design_config"
+
+      - name: Run single design
+        run: |
+          tag="${{ steps.get_tag.outputs.tag }}"
+          design_config="${{ github.event.inputs.design_config }}"
+          
+          echo "Running single design: $design_config"
+          echo "Using Docker image: openroad/orfs:$tag"
+          
+          docker run --rm \
+          -v ${{ github.workspace }}/OpenROAD-flow-scripts/flow:/OpenROAD-flow-scripts/flow \
+          -v ${{ github.workspace }}:/OpenROAD-flow-scripts/UCSC_ML_suite \
+          -w /OpenROAD-flow-scripts \
+          openroad/orfs:$tag \
+          bash -c "
+            set +e
+            git config --global --add safe.directory '*'
+            cd UCSC_ML_suite
+            
+            echo '===================='
+            echo 'Running design: $design_config'
+            echo '===================='
+            
+            start_time=\$(date +%s)
+            
+            if make DESIGN_CONFIG='$design_config'; then
+              end_time=\$(date +%s)
+              duration=\$((end_time - start_time))
+              echo ''
+              echo '===================='
+              echo 'SUCCESS: Design completed successfully'
+              echo \"Duration: \${duration} seconds\"
+              echo '===================='
+              exit 0
+            else
+              exit_code=\$?
+              end_time=\$(date +%s)
+              duration=\$((end_time - start_time))
+              echo ''
+              echo '===================='
+              echo \"FAILURE: Design failed (exit code: \$exit_code)\"
+              echo \"Duration: \${duration} seconds\"
+              echo '===================='
+              exit \$exit_code
+            fi
+          "
+
+      - name: Extract results
+        if: success()
+        run: |
+          echo "Extracting results for design: ${{ github.event.inputs.design_config }}"
+          
+          # Check if the script exists
+          if [ ! -f "extract_results.py" ]; then
+            echo "Warning: extract_results.py not found, skipping results extraction"
+            exit 0
+          fi
+          
+          # Run the extraction script
+          if python3 extract_results.py --base-dir . --output QOR-test.md; then
+            echo "Results extraction completed successfully"
+            
+            # Show a preview of the results
+            echo "Generated results preview:"
+            if [ -f "QOR-test.md" ]; then
+              cat QOR-test.md
+            fi
+          else
+            echo "Results extraction failed, but test was successful"
+          fi
