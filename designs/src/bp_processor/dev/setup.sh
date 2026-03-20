@@ -149,6 +149,8 @@ fi
 echo "sv2v conversion complete: generated/bp_processor.v"
 echo "$(wc -l < generated/bp_processor.v) lines generated"
 
+cp generated/bp_processor.v ../
+
 # ── Post-process: strip bsg_mem_*_synth module definitions ────────────
 # These contain parameterized register arrays that cause ABC OOM.
 # macros.v provides FakeRAM-backed replacements.
