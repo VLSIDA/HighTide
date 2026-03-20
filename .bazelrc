@@ -1,6 +1,7 @@
-# Remote cache (Google Cloud Storage) — shared across team
+# Remote cache (Google Cloud Storage) — publicly readable, auth required to write.
+# To enable writes: gcloud auth application-default login
 build --remote_cache=https://storage.googleapis.com/hightide-bazel-cache
-build --google_default_credentials
+build --remote_upload_local_results=false
 
 # Local disk cache as fallback
 build --disk_cache=~/.cache/bazel-disk-cache
