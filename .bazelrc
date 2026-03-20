@@ -1,4 +1,8 @@
-# Use disk cache for faster rebuilds
+# Remote cache (Google Cloud Storage) — shared across team
+build --remote_cache=https://storage.googleapis.com/hightide-bazel-cache
+build --google_default_credentials
+
+# Local disk cache as fallback
 build --disk_cache=~/.cache/bazel-disk-cache
 
 # bazel-orfs pip dependencies require Python 3.13
