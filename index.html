@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HighTide — VLSI Design Benchmark Suite</title>
+  <link rel="icon" type="image/png" href="lighthouse.png">
+  <style>
+    :root {
+      --navy: #1b2a6b;
+      --navy-dark: #0f1a4a;
+      --navy-light: #2a3d8f;
+      --yellow: #fdd835;
+      --yellow-light: #fff176;
+      --yellow-glow: #fef9e7;
+      --sea-blue: #4a90d9;
+      --sea-light: #81badd;
+      --white: #ffffff;
+      --gray-50: #f8f9fa;
+      --gray-100: #e9ecef;
+      --gray-600: #6c757d;
+      --gray-800: #343a40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--navy-dark);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    nav .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    nav .brand img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+    }
+
+    nav .links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav .links a {
+      color: var(--sea-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav .links a:hover {
+      color: var(--yellow);
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 40%, var(--navy-light) 100%);
+      color: var(--white);
+      padding: 8rem 2rem 6rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom right, transparent 49.5%, var(--white) 50.5%);
+    }
+
+    .hero-logo {
+      width: 180px;
+      height: 180px;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 0 30px rgba(253, 216, 53, 0.4));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .highlight {
+      color: var(--yellow);
+    }
+
+    .hero .tagline {
+      font-size: 1.25rem;
+      color: var(--sea-light);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: var(--navy-dark);
+    }
+
+    .btn-primary:hover {
+      background: var(--yellow-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(253, 216, 53, 0.4);
+    }
+
+    .btn-outline {
+      border-color: var(--sea-light);
+      color: var(--sea-light);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--yellow);
+      color: var(--yellow);
+      transform: translateY(-2px);
+    }
+
+    /* Sections */
+    section {
+      padding: 5rem 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--gray-600);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Motivation */
+    .motivation {
+      background: var(--white);
+    }
+
+    .motivation-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .motivation-text p {
+      color: var(--gray-600);
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .motivation-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .motivation-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .highlight-card {
+      background: var(--gray-50);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      border-left: 4px solid var(--yellow);
+    }
+
+    .highlight-card h4 {
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .highlight-card p {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    /* Features */
+    .features {
+      background: var(--gray-50);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 2rem;
+      border-top: 4px solid var(--navy);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .feature-card h3 {
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+      font-size: 1.15rem;
+    }
+
+    .feature-card p {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+    }
+
+    /* Placements Gallery */
+    .placements {
+      background: var(--white);
+    }
+
+    .placements-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .placement-card {
+      text-align: center;
+    }
+
+    .placement-card img {
+      width: 100%;
+      border-radius: 10px;
+      border: 2px solid var(--gray-100);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .placement-card img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .placement-card h4 {
+      color: var(--navy);
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    .placement-card .meta {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Workflow */
+    .workflow {
+      background: var(--gray-50);
+    }
+
+    .workflow-img {
+      display: block;
+      max-width: 700px;
+      margin: 0 auto;
+      border-radius: 12px;
+      border: 2px solid var(--gray-100);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    .workflow-caption {
+      text-align: center;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      margin-top: 1.25rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Designs */
+    .designs {
+      background: var(--white);
+    }
+
+    .designs-table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      font-size: 0.95rem;
+    }
+
+    thead {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    th {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    tbody tr:hover {
+      background: var(--yellow-glow);
+    }
+
+    .platform-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .badge-asap7 { background: #e3f2fd; color: #1565c0; }
+    .badge-nangate45 { background: #e8f5e9; color: #2e7d32; }
+    .badge-sky130hd { background: #fff3e0; color: #e65100; }
+
+    .lang-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #f3e5f5;
+      color: #7b1fa2;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    /* AI Skills */
+    .ai-skills {
+      background: var(--white);
+    }
+
+    .skills-intro {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      max-width: 800px;
+      margin-bottom: 2.5rem;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .skill-card {
+      background: var(--gray-50);
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid var(--gray-100);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .skill-card .skill-name {
+      display: inline-block;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      background: #e3f2fd;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .skill-card h3 {
+      color: var(--navy);
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-card p {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-card ul {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      padding-left: 1.25rem;
+      margin: 0;
+    }
+
+    .skill-card ul li {
+      margin-bottom: 0.3rem;
+    }
+
+    .claude-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, #d4a574, #c4956a);
+      color: var(--white);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Getting Started */
+    .quickstart {
+      background: var(--gray-50);
+    }
+
+    .code-block {
+      background: var(--navy-dark);
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      color: #e0e0e0;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    .code-block .comment {
+      color: var(--gray-600);
+    }
+
+    .code-block .cmd {
+      color: var(--yellow-light);
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: var(--navy);
+      color: var(--yellow);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-content h3 {
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      color: var(--gray-600);
+      margin-bottom: 0.75rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--navy-dark);
+      color: var(--sea-light);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--yellow);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    footer .copyright {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .hero .tagline { font-size: 1.1rem; }
+      .hero-logo { width: 140px; height: 140px; }
+      nav .links { gap: 1rem; }
+      section { padding: 3rem 1.5rem; }
+      .step { flex-direction: column; gap: 0.75rem; }
+      .motivation-content { grid-template-columns: 1fr; }
+      .placements-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+    }
+
+    @media (max-width: 480px) {
+      nav .links { display: none; }
+      .hero h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="brand">
+      <img src="lighthouse.png" alt="HighTide logo">
+      HighTide
+    </a>
+    <ul class="links">
+      <li><a href="#motivation">Motivation</a></li>
+      <li><a href="#designs">Designs</a></li>
+      <li><a href="#placements">Gallery</a></li>
+      <li><a href="#ai-skills">AI Skills</a></li>
+      <li><a href="#quickstart">Get Started</a></li>
+      <li><a href="https://github.com/VLSIDA/HighTide">GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <img src="lighthouse.svg" alt="HighTide Lighthouse" class="hero-logo">
+    <h1>High<span class="highlight">Tide</span></h1>
+    <p class="tagline">
+      A diverse, actively maintained open-source VLSI benchmark suite spanning
+      multiple design languages and technology nodes, built on the OpenROAD RTL-to-GDSII flow.
+    </p>
+    <div class="hero-buttons">
+      <a href="#quickstart" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Get Started
+      </a>
+      <a href="https://github.com/VLSIDA/HighTide" class="btn btn-outline">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- Motivation -->
+  <section class="motivation" id="motivation">
+    <div class="container">
+      <h2 class="section-title">Why HighTide?</h2>
+      <p class="section-subtitle">Existing benchmarks haven't kept pace with modern hardware diversity.</p>
+      <div class="motivation-content">
+        <div class="motivation-text">
+          <p>
+            Evaluation of EDA tools, circuits, and systems often relies on outdated hardware benchmarks.
+            Existing benchmark designs are predominantly RISC-V CPUs, providing limited representation of
+            the diverse components found in modern heterogeneous SoCs&mdash;from ML accelerators and GPUs to
+            cryptographic engines and networking cores.
+          </p>
+          <p>
+            The growing diversity of design languages poses an additional challenge. While designs exploiting
+            the parameterization capabilities of Chisel, Python-based generators, and SystemVerilog are
+            increasingly prevalent in the open-source community, the majority of benchmarks available to
+            suites remain Verilog-only snapshots&mdash;often never updated after their initial release.
+          </p>
+          <p>
+            For designs actively receiving upstream updates, relying on stale static snapshots risks
+            producing results that no longer reflect a design's true complexity and structure. Models trained
+            on a narrow design set learn patterns specific to those designs, rather than generalizable circuit
+            behaviors. HighTide addresses these gaps with a benchmark suite that evolves alongside the
+            open-source hardware ecosystem.
+          </p>
+        </div>
+        <div class="motivation-highlights">
+          <div class="highlight-card">
+            <h4>Design Diversity</h4>
+            <p>Processors, accelerators, cryptographic engines, and networking cores&mdash;not just CPUs. Cell counts range from under 20k to over 1M.</p>
+          </div>
+          <div class="highlight-card">
+            <h4>Language Coverage</h4>
+            <p>Designs originating from Verilog, SystemVerilog, Chisel, Python (LiteX), and migen, compiled down to Verilog for physical implementation.</p>
+          </div>
+          <div class="highlight-card">
+            <h4>Actively Tracked</h4>
+            <p>Git submodules track upstream sources. CI/CD pipelines validate RTL compilation on each update before tagging a release.</p>
+          </div>
+          <div class="highlight-card">
+            <h4>Full-Flow Evaluation</h4>
+            <p>End-to-end RTL-to-GDSII benchmarks exercising synthesis, floorplanning, placement, CTS, routing, and sign-off&mdash;not just point-tool targets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title">Key Features</h2>
+      <p class="section-subtitle">Infrastructure designed for reproducibility, scalability, and continuous evolution.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>Multi-Platform</h3>
+          <p>Targets ASAP7 (7nm), NanGate45 (45nm), and SKY130HD (130nm) technology nodes, enabling cross-node design exploration and tool evaluation.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Built on OpenROAD</h3>
+          <p>Leverages OpenROAD-flow-scripts for an open, reproducible RTL-to-GDSII flow. Designs run within a Docker image by default, eliminating manual tool installation.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Bazel Build System</h3>
+          <p>Bazel integration partitions the flow into separate build targets, enabling incremental re-execution and remote caching to drastically reduce runtimes for large designs.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Versioned Releases</h3>
+          <p>Tagged Git releases provide stable, versioned snapshots while regularly incorporating upstream changes through Git submodules for reproducible evaluation.</p>
+        </div>
+        <div class="feature-card">
+          <h3>ML-Ready</h3>
+          <p>Diverse designs with varying structural composition&mdash;sequential-heavy, combinational-heavy, macro-dense&mdash;provide rich training data for ML-driven EDA research.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Open Source</h3>
+          <p>Fully open-source and designed to grow. Contribute new designs, improve existing configurations, or use the suite for your research.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Designs -->
+  <section class="designs" id="designs">
+    <div class="container">
+      <h2 class="section-title">Design Portfolio</h2>
+      <p class="section-subtitle">Hardware blocks typically found in commercial heterogeneous SoCs.</p>
+      <div class="designs-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Design</th>
+              <th>Description</th>
+              <th>Language</th>
+              <th>Platforms</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>BlackParrot</strong></td>
+              <td>RISC-V multicore processor (single &amp; quad core)</td>
+              <td><span class="lang-badge">SystemVerilog</span></td>
+              <td><span class="platform-badge badge-asap7">asap7</span></td>
+            </tr>
+            <tr>
+              <td><strong>Gemmini</strong></td>
+              <td>Systolic array matrix multiplication accelerator</td>
+              <td><span class="lang-badge">Chisel</span></td>
+              <td><span class="platform-badge badge-asap7">asap7</span></td>
+            </tr>
+            <tr>
+              <td><strong>SHA3</strong></td>
+              <td>SHA-3 cryptographic hash accelerator</td>
+              <td><span class="lang-badge">Chisel</span></td>
+              <td><span class="platform-badge badge-asap7">asap7</span></td>
+            </tr>
+            <tr>
+              <td><strong>CNN</strong></td>
+              <td>Convolutional neural network accelerator</td>
+              <td><span class="lang-badge">Verilog</span></td>
+              <td><span class="platform-badge badge-asap7">asap7</span></td>
+            </tr>
+            <tr>
+              <td><strong>NyuziProcessor</strong></td>
+              <td>GPGPU-style multicore vector processor</td>
+              <td><span class="lang-badge">SystemVerilog</span></td>
+              <td>
+                <span class="platform-badge badge-asap7">asap7</span>
+                <span class="platform-badge badge-nangate45">nangate45</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Minimax</strong></td>
+              <td>Minimal area RISC-V core (serially-fetched)</td>
+              <td><span class="lang-badge">Verilog</span></td>
+              <td>
+                <span class="platform-badge badge-asap7">asap7</span>
+                <span class="platform-badge badge-nangate45">nangate45</span>
+                <span class="platform-badge badge-sky130hd">sky130hd</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>LFSR PRBS Gen</strong></td>
+              <td>LFSR-based pseudo-random bit sequence generator</td>
+              <td><span class="lang-badge">Verilog</span></td>
+              <td>
+                <span class="platform-badge badge-asap7">asap7</span>
+                <span class="platform-badge badge-nangate45">nangate45</span>
+                <span class="platform-badge badge-sky130hd">sky130hd</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>LiteEth</strong></td>
+              <td>Lightweight Ethernet core (6 MAC/PHY variants)</td>
+              <td><span class="lang-badge">Migen/LiteX</span></td>
+              <td>
+                <span class="platform-badge badge-asap7">asap7</span>
+                <span class="platform-badge badge-nangate45">nangate45</span>
+                <span class="platform-badge badge-sky130hd">sky130hd</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Placement Gallery -->
+  <section class="placements" id="placements">
+    <div class="container">
+      <h2 class="section-title">Design Variation</h2>
+      <p class="section-subtitle">
+        Placement views illustrating the structural diversity across the suite&mdash;from
+        small combinational datapaths to large systolic arrays and macro-dense accelerators.
+      </p>
+      <div class="placements-grid">
+        <div class="placement-card">
+          <img src="figures/final_placement_sha3.png" alt="SHA3 placement view">
+          <h4>SHA3</h4>
+          <p class="meta">~15k cells &middot; combinational-heavy datapath</p>
+        </div>
+        <div class="placement-card">
+          <img src="figures/final_placement_nvdla_partition_p.png" alt="NVDLA partition placement view">
+          <h4>NVDLA Partition</h4>
+          <p class="meta">~150k cells &middot; 84 memory macros</p>
+        </div>
+        <div class="placement-card">
+          <img src="figures/final_placement_gemmini.png" alt="Gemmini placement view">
+          <h4>Gemmini</h4>
+          <p class="meta">~570k cells &middot; largest macro-free design</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow -->
+  <section class="workflow" id="workflow">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">
+        HighTide tracks upstream sources via Git submodules and regenerates Verilog from each design's
+        native language, or uses pre-processed RTL for immediate builds.
+      </p>
+      <img src="figures/HighTideFLOW.png" alt="HighTide workflow diagram" class="workflow-img">
+      <p class="workflow-caption">
+        Design update path (left) pulls upstream sources and regenerates Verilog from the design's
+        native language. Default path (right) runs pre-existing Verilog through the ORFS RTL-to-GDS flow.
+      </p>
+    </div>
+  </section>
+
+  <!-- AI Skills -->
+  <section class="ai-skills" id="ai-skills">
+    <div class="container">
+      <h2 class="section-title">AI-Assisted Suite Management</h2>
+      <p class="section-subtitle">Claude Code skills that automate discovery, integration, and maintenance of benchmark designs.</p>
+      <p class="skills-intro">
+        HighTide includes a set of <a href="https://docs.anthropic.com/en/docs/claude-code" style="color: var(--sea-blue);">Claude Code</a>
+        skills&mdash;AI-powered slash commands that automate the complex, multi-step processes involved in managing a
+        benchmark suite. These skills handle everything from searching the open-source hardware ecosystem for new
+        candidates to performing full RTL-to-GDSII integration of new designs, reducing what would take hours of
+        manual work to a single command.
+      </p>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-name">/find-designs</div>
+          <h3>Discover New Benchmarks</h3>
+          <p>
+            Searches the open-source hardware ecosystem for designs that would strengthen the benchmark suite,
+            evaluates them against HighTide's selection criteria, and opens GitHub issues to propose additions.
+          </p>
+          <ul>
+            <li>Searches GitHub for synthesizable RTL across multiple HDLs</li>
+            <li>Evaluates license, activity, verification infrastructure, and complexity</li>
+            <li>Filters for diversity: new architectures, languages, and design categories</li>
+            <li>Opens structured GitHub issues with complexity estimates and conversion notes</li>
+            <li>Optionally focuses on a category (e.g., <code>/find-designs accelerators</code>)</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">/new-design</div>
+          <h3>Integrate a New Design</h3>
+          <p>
+            Performs the full end-to-end process of adding a new open-source hardware design to the suite,
+            from submodule setup through RTL generation to flow configuration and testing.
+          </p>
+          <ul>
+            <li>Adds the upstream repo as a Git submodule</li>
+            <li>Creates setup scripts to compile from the design's native HDL to Verilog</li>
+            <li>Identifies embedded memories and generates FakeRAM black-box macros</li>
+            <li>Creates platform-specific config, constraints, and power delivery</li>
+            <li>Generates release RTL and tests the full RTL-to-GDSII flow</li>
+            <li>Ports across ASAP7, NanGate45, and SKY130HD technology nodes</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">/update-design</div>
+          <h3>Track Upstream Changes</h3>
+          <p>
+            Audits all designs and tool dependencies for upstream updates, summarizes what changed,
+            and applies updates while maintaining flow compatibility.
+          </p>
+          <ul>
+            <li>Compares pinned submodule commits against upstream HEAD</li>
+            <li>Audits tool dependencies (sv2v, JDK, Python packages) for newer versions</li>
+            <li>Classifies changes as minor, moderate, or major with recommendations</li>
+            <li>Regenerates RTL, identifies new memories, and updates FakeRAM</li>
+            <li>Tunes flow parameters (utilization, timing, placement) when needed</li>
+            <li>Ports existing designs to additional technology platforms</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section class="quickstart" id="quickstart">
+    <div class="container">
+      <h2 class="section-title">Quick Start</h2>
+      <p class="section-subtitle">Get up and running in minutes with the Bazel flow.</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Install Dependencies</h3>
+          <p>You need Bazelisk and Docker on an Ubuntu machine.</p>
+          <div class="code-block"><code><span class="comment"># Install Bazelisk</span>
+<span class="cmd">sudo apt install perl
+sudo wget -O /usr/local/bin/bazel \
+  https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
+sudo chmod +x /usr/local/bin/bazel</span></code></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Clone the Repository</h3>
+          <div class="code-block"><code><span class="cmd">git clone https://github.com/VLSIDA/HighTide.git
+cd HighTide</span></code></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Build a Design</h3>
+          <p>Run the full RTL-to-GDSII flow for any design.</p>
+          <div class="code-block"><code><span class="comment"># Build a single design</span>
+<span class="cmd">bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final</span>
+
+<span class="comment"># Build all designs for a platform</span>
+<span class="cmd">bazel build //designs/asap7/...</span>
+
+<span class="comment"># Build everything</span>
+<span class="cmd">bazel build //designs/...</span></code></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>View Results</h3>
+          <p>Check build summaries and QoR reports.</p>
+          <div class="code-block"><code><span class="cmd">./tools/summary.sh</span></code></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com/VLSIDA/HighTide">GitHub Repository</a>
+      <a href="https://github.com/VLSIDA/HighTide/issues">Report an Issue</a>
+      <a href="https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts">OpenROAD Flow Scripts</a>
+    </div>
+    <p class="copyright">HighTide &mdash; VLSIDA &middot; UC Santa Cruz</p>
+  </footer>
+
+</body>
+</html>
