@@ -111,22 +111,32 @@ if [ ! -z "${CLEAN_BEFORE+x}" ]; then
 fi
 
 # Check if sv2v exists already (and set up if not)
-if [ ! -f "./sv2v" ]; then
-        echo "A local sv2v installation doesn't exist. Cloning and building..."
-        rm -rf sv2v_main
-        git clone https://github.com/zachjs/sv2v.git sv2v_main
-        # Download haskell stack locally
-        curl -sSL https://get.haskellstack.org/ | sh -s - -d $(pwd)/sv2v_main
-        cd sv2v_main
-        # Change default STACK_ROOT dir from ~/.stack to the current dir
-        export STACK_ROOT=$(pwd)/sv2v_main
-        ./stack setup
-        ./stack build
-        cp "$(./stack path --local-install-root)/bin/sv2v" ../sv2v
-        cd ..
-        rm -rf sv2v_main
-        echo "Local sv2v build completed!"
+if [ ! -f "${INSTALL_PATH}/sv2v" ]; then
+        echo "sv2v not found. Downloading prebuilt binary..."
+        SV2V_ZIP="sv2v-Linux.zip"
+        curl -sSL -o "$SV2V_ZIP" \
+            "https://github.com/zachjs/sv2v/releases/download/v0.0.13/sv2v-Linux.zip"
+        unzip -o "$SV2V_ZIP" -d sv2v_extract
+        cp sv2v_extract/sv2v-Linux/sv2v "${INSTALL_PATH}/sv2v"
+        chmod +x "${INSTALL_PATH}/sv2v"
+        rm -rf "$SV2V_ZIP" sv2v_extract
+        echo "sv2v binary downloaded successfully!"
 else
         echo "sv2v already present in directory"     
 fi
 
+SCRIPT_DIR="$(dirname $(readlink -f $0))"            # .../designs/src/minimax/dev
+BENCH_DESIGN_HOME="$(realpath "${SCRIPT_DIR}/../../../")"  # .../designs
+DESIGN_NAME="minimax"
+
+VERILOG_FILES="${BENCH_DESIGN_HOME}/src/${DESIGN_NAME}/${DESIGN_NAME}.v"
+REPO_FILES="${BENCH_DESIGN_HOME}/src/${DESIGN_NAME}/dev/repo/rtl/${DESIGN_NAME}.v"
+
+# Only rebuild if target is missing or source is newer
+if [ ! -f "${VERILOG_FILES}" ] || [ "${REPO_FILES}" -nt "${VERILOG_FILES}" ]; then
+    echo "Translating ${REPO_FILES}  ->  ${VERILOG_FILES}"
+    "${INSTALL_PATH}/sv2v" -w "${VERILOG_FILES}" "${REPO_FILES}"
+    echo "Done."
+else
+    echo "${VERILOG_FILES} is up to date, skipping translation."
+fi

@@ -16,13 +16,17 @@ echo "Initializing ORFS submodule..."
 git submodule init OpenROAD-flow-scripts
 git submodule update --recursive OpenROAD-flow-scripts
 
-# 2. Create symlinks for Make flow
+# 2. Initialize FakeRAM submodule
+git submodule init FakeRAM
+git submodule update --recursive FakeRAM
+
+# 3. Create symlinks for Make flow
 echo "Creating symlinks for Make flow..."
 ln -sf OpenROAD-flow-scripts/flow/util .
 ln -sf OpenROAD-flow-scripts/flow/scripts .
 ln -sf OpenROAD-flow-scripts/flow/platforms .
 
-# 3. Pull Docker image (used by both flows)
+# 4. Pull Docker image (used by both flows)
 echo "Pulling Docker image: ${DOCKER_IMAGE}"
 docker pull "${DOCKER_IMAGE}"
 

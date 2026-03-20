@@ -1,4 +1,5 @@
 export DESIGN_NAME	= minimax
+
 export PLATFORM		= asap7
 
 # This could be a wildcard
