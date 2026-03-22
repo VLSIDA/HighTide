@@ -11,6 +11,11 @@ if [ ! -d "$BIN_DIR" ]; then
     exit 1
 fi
 
+# Print commit version
+COMMIT=$(git -C "$(dirname "$0")/.." rev-parse --short HEAD 2>/dev/null || echo "unknown")
+echo "HighTide commit: $COMMIT"
+echo ""
+
 # Header
 printf "%-12s %-25s %10s %10s %10s %8s %8s %6s %5s %10s %10s %12s %12s %6s\n" \
     "Platform" "Design" "Die Area" "Core Area" "Inst Area" "Util%" "Cells" "Macr" "IOs" "WNS" "TNS" "Fmax(GHz)" "Power(mW)" "DRCs"
