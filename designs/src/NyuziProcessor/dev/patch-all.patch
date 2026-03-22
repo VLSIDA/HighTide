@@ -1,14 +1,3 @@
---- cache_lru.sv	2025-07-09 22:39:35.321468016 +0000
-+++ cache_lru_fix.sv	2025-07-09 22:41:13.034912461 +0000
-@@ -112,7 +112,7 @@
-     // be evicted. A strict LRU would take three cycles for the node to move to the
-     // LRU. So, this is close enough to LRU to work well, but much simpler to implement.
-     //
--    sram_1r1w #(
-+    fakeram_1r1w_3x1 #(
-         .DATA_WIDTH(LRU_FLAG_BITS),
-         .SIZE(NUM_SETS),
-         .READ_DURING_WRITE("NEW_DATA")
 --- dcache_data_stage.sv	2025-07-09 22:42:54.320385140 +0000
 +++ dcache_data_stage_fix.sv	2025-07-09 22:42:52.093373519 +0000
 @@ -472,7 +472,7 @@
@@ -20,17 +9,26 @@
          .DATA_WIDTH(CACHE_LINE_BITS),
          .SIZE(`L1D_WAYS * `L1D_SETS),
          .READ_DURING_WRITE("NEW_DATA")
---- dcache_tag_stage.sv	2025-07-09 22:44:07.942766681 +0000
-+++ dcache_tag_stage_fix.sv	2025-07-09 22:43:50.793678251 +0000
+--- dcache_tag_stage.sv 2025-11-05 03:31:47.869306193 +0000
++++ dcache_tag_stage_fix.sv     2025-11-05 03:30:09.028400827 +0000
 @@ -177,7 +177,7 @@
              // to all be cleared on reset.
              logic line_valid[`L1D_SETS];
- 
+
 -            sram_2r1w #(
 +            fakeram_2r1w_20x64 #(
                  .DATA_WIDTH($bits(l1d_tag_t)),
                  .SIZE(`L1D_SETS),
                  .READ_DURING_WRITE("NEW_DATA")
+@@ -275,7 +275,7 @@
+         end
+     end
+
+-    cache_lru #(
++    cache_lru_4x64 #(
+         .NUM_WAYS(`L1D_WAYS),
+         .NUM_SETS(`L1D_SETS)
+     ) lru(
 --- ifetch_data_stage.sv	2025-07-09 22:14:25.832128443 +0000
 +++ ifetch_data_stage_fix.sv	2025-07-09 22:16:31.971567357 +0000
 @@ -152,7 +152,7 @@
@@ -42,17 +40,26 @@
          .DATA_WIDTH(CACHE_LINE_BITS),
          .SIZE(`L1I_WAYS * `L1I_SETS),
          .READ_DURING_WRITE("NEW_DATA")
---- ifetch_tag_stage.sv	2025-07-09 22:50:10.217586731 +0000
-+++ ifetch_tag_stage_fix.sv	2025-07-09 22:49:59.507533958 +0000
+--- ifetch_tag_stage.sv 2025-11-05 03:31:48.227305861 +0000
++++ ifetch_tag_stage_fix.sv     2025-11-05 03:30:23.370386719 +0000
 @@ -179,7 +179,7 @@
              // to simultaneously be cleared on reset.
              logic line_valid[`L1I_SETS];
- 
+
 -            sram_1r1w #(
 +            fakeram_1r1w_20x64 #(
                  .DATA_WIDTH($bits(l1i_tag_t)),
                  .SIZE(`L1I_SETS),
                  .READ_DURING_WRITE("NEW_DATA")
+@@ -275,7 +275,7 @@
+         end
+     end
+
+-    cache_lru #(
++    cache_lru_4x64 #(
+         .NUM_WAYS(`L1I_WAYS),
+         .NUM_SETS(`L1I_SETS)
+     ) cache_lru(
 --- int_execute_stage.sv	2025-07-09 01:05:59.672070430 +0000
 +++ int_execute_stage_fix.sv	2025-07-09 19:58:46.419523214 +0000
 @@ -101,87 +101,40 @@
@@ -187,12 +194,21 @@
          .DATA_WIDTH(CACHE_LINE_BITS),
          .SIZE(`L2_WAYS * `L2_SETS),
          .READ_DURING_WRITE("NEW_DATA")
---- l2_cache_tag_stage.sv	2025-07-09 22:53:16.175496050 +0000
-+++ l2_cache_tag_stage_fix.sv	2025-07-09 22:53:08.300457778 +0000
+--- l2_cache_tag_stage.sv       2025-11-05 03:31:47.438306593 +0000
++++ l2_cache_tag_stage_fix.sv   2025-11-05 03:29:52.497417260 +0000
+@@ -62,7 +62,7 @@
+         assert((`L2_SETS & (`L2_SETS - 1)) == 0);
+     end
+
+-    cache_lru #(
++    cache_lru_8x256 #(
+         .NUM_SETS(`L2_SETS),
+         .NUM_WAYS(`L2_WAYS)
+     ) cache_lru(
 @@ -84,7 +84,7 @@
          begin : way_tags_gen
              logic line_valid[`L2_SETS];
- 
+
 -            sram_1r1w #(
 +            fakeram_1r1w_18x256 #(
                  .DATA_WIDTH($bits(l2_tag_t)),
@@ -201,7 +217,7 @@
 @@ -97,7 +97,7 @@
                  .write_data(l2r_update_tag_value),
                  .*);
- 
+
 -            sram_1r1w #(
 +            fakeram_1r1w_1x256 #(
                  .DATA_WIDTH(1),
