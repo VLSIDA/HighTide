@@ -1,0 +1,28 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "bp_processor",
+    platform = "asap7",
+    verilog_files = [
+        "//designs/src/bp_processor:rtl",
+        "//designs/asap7/bp_processor:macros",
+    ],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/asap7/bp_processor:sram_lefs"],
+        "ADDITIONAL_LIBS": ["//designs/asap7/bp_processor:sram_libs"],
+    },
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        "SYNTH_MINIMUM_KEEP_SIZE": "500",
+        "ABC_AREA": "1",
+        "SYNTH_MEMORY_MAX_BITS": "65536",
+        "DIE_AREA": "0 0 900 900",
+        "CORE_AREA": "10 10 890 890",
+        "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
+        "MACRO_PLACE_HALO": "6 6",
+        "MACRO_BLOCKAGE_HALO": "0.5",
+        "PLACE_DENSITY_LB_ADDON": "0.10",
+        "TNS_END_PERCENT": "100",
+    },
+)

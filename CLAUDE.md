@@ -120,7 +120,7 @@ Dev mode requires: `git submodule update --init designs/src/<design>/dev/repo` b
 
 | Platform | Node | Designs |
 |----------|------|---------|
-| asap7 | 7nm academic | gemmini, minimax, cnn, sha3, lfsr, NyuziProcessor, bp_processor/bp_quad, liteeth (6 variants) |
+| asap7 | 7nm academic | gemmini, minimax, cnn, sha3, lfsr, NyuziProcessor, bp_processor/bp_uno/bp_quad, liteeth (6 variants) |
 | nangate45 | 45nm | minimax, lfsr, NyuziProcessor, liteeth (6 variants) |
 | sky130hd | 130nm open | minimax, lfsr, liteeth (6 variants) |
 
