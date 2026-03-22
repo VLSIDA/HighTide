@@ -949,7 +949,7 @@ cd HighTide</span></code></div>
           <h3>Build a Design</h3>
           <p>Run the full RTL-to-GDSII flow for any design.</p>
           <div class="code-block"><code><span class="comment"># Build a single design</span>
-<span class="cmd">bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final</span>
+<span class="cmd">bazel build //designs/asap7/lfsr:lfsr_final</span>
 
 <span class="comment"># Build all designs for a platform</span>
 <span class="cmd">bazel build //designs/asap7/...</span>
@@ -964,7 +964,10 @@ cd HighTide</span></code></div>
         <div class="step-content">
           <h3>View Results</h3>
           <p>Check build summaries and QoR reports.</p>
-          <div class="code-block"><code><span class="cmd">./tools/summary.sh</span></code></div>
+          <div class="code-block"><code><span class="cmd">./tools/summary.sh</span>
+<span class="comment">Platform     Design                      Die Area  Core Area  Inst Area    Util%    Cells   Macr   IOs        WNS        TNS    Fmax(GHz)    Power(mW)   DRCs
+================================================================================================================================================================
+asap7        lfsr                   81.7       47.0       21.8     46.4      205      0    13      56.91       0.00         5.78        0.381      0</span></code></div>
         </div>
       </div>
     </div>
