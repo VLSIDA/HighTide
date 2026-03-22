@@ -79,10 +79,9 @@ To view a summary table of all completed builds:
 ```
 
 ```
-Platform     Design                               Area      Util%        WNS        TNS    Cells   DRCs
-====================================================================================================
-asap7        lfsr                        47.0       46.4      56.91       0.00      452      0
-asap7        sha3                               3319.8       72.5      88.34       0.00    35255      0
+Platform     Design                      Die Area  Core Area  Inst Area    Util%    Cells   Macr   IOs        WNS        TNS    Fmax(GHz)    Power(mW)   DRCs
+================================================================================================================================================================
+asap7        lfsr                   81.7       47.0       21.8     46.4      205      0    13      56.91       0.00         5.78        0.381      0
 ```
 
 ## Make Flow (legacy)
