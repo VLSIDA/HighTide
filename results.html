@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HighTide — Build Results</title>
+  <link rel="icon" type="image/png" href="lighthouse.png">
+  <style>
+    :root {
+      --navy: #1b2a6b;
+      --navy-dark: #0f1a4a;
+      --yellow: #fdd835;
+      --yellow-glow: #fef9e7;
+      --sea-light: #81badd;
+      --sea-blue: #4a90d9;
+      --white: #ffffff;
+      --gray-50: #f8f9fa;
+      --gray-100: #e9ecef;
+      --gray-600: #6c757d;
+      --gray-800: #343a40;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--gray-800);
+      line-height: 1.6;
+      background: var(--gray-50);
+    }
+
+    nav {
+      background: var(--navy-dark);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    nav .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    nav .brand img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+    }
+
+    nav .links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav .links a {
+      color: var(--sea-light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav .links a:hover { color: var(--yellow); }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--gray-600);
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    thead { background: var(--navy); color: var(--white); }
+
+    th {
+      padding: 0.85rem 1rem;
+      text-align: right;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    th:first-child, th:nth-child(2) { text-align: left; }
+
+    td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--gray-100);
+      text-align: right;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+    }
+
+    td:first-child, td:nth-child(2) {
+      text-align: left;
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    tbody tr:hover { background: var(--yellow-glow); }
+
+    .platform-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .badge-asap7 { background: #e3f2fd; color: #1565c0; }
+    .badge-nangate45 { background: #e8f5e9; color: #2e7d32; }
+    .badge-sky130hd { background: #fff3e0; color: #e65100; }
+
+    .note {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+
+    footer {
+      background: var(--navy-dark);
+      color: var(--sea-light);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    footer a { color: var(--yellow); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="brand">
+      <img src="lighthouse.png" alt="HighTide logo">
+      HighTide
+    </a>
+    <ul class="links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="https://github.com/VLSIDA/HighTide">GitHub</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h1>Build Results</h1>
+    <p class="subtitle">
+      QoR summary from <code>./tools/summary.sh</code> after running the full RTL-to-GDSII flow.
+    </p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Design</th>
+            <th>Die Area</th>
+            <th>Core Area</th>
+            <th>Inst Area</th>
+            <th>Util%</th>
+            <th>Cells</th>
+            <th>Macros</th>
+            <th>IOs</th>
+            <th>WNS</th>
+            <th>TNS</th>
+            <th>Fmax (GHz)</th>
+            <th>Power (mW)</th>
+            <th>DRCs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- RESULTS_START -->
+          <tr>
+            <td><span class="platform-badge badge-asap7">asap7</span></td>
+            <td>lfsr</td>
+            <td>81.7</td>
+            <td>47.0</td>
+            <td>21.8</td>
+            <td>46.4</td>
+            <td>205</td>
+            <td>0</td>
+            <td>13</td>
+            <td>56.91</td>
+            <td>0.00</td>
+            <td>5.78</td>
+            <td>0.381</td>
+            <td>0</td>
+          </tr>
+          <!-- RESULTS_END -->
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      This table is regenerated from build results. Run <code>bazel build //designs/...</code>
+      followed by <code>./tools/summary.sh</code> to produce updated results.
+    </p>
+  </div>
+
+  <footer>
+    <a href="index.html">Back to HighTide</a>
+  </footer>
+
+</body>
+</html>
