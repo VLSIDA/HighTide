@@ -21,11 +21,9 @@ hightide_design(
     },
     arguments = {
         "SYNTH_HIERARCHICAL": "1",
-        "ABC_AREA": "1",
-        "DIE_AREA": "0 0 660 660",
-        "CORE_AREA": "5 5 655 655",
-        "PLACE_DENSITY_LB_ADDON": "0.15",
-        "MACRO_PLACE_HALO": "5 5",
+        "CORE_UTILIZATION": "55",
+        "PLACE_DENSITY_LB_ADDON": "0.22",
+        "MACRO_PLACE_HALO": "6 6",
         "TNS_END_PERCENT": "100",
     },
 )
