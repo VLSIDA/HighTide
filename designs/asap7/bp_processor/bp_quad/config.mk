@@ -35,8 +35,8 @@ export ADDITIONAL_LIBS = $(PLATFORM_DESIGN_DIR)/sram/lib/fakeram_8x174_1rw.lib \
 
 export SYNTH_MEMORY_MAX_BITS = 65536
 
-export DIE_AREA  = 0 0 1020 1020
-export CORE_AREA = 10 10 1010 1010
+export DIE_AREA  = 0 0 1200 1200
+export CORE_AREA = 10 10 1190 1190
 
 export PLACE_PINS_ARGS = -min_distance 30 -min_distance_in_tracks
 export MACRO_PLACE_HALO    = 6 6
