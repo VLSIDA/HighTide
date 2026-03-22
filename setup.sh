@@ -28,4 +28,4 @@ docker pull "${DOCKER_IMAGE}"
 
 echo "=== Setup complete ==="
 echo "  Make flow:  ./runorfs.sh"
-echo "  Bazel flow: bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_synth"
+echo "  Bazel flow: bazel build //designs/asap7/lfsr:lfsr_synth"

@@ -35,7 +35,7 @@ Check the existing designs before proposing:
 - gemmini (ML systolic array accelerator)
 - minimax (RISC-V core)
 - NyuziProcessor (RISC processor)
-- lfsr_prbs_gen (LFSR/PRBS generator)
+- lfsr (LFSR/PRBS generator)
 - liteeth (Ethernet MAC, multiple variants)
 - cnn (CNN accelerator via NNgen/Veriloggen)
 - sha3 (SHA3 hash, in progress)

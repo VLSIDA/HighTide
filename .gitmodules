@@ -1,8 +1,8 @@
 [submodule "OpenROAD-flow-scripts"]
 	path = OpenROAD-flow-scripts
 	url  = https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
-[submodule "designs/src/lfsr_prbs_gen/dev/repo"]
-	path = designs/src/lfsr_prbs_gen/dev/repo
+[submodule "designs/src/lfsr/dev/repo"]
+	path = designs/src/lfsr/dev/repo
 	url = https://github.com/alexforencich/verilog-lfsr.git
 [submodule "designs/src/minimax/dev/repo"]
 	path = designs/src/minimax/dev/repo

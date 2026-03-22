@@ -1,9 +1,10 @@
 load("//:defs.bzl", "hightide_design")
 
 hightide_design(
-    name = "lfsr_prbs_gen",
+    name = "lfsr",
+    top = "lfsr_prbs_gen",
     platform = "nangate45",
-    verilog_files = ["//designs/src/lfsr_prbs_gen:rtl"],
+    verilog_files = ["//designs/src/lfsr:rtl"],
     sources = {"SDC_FILE": [":constraint.sdc"]},
     arguments = {
         "CORE_UTILIZATION": "20",

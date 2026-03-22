@@ -34,7 +34,7 @@ This script must:
 
 The setup.sh must install all dependencies needed to convert the source HDL to plain Verilog. Follow existing patterns:
 - **SystemVerilog designs**: Use either sv2v (see `designs/src/minimax/dev/setup.sh`) or yosys-slang. The setup.sh must build/install the chosen tool locally if not present.
-- **Pure Verilog designs**: May just need file copying (see `designs/src/lfsr_prbs_gen/dev/setup.sh`)
+- **Pure Verilog designs**: May just need file copying (see `designs/src/lfsr/dev/setup.sh`)
 - **Chisel/Scala designs**: Install JDK + sbt locally, run sbt to generate Verilog (see `designs/src/gemmini/dev/setup.sh`)
 - **LiteX/Python designs**: Create Python venv, pip install all dependencies, generate Verilog (see `designs/src/liteeth/dev/setup.sh`)
 - **Veriloggen/Python designs**: Create Python venv, pip install dependencies including Veriloggen/NNgen, generate Verilog (see `designs/src/cnn/dev/setup.sh`)

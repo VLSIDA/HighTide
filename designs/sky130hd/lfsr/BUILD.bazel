@@ -1,9 +1,10 @@
 load("//:defs.bzl", "hightide_design")
 
 hightide_design(
-    name = "lfsr_prbs_gen",
-    platform = "asap7",
-    verilog_files = ["//designs/src/lfsr_prbs_gen:rtl"],
+    name = "lfsr",
+    top = "lfsr_prbs_gen",
+    platform = "sky130hd",
+    verilog_files = ["//designs/src/lfsr:rtl"],
     sources = {"SDC_FILE": [":constraint.sdc"]},
     arguments = {
         "CORE_UTILIZATION": "40",

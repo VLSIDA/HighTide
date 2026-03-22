@@ -31,7 +31,7 @@ No additional setup needed — Bazel fetches ORFS and bazel-orfs automatically v
 
 ```bash
 # Build a single design
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build //designs/asap7/lfsr:lfsr_final
 
 # Build all designs for a platform
 bazel build //designs/asap7/...
@@ -40,17 +40,17 @@ bazel build //designs/asap7/...
 bazel build //designs/...
 
 # Build with dev RTL generation (requires submodule init + tools)
-bazel build --define update_rtl=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build --define update_rtl=true //designs/asap7/lfsr:lfsr_final
 
 # Build individual stages (target suffixes: _synth, _floorplan, _place, _cts, _route, _final)
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_synth
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_place
+bazel build //designs/asap7/lfsr:lfsr_synth
+bazel build //designs/asap7/lfsr:lfsr_place
 ```
 
 ### Make Flow (legacy)
 
 ```bash
-# Run full flow for a design (default: nangate45/lfsr_prbs_gen)
+# Run full flow for a design (default: asap7/lfsr)
 make DESIGN_CONFIG=./designs/<platform>/<design>/config.mk
 
 # Run via Docker non-interactively (use this instead of runorfs.sh which has -it)
@@ -120,9 +120,9 @@ Dev mode requires: `git submodule update --init designs/src/<design>/dev/repo` b
 
 | Platform | Node | Designs |
 |----------|------|---------|
-| asap7 | 7nm academic | gemmini, minimax, cnn, sha3, lfsr_prbs_gen, NyuziProcessor, bp_processor/bp_quad, liteeth (6 variants) |
-| nangate45 | 45nm | minimax, lfsr_prbs_gen, NyuziProcessor, liteeth (6 variants) |
-| sky130hd | 130nm open | minimax, lfsr_prbs_gen, liteeth (6 variants) |
+| asap7 | 7nm academic | gemmini, minimax, cnn, sha3, lfsr, NyuziProcessor, bp_processor/bp_quad, liteeth (6 variants) |
+| nangate45 | 45nm | minimax, lfsr, NyuziProcessor, liteeth (6 variants) |
+| sky130hd | 130nm open | minimax, lfsr, liteeth (6 variants) |
 
 ### Output Directories
 

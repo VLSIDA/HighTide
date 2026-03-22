@@ -29,7 +29,7 @@ cd HighTide
 3. Build a design:
 
 ```bash
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build //designs/asap7/lfsr:lfsr_final
 ```
 
 No additional setup is needed. Bazel automatically fetches ORFS and bazel-orfs via `MODULE.bazel`.
@@ -38,7 +38,7 @@ No additional setup is needed. Bazel automatically fetches ORFS and bazel-orfs v
 
 ```bash
 # Build a single design (full RTL-to-GDSII flow)
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build //designs/asap7/lfsr:lfsr_final
 
 # Build all designs for a platform
 bazel build //designs/asap7/...
@@ -47,11 +47,11 @@ bazel build //designs/asap7/...
 bazel build //designs/...
 
 # Build individual stages
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_synth
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_floorplan
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_place
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_cts
-bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_route
+bazel build //designs/asap7/lfsr:lfsr_synth
+bazel build //designs/asap7/lfsr:lfsr_floorplan
+bazel build //designs/asap7/lfsr:lfsr_place
+bazel build //designs/asap7/lfsr:lfsr_cts
+bazel build //designs/asap7/lfsr:lfsr_route
 ```
 
 ### RTL Regeneration (Bazel)
@@ -59,7 +59,7 @@ bazel build //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_route
 By default, designs use pre-generated Verilog. To regenerate RTL from source repositories:
 
 ```bash
-bazel build --define update_rtl=true //designs/asap7/lfsr_prbs_gen:lfsr_prbs_gen_final
+bazel build --define update_rtl=true //designs/asap7/lfsr:lfsr_final
 ```
 
 This automatically initializes the git submodule and runs the design's generation script.
@@ -81,7 +81,7 @@ To view a summary table of all completed builds:
 ```
 Platform     Design                               Area      Util%        WNS        TNS    Cells   DRCs
 ====================================================================================================
-asap7        lfsr_prbs_gen                        47.0       46.4      56.91       0.00      452      0
+asap7        lfsr                        47.0       46.4      56.91       0.00      452      0
 asap7        sha3                               3319.8       72.5      88.34       0.00    35255      0
 ```
 
@@ -111,7 +111,7 @@ cd HighTide
 4. Run a design in the Docker image:
 
 ```bash
-make DESIGN_CONFIG=./designs/nangate45/lfsr_prbs_gen/config.mk
+make DESIGN_CONFIG=./designs/asap7/lfsr/config.mk
 ```
 
 ### Dev RTL Generation (Make)

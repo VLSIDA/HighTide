@@ -1,19 +1,19 @@
 ###            Comprehensive Design List (nangate45, sky130hd, asap7)            ###
 # 
-# DESIGN_CONFIG=./designs/nangate45/lfsr_prbs_gen/config.mk
+# DESIGN_CONFIG=./designs/nangate45/lfsr/config.mk
 # DESIGN_CONFIG=./designs/nangate45/minimax/config.mk
 # DESIGN_CONFIG=./designs/nangate45/NyuziProcessor/config.mk
 # 
-# DESIGN_CONFIG=./designs/sky130hd/lfsr_prbs_gen/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/lfsr/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/minimax/config.mk
 # 
 # DESIGN_CONFIG=./designs/asap7/minimax/config.mk
-# DESIGN_CONFIG=./designs/asap7/lfsr_prbs_gen/config.mk
+# DESIGN_CONFIG=./designs/asap7/lfsr/config.mk
 # DESIGN_CONFIG=./designs/asap7/NyuziProcessor/config.mk
 # DESIGN_CONFIG=./designs/asap7/gemmini/config.mk
 # DESIGN_CONFIG=./designs/asap7/bp_processor/bp_quad/config.mk
 
-DESIGN_CONFIG ?= ./designs/nangate45/lfsr_prbs_gen/config.mk
+DESIGN_CONFIG ?= ./designs/asap7/lfsr/config.mk
 -include OpenROAD-flow-scripts/flow/Makefile
 # Designs with RAM macros use FakeRAM (LEF generated for pins, no internal logic)
 # Check if calling "update-rtl" with an ORFS command or by itself.
