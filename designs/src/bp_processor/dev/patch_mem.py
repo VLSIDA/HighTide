@@ -30,6 +30,53 @@ STRIP_MODULES = {
     "bsg_mem_1rw_sync_mask_write_bit_synth",
 }
 
+# Stub modules to append: modules referenced by the RTL but not included
+# in sv2v output. These provide synthesizable stand-ins.
+STUB_MODULES = {
+    # bsg_fifo_1r1w_small_hardened is instantiated when harden_p != 0
+    # in bsg_fifo_1r1w_small (used by the quad-core coherence network).
+    # No actual hard macro exists for ASIC synthesis, so we delegate to
+    # the unhardened implementation.
+    "bsg_fifo_1r1w_small_hardened": """\
+module bsg_fifo_1r1w_small_hardened (
+\tclk_i,
+\treset_i,
+\tv_i,
+\tready_param_o,
+\tdata_i,
+\tv_o,
+\tdata_o,
+\tyumi_i
+);
+\tparameter width_p = 0;
+\tparameter els_p = 0;
+\tparameter ready_THEN_valid_p = 0;
+\tinput clk_i;
+\tinput reset_i;
+\tinput v_i;
+\toutput wire ready_param_o;
+\tinput [width_p - 1:0] data_i;
+\toutput wire v_o;
+\toutput wire [width_p - 1:0] data_o;
+\tinput yumi_i;
+\tbsg_fifo_1r1w_small_unhardened #(
+\t\t.width_p(width_p),
+\t\t.els_p(els_p),
+\t\t.ready_THEN_valid_p(ready_THEN_valid_p)
+\t) fifo (
+\t\t.clk_i(clk_i),
+\t\t.reset_i(reset_i),
+\t\t.v_i(v_i),
+\t\t.ready_param_o(ready_param_o),
+\t\t.data_i(data_i),
+\t\t.v_o(v_o),
+\t\t.data_o(data_o),
+\t\t.yumi_i(yumi_i)
+\t);
+endmodule
+""",
+}
+
 
 def patch(input_path, output_path):
     with open(input_path, "r") as f:
@@ -58,10 +105,20 @@ def patch(input_path, output_path):
             out_lines.append(line)
             i += 1
 
+    # Append stub modules for missing dependencies
+    stubs_added = 0
+    for mod_name, mod_code in STUB_MODULES.items():
+        # Only add if module is not already defined
+        if not re.search(rf"^module\s+{re.escape(mod_name)}\s*\(", "\n".join(out_lines), re.MULTILINE):
+            out_lines.append("")
+            out_lines.append(mod_code)
+            stubs_added += 1
+            print(f"  Added stub module: {mod_name}")
+
     with open(output_path, "w") as f:
         f.write("\n".join(out_lines))
 
-    print(f"Stripped {stripped} module definitions")
+    print(f"Stripped {stripped} module definitions, added {stubs_added} stub modules")
     return stripped
 
 
