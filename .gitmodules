@@ -25,3 +25,6 @@
 [submodule "designs/src/sha3/dev/repo"]
 	path = designs/src/sha3/dev/repo
 	url = https://github.com/ucb-bar/sha3
+[submodule "designs/src/SYNtzulA/dev/repo"]
+	path = designs/src/SYNtzulA/dev/repo
+	url = https://github.com/EOLAB-2025/SYNtzulA.git

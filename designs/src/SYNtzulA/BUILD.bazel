@@ -1,0 +1,66 @@
+filegroup(
+    name = "rtl_release",
+    srcs = [
+        "SYNtzulATop.v",
+        "macros.v",
+        "config.txt",
+    ],
+)
+
+# update-rtl mode: init submodule, patch, sv2v, cat plain .v files
+genrule(
+    name = "rtl_dev_gen",
+    srcs = [],
+    outs = [
+        "dev_SYNtzulATop.v",
+        "dev_macros.v",
+    ],
+    local = True,
+    cmd = """
+        WORKSPACE_ROOT=$$(readlink -f $(location //:tools/update_rtl.sh) | sed 's|/tools/update_rtl.sh||')
+        cd $$WORKSPACE_ROOT
+
+        DESIGN_SRC=designs/src/SYNtzulA
+        DEV_DIR=$$DESIGN_SRC/dev
+        REPO_DIR=$$DEV_DIR/repo
+        RTL_DIR=$$REPO_DIR/rtl
+
+        # Init submodule
+        git submodule update --init $$REPO_DIR >&2
+
+        # Setup
+        bash $$DEV_DIR/setup.sh >&2
+
+        # Patch (ignore already-applied)
+        patch -p1 -N --silent --directory=$$REPO_DIR \
+            < $$DEV_DIR/patch-synsnn.patch > /dev/null 2>&1 || [ $$? -eq 1 ]
+
+        # define.v first so macros are visible to everything after
+        cat $$RTL_DIR/define.v > $(location dev_SYNtzulATop.v)
+
+        # sv2v: convert .sv files, -I so sv2v resolves includes during conversion
+        SV_FILES=$$(find $$RTL_DIR -mindepth 2 -maxdepth 2 -name "*.sv")
+        $$DEV_DIR/sv2v --top SYNtzulATop -w stdout \
+            -I $$RTL_DIR \
+            $$SV_FILES \
+            >> $(location dev_SYNtzulATop.v)
+
+        # Append plain .v files (excluding define.v at rtl root)
+        V_FILES=$$(find $$RTL_DIR -mindepth 2 -maxdepth 2 -name "*.v")
+        for f in $$V_FILES; do
+            cat $$f >> $(location dev_SYNtzulATop.v)
+        done
+
+        cp $$DESIGN_SRC/macros.v $(location dev_macros.v)
+    """,
+    tools = ["//:tools/update_rtl.sh"],
+)
+
+alias(
+    name = "rtl",
+    actual = select({
+        "//:update_rtl": ":rtl_dev_gen",
+        "//conditions:default": ":rtl_release",
+    }),
+    visibility = ["//visibility:public"],
+)
