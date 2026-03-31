@@ -3,12 +3,10 @@
 
 set -eu
 
-DIR="$(dirname $(readlink -f $0))"
-cd "$DIR"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
-
-INSTALL_PATH="$(pwd)"
-
+INSTALL_PATH="$SCRIPT_DIR"
 
 PROC=-1
 
@@ -119,4 +117,14 @@ if [ ! -f "./sv2v" ]; then
         echo "Local sv2v build completed!"
 else
         echo "sv2v already present in directory"     
+fi
+
+REPO_LICENSE="$SCRIPT_DIR/LICENSE"
+PARENT_LICENSE="$SCRIPT_DIR/../LICENSE"
+
+if [ -f "$REPO_LICENSE" ]; then
+    echo "Copying $REPO_LICENSE -> $PARENT_LICENSE"
+    cp -u "$REPO_LICENSE" "$PARENT_LICENSE"
+else
+    echo "Source LICENSE not found in dev directory"
 fi
