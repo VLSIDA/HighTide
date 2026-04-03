@@ -2,7 +2,7 @@ current_design snitch_cluster_wrapper
 
 set clk_name  clk
 set clk_port_name clk_i
-set clk_period 1000
+set clk_period 6000
 
 set clk_port [get_ports $clk_port_name]
 

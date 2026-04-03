@@ -1,6 +1,6 @@
 #!/bin/bash
 cd OpenROAD-flow-scripts
-tag=$(git describe --tags --abbrev=8 2>/dev/null)
+tag=$(git describe --tags --abbrev=8 2>/dev/null | sed 's/\(-g[0-9a-f]\{8\}\)[0-9a-f]*/\1/')
 if [ -z "$tag" ]; then
   echo "Warning: Commit is not on an exact tag."
   tag="v3.0-3201-gf53fbce7" # fallback tag or handle error

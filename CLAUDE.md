@@ -141,3 +141,16 @@ SRAM LEF/LIB files are organized per-platform:
 - `designs/<platform>/liteeth/sram/{lef,lib}/` — liteeth variant memories (shared across variants)
 - `designs/asap7/bp_processor/sram/{lef,lib}/` — bp_processor memories
 - `designs/src/cnn/fakeram_*.{lef,lib}` — CNN memories (in source directory)
+
+## Shared Machine
+
+- This is a shared multi-user machine. When checking process status (e.g., `ps aux | grep openroad`), always filter to the current user's processes or check for bazel sandbox paths (`external/bazel-orfs`) to avoid confusing other users' builds with ours.
+
+## Bazel Cache
+
+- **NEVER** run `bazel clean --expunge` or delete the entire disk cache (`~/.cache/bazel-disk-cache`). Synthesis takes hours and clearing the cache forces a full rebuild of all designs.
+- To invalidate a single design's cached results, use targeted approaches:
+  - Change an argument in the design's BUILD.bazel (forces re-run of affected stages)
+  - Use `bazel build --strategy=<target>=local` to bypass cache for one target
+- The remote cache (`--remote_cache` in `.bazelrc`) is shared and read-only by default. Never delete or corrupt it.
+- If you suspect a stale cache, verify by checking the process count in bazel output: `N processwrapper-sandbox` means N actions actually ran; `N internal` means cached.

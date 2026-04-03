@@ -23,3 +23,7 @@ export SYNTH_ARGS = -flatten -noshare
 
 export CORE_UTILIZATION = 40
 export PLACE_DENSITY = 0.65
+
+# Skip CTS repair_timing: hold violations from async reset fanout cause infinite loop;
+# hold fixing is deferred to the route stage
+export SKIP_CTS_REPAIR_TIMING = 1
