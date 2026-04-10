@@ -13,12 +13,13 @@
 #   ./k8s/run.sh --delete --design lfsr # delete lfsr across all platforms
 #
 # Options:
-#   --branch BRANCH   Git branch to build (default: current branch)
-#   --cpu NUM         CPU request per job (default: 8)
-#   --mem SIZE        Memory request per job (default: 32Gi)
-#   --dry-run         Print generated YAML without submitting
-#   --status          Show status of submitted jobs
-#   --delete          Delete jobs (filtered by platform/design args)
+#   --branch BRANCH    Git branch to build (default: current branch)
+#   --cpu NUM          CPU request per job (default: 8)
+#   --mem SIZE         Memory request per job (default: 64Gi)
+#   --upload-artifacts Upload build artifacts (bazel-bin) to GCS for debug
+#   --dry-run          Print generated YAML without submitting
+#   --status           Show status of submitted jobs
+#   --delete           Delete jobs (filtered by platform/design args)
 
 set -euo pipefail
 
@@ -35,6 +36,7 @@ MEM_REQUEST="64Gi"
 MEM_LIMIT="128Gi"
 DRY_RUN=false
 MODE="submit"
+UPLOAD_ARTIFACTS="false"
 FILTER_PLATFORM=""
 FILTER_DESIGN=""
 
@@ -44,6 +46,7 @@ while [[ $# -gt 0 ]]; do
         --branch)   BRANCH="$2"; shift 2 ;;
         --cpu)      CPU_REQUEST="$2"; CPU_LIMIT="$((${2} * 2))"; shift 2 ;;
         --mem)      MEM_REQUEST="$2"; MEM_LIMIT="${2%Gi}"; MEM_LIMIT="$((MEM_LIMIT * 2))Gi"; shift 2 ;;
+        --upload-artifacts) UPLOAD_ARTIFACTS=true; shift ;;
         --dry-run)  DRY_RUN=true; shift ;;
         --status)   MODE="status"; shift ;;
         --delete)   MODE="delete"; shift ;;
@@ -162,6 +165,7 @@ for entry in "${DESIGNS[@]}"; do
         -e "s|__JOB_NAME__|${job_name}|g" \
         -e "s|__BRANCH__|${BRANCH}|g" \
         -e "s|__BAZEL_TARGET__|${target}|g" \
+        -e "s|__UPLOAD_ARTIFACTS__|${UPLOAD_ARTIFACTS}|g" \
         -e "s|__CPU_REQUEST__|${CPU_REQUEST}|g" \
         -e "s|__CPU_LIMIT__|${CPU_LIMIT}|g" \
         -e "s|__MEM_REQUEST__|${MEM_REQUEST}|g" \

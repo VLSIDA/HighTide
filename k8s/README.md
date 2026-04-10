@@ -37,6 +37,7 @@ Each invocation of `run.sh` creates one K8s Job per matching design. Jobs clone 
 | `--branch BRANCH` | `main` | Git branch to build |
 | `--cpu NUM` | `8` | CPU request per job |
 | `--mem SIZE` | `64Gi` | Memory request per job (limit is 2x) |
+| `--upload-artifacts` | off | Upload `bazel-bin` artifacts to GCS for debug (see below) |
 | `--dry-run` | | Print YAML without submitting |
 
 ## Monitoring Jobs
@@ -101,6 +102,53 @@ After fetching, view results with:
 ```bash
 ./tools/summary.sh
 ```
+
+## Build Artifacts (Debug)
+
+For debugging individual builds, K8s jobs can upload their full `bazel-bin/<design>/` outputs (results, reports, logs) as a tarball to a separate GCS prefix. Use `--upload-artifacts` when submitting:
+
+```bash
+./k8s/run.sh --upload-artifacts asap7 lfsr
+```
+
+Tarballs are stored at `gs://hightide-bazel-cache/artifacts/designs/<platform>/<design>/build.tar.gz`.
+
+### Fetching Artifacts
+
+`tools/fetch_artifacts.sh` downloads and extracts artifacts to a local `artifacts/` directory. By default, the GCS tarball is **deleted** after a successful fetch (use `--keep` to preserve it).
+
+```bash
+# Fetch all available artifacts
+./tools/fetch_artifacts.sh
+
+# Fetch artifacts for a specific design
+./tools/fetch_artifacts.sh asap7 lfsr
+
+# Fetch and keep the tarball in GCS
+./tools/fetch_artifacts.sh --keep asap7 lfsr
+
+# Fetch to a custom directory
+./tools/fetch_artifacts.sh --output-dir debug asap7 lfsr
+```
+
+After fetching, the artifacts are at `artifacts/<platform>/<design>/` (containing `results/`, `reports/`, `logs/`).
+
+### Deleting Artifacts
+
+`tools/delete_artifacts.sh` removes artifact tarballs from GCS without fetching them. It prompts for confirmation by default (skip with `--yes`).
+
+```bash
+# Delete artifacts for a specific design
+./tools/delete_artifacts.sh asap7 lfsr
+
+# Delete all artifacts on a platform
+./tools/delete_artifacts.sh asap7
+
+# Delete all artifacts without confirmation
+./tools/delete_artifacts.sh --yes
+```
+
+Both fetch and delete tools require `gsutil` or `gcloud` to be installed and authenticated locally.
 
 ## Job Template
 
