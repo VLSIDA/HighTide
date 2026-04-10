@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fetch build artifacts uploaded by K8s jobs from GCS.
-# Artifacts are uploaded to gs://hightide-bazel-cache/artifacts/<platform>/<design>/build.tar.gz
+# Artifacts are synced to gs://hightide-bazel-cache/artifacts/designs/<platform>/<design>/
 # when jobs are submitted with `./k8s/run.sh --upload-artifacts ...`.
 #
 # Usage:
@@ -10,7 +10,7 @@
 #   ./tools/fetch_artifacts.sh --design lfsr        # one design, all platforms
 #
 # Options:
-#   --output-dir DIR  Where to extract tarballs (default: artifacts/)
+#   --output-dir DIR  Where to sync artifacts (default: artifacts/)
 #   --keep            Keep artifacts in GCS after fetching (default: delete)
 
 set -uo pipefail
@@ -47,16 +47,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Check for gsutil/gcloud
-if ! command -v gsutil >/dev/null 2>&1 && ! command -v gcloud >/dev/null 2>&1; then
-    echo "ERROR: gsutil or gcloud must be installed and authenticated" >&2
+if ! command -v gcloud >/dev/null 2>&1; then
+    echo "ERROR: gcloud must be installed and authenticated" >&2
     exit 1
 fi
 
-GS_CMD="gsutil"
-command -v gsutil >/dev/null 2>&1 || GS_CMD="gcloud storage"
-
-# Discover designs (same logic as fetch_cache.sh)
+# Discover designs
 TARGETS=()
 for build_file in designs/*/BUILD.bazel \
                   designs/*/*/BUILD.bazel \
@@ -90,7 +86,7 @@ if [[ ${#TARGETS[@]} -eq 0 ]]; then
 fi
 
 mkdir -p "$OUTPUT_DIR"
-echo "Fetching artifacts to $OUTPUT_DIR/"
+echo "Syncing artifacts to $OUTPUT_DIR/"
 echo ""
 
 PASS=0
@@ -100,26 +96,30 @@ for entry in "${TARGETS[@]}"; do
     IFS='|' read -r platform leaf relpath <<< "$entry"
     printf "  %-12s %-30s " "$platform" "$leaf"
 
-    GCS_PATH="$GCS_BUCKET/designs/$relpath/build.tar.gz"
+    GCS_PATH="$GCS_BUCKET/designs/$relpath"
     LOCAL_DIR="$OUTPUT_DIR/$relpath"
-    LOCAL_TAR="$LOCAL_DIR/build.tar.gz"
+
+    # Check if remote path has any objects before attempting rsync
+    if ! gcloud storage ls "$GCS_PATH/**" >/dev/null 2>&1; then
+        echo "NOT FOUND"
+        ((FAIL++))
+        continue
+    fi
 
     mkdir -p "$LOCAL_DIR"
-    # Strip "designs/<relpath>/" prefix from tarball (1 + number of slashes in relpath)
-    STRIP=$(($(echo "$relpath" | tr -cd / | wc -c) + 2))
-    if $GS_CMD cp "$GCS_PATH" "$LOCAL_TAR" 2>/dev/null; then
-        tar xzf "$LOCAL_TAR" -C "$LOCAL_DIR" --strip-components=$STRIP 2>/dev/null
+    if gcloud storage rsync --recursive "$GCS_PATH" "$LOCAL_DIR" >/dev/null 2>&1; then
         if [[ "$KEEP_REMOTE" != "true" ]]; then
-            $GS_CMD rm "$GCS_PATH" 2>/dev/null && echo "OK (deleted remote)" || echo "OK"
+            gcloud storage rm --recursive "$GCS_PATH" >/dev/null 2>&1 \
+                && echo "OK (deleted remote)" || echo "OK"
         else
             echo "OK"
         fi
         ((PASS++))
     else
-        echo "NOT FOUND"
+        echo "FAILED"
         ((FAIL++))
     fi
 done
 
 echo ""
-echo "Fetched: $PASS  Not found: $FAIL"
+echo "Fetched: $PASS  Not found/failed: $FAIL"

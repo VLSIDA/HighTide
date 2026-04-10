@@ -53,6 +53,12 @@ spec:
             echo "WARNING: GCS credentials not found, cache is read-only"
           fi
 
+          # When uploading artifacts, force download of all intermediate
+          # outputs (logs, reports, results) so we capture them on cache hits.
+          if [ "__UPLOAD_ARTIFACTS__" = "true" ]; then
+            CACHE_FLAGS="$CACHE_FLAGS --remote_download_outputs=all"
+          fi
+
           bazel build $CACHE_FLAGS __BAZEL_TARGET__
 
           # Upload build artifacts to GCS for debug retrieval (when enabled)
@@ -60,7 +66,7 @@ spec:
             if [ -f /secrets/gcs/key.json ]; then
               echo "Uploading build artifacts to GCS..."
 
-              # Install gcloud CLI for storage upload
+              # Install gcloud CLI for storage rsync
               curl -fsSL https://sdk.cloud.google.com | bash -s -- --disable-prompts >/dev/null 2>&1
               export PATH="$HOME/google-cloud-sdk/bin:$PATH"
               gcloud auth activate-service-account --key-file=/secrets/gcs/key.json --quiet 2>&1
@@ -72,15 +78,12 @@ spec:
 
               ARTIFACT_DIR="bazel-bin/${DESIGN_PATH}"
               if [ -d "$ARTIFACT_DIR" ]; then
-                TARBALL="/tmp/__JOB_NAME__.tar.gz"
-                # Resolve symlinks since bazel-bin is a symlink to bazel-out
-                tar czhf "$TARBALL" \
-                    --exclude='*.runfiles' \
-                    --exclude='*.runfiles_manifest' \
-                    -C bazel-bin "${DESIGN_PATH}"
-                echo "Tarball size: $(du -h $TARBALL | cut -f1)"
-                gcloud storage cp "$TARBALL" "gs://hightide-bazel-cache/artifacts/${DESIGN_PATH}/build.tar.gz"
-                echo "Uploaded to gs://hightide-bazel-cache/artifacts/${DESIGN_PATH}/build.tar.gz"
+                # Sync the artifact directory to GCS, resolving symlinks
+                # (bazel-bin is a symlink tree to bazel-out)
+                REAL_DIR=$(readlink -f "$ARTIFACT_DIR")
+                gcloud storage rsync --recursive --delete-unmatched-destination-objects \
+                  "$REAL_DIR" "gs://hightide-bazel-cache/artifacts/${DESIGN_PATH}"
+                echo "Synced to gs://hightide-bazel-cache/artifacts/${DESIGN_PATH}/"
               else
                 echo "WARNING: artifact directory $ARTIFACT_DIR not found"
               fi

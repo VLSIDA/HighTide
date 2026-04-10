@@ -1,6 +1,6 @@
 #!/bin/bash
 # Delete build artifacts uploaded by K8s jobs from GCS.
-# Removes tarballs at gs://hightide-bazel-cache/artifacts/<platform>/<design>/build.tar.gz
+# Removes objects under gs://hightide-bazel-cache/artifacts/designs/<platform>/<design>/
 #
 # Usage:
 #   ./tools/delete_artifacts.sh                      # all designs
@@ -43,14 +43,10 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Check for gsutil/gcloud
-if ! command -v gsutil >/dev/null 2>&1 && ! command -v gcloud >/dev/null 2>&1; then
-    echo "ERROR: gsutil or gcloud must be installed and authenticated" >&2
+if ! command -v gcloud >/dev/null 2>&1; then
+    echo "ERROR: gcloud must be installed and authenticated" >&2
     exit 1
 fi
-
-GS_CMD="gsutil"
-command -v gsutil >/dev/null 2>&1 || GS_CMD="gcloud storage"
 
 # Discover designs
 TARGETS=()
@@ -107,8 +103,8 @@ for entry in "${TARGETS[@]}"; do
     IFS='|' read -r platform leaf relpath <<< "$entry"
     printf "  %-12s %-30s " "$platform" "$leaf"
 
-    GCS_PATH="$GCS_BUCKET/designs/$relpath/build.tar.gz"
-    if $GS_CMD rm "$GCS_PATH" 2>/dev/null; then
+    GCS_PATH="$GCS_BUCKET/designs/$relpath"
+    if gcloud storage rm --recursive "$GCS_PATH" >/dev/null 2>&1; then
         echo "DELETED"
         ((PASS++))
     else
