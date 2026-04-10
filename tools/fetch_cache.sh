@@ -67,13 +67,14 @@ for build_file in designs/*/BUILD.bazel \
         continue
     fi
     if [[ -n "$FILTER_DESIGN" ]]; then
-        design_dir="${relpath#*/}"
-        if [[ "$name" != "$FILTER_DESIGN" && "$design_dir" != *"$FILTER_DESIGN"* ]]; then
+        leaf="${relpath##*/}"
+        if [[ "$name" != "$FILTER_DESIGN" && "$leaf" != *"$FILTER_DESIGN"* && "$relpath" != *"$FILTER_DESIGN"* ]]; then
             continue
         fi
     fi
 
-    TARGETS+=("$platform|$name|//designs/$relpath:${name}_${STAGE}")
+    leaf_name="${relpath##*/}"
+    TARGETS+=("$platform|$leaf_name|//designs/$relpath:${name}_${STAGE}")
 done
 
 if [[ ${#TARGETS[@]} -eq 0 ]]; then
