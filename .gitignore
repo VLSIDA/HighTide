@@ -10,6 +10,7 @@ objects
 sv2v
 **/dev/liteeth_builds
 bazel-*
+artifacts/
 MODULE.bazel.lock
 .bazelrc.user
 google-cloud-sdk/
