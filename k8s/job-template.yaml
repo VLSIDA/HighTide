@@ -61,34 +61,28 @@ spec:
 
           bazel build $CACHE_FLAGS __BAZEL_TARGET__
 
-          # Upload build artifacts to GCS for debug retrieval (when enabled)
+          # Copy build artifacts to persistent storage (when enabled)
           if [ "__UPLOAD_ARTIFACTS__" = "true" ]; then
-            if [ -f /secrets/gcs/key.json ]; then
-              echo "Uploading build artifacts to GCS..."
+            # Extract design path from bazel target //designs/<platform>/<design>:<name>
+            TARGET="__BAZEL_TARGET__"
+            DESIGN_PATH="${TARGET#//}"
+            DESIGN_PATH="${DESIGN_PATH%%:*}"
 
-              # Install gcloud CLI for storage rsync
-              curl -fsSL https://sdk.cloud.google.com | bash -s -- --disable-prompts >/dev/null 2>&1
-              export PATH="$HOME/google-cloud-sdk/bin:$PATH"
-              gcloud auth activate-service-account --key-file=/secrets/gcs/key.json --quiet 2>&1
-
-              # Extract design path from bazel target //designs/<platform>/<design>:<name>
-              TARGET="__BAZEL_TARGET__"
-              DESIGN_PATH="${TARGET#//}"
-              DESIGN_PATH="${DESIGN_PATH%%:*}"
-
-              ARTIFACT_DIR="bazel-bin/${DESIGN_PATH}"
-              if [ -d "$ARTIFACT_DIR" ]; then
-                # Sync the artifact directory to GCS, resolving symlinks
-                # (bazel-bin is a symlink tree to bazel-out)
-                REAL_DIR=$(readlink -f "$ARTIFACT_DIR")
-                gcloud storage rsync --recursive --delete-unmatched-destination-objects \
-                  "$REAL_DIR" "gs://hightide-bazel-cache/artifacts/${DESIGN_PATH}"
-                echo "Synced to gs://hightide-bazel-cache/artifacts/${DESIGN_PATH}/"
-              else
-                echo "WARNING: artifact directory $ARTIFACT_DIR not found"
-              fi
+            ARTIFACT_DIR="bazel-bin/${DESIGN_PATH}"
+            if [ -d "$ARTIFACT_DIR" ]; then
+              DEST="/artifacts/${DESIGN_PATH}"
+              echo "Copying build artifacts to $DEST..."
+              rm -rf "$DEST"
+              mkdir -p "$DEST"
+              # Resolve symlinks (bazel-bin is a symlink tree to bazel-out)
+              cp -rL "$ARTIFACT_DIR"/* "$DEST/" 2>/dev/null || true
+              # Remove runfiles (not useful for debug)
+              find "$DEST" -name '*.runfiles' -type d -exec rm -rf {} + 2>/dev/null || true
+              find "$DEST" -name '*.runfiles_manifest' -delete 2>/dev/null || true
+              echo "Artifacts saved to $DEST/"
+              du -sh "$DEST"
             else
-              echo "WARNING: artifact upload requested but GCS credentials not found"
+              echo "WARNING: artifact directory $ARTIFACT_DIR not found"
             fi
           fi
         volumeMounts:
@@ -97,6 +91,8 @@ spec:
         - name: gcs-key
           mountPath: /secrets/gcs
           readOnly: true
+        - name: artifacts
+          mountPath: /artifacts
         resources:
           requests:
             memory: __MEM_REQUEST__
@@ -111,4 +107,7 @@ spec:
         secret:
           secretName: gcs-bazel-cache
           optional: true
+      - name: artifacts
+        persistentVolumeClaim:
+          claimName: hightide-artifacts
       restartPolicy: Never

@@ -1,7 +1,6 @@
 #!/bin/bash
-# Fetch build artifacts uploaded by K8s jobs from GCS.
-# Artifacts are synced to gs://hightide-bazel-cache/artifacts/designs/<platform>/<design>/
-# when jobs are submitted with `./k8s/run.sh --upload-artifacts ...`.
+# Fetch build artifacts from the hightide-artifacts PVC on Nautilus NRP.
+# Artifacts are saved by K8s jobs when submitted with `./k8s/run.sh --upload-artifacts`.
 #
 # Usage:
 #   ./tools/fetch_artifacts.sh                      # all designs
@@ -10,15 +9,16 @@
 #   ./tools/fetch_artifacts.sh --design lfsr        # one design, all platforms
 #
 # Options:
-#   --output-dir DIR  Where to sync artifacts (default: artifacts/)
-#   --keep            Keep artifacts in GCS after fetching (default: delete)
+#   --output-dir DIR  Where to copy artifacts (default: artifacts/)
+#   --keep            Keep artifacts on the PVC after fetching (default: delete)
 
 set -uo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_DIR"
 
-GCS_BUCKET="gs://hightide-bazel-cache/artifacts"
+NAMESPACE="vlsida"
+PVC_NAME="hightide-artifacts"
 OUTPUT_DIR="artifacts"
 KEEP_REMOTE=false
 FILTER_PLATFORM=""
@@ -46,11 +46,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-if ! command -v gcloud >/dev/null 2>&1; then
-    echo "ERROR: gcloud must be installed and authenticated" >&2
-    exit 1
-fi
 
 # Discover designs
 TARGETS=()
@@ -85,8 +80,44 @@ if [[ ${#TARGETS[@]} -eq 0 ]]; then
     exit 1
 fi
 
+# Start a temporary pod to access the PVC
+POD_NAME="hightide-fetch-$$"
+echo "Starting temporary pod to access PVC..."
+kubectl run "$POD_NAME" -n "$NAMESPACE" \
+    --image=alpine \
+    --restart=Never \
+    --overrides='{
+      "spec": {
+        "containers": [{
+          "name": "fetch",
+          "image": "alpine",
+          "command": ["sleep", "3600"],
+          "volumeMounts": [{
+            "name": "artifacts",
+            "mountPath": "/artifacts"
+          }]
+        }],
+        "volumes": [{
+          "name": "artifacts",
+          "persistentVolumeClaim": {
+            "claimName": "'"$PVC_NAME"'"
+          }
+        }]
+      }
+    }' >/dev/null 2>&1
+
+# Wait for the pod to be ready
+echo "Waiting for pod..."
+kubectl wait --for=condition=Ready pod/"$POD_NAME" -n "$NAMESPACE" --timeout=60s >/dev/null 2>&1
+
+cleanup() {
+    echo "Cleaning up temporary pod..."
+    kubectl delete pod "$POD_NAME" -n "$NAMESPACE" --ignore-not-found=true >/dev/null 2>&1
+}
+trap cleanup EXIT
+
 mkdir -p "$OUTPUT_DIR"
-echo "Syncing artifacts to $OUTPUT_DIR/"
+echo "Fetching artifacts to $OUTPUT_DIR/"
 echo ""
 
 PASS=0
@@ -96,21 +127,23 @@ for entry in "${TARGETS[@]}"; do
     IFS='|' read -r platform leaf relpath <<< "$entry"
     printf "  %-12s %-30s " "$platform" "$leaf"
 
-    GCS_PATH="$GCS_BUCKET/designs/$relpath"
-    LOCAL_DIR="$OUTPUT_DIR/$relpath"
+    REMOTE_DIR="/artifacts/designs/$relpath"
 
-    # Check if remote path has any objects before attempting rsync
-    if ! gcloud storage ls "$GCS_PATH/**" >/dev/null 2>&1; then
+    # Check if remote directory exists
+    if ! kubectl exec "$POD_NAME" -n "$NAMESPACE" -- ls "$REMOTE_DIR" >/dev/null 2>&1; then
         echo "NOT FOUND"
         ((FAIL++))
         continue
     fi
 
+    LOCAL_DIR="$OUTPUT_DIR/$relpath"
     mkdir -p "$LOCAL_DIR"
-    if gcloud storage rsync --recursive "$GCS_PATH" "$LOCAL_DIR" >/dev/null 2>&1; then
+
+    # Copy artifacts from PVC via kubectl cp
+    if kubectl cp "$NAMESPACE/$POD_NAME:$REMOTE_DIR" "$LOCAL_DIR" >/dev/null 2>&1; then
         if [[ "$KEEP_REMOTE" != "true" ]]; then
-            gcloud storage rm --recursive "$GCS_PATH" >/dev/null 2>&1 \
-                && echo "OK (deleted remote)" || echo "OK"
+            kubectl exec "$POD_NAME" -n "$NAMESPACE" -- rm -rf "$REMOTE_DIR" 2>/dev/null
+            echo "OK (deleted remote)"
         else
             echo "OK"
         fi

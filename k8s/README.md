@@ -105,17 +105,17 @@ After fetching, view results with:
 
 ## Build Artifacts (Debug)
 
-For debugging individual builds, K8s jobs can upload their full `bazel-bin/<design>/` outputs (results, reports, logs) as a tarball to a separate GCS prefix. Use `--upload-artifacts` when submitting:
+For debugging individual builds, K8s jobs can save their full `bazel-bin/<design>/` outputs (results, reports, logs) to persistent storage on Nautilus. Use `--upload-artifacts` when submitting:
 
 ```bash
 ./k8s/run.sh --upload-artifacts asap7 lfsr
 ```
 
-Tarballs are stored at `gs://hightide-bazel-cache/artifacts/designs/<platform>/<design>/build.tar.gz`.
+Artifacts are stored on the `hightide-artifacts` PVC (CephFS, ReadWriteMany) at `/artifacts/designs/<platform>/<design>/`. When `--upload-artifacts` is enabled, `--remote_download_outputs=all` is also set to ensure all intermediate stage outputs are fetched from the cache, not just the final stage.
 
 ### Fetching Artifacts
 
-`tools/fetch_artifacts.sh` downloads and extracts artifacts to a local `artifacts/` directory. By default, the GCS tarball is **deleted** after a successful fetch (use `--keep` to preserve it).
+`tools/fetch_artifacts.sh` copies artifacts from the PVC to a local `artifacts/` directory via a temporary pod. By default, artifacts are **deleted** from the PVC after a successful fetch (use `--keep` to preserve them).
 
 ```bash
 # Fetch all available artifacts
@@ -124,7 +124,7 @@ Tarballs are stored at `gs://hightide-bazel-cache/artifacts/designs/<platform>/<
 # Fetch artifacts for a specific design
 ./tools/fetch_artifacts.sh asap7 lfsr
 
-# Fetch and keep the tarball in GCS
+# Fetch and keep artifacts on the PVC
 ./tools/fetch_artifacts.sh --keep asap7 lfsr
 
 # Fetch to a custom directory
@@ -135,7 +135,7 @@ After fetching, the artifacts are at `artifacts/<platform>/<design>/` (containin
 
 ### Deleting Artifacts
 
-`tools/delete_artifacts.sh` removes artifact tarballs from GCS without fetching them. It prompts for confirmation by default (skip with `--yes`).
+`tools/delete_artifacts.sh` removes artifacts from the PVC without fetching them. It prompts for confirmation by default (skip with `--yes`).
 
 ```bash
 # Delete artifacts for a specific design
@@ -148,7 +148,7 @@ After fetching, the artifacts are at `artifacts/<platform>/<design>/` (containin
 ./tools/delete_artifacts.sh --yes
 ```
 
-Both fetch and delete tools require `gsutil` or `gcloud` to be installed and authenticated locally.
+Both fetch and delete tools require `kubectl` access to the Nautilus cluster.
 
 ## Job Template
 
@@ -158,7 +158,16 @@ The job template (`job-template.yaml`) defines the K8s Job spec. Each job:
 2. Installs dependencies (`curl`, `git`, `build-essential`, `python3`, `python3-yaml`, `python3-numpy`, `time`)
 3. Installs Bazelisk
 4. Runs `bazel build` with the remote cache flags
+5. Optionally copies artifacts to the `hightide-artifacts` PVC
 
 The container uses `ubuntu:24.04` as a base image. ORFS tools are extracted from the Docker image by bazel-orfs at build time (via OCI layer extraction), matching the local build environment so that cache keys are compatible.
 
 Jobs have `backoffLimit: 1` (one retry on failure) and `ttlSecondsAfterFinished: 3600` (auto-cleanup after 1 hour).
+
+### Volumes
+
+| Volume | Type | Purpose |
+|--------|------|---------|
+| `repo` | emptyDir | Cloned repo (ephemeral) |
+| `gcs-key` | Secret (`gcs-bazel-cache`, optional) | GCS credentials for remote cache |
+| `artifacts` | PVC (`hightide-artifacts`) | Persistent artifact storage for debug |

@@ -1,6 +1,5 @@
 #!/bin/bash
-# Delete build artifacts uploaded by K8s jobs from GCS.
-# Removes objects under gs://hightide-bazel-cache/artifacts/designs/<platform>/<design>/
+# Delete build artifacts from the hightide-artifacts PVC on Nautilus NRP.
 #
 # Usage:
 #   ./tools/delete_artifacts.sh                      # all designs
@@ -16,7 +15,8 @@ set -uo pipefail
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_DIR"
 
-GCS_BUCKET="gs://hightide-bazel-cache/artifacts"
+NAMESPACE="vlsida"
+PVC_NAME="hightide-artifacts"
 SKIP_CONFIRM=false
 FILTER_PLATFORM=""
 FILTER_DESIGN=""
@@ -42,11 +42,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-if ! command -v gcloud >/dev/null 2>&1; then
-    echo "ERROR: gcloud must be installed and authenticated" >&2
-    exit 1
-fi
 
 # Discover designs
 TARGETS=()
@@ -96,6 +91,41 @@ if [[ "$SKIP_CONFIRM" != "true" ]]; then
     fi
 fi
 
+# Start a temporary pod to access the PVC
+POD_NAME="hightide-delete-$$"
+echo "Starting temporary pod to access PVC..."
+kubectl run "$POD_NAME" -n "$NAMESPACE" \
+    --image=alpine \
+    --restart=Never \
+    --overrides='{
+      "spec": {
+        "containers": [{
+          "name": "delete",
+          "image": "alpine",
+          "command": ["sleep", "3600"],
+          "volumeMounts": [{
+            "name": "artifacts",
+            "mountPath": "/artifacts"
+          }]
+        }],
+        "volumes": [{
+          "name": "artifacts",
+          "persistentVolumeClaim": {
+            "claimName": "'"$PVC_NAME"'"
+          }
+        }]
+      }
+    }' >/dev/null 2>&1
+
+echo "Waiting for pod..."
+kubectl wait --for=condition=Ready pod/"$POD_NAME" -n "$NAMESPACE" --timeout=60s >/dev/null 2>&1
+
+cleanup() {
+    echo "Cleaning up temporary pod..."
+    kubectl delete pod "$POD_NAME" -n "$NAMESPACE" --ignore-not-found=true >/dev/null 2>&1
+}
+trap cleanup EXIT
+
 PASS=0
 FAIL=0
 
@@ -103,8 +133,8 @@ for entry in "${TARGETS[@]}"; do
     IFS='|' read -r platform leaf relpath <<< "$entry"
     printf "  %-12s %-30s " "$platform" "$leaf"
 
-    GCS_PATH="$GCS_BUCKET/designs/$relpath"
-    if gcloud storage rm --recursive "$GCS_PATH" >/dev/null 2>&1; then
+    REMOTE_DIR="/artifacts/designs/$relpath"
+    if kubectl exec "$POD_NAME" -n "$NAMESPACE" -- rm -rf "$REMOTE_DIR" 2>/dev/null; then
         echo "DELETED"
         ((PASS++))
     else
