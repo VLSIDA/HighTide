@@ -119,7 +119,7 @@ discover_designs() {
 
         local relpath="${dir#$REPO_DIR/designs/}"
         local platform="${relpath%%/*}"
-        local target="//designs/$relpath:${name}"
+        local target="//designs/$relpath:${name}_final"
 
         echo "$platform|$name|$relpath|$target"
     done
