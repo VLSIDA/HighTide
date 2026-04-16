@@ -51,6 +51,10 @@ filegroup(
     srcs = glob(
         ["dev/generated/**/*.sv"],
         exclude = ["dev/generated/sram/**"],
-    ) + glob(["dev/generated/deps/include/**/*.svh"]),
+        allow_empty = True,
+    ) + glob(
+        ["dev/generated/deps/include/**/*.svh"],
+        allow_empty = True,
+    ),
     visibility = ["//visibility:public"],
 )

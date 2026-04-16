@@ -37,6 +37,10 @@ filegroup(
     name = "rtl",
     srcs = glob(
         ["dev/generated/**/*.sv"],
-    ) + glob(["dev/generated/deps/include/**/*.svh"]),
+        allow_empty = True,
+    ) + glob(
+        ["dev/generated/deps/include/**/*.svh"],
+        allow_empty = True,
+    ),
     visibility = ["//visibility:public"],
 )
