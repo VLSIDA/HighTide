@@ -231,4 +231,14 @@ echo "Generated file lists:"
 echo "  $(wc -l < generated/files.txt) source files"
 echo "  $(wc -l < generated/includes.txt) include directories"
 echo "  $(wc -l < generated/defines.txt) defines"
+
+# ── Stage generated files for commit ──────────────────────────────
+# Generated deps must be committed so K8s/CI builds work without
+# running setup.sh (which requires the submodule + bender).
+cd "$DIR/.."
+if git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "Staging generated files for commit..."
+    git add dev/generated/ 2>/dev/null || true
+fi
+
 echo "Done. Use SYNTH_HDL_FRONTEND=slang with ORFS to synthesize."
