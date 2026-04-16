@@ -1,0 +1,18 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "floonoc",
+    top = "floonoc_mesh_top",
+    platform = "asap7",
+    verilog_files = ["//designs/src/floonoc:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+    },
+    arguments = {
+        "SYNTH_HDL_FRONTEND": "slang",
+        "VERILOG_DEFINES": "-D VERILATOR",
+        "DIE_AREA": "0 0 1500 1500",
+        "CORE_AREA": "2 2 1498 1498",
+        "PLACE_DENSITY": "0.40",
+    },
+)

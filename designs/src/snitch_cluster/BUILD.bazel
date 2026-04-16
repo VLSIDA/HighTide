@@ -1,0 +1,56 @@
+# Snitch Cluster RTL sources.
+#
+# This design uses yosys-slang (SYNTH_HDL_FRONTEND=slang) to read
+# SystemVerilog directly. setup.sh runs bender + clustergen and copies
+# all dependency sources and headers into generated/deps/ with clean
+# package names (no bender git hashes).
+
+# update-rtl mode: init submodule + run setup.sh to regenerate.
+genrule(
+    name = "rtl_dev_gen",
+    srcs = glob(
+        ["dev/**"],
+        exclude = [
+            "dev/generated/**",
+            "dev/repo/**",
+            "dev/.venv/**",
+            "dev/bender",
+        ],
+    ),
+    outs = ["snitch_cluster_rtl.tar"],
+    local = True,
+    cmd = """
+        WORKSPACE_ROOT=$$(readlink -f $(location //:tools/update_rtl.sh) | sed 's|/tools/update_rtl.sh||')
+        cd $$WORKSPACE_ROOT
+        git submodule update --init designs/src/snitch_cluster/dev/repo >&2
+        bash designs/src/snitch_cluster/dev/setup.sh >&2
+        tar cf $(OUTS) designs/src/snitch_cluster/dev/generated/deps/
+    """,
+    tools = [
+        "dev/setup.sh",
+        "//:tools/update_rtl.sh",
+    ],
+)
+
+# SRAM macro LEF/LIB files
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["dev/generated/sram/*/*.lef"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["dev/generated/sram/*/*.lib"]),
+    visibility = ["//visibility:public"],
+)
+
+# RTL sources: generated .sv files + bender dependency copies (no git hashes)
+filegroup(
+    name = "rtl",
+    srcs = glob(
+        ["dev/generated/**/*.sv"],
+        exclude = ["dev/generated/sram/**"],
+    ) + glob(["dev/generated/deps/include/**/*.svh"]),
+    visibility = ["//visibility:public"],
+)

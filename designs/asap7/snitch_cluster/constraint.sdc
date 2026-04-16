@@ -14,3 +14,8 @@ set_output_delay 10 -clock $clk_name [all_outputs]
 
 set_driving_cell -lib_cell DFFHQNx2_ASAP7_75t_R -pin QN $non_clock_inputs
 set_load [expr 4.0 * 0.683716] [all_outputs]
+
+# Async reset: exclude recovery/removal checks on rst_ni.
+# The reset tree has ~230K fanout which causes STA memory corruption
+# during repair_timing. CTS will buffer the reset tree properly.
+set_false_path -from [get_ports rst_ni]

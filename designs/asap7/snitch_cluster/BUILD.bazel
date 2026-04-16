@@ -1,0 +1,28 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "snitch_cluster",
+    top = "snitch_cluster_wrapper",
+    platform = "asap7",
+    verilog_files = ["//designs/src/snitch_cluster:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "IO_CONSTRAINTS": [":io.tcl"],
+        "FOOTPRINT_TCL": [":io.tcl"],
+        "ADDITIONAL_LEFS": ["//designs/src/snitch_cluster:sram_lefs"],
+        "ADDITIONAL_LIBS": ["//designs/src/snitch_cluster:sram_libs"],
+    },
+    arguments = {
+        "SYNTH_HDL_FRONTEND": "slang",
+        "VERILOG_INCLUDE_DIRS": "designs/src/snitch_cluster/dev/generated/deps/include designs/src/snitch_cluster/dev/generated",
+        "VERILOG_DEFINES": "-D VERILATOR",
+        "SYNTH_MEMORY_MAX_BITS": "8193",
+        "SYNTH_HIERARCHICAL": "1",
+        "SYNTH_ARGS": "-noshare",
+        "DIE_AREA": "0 0 1500 1500",
+        "CORE_AREA": "5 5 1495 1495",
+        "PLACE_DENSITY": "0.35",
+        "MACRO_PLACE_HALO": "2 2",
+        "SKIP_CTS_REPAIR_TIMING": "1",
+    },
+)

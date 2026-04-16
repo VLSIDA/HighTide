@@ -82,6 +82,7 @@ PKG_TPL="$REPO/hw/snitch_cluster/src/snitch_cluster_pkg.sv.tpl"
 echo "Generating snitch_cluster_wrapper.sv..."
 python3 "$CLUSTERGEN" -c "$CFG" -o generated/snitch_cluster_wrapper.sv --template "$WRAPPER_TPL"
 
+
 echo "Generating snitch_cluster_pkg.sv..."
 python3 "$CLUSTERGEN" -c "$CFG" -o generated/snitch_cluster_pkg.sv --template "$PKG_TPL"
 
@@ -199,6 +200,32 @@ for d in "${INCLUDE_DIRS[@]}"; do
     realpath --relative-to="$DIR" "$d"
 done | awk '!seen[$0]++' > generated/includes.txt
 printf '%s\n' "${DEFINES[@]}" | awk '!seen[$0]++' > generated/defines.txt
+
+# ── Create stable symlinks for Bazel (no git hashes in paths) ──────
+# Symlink all bender-managed .sv/.svh files into generated/deps/ so
+# BUILD files can glob them without embedding bender git hashes.
+echo "Creating stable symlinks in generated/deps/..."
+rm -rf generated/deps
+mkdir -p generated/deps/src generated/deps/include
+
+# Symlink source files (from files.txt, excluding generated/ entries)
+while IFS= read -r f; do
+    [[ "$f" == generated/* ]] && continue
+    [ -f "$DIR/$f" ] || continue
+    # Use basename; prefix with package name to avoid collisions
+    pkg=$(echo "$f" | sed -E 's|repo/\.bender/git/checkouts/([^/]+)-[0-9a-f]+/|deps/\1/|; s|repo/hw/|deps/|; s|repo/|deps/|')
+    mkdir -p "generated/deps/src/$(dirname "$pkg")"
+    cp "$(readlink -f "$DIR/$f")" "generated/deps/src/$pkg"
+done < generated/files.txt
+
+# Copy include trees (preserving subdirectory structure for `include "axi/typedef.svh"`)
+while IFS= read -r d; do
+    [[ "$d" == generated ]] && continue
+    [ -d "$DIR/$d" ] || continue
+    # Skip test directories (contain unsynthesizable testbench headers)
+    [[ "$d" == */test ]] || [[ "$d" == */test/* ]] && continue
+    cp -r "$DIR/$d"/* generated/deps/include/ 2>/dev/null || true
+done < generated/includes.txt
 
 echo "Generated file lists:"
 echo "  $(wc -l < generated/files.txt) source files"

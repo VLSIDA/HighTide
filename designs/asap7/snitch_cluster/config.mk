@@ -18,11 +18,14 @@ export ADDITIONAL_LIBS = $(SRAM_LIBS)
 # Large SRAMs (512x64 TCDM, 128x512 ICache, 64x512 DMA) are mapped to fakerams in tc_sram.sv
 export SYNTH_MEMORY_MAX_BITS = 8193
 
-# Skip SAT-based resource sharing (OOM at ~45GB without this)
-export SYNTH_ARGS = -flatten -noshare
+# Hierarchical synthesis: keeps module boundaries, reduces placement complexity
+export SYNTH_HIERARCHICAL = 1
+export SYNTH_ARGS = -noshare
 
-export CORE_UTILIZATION = 40
-export PLACE_DENSITY = 0.65
+export DIE_AREA  = 0 0 1500 1500
+export CORE_AREA = 5 5 1495 1495
+export PLACE_DENSITY = 0.35
+export MACRO_PLACE_HALO = 2 2
 
 # Skip CTS repair_timing: hold violations from async reset fanout cause infinite loop;
 # hold fixing is deferred to the route stage

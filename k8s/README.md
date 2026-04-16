@@ -11,7 +11,7 @@ See the [NRP Nautilus documentation](https://docs.nrp-nautilus.io/) for cluster 
 
 ## Submitting Jobs
 
-Each invocation of `run.sh` creates one K8s Job per matching design. Jobs clone the HighTide repo, install Bazel, and run the full RTL-to-GDSII flow using bazel-orfs.
+Each invocation of `run.sh` creates one K8s Job per matching design. Jobs clone the HighTide repo, install Bazel, and run the full RTL-to-GDSII flow plus stage image generation using bazel-orfs.
 
 ```bash
 # Submit all designs, all platforms
@@ -91,8 +91,11 @@ HighTide generates baseline build results for all designs. Users can fetch these
 # Fetch a specific design
 ./tools/fetch_cache.sh asap7 lfsr
 
-# Fetch only through a specific stage (synth, floorplan, place, cts, route, final)
+# Fetch only through a specific stage (synth, floorplan, place, cts, route, final, all)
 ./tools/fetch_cache.sh --stage synth asap7
+
+# Fetch full flow + stage images
+./tools/fetch_cache.sh --stage all asap7
 ```
 
 The script uses `--local_cpu_resources=0` to prevent local builds — it only succeeds if results are available in the remote cache. Each design reports `OK (remote)`, `OK (local)`, or `NOT CACHED`.

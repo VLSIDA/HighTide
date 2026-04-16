@@ -30,7 +30,10 @@ No additional setup needed — Bazel fetches ORFS and bazel-orfs automatically v
 ### Bazel Flow (recommended)
 
 ```bash
-# Build a single design
+# Build a single design (full flow + stage images)
+bazel build //designs/asap7/lfsr:lfsr
+
+# Build just the RTL-to-GDS flow without images
 bazel build //designs/asap7/lfsr:lfsr_final
 
 # Build all designs for a platform
@@ -40,11 +43,15 @@ bazel build //designs/asap7/...
 bazel build //designs/...
 
 # Build with dev RTL generation (requires submodule init + tools)
-bazel build --define update_rtl=true //designs/asap7/lfsr:lfsr_final
+bazel build --define update_rtl=true //designs/asap7/lfsr:lfsr
 
-# Build individual stages (target suffixes: _synth, _floorplan, _place, _cts, _route, _final)
+# Build individual stages (target suffixes: _synth, _floorplan, _place, _cts, _grt, _route, _final)
 bazel build //designs/asap7/lfsr:lfsr_synth
 bazel build //designs/asap7/lfsr:lfsr_place
+
+# Build stage images (placement + density heatmap per stage)
+bazel build //designs/asap7/lfsr:lfsr_place_images     # single stage
+bazel build //designs/asap7/lfsr:lfsr_images           # all stages
 ```
 
 ### Make Flow (legacy)
@@ -84,7 +91,8 @@ make DESIGN_CONFIG=... clean_all      # Full cleanup
 ### Key Relationships (Bazel Flow)
 
 - **`MODULE.bazel`** — Declares dependencies on `bazel-orfs` (via `git_override`) and configures the ORFS Docker image for tool extraction
-- **`defs.bzl`** — `hightide_design()` macro wrapping `orfs_flow()` with common defaults (`GDS_ALLOW_EMPTY`, platform-to-PDK mapping)
+- **`defs.bzl`** — `hightide_design()` macro wrapping `orfs_flow()` with common defaults (`GDS_ALLOW_EMPTY`, platform-to-PDK mapping, per-stage image generation)
+- **`tools/save_stage_image.tcl`** — TCL script that generates placement and density heatmap images via OpenROAD's headless GUI; used by `orfs_run` targets created by `hightide_design()`
 - **`BUILD.bazel`** (root) — Defines `//:update_rtl` config setting and nangate45 `orfs_pdk` (not in ORFS's defaults)
 - Each design has a `BUILD.bazel` calling `hightide_design()` with parameters mirroring its `config.mk`
 - RTL sources at `designs/src/<design>/BUILD.bazel` use `select()` to switch between release and dev RTL
@@ -120,7 +128,7 @@ Dev mode requires: `git submodule update --init designs/src/<design>/dev/repo` b
 
 | Platform | Node | Designs |
 |----------|------|---------|
-| asap7 | 7nm academic | gemmini, minimax, cnn, sha3, lfsr, NyuziProcessor, bp_processor/bp_uno/bp_quad, liteeth (6 variants) |
+| asap7 | 7nm academic | gemmini, minimax, cnn, sha3, lfsr, NyuziProcessor, bp_processor/bp_uno/bp_quad, liteeth (6 variants), snitch_cluster, floonoc |
 | nangate45 | 45nm | minimax, lfsr, NyuziProcessor, liteeth (6 variants) |
 | sky130hd | 130nm open | minimax, lfsr, liteeth (6 variants) |
 
@@ -130,7 +138,12 @@ Dev mode requires: `git submodule update --init designs/src/<design>/dev/repo` b
 - `results/.../6_final.gds` — Final GDSII layout
 - `reports/.../` — QoR reports per stage
 
-**Bazel flow:** Build artifacts go to `bazel-bin/designs/<platform>/<design>/`. Key outputs accessible via `bazel build` target names (e.g., `<design>_final` for GDS).
+**Bazel flow:** Build artifacts go to `bazel-bin/designs/<platform>/<design>/`. Key outputs:
+- `<design>_final` — Final GDS, ODB, and reports
+- `<design>_<stage>_placement.webp` — Layout image after each stage (floorplan, place, cts, grt, route)
+- `<design>_<stage>_density.webp` — Placement density heatmap after each stage
+- `<design>` — Builds full flow + all stage images (default target)
+- `<design>_images` — All stage images only
 
 ### FakeRAM
 
