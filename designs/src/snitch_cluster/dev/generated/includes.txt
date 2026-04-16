@@ -1,0 +1,17 @@
+repo/.bender/git/checkouts/common_cells-aa028fdb314cdab0/include
+repo/.bender/git/checkouts/apb-0b8df27abad700ff/include
+repo/.bender/git/checkouts/axi-4412c8ea6d513c2a/include
+repo/.bender/git/checkouts/axi_stream-8730fb4f6af32dfe/include
+repo/.bender/git/checkouts/obi-a325e74505580874/include
+repo/.bender/git/checkouts/register_interface-5a95d2f18694a6d3/include
+repo/.bender/git/checkouts/idma-73cbef6e7a479a36/src/include
+repo/.bender/git/checkouts/idma-73cbef6e7a479a36/target/rtl/include
+repo/.bender/git/checkouts/idma-73cbef6e7a479a36/test
+repo/hw/dca_interface/include
+repo/hw/mem_interface/include
+repo/hw/reqrsp_interface/include
+repo/hw/snitch/include
+repo/hw/snitch_fp_ss/include
+repo/hw/snitch_ssr/include
+repo/hw/tcdm_interface/include
+generated
