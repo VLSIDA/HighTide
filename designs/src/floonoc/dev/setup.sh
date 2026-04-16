@@ -249,6 +249,28 @@ for d in "${INCLUDE_DIRS[@]}"; do
 done | awk '!seen[$0]++' > generated/includes.txt
 printf '%s\n' "${DEFINES[@]}" | awk '!seen[$0]++' > generated/defines.txt
 
+# ── Copy deps for Bazel (stable paths without bender git hashes) ───
+echo "Copying dependency sources into generated/deps/..."
+rm -rf generated/deps
+mkdir -p generated/deps/src generated/deps/include
+
+# Copy source files (from files.txt, excluding generated/ entries)
+while IFS= read -r f; do
+    [[ "$f" == generated/* ]] && continue
+    [ -f "$DIR/$f" ] || continue
+    pkg=$(echo "$f" | sed -E 's|repo/\.bender/git/checkouts/([^/]+)-[0-9a-f]+/|deps/\1/|; s|repo/hw/|deps/|; s|repo/|deps/|')
+    mkdir -p "generated/deps/src/$(dirname "$pkg")"
+    cp "$(readlink -f "$DIR/$f")" "generated/deps/src/$pkg"
+done < generated/files.txt
+
+# Copy include trees (preserving subdirectory structure)
+while IFS= read -r d; do
+    [[ "$d" == generated ]] && continue
+    [ -d "$DIR/$d" ] || continue
+    [[ "$d" == */test ]] || [[ "$d" == */test/* ]] && continue
+    cp -r "$DIR/$d"/* generated/deps/include/ 2>/dev/null || true
+done < generated/includes.txt
+
 echo "Generated file lists:"
 echo "  $(wc -l < generated/files.txt) source files"
 echo "  $(wc -l < generated/includes.txt) include directories"
