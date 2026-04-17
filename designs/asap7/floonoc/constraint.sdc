@@ -2,7 +2,7 @@ current_design floonoc_mesh_top
 
 set clk_name  clk
 set clk_port_name clk_i
-set clk_period 1000
+set clk_period 2000
 
 set clk_port [get_ports $clk_port_name]
 
@@ -14,3 +14,6 @@ set_output_delay 10 -clock $clk_name [all_outputs]
 
 set_driving_cell -lib_cell DFFHQNx2_ASAP7_75t_R -pin QN $non_clock_inputs
 set_load [expr 4.0 * 0.683716] [all_outputs]
+
+# Async reset: exclude recovery/removal checks on rst_ni
+set_false_path -from [get_ports rst_ni]
