@@ -63,13 +63,6 @@ bazel_dep(name = "qt-bazel")
 git_override(
     module_name = "qt-bazel",
     commit = "886104974c2fd72439f2c33b5deebf0fe4649df7",
-    patch_cmds = [
-        "curl -sSfL --retry 5 --retry-all-errors --retry-delay 5 -o xcb-util-cursor-0.1.5.tar.xz https://xorg.freedesktop.org/archive/individual/lib/xcb-util-cursor-0.1.5.tar.xz && tar xJf xcb-util-cursor-0.1.5.tar.xz --strip-components=1 -C interface_libs/xcb xcb-util-cursor-0.1.5/cursor && rm xcb-util-cursor-0.1.5.tar.xz",
-    ],
-    patch_strip = 1,
-    patches = [
-        "//patches:qt-bazel-xcb-cursor-from-source.patch",
-    ],
     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
