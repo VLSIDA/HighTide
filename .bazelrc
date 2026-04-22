@@ -16,3 +16,6 @@ build --@rules_python//python/config_settings:python_version=3.13
 
 # Show test output
 test --test_output=errors
+
+# Per-user overrides (gitignored) — e.g. enabling cache uploads.
+try-import %workspace%/.bazelrc.user
