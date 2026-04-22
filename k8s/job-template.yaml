@@ -11,16 +11,17 @@ spec:
       initContainers:
       - name: clone-repo
         image: alpine/git
+        command: ["sh", "-c"]
         args:
-        - clone
-        - --single-branch
-        - --branch
-        - __BRANCH__
-        - --depth=1
-        - --recurse-submodules
-        - --shallow-submodules
-        - https://github.com/VLSIDA/HighTide.git
-        - /repo
+        - |
+          set -e
+          git clone --single-branch --branch __BRANCH__ --depth=1 \
+            https://github.com/VLSIDA/HighTide.git /repo
+          # Only the bazel-orfs submodule is needed for the Bazel flow.
+          # Design-src / OpenROAD-flow-scripts / bsg_fakeram submodules
+          # are only used by Make-flow / update-rtl / generate-sram paths.
+          cd /repo
+          git submodule update --init --depth=1 bazel-orfs
         volumeMounts:
         - name: repo
           mountPath: /repo
