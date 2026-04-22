@@ -34,12 +34,23 @@ spec:
         - |
           set -euo pipefail
 
-          # Install dependencies: curl for bazelisk, git for bazel-orfs fetch,
-          # build-essential for Bazel CC toolchain, python3/time for ORFS flow scripts,
-          # libxml2 because ld.lld from toolchains_llvm dlopens libxml2.so.2 at link time
+          # Install dependencies:
+          #   curl  — bazelisk download
+          #   git   — bazel-orfs fetch
+          #   build-essential + libxml2 — link-time deps for Bazel CC toolchain
+          #     (ld.lld from toolchains_llvm dlopens libxml2.so.2)
+          #   python3/time/numpy/yaml — ORFS flow scripts
+          #   libx11-xcb1 + libxcb-* + libxkbcommon-x11-0 — runtime deps for
+          #     OpenROAD built with --@openroad//:platform=gui (bazel-orfs .bazelrc);
+          #     binary DT_NEEDEDs libX11-xcb.so.1 even when run headlessly
           apt-get update -qq && apt-get install -y -qq \
             curl git build-essential time libxml2 \
-            python3 python3-yaml python3-numpy >/dev/null 2>&1
+            python3 python3-yaml python3-numpy \
+            libx11-xcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
+            libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 \
+            libxcb-sync1 libxcb-xfixes0 libxcb-xinerama0 libxcb-xkb1 \
+            libxkbcommon-x11-0 libdbus-1-3 libegl1 libfontconfig1 libglib2.0-0 \
+            >/dev/null 2>&1
 
           # Install bazelisk as bazel
           curl -fsSL -o /usr/local/bin/bazel \
