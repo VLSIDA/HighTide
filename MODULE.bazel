@@ -1,109 +1,116 @@
-"""HighTide module — uses bazel-orfs with OpenROAD extracted from the
-ORFS Docker image (zero-source OpenROAD build).
+"""HighTide module — layered on top of bazel-orfs (pinned via submodule).
 
-Mirrors the bazel-orfs test/docker/MODULE.bazel pattern.
+bazel-orfs lives at ./bazel-orfs as a git submodule.  Most Bazel
+settings (dep versions, patches, ORFS/OpenROAD/Qt commits) come from
+bazel-orfs's own MODULE.bazel; we re-declare the overrides at the
+root because git_override and single_version_override are only
+honored in the root module, and we reference patch files from the
+submodule to avoid duplication.
+
+HighTide-specific additions on top:
+  - yosys-slang plugin built from source and merged into yosys_share
+  - LLVM 20.1.8 toolchain for OpenROAD's C++20 source build
+  - Python 3.13 toolchain for bazel-orfs's pip deps
 """
 
 module(
-    name = "hightide2",
+    name = "hightide",
     version = "0.0.1",
 )
 
-# --- bazel-orfs ---
-BAZEL_ORFS_COMMIT = "da4ffdf2752f377c6e66aa942fae3e24a36ad99a"
-
-BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
-
+# --- bazel-orfs pinned via submodule ---
 bazel_dep(name = "bazel-orfs")
-git_override(
+local_path_override(
     module_name = "bazel-orfs",
-    commit = BAZEL_ORFS_COMMIT,
-    patch_strip = 1,
-    # Point private _tcl/_opengl/_qt_plugins attr defaults at
-    # @docker_orfs_image so OpenROAD can find its Qt offscreen
-    # plugin at the save_images.tcl finish stage (GUI-0076/0077).
-    patches = [
-        "//patches:bazel-orfs-docker-orfs-image-runtime-deps.patch",
-    ],
-    remote = BAZEL_ORFS_REMOTE,
+    path = "bazel-orfs",
 )
 
-# bazel-orfs-verilog lives in the verilog/ subdir of the bazel-orfs repo.
 bazel_dep(name = "bazel-orfs-verilog")
-git_override(
+local_path_override(
     module_name = "bazel-orfs-verilog",
-    commit = BAZEL_ORFS_COMMIT,
-    remote = BAZEL_ORFS_REMOTE,
-    strip_prefix = "verilog",
+    path = "bazel-orfs/verilog",
 )
 
-# --- Stub overrides for modules we don't build from source ---
-# The OpenROAD binary comes from the Docker image via
-# @bazel-orfs//:openroad-latest, so @openroad and @qt-bazel only need
-# to exist for module-graph resolution. We point them at the stub
-# subdirs inside bazel-orfs itself.
+# --- Non-BCR deps required by bazel-orfs (git_override is root-only) ---
+# Commits + patch sets mirror bazel-orfs/MODULE.bazel at the pinned
+# submodule commit.  Keep in sync when bumping the submodule.
+#
+# patches/ holds symlinks into bazel-orfs/patches/ (bazel's
+# git_override only accepts patch labels from the main repo).
+
+bazel_dep(name = "orfs")
+git_override(
+    module_name = "orfs",
+    commit = "2f4de31a0f3f6402ca74887f67b75a9303c6e061",
+    patch_strip = 1,
+    patches = [
+        "//patches:0035-fix-remove-non-root-overrides-from-MODULE.bazel.patch",
+        "//patches:orfs-preserve-tool-exe-env.patch",
+        "//patches:orfs-log-cmd-clock-fallback.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git",
+)
+
 bazel_dep(name = "openroad")
 git_override(
     module_name = "openroad",
-    commit = BAZEL_ORFS_COMMIT,
-    remote = BAZEL_ORFS_REMOTE,
-    strip_prefix = "test/docker/stub/openroad",
+    commit = "5f1bd87f37fd3c6dc83ad2195cc63b7b366771bc",
+    init_submodules = True,
+    remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
 )
 
 bazel_dep(name = "qt-bazel")
 git_override(
     module_name = "qt-bazel",
-    commit = BAZEL_ORFS_COMMIT,
-    remote = BAZEL_ORFS_REMOTE,
-    strip_prefix = "test/docker/stub/qt-bazel",
-)
-
-# --- ORFS flow scripts (Makefile, TCL, PDKs) ---
-bazel_dep(name = "orfs")
-git_override(
-    module_name = "orfs",
-    commit = "d8c6b0cbd54d3a2d6e78671e80b7b479c10af6f6",
+    commit = "886104974c2fd72439f2c33b5deebf0fe4649df7",
+    patch_cmds = [
+        "curl -sSfL --retry 5 --retry-all-errors --retry-delay 5 -o xcb-util-cursor-0.1.5.tar.xz https://xorg.freedesktop.org/archive/individual/lib/xcb-util-cursor-0.1.5.tar.xz && tar xJf xcb-util-cursor-0.1.5.tar.xz --strip-components=1 -C interface_libs/xcb xcb-util-cursor-0.1.5/cursor && rm xcb-util-cursor-0.1.5.tar.xz",
+    ],
     patch_strip = 1,
     patches = [
-        "//patches:0035-fix-remove-non-root-overrides-from-MODULE.bazel.patch",
+        "//patches:qt-bazel-xcb-cursor-from-source.patch",
     ],
-    remote = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git",
+    remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
-# --- yosys + plugins (slang) extracted from the ORFS Docker image ---
-# The BCR yosys package doesn't ship the slang plugin that bp_processor
-# needs. We re-run bazel-orfs's docker_pkg rule with a custom BUILD
-# file exposing yosys, yosys-abc, and yosys_share (including
-# plugins/slang.so) from the image, then route orfs.default() at the
-# extracted binaries. Bazel's content-addressed repository cache
-# dedupes the layer downloads with @docker_orfs_image.
-#
-# This is the intended downstream extensibility pattern — bazel-orfs
-# supports pointing at user-supplied docker-extracted binaries as a
-# first-class use case. The retirement of @docker_orfs described in
-# bazel-orfs/ideas/toolchains.md applies to bazel-orfs's own internal
-# default path, not to the orfs.default(yosys=...) override below.
+# --- Yosys (BCR) with visibility / headers / tcl9 patches ---
 bazel_dep(name = "yosys", version = "0.62")
 single_version_override(
     module_name = "yosys",
     patch_strip = 1,
     patches = [
         "//patches:yosys-visibility.patch",
+        "//patches:yosys-hdrs.patch",
+        "//patches:yosys-tcl9-mp-to-ubin.patch",
     ],
 )
 
-docker_pkg = use_repo_rule("@bazel-orfs//:docker.bzl", "docker_pkg")
+bazel_dep(name = "abc", version = "0.64-yosyshq.bcr.1")
+bazel_dep(name = "glpk", version = "5.0.bcr.4")
 
-docker_pkg(
-    name = "docker_orfs_yosys",
-    build_file = "//:docker_yosys.BUILD.bazel",
-    image = "docker.io/openroad/orfs:26Q2-32-gca75a11e2",
-    # Delete BUILD files under OpenROAD-flow-scripts so they don't
-    # create subpackages that break the yosys_share glob.
-    patch_cmds = [
-        "find OpenROAD-flow-scripts -name BUILD -delete -o -name BUILD.bazel -delete",
-    ],
-    sha256 = "a50429aaed8cbaf2103b46196507f7c9445c95066d00a91953bd47c27dad6f31",
+# Pulled transitively: or-tools@9.15 → soplex@7.1.4.bcr.1 pins
+# boost.multiprecision / boost.serialization at 1.87.0 (compat 108700),
+# but openroad → boost.* wants 1.89.0.bcr.2 (compat 0).  soplex@7.1.4.bcr.3
+# rebuilt against the newer boost; force that via single_version_override.
+single_version_override(
+    module_name = "soplex",
+    version = "7.1.4.bcr.3",
+)
+
+# --- LLVM toolchain (OpenROAD needs C++20 / libc++) ---
+bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+
+llvm = use_extension(
+    "@toolchains_llvm//toolchain/extensions:llvm.bzl",
+    "llvm",
+)
+llvm.toolchain(
+    llvm_version = "20.1.8",
+)
+use_repo(llvm, "llvm_toolchain")
+
+register_toolchains(
+    "@llvm_toolchain//:all",
 )
 
 # --- Python 3.13 toolchain ---
@@ -115,14 +122,12 @@ python.toolchain(
     python_version = "3.13",
 )
 
-# --- ORFS extension: use Docker image OpenROAD + yosys binaries ---
+# --- yosys-slang plugin (built from source) ---
+yosys_slang = use_extension("//:yosys_slang.bzl", "yosys_slang")
+use_repo(yosys_slang, "yosys-slang")
+
+# --- ORFS extension: merged yosys_share with slang plugin ---
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 orfs.default(
-    openroad = "@bazel-orfs//:openroad-latest",
-    opensta = "@bazel-orfs//:opensta-latest",
-    yosys = "@docker_orfs_yosys//:yosys",
-    yosys_abc = "@docker_orfs_yosys//:yosys-abc",
-    yosys_share = "@docker_orfs_yosys//:yosys_share",
+    yosys_share = "//:yosys_share_with_slang",
 )
-use_repo(orfs, "docker_orfs")
-use_repo(orfs, "docker_orfs_image")

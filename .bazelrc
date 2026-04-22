@@ -1,3 +1,8 @@
+# Inherit bazel-orfs's Bazel settings (C++20, strict action env, disk-cache GC,
+# lockfile mode, OpenROAD GUI build flag, etc.).  Kept as try-import so the
+# submodule not being checked out doesn't break bazel invocations.
+try-import %workspace%/bazel-orfs/.bazelrc
+
 # Remote cache (Google Cloud Storage) — publicly readable, auth required to write.
 # To enable writes: gcloud auth application-default login
 build --remote_cache=https://storage.googleapis.com/hightide-bazel-cache

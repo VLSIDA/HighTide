@@ -40,3 +40,6 @@
 [submodule "tools/bsg_fakeram"]
 	path = tools/bsg_fakeram
 	url = https://github.com/VLSIDA/bsg_fakeram.git
+[submodule "bazel-orfs"]
+	path = bazel-orfs
+	url = https://github.com/The-OpenROAD-Project/bazel-orfs.git

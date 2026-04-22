@@ -11,6 +11,7 @@ sv2v
 **/dev/liteeth_builds
 bazel-*
 !patches/bazel-*
+!bazel-orfs
 artifacts/
 MODULE.bazel.lock
 .bazelrc.user

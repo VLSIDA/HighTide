@@ -1,3 +1,5 @@
+load("//:merge_share.bzl", "merge_yosys_share")
+
 exports_files(["tools/update_rtl.sh"])
 
 # Config setting for RTL regeneration from source repos.
@@ -5,5 +7,16 @@ exports_files(["tools/update_rtl.sh"])
 config_setting(
     name = "update_rtl",
     define_values = {"update_rtl": "true"},
+    visibility = ["//visibility:public"],
+)
+
+# Merge BCR yosys share tree with the yosys-slang plugin built from
+# source.  Wired into orfs.default(yosys_share=...) in MODULE.bazel
+# so designs using SYNTH_HDL_FRONTEND=slang (bp_processor, vortex,
+# floonoc, snitch_cluster) pick up share/yosys/plugins/slang.so.
+merge_yosys_share(
+    name = "yosys_share_with_slang",
+    plugins = ["@yosys-slang//:slang.so"],
+    share = "@yosys//:yosys_share",
     visibility = ["//visibility:public"],
 )
