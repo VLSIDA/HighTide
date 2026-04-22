@@ -17,6 +17,8 @@ spec:
         - --branch
         - __BRANCH__
         - --depth=1
+        - --recurse-submodules
+        - --shallow-submodules
         - https://github.com/VLSIDA/HighTide.git
         - /repo
         volumeMounts:
