@@ -35,9 +35,10 @@ spec:
           set -euo pipefail
 
           # Install dependencies: curl for bazelisk, git for bazel-orfs fetch,
-          # build-essential for Bazel CC toolchain, python3/time for ORFS flow scripts
+          # build-essential for Bazel CC toolchain, python3/time for ORFS flow scripts,
+          # libxml2 because ld.lld from toolchains_llvm dlopens libxml2.so.2 at link time
           apt-get update -qq && apt-get install -y -qq \
-            curl git build-essential time \
+            curl git build-essential time libxml2 \
             python3 python3-yaml python3-numpy >/dev/null 2>&1
 
           # Install bazelisk as bazel
