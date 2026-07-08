@@ -1269,7 +1269,12 @@ git submodule update --init bazel-orfs</span></code></div>
 <span class="cmd">./tools/run_orfs.sh --openroad ~/OpenROAD/build/src/openroad designs/asap7/lfsr</span>
 
 <span class="comment"># Re-synthesize from RTL in your own ORFS install (its Yosys + slang)</span>
-<span class="cmd">./tools/run_orfs.sh --resynth --flow-home ~/OpenROAD-flow-scripts designs/asap7/lfsr</span></code></div>
+<span class="cmd">./tools/run_orfs.sh --resynth --flow-home ~/OpenROAD-flow-scripts designs/asap7/lfsr</span>
+
+<span class="comment"># Stage many designs without running, then run each later (no Bazel needed)</span>
+<span class="cmd">for d in designs/asap7/lfsr designs/asap7/NVDLA/partition_a; do ./tools/run_orfs.sh --prepare-only "$d"; done</span>
+<span class="cmd">OPENROAD_EXE=~/OpenROAD/build/src/openroad .run_orfs/asap7/lfsr/run.sh</span></code></div>
+          <p><code>--prepare-only</code> writes each design's work dir (<code>config.mk</code> + the seeded golden netlist) and a self-contained <code>run.sh</code>, but stops before running &mdash; so you can prepare a batch, then run each <code>run.sh</code> anywhere, overriding <code>OPENROAD_EXE</code>, <code>FLOW_HOME</code>, or the make targets at run time. Grouped designs (NVDLA, bp_processor) are containers: pass a sub-design such as <code>designs/asap7/NVDLA/partition_a</code>.</p>
         </div>
       </div>
     </div>
