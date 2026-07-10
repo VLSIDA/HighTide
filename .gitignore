@@ -4,6 +4,7 @@ sv2v
 designs/src/liteeth/dev/*_build_*/
 **/vortex/dev/gen/
 **/dev/litedram_build_*
+**/dev/build_archive/
 **/litedram_core.v.orig
 **/dev/bender
 **/dev/repo/.bender/

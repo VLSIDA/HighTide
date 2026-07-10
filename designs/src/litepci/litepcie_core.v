@@ -8,8 +8,8 @@
 //
 // Filename   : litepcie_core.v
 // Device     : xcku
-// LiteX sha1 : 638f90b2
-// Date       : 2026-05-11 20:42:46
+// LiteX sha1 : 2c6aa442
+// Date       : 2026-05-30 08:10:35
 //------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
@@ -741,9 +741,6 @@ wire          cmp_packetizer_cmp_sink_valid;
 reg   [127:0] cmp_packetizer_header_inserter_header_inserter_3dws_be_r = 128'd0;
 reg           cmp_packetizer_header_inserter_header_inserter_3dws_dws_per_beat = 1'd0;
 reg    [15:0] cmp_packetizer_header_inserter_header_inserter_3dws_payload_dw = 16'd0;
-reg           cmp_packetizer_header_inserter_header_inserter_3dws_replay_first = 1'd0;
-reg           cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value = 1'd0;
-reg           cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value_ce = 1'd0;
 reg           cmp_packetizer_header_inserter_header_inserter_3dws_sink_first = 1'd0;
 reg           cmp_packetizer_header_inserter_header_inserter_3dws_sink_last = 1'd0;
 reg    [15:0] cmp_packetizer_header_inserter_header_inserter_3dws_sink_payload_be = 16'd0;
@@ -761,9 +758,6 @@ reg           cmp_packetizer_header_inserter_header_inserter_3dws_source_valid =
 reg   [127:0] cmp_packetizer_header_inserter_header_inserter_4dws_be_r = 128'd0;
 reg           cmp_packetizer_header_inserter_header_inserter_4dws_dws_per_beat = 1'd0;
 reg    [15:0] cmp_packetizer_header_inserter_header_inserter_4dws_payload_dw = 16'd0;
-reg           cmp_packetizer_header_inserter_header_inserter_4dws_replay_first = 1'd0;
-reg           cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value = 1'd0;
-reg           cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value_ce = 1'd0;
 reg           cmp_packetizer_header_inserter_header_inserter_4dws_sink_first = 1'd0;
 reg           cmp_packetizer_header_inserter_header_inserter_4dws_sink_last = 1'd0;
 reg    [15:0] cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_be = 16'd0;
@@ -2563,9 +2557,6 @@ wire          req_depacketizer_tlp_req_valid;
 reg   [127:0] req_packetizer_header_inserter_header_inserter_3dws_be_r = 128'd0;
 reg           req_packetizer_header_inserter_header_inserter_3dws_dws_per_beat = 1'd0;
 reg    [15:0] req_packetizer_header_inserter_header_inserter_3dws_payload_dw = 16'd0;
-reg           req_packetizer_header_inserter_header_inserter_3dws_replay_first = 1'd0;
-reg           req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value = 1'd0;
-reg           req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value_ce = 1'd0;
 reg           req_packetizer_header_inserter_header_inserter_3dws_sink_first = 1'd0;
 reg           req_packetizer_header_inserter_header_inserter_3dws_sink_last = 1'd0;
 reg    [15:0] req_packetizer_header_inserter_header_inserter_3dws_sink_payload_be = 16'd0;
@@ -2583,9 +2574,6 @@ reg           req_packetizer_header_inserter_header_inserter_3dws_source_valid =
 reg   [127:0] req_packetizer_header_inserter_header_inserter_4dws_be_r = 128'd0;
 reg           req_packetizer_header_inserter_header_inserter_4dws_dws_per_beat = 1'd0;
 reg    [15:0] req_packetizer_header_inserter_header_inserter_4dws_payload_dw = 16'd0;
-reg           req_packetizer_header_inserter_header_inserter_4dws_replay_first = 1'd0;
-reg           req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value = 1'd0;
-reg           req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value_ce = 1'd0;
 reg           req_packetizer_header_inserter_header_inserter_4dws_sink_first = 1'd0;
 reg           req_packetizer_header_inserter_header_inserter_4dws_sink_last = 1'd0;
 reg    [15:0] req_packetizer_header_inserter_header_inserter_4dws_sink_payload_be = 16'd0;
@@ -6486,8 +6474,6 @@ always @(*) begin
     endcase
 end
 always @(*) begin
-    cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value <= 1'd0;
-    cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value_ce <= 1'd0;
     cmp_packetizer_header_inserter_header_inserter_3dws_sink_ready <= 1'd0;
     cmp_packetizer_header_inserter_header_inserter_3dws_source_first <= 1'd0;
     cmp_packetizer_header_inserter_header_inserter_3dws_source_last <= 1'd0;
@@ -6534,10 +6520,6 @@ always @(*) begin
             cmp_packetizer_header_inserter_header_inserter_3dws_source_payload_be[15:12] <= cmp_packetizer_header_inserter_header_inserter_3dws_sink_payload_be[3:0];
             cmp_packetizer_header_inserter_header_inserter_3dws_source_last <= (cmp_packetizer_header_inserter_header_inserter_3dws_sink_last & (cmp_packetizer_header_inserter_header_inserter_3dws_sink_payload_be[15:4] == 1'd0));
             if ((cmp_packetizer_header_inserter_header_inserter_3dws_source_valid & cmp_packetizer_header_inserter_header_inserter_3dws_source_ready)) begin
-                if (((~cmp_packetizer_header_inserter_header_inserter_3dws_source_last) & 1'd0)) begin
-                    cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value <= 1'd1;
-                    cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value_ce <= 1'd1;
-                end
                 if ((~cmp_packetizer_header_inserter_header_inserter_3dws_source_last)) begin
                     subfragments_litepcietlpheaderinserter3dws0_next_state <= 1'd1;
                 end
@@ -6546,8 +6528,6 @@ always @(*) begin
     endcase
 end
 always @(*) begin
-    cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value <= 1'd0;
-    cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value_ce <= 1'd0;
     cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd0;
     cmp_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
     cmp_packetizer_header_inserter_header_inserter_4dws_source_last <= 1'd0;
@@ -6558,52 +6538,36 @@ always @(*) begin
     subfragments_litepcietlpheaderinserter4dws0_next_state <= subfragments_litepcietlpheaderinserter4dws0_state;
     case (subfragments_litepcietlpheaderinserter4dws0_state)
         1'd1: begin
-            if (cmp_packetizer_header_inserter_header_inserter_4dws_replay_first) begin
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_valid <= 1'd1;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_last <= cmp_packetizer_header_inserter_header_inserter_4dws_dws_per_beat;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat <= cmp_packetizer_header_inserter_header_inserter_4dws_be_r;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be <= cmp_packetizer_header_inserter_header_inserter_4dws_payload_dw;
-                cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd0;
-                if (cmp_packetizer_header_inserter_header_inserter_4dws_source_ready) begin
-                    cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value <= 1'd0;
-                    cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value_ce <= 1'd1;
-                    if (cmp_packetizer_header_inserter_header_inserter_4dws_dws_per_beat) begin
-                        subfragments_litepcietlpheaderinserter4dws0_next_state <= 1'd0;
-                    end
-                end
-            end else begin
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_valid <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_valid;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_last <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_last;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_dat;
-                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_be;
-                cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= cmp_packetizer_header_inserter_header_inserter_4dws_source_ready;
-                if (((cmp_packetizer_header_inserter_header_inserter_4dws_source_valid & cmp_packetizer_header_inserter_header_inserter_4dws_source_ready) & cmp_packetizer_header_inserter_header_inserter_4dws_source_last)) begin
-                    subfragments_litepcietlpheaderinserter4dws0_next_state <= 1'd0;
-                end
+            cmp_packetizer_header_inserter_header_inserter_4dws_source_valid <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_valid;
+            cmp_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
+            cmp_packetizer_header_inserter_header_inserter_4dws_source_last <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_last;
+            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_dat;
+            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_be;
+            cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= cmp_packetizer_header_inserter_header_inserter_4dws_source_ready;
+            if (((cmp_packetizer_header_inserter_header_inserter_4dws_source_valid & cmp_packetizer_header_inserter_header_inserter_4dws_source_ready) & cmp_packetizer_header_inserter_header_inserter_4dws_source_last)) begin
+                subfragments_litepcietlpheaderinserter4dws0_next_state <= 1'd0;
             end
         end
         default: begin
-            cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= cmp_packetizer_header_inserter_header_inserter_4dws_source_ready;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_valid <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_valid;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_first <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_first;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[31:0] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[31:0];
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[3:0] <= 4'd15;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[63:32] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[63:32];
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[7:4] <= 4'd15;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[95:64] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[95:64];
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[11:8] <= 4'd15;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[127:96] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[127:96];
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[15:12] <= 4'd15;
-            cmp_packetizer_header_inserter_header_inserter_4dws_source_last <= (cmp_packetizer_header_inserter_header_inserter_4dws_sink_last & (cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_be == 1'd0));
-            if ((cmp_packetizer_header_inserter_header_inserter_4dws_source_valid & cmp_packetizer_header_inserter_header_inserter_4dws_source_ready)) begin
-                if (((~cmp_packetizer_header_inserter_header_inserter_4dws_source_last) & 1'd1)) begin
-                    cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value <= 1'd1;
-                    cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value_ce <= 1'd1;
-                end
-                if ((~cmp_packetizer_header_inserter_header_inserter_4dws_source_last)) begin
-                    subfragments_litepcietlpheaderinserter4dws0_next_state <= 1'd1;
+            cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd0;
+            if ((cmp_packetizer_header_inserter_header_inserter_4dws_sink_valid & cmp_packetizer_header_inserter_header_inserter_4dws_sink_first)) begin
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_valid <= 1'd1;
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd1;
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[31:0] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[31:0];
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[3:0] <= 4'd15;
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[63:32] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[63:32];
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[7:4] <= 4'd15;
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[95:64] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[95:64];
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[11:8] <= 4'd15;
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[127:96] <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[127:96];
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_payload_be[15:12] <= 4'd15;
+                cmp_packetizer_header_inserter_header_inserter_4dws_source_last <= (cmp_packetizer_header_inserter_header_inserter_4dws_sink_last & (cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_be == 1'd0));
+                if ((cmp_packetizer_header_inserter_header_inserter_4dws_source_valid & cmp_packetizer_header_inserter_header_inserter_4dws_source_ready)) begin
+                    if (cmp_packetizer_header_inserter_header_inserter_4dws_source_last) begin
+                        cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd1;
+                    end else begin
+                        subfragments_litepcietlpheaderinserter4dws0_next_state <= 1'd1;
+                    end
                 end
             end
         end
@@ -6873,8 +6837,6 @@ always @(*) begin
     endcase
 end
 always @(*) begin
-    req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value <= 1'd0;
-    req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value_ce <= 1'd0;
     req_packetizer_header_inserter_header_inserter_3dws_sink_ready <= 1'd0;
     req_packetizer_header_inserter_header_inserter_3dws_source_first <= 1'd0;
     req_packetizer_header_inserter_header_inserter_3dws_source_last <= 1'd0;
@@ -6921,10 +6883,6 @@ always @(*) begin
             req_packetizer_header_inserter_header_inserter_3dws_source_payload_be[15:12] <= req_packetizer_header_inserter_header_inserter_3dws_sink_payload_be[3:0];
             req_packetizer_header_inserter_header_inserter_3dws_source_last <= (req_packetizer_header_inserter_header_inserter_3dws_sink_last & (req_packetizer_header_inserter_header_inserter_3dws_sink_payload_be[15:4] == 1'd0));
             if ((req_packetizer_header_inserter_header_inserter_3dws_source_valid & req_packetizer_header_inserter_header_inserter_3dws_source_ready)) begin
-                if (((~req_packetizer_header_inserter_header_inserter_3dws_source_last) & 1'd0)) begin
-                    req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value <= 1'd1;
-                    req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value_ce <= 1'd1;
-                end
                 if ((~req_packetizer_header_inserter_header_inserter_3dws_source_last)) begin
                     subfragments_litepcietlpheaderinserter3dws1_next_state <= 1'd1;
                 end
@@ -6933,8 +6891,6 @@ always @(*) begin
     endcase
 end
 always @(*) begin
-    req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value <= 1'd0;
-    req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value_ce <= 1'd0;
     req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd0;
     req_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
     req_packetizer_header_inserter_header_inserter_4dws_source_last <= 1'd0;
@@ -6945,52 +6901,36 @@ always @(*) begin
     subfragments_litepcietlpheaderinserter4dws1_next_state <= subfragments_litepcietlpheaderinserter4dws1_state;
     case (subfragments_litepcietlpheaderinserter4dws1_state)
         1'd1: begin
-            if (req_packetizer_header_inserter_header_inserter_4dws_replay_first) begin
-                req_packetizer_header_inserter_header_inserter_4dws_source_valid <= 1'd1;
-                req_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
-                req_packetizer_header_inserter_header_inserter_4dws_source_last <= req_packetizer_header_inserter_header_inserter_4dws_dws_per_beat;
-                req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat <= req_packetizer_header_inserter_header_inserter_4dws_be_r;
-                req_packetizer_header_inserter_header_inserter_4dws_source_payload_be <= req_packetizer_header_inserter_header_inserter_4dws_payload_dw;
-                req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd0;
-                if (req_packetizer_header_inserter_header_inserter_4dws_source_ready) begin
-                    req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value <= 1'd0;
-                    req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value_ce <= 1'd1;
-                    if (req_packetizer_header_inserter_header_inserter_4dws_dws_per_beat) begin
-                        subfragments_litepcietlpheaderinserter4dws1_next_state <= 1'd0;
-                    end
-                end
-            end else begin
-                req_packetizer_header_inserter_header_inserter_4dws_source_valid <= req_packetizer_header_inserter_header_inserter_4dws_sink_valid;
-                req_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
-                req_packetizer_header_inserter_header_inserter_4dws_source_last <= req_packetizer_header_inserter_header_inserter_4dws_sink_last;
-                req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_dat;
-                req_packetizer_header_inserter_header_inserter_4dws_source_payload_be <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_be;
-                req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= req_packetizer_header_inserter_header_inserter_4dws_source_ready;
-                if (((req_packetizer_header_inserter_header_inserter_4dws_source_valid & req_packetizer_header_inserter_header_inserter_4dws_source_ready) & req_packetizer_header_inserter_header_inserter_4dws_source_last)) begin
-                    subfragments_litepcietlpheaderinserter4dws1_next_state <= 1'd0;
-                end
+            req_packetizer_header_inserter_header_inserter_4dws_source_valid <= req_packetizer_header_inserter_header_inserter_4dws_sink_valid;
+            req_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd0;
+            req_packetizer_header_inserter_header_inserter_4dws_source_last <= req_packetizer_header_inserter_header_inserter_4dws_sink_last;
+            req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_dat;
+            req_packetizer_header_inserter_header_inserter_4dws_source_payload_be <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_be;
+            req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= req_packetizer_header_inserter_header_inserter_4dws_source_ready;
+            if (((req_packetizer_header_inserter_header_inserter_4dws_source_valid & req_packetizer_header_inserter_header_inserter_4dws_source_ready) & req_packetizer_header_inserter_header_inserter_4dws_source_last)) begin
+                subfragments_litepcietlpheaderinserter4dws1_next_state <= 1'd0;
             end
         end
         default: begin
-            req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= req_packetizer_header_inserter_header_inserter_4dws_source_ready;
-            req_packetizer_header_inserter_header_inserter_4dws_source_valid <= req_packetizer_header_inserter_header_inserter_4dws_sink_valid;
-            req_packetizer_header_inserter_header_inserter_4dws_source_first <= req_packetizer_header_inserter_header_inserter_4dws_sink_first;
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[31:0] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[31:0];
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[3:0] <= 4'd15;
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[63:32] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[63:32];
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[7:4] <= 4'd15;
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[95:64] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[95:64];
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[11:8] <= 4'd15;
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[127:96] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[127:96];
-            req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[15:12] <= 4'd15;
-            req_packetizer_header_inserter_header_inserter_4dws_source_last <= (req_packetizer_header_inserter_header_inserter_4dws_sink_last & (req_packetizer_header_inserter_header_inserter_4dws_sink_payload_be == 1'd0));
-            if ((req_packetizer_header_inserter_header_inserter_4dws_source_valid & req_packetizer_header_inserter_header_inserter_4dws_source_ready)) begin
-                if (((~req_packetizer_header_inserter_header_inserter_4dws_source_last) & 1'd1)) begin
-                    req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value <= 1'd1;
-                    req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value_ce <= 1'd1;
-                end
-                if ((~req_packetizer_header_inserter_header_inserter_4dws_source_last)) begin
-                    subfragments_litepcietlpheaderinserter4dws1_next_state <= 1'd1;
+            req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd0;
+            if ((req_packetizer_header_inserter_header_inserter_4dws_sink_valid & req_packetizer_header_inserter_header_inserter_4dws_sink_first)) begin
+                req_packetizer_header_inserter_header_inserter_4dws_source_valid <= 1'd1;
+                req_packetizer_header_inserter_header_inserter_4dws_source_first <= 1'd1;
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[31:0] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[31:0];
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[3:0] <= 4'd15;
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[63:32] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[63:32];
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[7:4] <= 4'd15;
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[95:64] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[95:64];
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[11:8] <= 4'd15;
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_dat[127:96] <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_header[127:96];
+                req_packetizer_header_inserter_header_inserter_4dws_source_payload_be[15:12] <= 4'd15;
+                req_packetizer_header_inserter_header_inserter_4dws_source_last <= (req_packetizer_header_inserter_header_inserter_4dws_sink_last & (req_packetizer_header_inserter_header_inserter_4dws_sink_payload_be == 1'd0));
+                if ((req_packetizer_header_inserter_header_inserter_4dws_source_valid & req_packetizer_header_inserter_header_inserter_4dws_source_ready)) begin
+                    if (req_packetizer_header_inserter_header_inserter_4dws_source_last) begin
+                        req_packetizer_header_inserter_header_inserter_4dws_sink_ready <= 1'd1;
+                    end else begin
+                        subfragments_litepcietlpheaderinserter4dws1_next_state <= 1'd1;
+                    end
                 end
             end
         end
@@ -11356,18 +11296,12 @@ always @(posedge sys_clk) begin
         cmp_packetizer_header_inserter_header_inserter_3dws_dws_per_beat <= cmp_packetizer_header_inserter_header_inserter_3dws_sink_last;
     end
     subfragments_litepcietlpheaderinserter3dws0_state <= subfragments_litepcietlpheaderinserter3dws0_next_state;
-    if (cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value_ce) begin
-        cmp_packetizer_header_inserter_header_inserter_3dws_replay_first <= cmp_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws0_next_value;
-    end
     if ((cmp_packetizer_header_inserter_header_inserter_4dws_sink_valid & cmp_packetizer_header_inserter_header_inserter_4dws_sink_ready)) begin
         cmp_packetizer_header_inserter_header_inserter_4dws_be_r <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_dat;
         cmp_packetizer_header_inserter_header_inserter_4dws_payload_dw <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_payload_be;
         cmp_packetizer_header_inserter_header_inserter_4dws_dws_per_beat <= cmp_packetizer_header_inserter_header_inserter_4dws_sink_last;
     end
     subfragments_litepcietlpheaderinserter4dws0_state <= subfragments_litepcietlpheaderinserter4dws0_next_state;
-    if (cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value_ce) begin
-        cmp_packetizer_header_inserter_header_inserter_4dws_replay_first <= cmp_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws0_next_value;
-    end
     if (((~req_packetizer_tlp_raw_req_buf_pipe_valid_source_valid) | req_packetizer_tlp_raw_req_buf_pipe_valid_source_ready)) begin
         req_packetizer_tlp_raw_req_buf_pipe_valid_source_valid <= req_packetizer_tlp_raw_req_buf_pipe_valid_sink_valid;
         req_packetizer_tlp_raw_req_buf_pipe_valid_source_first <= req_packetizer_tlp_raw_req_buf_pipe_valid_sink_first;
@@ -11392,18 +11326,12 @@ always @(posedge sys_clk) begin
         req_packetizer_header_inserter_header_inserter_3dws_dws_per_beat <= req_packetizer_header_inserter_header_inserter_3dws_sink_last;
     end
     subfragments_litepcietlpheaderinserter3dws1_state <= subfragments_litepcietlpheaderinserter3dws1_next_state;
-    if (req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value_ce) begin
-        req_packetizer_header_inserter_header_inserter_3dws_replay_first <= req_packetizer_header_inserter_header_inserter_3dws_replay_first_litepcietlpheaderinserter3dws1_next_value;
-    end
     if ((req_packetizer_header_inserter_header_inserter_4dws_sink_valid & req_packetizer_header_inserter_header_inserter_4dws_sink_ready)) begin
         req_packetizer_header_inserter_header_inserter_4dws_be_r <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_dat;
         req_packetizer_header_inserter_header_inserter_4dws_payload_dw <= req_packetizer_header_inserter_header_inserter_4dws_sink_payload_be;
         req_packetizer_header_inserter_header_inserter_4dws_dws_per_beat <= req_packetizer_header_inserter_header_inserter_4dws_sink_last;
     end
     subfragments_litepcietlpheaderinserter4dws1_state <= subfragments_litepcietlpheaderinserter4dws1_next_state;
-    if (req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value_ce) begin
-        req_packetizer_header_inserter_header_inserter_4dws_replay_first <= req_packetizer_header_inserter_header_inserter_4dws_replay_first_litepcietlpheaderinserter4dws1_next_value;
-    end
     if (subfragments_first) begin
         subfragments_sel_ongoing <= subfragments_sel0;
     end
@@ -13063,8 +12991,6 @@ always @(posedge sys_clk) begin
         cmp_packetizer_tlp_raw_buf_pipe_valid_source_payload_header <= 128'd0;
         cmp_packetizer_tlp_raw_buf_pipe_valid_source_payload_dat <= 128'd0;
         cmp_packetizer_tlp_raw_buf_pipe_valid_source_payload_be <= 16'd0;
-        cmp_packetizer_header_inserter_header_inserter_3dws_replay_first <= 1'd0;
-        cmp_packetizer_header_inserter_header_inserter_4dws_replay_first <= 1'd0;
         req_packetizer_tlp_raw_req_buf_pipe_valid_source_valid <= 1'd0;
         req_packetizer_tlp_raw_req_buf_pipe_valid_source_payload_fmt <= 2'd0;
         req_packetizer_tlp_raw_req_buf_pipe_valid_source_payload_header <= 128'd0;
@@ -13075,8 +13001,6 @@ always @(posedge sys_clk) begin
         req_packetizer_tlp_raw_buf_pipe_valid_source_payload_header <= 128'd0;
         req_packetizer_tlp_raw_buf_pipe_valid_source_payload_dat <= 128'd0;
         req_packetizer_tlp_raw_buf_pipe_valid_source_payload_be <= 16'd0;
-        req_packetizer_header_inserter_header_inserter_3dws_replay_first <= 1'd0;
-        req_packetizer_header_inserter_header_inserter_4dws_replay_first <= 1'd0;
         pcie_wishbone_master_sink_payload_req_id <= 16'd0;
         pcie_wishbone_master_sink_payload_cmp_id <= 16'd0;
         pcie_wishbone_master_sink_payload_adr <= 32'd0;
@@ -13494,17 +13418,17 @@ initial begin
 	mem[30] = 8'h30;
 	mem[31] = 8'h35;
 	mem[32] = 8'h2d;
-	mem[33] = 8'h31;
-	mem[34] = 8'h31;
+	mem[33] = 8'h33;
+	mem[34] = 8'h30;
 	mem[35] = 8'h20;
-	mem[36] = 8'h32;
-	mem[37] = 8'h30;
+	mem[36] = 8'h30;
+	mem[37] = 8'h38;
 	mem[38] = 8'h3a;
-	mem[39] = 8'h34;
-	mem[40] = 8'h32;
+	mem[39] = 8'h31;
+	mem[40] = 8'h30;
 	mem[41] = 8'h3a;
-	mem[42] = 8'h34;
-	mem[43] = 8'h36;
+	mem[42] = 8'h33;
+	mem[43] = 8'h34;
 	mem[44] = 8'h00;
 end
 reg [5:0] mem_adr0;
@@ -14596,5 +14520,5 @@ FDPE #(
 endmodule
 
 // -----------------------------------------------------------------------------
-//  Auto-Generated by LiteX on 2026-05-11 20:42:47.
+//  Auto-Generated by LiteX on 2026-05-30 08:10:35.
 //------------------------------------------------------------------------------
