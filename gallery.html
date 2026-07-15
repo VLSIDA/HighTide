@@ -285,6 +285,13 @@
   </nav>
 
   <div class="container">
+    <div class="version-bar" style="display:flex;justify-content:flex-end;align-items:center;gap:.5rem;margin:.25rem 0 1rem;font-size:.9rem;">
+      <label for="version-select" style="color:var(--navy);font-weight:600;">Version</label>
+      <select id="version-select" onchange="if(this.value)location.href=this.value" style="padding:.35rem .6rem;border:1px solid var(--sea-light);border-radius:6px;background:#fff;color:var(--navy);font:inherit;cursor:pointer;">
+        <option value="gallery.html" selected>main (latest)</option>
+        <option value="results/26Q3/gallery.html">26Q3</option>
+      </select>
+    </div>
     <h1>Design Gallery</h1>
     <p class="subtitle">
       Placement views and upstream links for each design in the HighTide benchmark suite.
@@ -304,9 +311,9 @@
       <div class="design-body">
         <div class="design-image">
           <div class="design-thumbs">
-            <a class="thumb-link" href="figures/bp_uno_asap7_24bbf831.png"><img src="figures/thumbs/bp_uno_asap7_24bbf831.jpg" alt="BlackParrot bp_uno asap7 final"><span class="thumb-label asap7">asap7</span></a>
-            <a class="thumb-link" href="figures/bp_uno_nangate45_24bbf831.png"><img src="figures/thumbs/bp_uno_nangate45_24bbf831.jpg" alt="BlackParrot bp_uno nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
-            <a class="thumb-link" href="figures/bp_uno_sky130hd_1c56f44f.png"><img src="figures/thumbs/bp_uno_sky130hd_1c56f44f.jpg" alt="BlackParrot bp_uno sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+            <a class="thumb-link" href="figures/bp_uno_asap7_d74f835b.png"><img src="figures/thumbs/bp_uno_asap7_d74f835b.jpg" alt="BlackParrot bp_uno asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/bp_uno_nangate45_d74f835b.png"><img src="figures/thumbs/bp_uno_nangate45_d74f835b.jpg" alt="BlackParrot bp_uno nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/bp_uno_sky130hd_d74f835b.png"><img src="figures/thumbs/bp_uno_sky130hd_d74f835b.jpg" alt="BlackParrot bp_uno sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -395,8 +402,8 @@
         <div class="design-image">
           <div class="design-thumbs">
             <a class="thumb-link" href="figures/cnn_asap7_9bbf1e60.png"><img src="figures/thumbs/cnn_asap7_9bbf1e60.jpg" alt="CNN asap7 final"><span class="thumb-label asap7">asap7</span></a>
-            <a class="thumb-link" href="figures/cnn_nangate45_9bbf1e60.png"><img src="figures/thumbs/cnn_nangate45_9bbf1e60.jpg" alt="CNN nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
-            <a class="thumb-link" href="figures/cnn_sky130hd_9bbf1e60.png"><img src="figures/thumbs/cnn_sky130hd_9bbf1e60.jpg" alt="CNN sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+            <a class="thumb-link" href="figures/cnn_nangate45_809b855e.png"><img src="figures/thumbs/cnn_nangate45_809b855e.jpg" alt="CNN nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/cnn_sky130hd_809b855e.png"><img src="figures/thumbs/cnn_sky130hd_809b855e.jpg" alt="CNN sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -573,8 +580,8 @@
       <div class="design-body">
         <div class="design-image">
           <div class="design-thumbs">
-            <a class="thumb-link" href="figures/litepci_asap7_ce758b83.png"><img src="figures/thumbs/litepci_asap7_ce758b83.jpg" alt="LitePCI asap7 final"><span class="thumb-label asap7">asap7</span></a>
-            <a class="thumb-link" href="figures/litepci_nangate45_ce758b83.png"><img src="figures/thumbs/litepci_nangate45_ce758b83.jpg" alt="LitePCI nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/litepci_asap7_d74f835b.png"><img src="figures/thumbs/litepci_asap7_d74f835b.jpg" alt="LitePCI asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/litepci_nangate45_d74f835b.png"><img src="figures/thumbs/litepci_nangate45_d74f835b.jpg" alt="LitePCI nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
             <div class="thumb-placeholder"><div class="ph-box">pending</div><span class="thumb-label sky130hd">sky130hd</span></div>
           </div>
         </div>
@@ -677,9 +684,9 @@
       <div class="design-body">
         <div class="design-image">
           <div class="design-thumbs">
-            <a class="thumb-link" href="figures/floonoc_asap7_3b860705.png"><img src="figures/thumbs/floonoc_asap7_3b860705.jpg" alt="FlooNoC asap7 final"><span class="thumb-label asap7">asap7</span></a>
-            <a class="thumb-link" href="figures/floonoc_nangate45_f8c54924.png"><img src="figures/thumbs/floonoc_nangate45_f8c54924.jpg" alt="FlooNoC nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
-            <a class="thumb-link" href="figures/floonoc_sky130hd_bf2eb2fa.png"><img src="figures/thumbs/floonoc_sky130hd_bf2eb2fa.jpg" alt="FlooNoC sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+            <a class="thumb-link" href="figures/floonoc_asap7_68afbcb7.png"><img src="figures/thumbs/floonoc_asap7_68afbcb7.jpg" alt="FlooNoC asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/floonoc_nangate45_68afbcb7.png"><img src="figures/thumbs/floonoc_nangate45_68afbcb7.jpg" alt="FlooNoC nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/floonoc_sky130hd_68afbcb7.png"><img src="figures/thumbs/floonoc_sky130hd_68afbcb7.jpg" alt="FlooNoC sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -706,8 +713,8 @@
       <div class="design-body">
         <div class="design-image">
           <div class="design-thumbs">
-            <a class="thumb-link" href="figures/snitch_cluster_asap7_3a26ac4c.png"><img src="figures/thumbs/snitch_cluster_asap7_3a26ac4c.jpg" alt="snitch_cluster asap7"><span class="thumb-label asap7">asap7</span></a>
-            <a class="thumb-link" href="figures/snitch_cluster_nangate45_24da230d.png"><img src="figures/thumbs/snitch_cluster_nangate45_24da230d.jpg" alt="snitch_cluster nangate45"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/snitch_cluster_asap7_d74f835b.png"><img src="figures/thumbs/snitch_cluster_asap7_d74f835b.jpg" alt="snitch_cluster asap7"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/snitch_cluster_nangate45_d74f835b.png"><img src="figures/thumbs/snitch_cluster_nangate45_d74f835b.jpg" alt="snitch_cluster nangate45"><span class="thumb-label nangate45">nangate45</span></a>
           </div>
         </div>
         <div class="design-info">
