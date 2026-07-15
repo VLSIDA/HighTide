@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <title>HighTide — Design Gallery</title>
+  <link rel="icon" type="image/png" href="../../lighthouse.png">
+  <style>
+    :root {
+      --navy: #1b2a6b;
+      --navy-dark: #0f1a4a;
+      --yellow: #fdd835;
+      --yellow-glow: #fef9e7;
+      --sea-blue: #4a90d9;
+      --sea-light: #81badd;
+      --white: #ffffff;
+      --gray-50: #f8f9fa;
+      --gray-100: #e9ecef;
+      --gray-600: #6c757d;
+      --gray-800: #343a40;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--gray-800);
+      line-height: 1.6;
+      background: var(--gray-50);
+    }
+
+    nav {
+      background: var(--navy-dark);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    nav .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    nav .brand img { height: 36px; width: 36px; border-radius: 50%; }
+
+    nav .links { display: flex; gap: 2rem; list-style: none; }
+    nav .links a { color: var(--sea-light); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+    nav .links a:hover { color: var(--yellow); }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    h1 { font-size: 2rem; color: var(--navy); margin-bottom: 0.5rem; }
+
+    .subtitle {
+      color: var(--gray-600);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Design Cards */
+    .design-card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .design-header {
+      background: var(--navy);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .design-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .design-header h2 a {
+      color: var(--yellow);
+      text-decoration: none;
+    }
+
+    .design-header h2 a:hover { text-decoration: underline; }
+
+    .design-header .badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .platform-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .badge-asap7 { background: #e3f2fd; color: #1565c0; }
+    .badge-nangate45 { background: #e8f5e9; color: #2e7d32; }
+    .badge-sky130hd { background: #fff3e0; color: #e65100; }
+
+    .lang-badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #f3e5f5;
+      color: #7b1fa2;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .design-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .design-info {
+      order: 1;
+    }
+
+    .design-image {
+      order: 2;
+    }
+
+    .design-image img {
+      width: 100%;
+      border-radius: 8px;
+      border: 2px solid var(--gray-100);
+    }
+
+    .thumb-placeholder {
+      display: block;
+      color: var(--gray-600);
+      text-align: center;
+    }
+
+    .thumb-placeholder .ph-box {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 6px;
+      border: 2px dashed var(--gray-100);
+      background: var(--gray-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--gray-600);
+    }
+
+    .design-thumbs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .thumb-link {
+      display: block;
+      text-decoration: none;
+      color: var(--gray-800);
+      transition: transform 0.15s;
+    }
+
+    .thumb-link:hover {
+      transform: translateY(-2px);
+    }
+
+    .thumb-link img {
+      width: 100%;
+      border-radius: 6px;
+      border: 2px solid var(--gray-100);
+      display: block;
+      background: #000;
+    }
+
+    .thumb-link:hover img {
+      border-color: var(--sea-blue);
+    }
+
+    .thumb-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0.25rem 0.4rem;
+      margin-top: 0.25rem;
+      border-radius: 3px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .thumb-label.asap7 { background: #e3f2fd; color: #1565c0; }
+    .thumb-label.nangate45 { background: #e8f5e9; color: #2e7d32; }
+    .thumb-label.sky130hd { background: #fff3e0; color: #e65100; }
+
+    .thumb-variant {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--gray-600);
+      text-align: center;
+      margin-top: 0.15rem;
+    }
+
+    .design-info {
+      flex: 1;
+    }
+
+    .design-info p {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .source-link {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .source-link a {
+      color: var(--sea-blue);
+      text-decoration: none;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .source-link a:hover {
+      color: var(--navy);
+      text-decoration: underline;
+    }
+
+    footer {
+      background: var(--navy-dark);
+      color: var(--sea-light);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    footer a { color: var(--yellow); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .design-thumbs { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../../index.html" class="brand">
+      <img src="../../lighthouse.png" alt="HighTide logo">
+      HighTide
+    </a>
+    <ul class="links">
+      <li><a href="../../index.html#motivation">Motivation</a></li>
+      <li><a href="../../index.html#designs">Designs</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="index.html">Results</a></li>
+      <li><a href="../../index.html#ai-skills">AI Skills</a></li>
+      <li><a href="../../index.html#quickstart">Get Started</a></li>
+      <li><a href="https://github.com/VLSIDA/HighTide">GitHub</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="version-bar" style="display:flex;justify-content:flex-end;align-items:center;gap:.5rem;margin:.25rem 0 1rem;font-size:.9rem;">
+      <label for="version-select" style="color:var(--navy);font-weight:600;">Version</label>
+      <select id="version-select" onchange="if(this.value)location.href=this.value" style="padding:.35rem .6rem;border:1px solid var(--sea-light);border-radius:6px;background:#fff;color:var(--navy);font:inherit;cursor:pointer;">
+        <option value="../../gallery.html">main (latest)</option>
+        <option value="gallery.html" selected>26Q3</option>
+      </select>
+    </div>
+    <h1>Design Gallery</h1>
+    <p class="subtitle">
+      Placement views and upstream links for each design in the HighTide benchmark suite.
+    </p>
+
+    <!-- BlackParrot -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/black-parrot/black-parrot">BlackParrot</a></h2>
+        <div class="badges">
+          <span class="lang-badge">SystemVerilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/bp_uno_asap7_24bbf831.png"><img src="figures/thumbs/bp_uno_asap7_24bbf831.jpg" alt="BlackParrot bp_uno asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/bp_uno_nangate45_24bbf831.png"><img src="figures/thumbs/bp_uno_nangate45_24bbf831.jpg" alt="BlackParrot bp_uno nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/bp_uno_sky130hd_1c56f44f.png"><img src="figures/thumbs/bp_uno_sky130hd_1c56f44f.jpg" alt="BlackParrot bp_uno sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            BlackParrot is a Linux-capable, cache-coherent multicore RISC-V SoC from the University
+            of Washington. Available in single-core (bp_uno) and quad-core (bp_quad) variants, with
+            dense SRAM macros for L1 / L2 caches and register files.
+          </p>
+          <p class="source-link"><a href="https://github.com/black-parrot/black-parrot">black-parrot/black-parrot &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gemmini -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/ucb-bar/gemmini">Gemmini</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Chisel</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/gemmini_asap7_ecfab7e3.png"><img src="figures/thumbs/gemmini_asap7_ecfab7e3.jpg" alt="Gemmini asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/gemmini_nangate45_ecfab7e3.png"><img src="figures/thumbs/gemmini_nangate45_ecfab7e3.jpg" alt="Gemmini nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/gemmini_sky130hd_ecfab7e3.png"><img src="figures/thumbs/gemmini_sky130hd_ecfab7e3.jpg" alt="Gemmini sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Gemmini is a systolic array matrix multiplication accelerator from UC Berkeley, integrated
+            with the Chipyard SoC framework. It is generated from a parameterizable Chisel description
+            of a configurable systolic spatial array with on-chip scratchpad memory.
+          </p>
+          <p class="source-link"><a href="https://github.com/ucb-bar/gemmini">ucb-bar/gemmini &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHA3 -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/ucb-bar/sha3">SHA3</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Chisel</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/sha3_asap7_b3c87801.png"><img src="figures/thumbs/sha3_asap7_b3c87801.jpg" alt="SHA3 asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/sha3_nangate45_b3c87801.png"><img src="figures/thumbs/sha3_nangate45_b3c87801.jpg" alt="SHA3 nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/sha3_sky130hd_66ef90de.png"><img src="figures/thumbs/sha3_sky130hd_66ef90de.jpg" alt="SHA3 sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            SHA3 is a cryptographic hash accelerator from UC Berkeley implementing the Keccak / SHA-3
+            family of hash functions. A combinational-heavy datapath built around a 1600-bit state
+            permutation, written in Chisel.
+          </p>
+          <p class="source-link"><a href="https://github.com/ucb-bar/sha3">ucb-bar/sha3 &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CNN -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/NNgen/nngen">CNN</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Python (NNgen/Veriloggen)</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/cnn_asap7_9bbf1e60.png"><img src="figures/thumbs/cnn_asap7_9bbf1e60.jpg" alt="CNN asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/cnn_nangate45_9bbf1e60.png"><img src="figures/thumbs/cnn_nangate45_9bbf1e60.jpg" alt="CNN nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/cnn_sky130hd_9bbf1e60.png"><img src="figures/thumbs/cnn_sky130hd_9bbf1e60.jpg" alt="CNN sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            A convolutional neural network inference accelerator generated by NNgen, a model-to-hardware
+            compiler built on Veriloggen. Embedded SRAM macros hold weights and activations.
+          </p>
+          <p class="source-link"><a href="https://github.com/NNgen/nngen">NNgen/nngen &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eyeriss v2 -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/BoooC/CNN-Accelerator-Based-on-Eyeriss-v2">Eyeriss v2</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Verilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/eyeriss_asap7_fde02b5d.png"><img src="figures/thumbs/eyeriss_asap7_fde02b5d.jpg" alt="Eyeriss v2 asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/eyeriss_nangate45_fde02b5d.png"><img src="figures/thumbs/eyeriss_nangate45_fde02b5d.jpg" alt="Eyeriss v2 nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/eyeriss_sky130hd_fde02b5d.png"><img src="figures/thumbs/eyeriss_sky130hd_fde02b5d.jpg" alt="Eyeriss v2 sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Sparse CNN inference accelerator with a 2&times;2 array of cluster groups, each holding
+            9 processing elements. CSC-encoded activations and weights stream through input-activation,
+            weight, and partial-sum SRAM banks (per-PE spads + GLB) on a hierarchical mesh.
+          </p>
+          <p class="source-link"><a href="https://github.com/BoooC/CNN-Accelerator-Based-on-Eyeriss-v2">BoooC/CNN-Accelerator-Based-on-Eyeriss-v2 &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NyuziProcessor -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/jbush001/NyuziProcessor">NyuziProcessor</a></h2>
+        <div class="badges">
+          <span class="lang-badge">SystemVerilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/NyuziProcessor_asap7_b3c87801.png"><img src="figures/thumbs/NyuziProcessor_asap7_b3c87801.jpg" alt="Nyuzi asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/NyuziProcessor_nangate45_480fdfa1.png"><img src="figures/thumbs/NyuziProcessor_nangate45_480fdfa1.jpg" alt="Nyuzi nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Nyuzi is an open-source GPGPU-style multicore vector processor designed for graphics and
+            parallel-compute workloads. Hardware multithreading, wide vector arithmetic, and an
+            L1 / L2 cache hierarchy across its cores.
+          </p>
+          <p class="source-link"><a href="https://github.com/jbush001/NyuziProcessor">jbush001/NyuziProcessor &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Minimax -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/gsmecher/minimax">Minimax</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Verilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/minimax_asap7_13ea0da8.png"><img src="figures/thumbs/minimax_asap7_13ea0da8.jpg" alt="Minimax asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/minimax_nangate45_13ea0da8.png"><img src="figures/thumbs/minimax_nangate45_13ea0da8.jpg" alt="Minimax nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/minimax_sky130hd_13ea0da8.png"><img src="figures/thumbs/minimax_sky130hd_13ea0da8.jpg" alt="Minimax sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Minimax is a minimal-area RISC-V RV32IC core that decodes and serially executes 16-bit
+            and 32-bit instructions. Designed for tiny embedded controllers where area dominates
+            performance.
+          </p>
+          <p class="source-link"><a href="https://github.com/gsmecher/minimax">gsmecher/minimax &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LiteDRAM -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/enjoy-digital/litedram">LiteDRAM</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Python (Migen/LiteX)</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/litedram_asap7_f8c54924.png"><img src="figures/thumbs/litedram_asap7_f8c54924.jpg" alt="LiteDRAM asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/litedram_nangate45_f8c54924.png"><img src="figures/thumbs/litedram_nangate45_f8c54924.jpg" alt="LiteDRAM nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/litedram_sky130hd_3b860705.png"><img src="figures/thumbs/litedram_sky130hd_3b860705.jpg" alt="LiteDRAM sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            LiteDRAM is a configurable DRAM controller core generated by the LiteX / Migen Python
+            framework. The HighTide variant uses the vendor-agnostic Generic SDR PHY (GENSDRPHY)
+            with an AXI + Wishbone + native frontend crossbar; CPU / UART / ROM are stripped out
+            so the benchmark exercises the bank machines, refresh FSM, and command arbitration
+            rather than a SoC.
+          </p>
+          <p class="source-link"><a href="https://github.com/enjoy-digital/litedram">enjoy-digital/litedram &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LiteEth -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/enjoy-digital/liteeth">LiteEth</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Python (Migen/LiteX)</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/liteeth_asap7_b3c87801.png"><img src="figures/thumbs/liteeth_asap7_b3c87801.jpg" alt="LiteEth asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/liteeth_nangate45_3b860705.png"><img src="figures/thumbs/liteeth_nangate45_3b860705.jpg" alt="LiteEth nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/liteeth_sky130hd_0ee5eba0.png"><img src="figures/thumbs/liteeth_sky130hd_0ee5eba0.jpg" alt="LiteEth sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            LiteEth is a small-footprint Ethernet IP core generated by the LiteX / Migen Python
+            framework. This configuration ships a UDP endpoint over the Xilinx UltraScale+ GTH
+            SGMII PHY — the most complex of the LiteEth PHY/protocol combinations.
+          </p>
+          <p class="source-link"><a href="https://github.com/enjoy-digital/liteeth">enjoy-digital/liteeth &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LitePCI -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/enjoy-digital/litepcie">LitePCI</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Python (Migen/LiteX)</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/litepci_asap7_ce758b83.png"><img src="figures/thumbs/litepci_asap7_ce758b83.jpg" alt="LitePCI asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/litepci_nangate45_ce758b83.png"><img src="figures/thumbs/litepci_nangate45_ce758b83.jpg" alt="LitePCI nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <div class="thumb-placeholder"><div class="ph-box">pending</div><span class="thumb-label sky130hd">sky130hd</span></div>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            LitePCI is the LiteX project's PCIe endpoint IP — a small-footprint, configurable
+            PCIe Gen2/3 controller generated from Python / Migen. This configuration targets the
+            Xilinx UltraScale+ <code>pcie_us</code> hard-IP PHY (committed as a LEF/LIB blackbox
+            with a 1000×1000 µm footprint) and five FakeRAM macros for the DMA buffer set.
+          </p>
+          <p class="source-link"><a href="https://github.com/enjoy-digital/litepcie">enjoy-digital/litepcie &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CoralNPU -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/google-coral/coralnpu">CoralNPU</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Chisel</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/coralnpu_asap7_aeb7ce99.png"><img src="figures/thumbs/coralnpu_asap7_aeb7ce99.jpg" alt="CoralNPU asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/coralnpu_nangate45_aeb7ce99.png"><img src="figures/thumbs/coralnpu_nangate45_aeb7ce99.jpg" alt="CoralNPU nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/coralnpu_sky130hd_aeb7ce99.png"><img src="figures/thumbs/coralnpu_sky130hd_aeb7ce99.jpg" alt="CoralNPU sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Coral NPU is Google's open-source machine-learning accelerator core for energy-efficient
+            AI at the edge. The HighTide port is generated from the upstream Chisel design and
+            converted to Verilog via sv2v.
+          </p>
+          <p class="source-link"><a href="https://github.com/google-coral/coralnpu">google-coral/coralnpu &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NVDLA -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/nvdla/hw">NVDLA</a></h2>
+        <div class="badges">
+          <span class="lang-badge">Verilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/partition_a_asap7_25d55d07.png"><img src="figures/thumbs/partition_a_asap7_25d55d07.jpg" alt="NVDLA partition_a asap7 final"><span class="thumb-label asap7">asap7</span><span class="thumb-variant">partition_a</span></a>
+            <a class="thumb-link" href="figures/partition_c_asap7_21fa89bf.png"><img src="figures/thumbs/partition_c_asap7_21fa89bf.jpg" alt="NVDLA partition_c asap7 final"><span class="thumb-label asap7">asap7</span><span class="thumb-variant">partition_c</span></a>
+            <a class="thumb-link" href="figures/partition_m_asap7_a0e9d833.png"><img src="figures/thumbs/partition_m_asap7_a0e9d833.jpg" alt="NVDLA partition_m asap7 final"><span class="thumb-label asap7">asap7</span><span class="thumb-variant">partition_m</span></a>
+            <a class="thumb-link" href="figures/partition_o_asap7_4f1ad017.png"><img src="figures/thumbs/partition_o_asap7_4f1ad017.jpg" alt="NVDLA partition_o asap7 final"><span class="thumb-label asap7">asap7</span><span class="thumb-variant">partition_o</span></a>
+            <a class="thumb-link" href="figures/partition_p_asap7_f55a93ea.png"><img src="figures/thumbs/partition_p_asap7_f55a93ea.jpg" alt="NVDLA partition_p asap7 final"><span class="thumb-label asap7">asap7</span><span class="thumb-variant">partition_p</span></a>
+            <a class="thumb-link" href="figures/partition_a_nangate45_3b860705.png"><img src="figures/thumbs/partition_a_nangate45_3b860705.jpg" alt="NVDLA partition_a nangate45 final"><span class="thumb-label nangate45">nangate45</span><span class="thumb-variant">partition_a</span></a>
+            <a class="thumb-link" href="figures/partition_c_nangate45_3b860705.png"><img src="figures/thumbs/partition_c_nangate45_3b860705.jpg" alt="NVDLA partition_c nangate45 final"><span class="thumb-label nangate45">nangate45</span><span class="thumb-variant">partition_c</span></a>
+            <a class="thumb-link" href="figures/partition_m_nangate45_b3c87801.png"><img src="figures/thumbs/partition_m_nangate45_b3c87801.jpg" alt="NVDLA partition_m nangate45 final"><span class="thumb-label nangate45">nangate45</span><span class="thumb-variant">partition_m</span></a>
+            <a class="thumb-link" href="figures/partition_o_nangate45_3b860705.png"><img src="figures/thumbs/partition_o_nangate45_3b860705.jpg" alt="NVDLA partition_o nangate45 final"><span class="thumb-label nangate45">nangate45</span><span class="thumb-variant">partition_o</span></a>
+            <a class="thumb-link" href="figures/partition_p_nangate45_3b860705.png"><img src="figures/thumbs/partition_p_nangate45_3b860705.jpg" alt="NVDLA partition_p nangate45 final"><span class="thumb-label nangate45">nangate45</span><span class="thumb-variant">partition_p</span></a>
+            <a class="thumb-link" href="figures/partition_a_sky130hd_b3c87801.png"><img src="figures/thumbs/partition_a_sky130hd_b3c87801.jpg" alt="NVDLA partition_a sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_a</span></a>
+            <div class="thumb-placeholder"><div class="ph-box">pending</div><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_c</span></div>
+            <a class="thumb-link" href="figures/partition_m_sky130hd_b3c87801.png"><img src="figures/thumbs/partition_m_sky130hd_b3c87801.jpg" alt="NVDLA partition_m sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_m</span></a>
+            <a class="thumb-link" href="figures/partition_o_sky130hd_79da6274.png"><img src="figures/thumbs/partition_o_sky130hd_79da6274.jpg" alt="NVDLA partition_o sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_o</span></a>
+            <a class="thumb-link" href="figures/partition_p_sky130hd_c919ca69.png"><img src="figures/thumbs/partition_p_sky130hd_c919ca69.jpg" alt="NVDLA partition_p sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_p</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            NVDLA is NVIDIA's open-source Deep Learning Accelerator for inference of convolutional
+            neural networks. The nv_small configuration exposes the design's natural hierarchical
+            partitioning into five top-level blocks &mdash; partitions a, c, m, o, p &mdash; each
+            mixing compute datapath, control, and embedded SRAM macros.
+          </p>
+          <p class="source-link"><a href="https://github.com/nvdla/hw">nvdla/hw &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FlooNoC -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/pulp-platform/FlooNoC">FlooNoC</a></h2>
+        <div class="badges">
+          <span class="lang-badge">SystemVerilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/floonoc_asap7_3b860705.png"><img src="figures/thumbs/floonoc_asap7_3b860705.jpg" alt="FlooNoC asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/floonoc_nangate45_f8c54924.png"><img src="figures/thumbs/floonoc_nangate45_f8c54924.jpg" alt="FlooNoC nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/floonoc_sky130hd_bf2eb2fa.png"><img src="figures/thumbs/floonoc_sky130hd_bf2eb2fa.jpg" alt="FlooNoC sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            FlooNoC is a fast and low-overhead Network-on-Chip from the PULP Platform group at ETH
+            Zurich. SystemVerilog routers, links, and AXI bridges are composed into mesh / torus
+            topologies via the FloGen Python generator.
+          </p>
+          <p class="source-link"><a href="https://github.com/pulp-platform/FlooNoC">pulp-platform/FlooNoC &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Snitch Cluster -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/pulp-platform/snitch_cluster">Snitch Cluster</a></h2>
+        <div class="badges">
+          <span class="lang-badge">SystemVerilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/snitch_cluster_asap7_3a26ac4c.png"><img src="figures/thumbs/snitch_cluster_asap7_3a26ac4c.jpg" alt="snitch_cluster asap7"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/snitch_cluster_nangate45_24da230d.png"><img src="figures/thumbs/snitch_cluster_nangate45_24da230d.jpg" alt="snitch_cluster nangate45"><span class="thumb-label nangate45">nangate45</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Snitch Cluster is an energy-efficient compute cluster from the PULP Platform group at
+            ETH Zurich, built around the Snitch RISC-V core paired with custom floating-point
+            extensions. SystemVerilog cores, FPU, TCDM, and AXI plumbing are composed into a
+            parameterizable cluster wrapper via the clustergen Python generator.
+          </p>
+          <p class="source-link"><a href="https://github.com/pulp-platform/snitch_cluster">pulp-platform/snitch_cluster &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ternip -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/sifferman/ternip">Ternip</a></h2>
+        <div class="badges">
+          <span class="lang-badge">SystemVerilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/ternip_asap7_b3c87801.png"><img src="figures/thumbs/ternip_asap7_b3c87801.jpg" alt="Ternip asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/ternip_nangate45_b3c87801.png"><img src="figures/thumbs/ternip_nangate45_b3c87801.jpg" alt="Ternip nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/ternip_sky130hd_b3c87801.png"><img src="figures/thumbs/ternip_sky130hd_b3c87801.jpg" alt="Ternip sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Ternip is a SystemVerilog ternary matmul inference accelerator with a vector register
+            file, a tmatmul unit backed by import/export vector SRAMs, and BSG STL dataflow plumbing.
+          </p>
+          <p class="source-link"><a href="https://github.com/sifferman/ternip">sifferman/ternip &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vortex -->
+    <div class="design-card">
+      <div class="design-header">
+        <h2><a href="https://github.com/vortexgpgpu/vortex">Vortex</a></h2>
+        <div class="badges">
+          <span class="lang-badge">SystemVerilog</span>
+          <span class="platform-badge badge-asap7">asap7</span>
+          <span class="platform-badge badge-nangate45">nangate45</span>
+          <span class="platform-badge badge-sky130hd">sky130hd</span>
+        </div>
+      </div>
+      <div class="design-body">
+        <div class="design-image">
+          <div class="design-thumbs">
+            <a class="thumb-link" href="figures/vortex_asap7_e2c814ac.png"><img src="figures/thumbs/vortex_asap7_e2c814ac.jpg" alt="Vortex asap7 final"><span class="thumb-label asap7">asap7</span></a>
+            <a class="thumb-link" href="figures/vortex_nangate45_3b860705.png"><img src="figures/thumbs/vortex_nangate45_3b860705.jpg" alt="Vortex nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
+            <a class="thumb-link" href="figures/vortex_sky130hd_e2c814ac.png"><img src="figures/thumbs/vortex_sky130hd_e2c814ac.jpg" alt="Vortex sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+          </div>
+        </div>
+        <div class="design-info">
+          <p>
+            Vortex is an open-source RISC-V GPGPU from Georgia Tech with a SIMT execution model, a
+            full cache hierarchy, FPU, and multi-core memory subsystem. Targets graphics and
+            general-purpose compute workloads on FPGA and ASIC.
+          </p>
+          <p class="source-link"><a href="https://github.com/vortexgpgpu/vortex">vortexgpgpu/vortex &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="../../index.html">Back to HighTide</a> &middot; <a href="index.html">Build Results</a>
+  </footer>
+
+</body>
+</html>
