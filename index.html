@@ -1269,7 +1269,7 @@ git submodule update --init bazel-orfs</span></code></div>
 <span class="cmd">./tools/bazel_to_orfs.sh //designs/asap7/...</span>
 
 <span class="comment"># Run a prepared bundle on any machine (needs an ORFS install with Yosys + slang)</span>
-<span class="cmd">FLOW_HOME=~/OpenROAD-flow-scripts OPENROAD_EXE=~/OpenROAD/build/src/openroad .run_orfs/asap7/lfsr/run.sh</span>
+<span class="cmd">FLOW_HOME=~/OpenROAD-flow-scripts OPENROAD_EXE=~/OpenROAD/build/src/openroad .orfs_bundles/asap7/lfsr/run.sh</span>
 
 <span class="comment"># Prepare + run locally against your own ORFS install</span>
 <span class="cmd">./tools/bazel_to_orfs.sh --run --flow-home ~/OpenROAD-flow-scripts designs/asap7/lfsr</span></code></div>
