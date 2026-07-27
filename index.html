@@ -1260,22 +1260,21 @@ git submodule update --init bazel-orfs</span></code></div>
       <div class="step">
         <div class="step-num">5</div>
         <div class="step-content">
-          <h3>Run in Upstream ORFS (Custom OpenROAD or Flow)</h3>
-          <p>OpenROAD researchers can run any design in plain <a href="https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts" style="color: var(--sea-blue);">OpenROAD-flow-scripts</a> to try a custom OpenROAD build, modified flow scripts, or new flow steps &mdash; while the Bazel configuration stays the golden source of truth. <code>run_orfs.sh</code> extracts the resolved <code>config.mk</code> (seconds, no full build) and drives the standard ORFS <code>Makefile</code>.</p>
-          <div class="code-block"><code><span class="comment"># Fast, zero-setup: reuse the golden netlist, full place-and-route</span>
-<span class="cmd">./tools/run_orfs.sh designs/asap7/lfsr</span>
+          <h3>Export a Portable ORFS Bundle (Custom OpenROAD or Flow)</h3>
+          <p>OpenROAD researchers can run any design in plain <a href="https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts" style="color: var(--sea-blue);">OpenROAD-flow-scripts</a> to try a custom OpenROAD build, modified flow scripts, or new flow steps &mdash; while the Bazel configuration stays the golden source of truth. <code>bazel_to_orfs.sh</code> materializes the RTL, extracts the resolved <code>config.mk</code>, and copies every input into a self-contained, relocatable bundle &mdash; <code>inputs/</code> + <code>config.mk</code> + <code>run.sh</code> &mdash; that runs the whole flow from RTL with no Bazel and no HighTide checkout.</p>
+          <div class="code-block"><code><span class="comment"># Prepare a portable bundle (default &mdash; stages + prints how to run, no run)</span>
+<span class="cmd">./tools/bazel_to_orfs.sh designs/asap7/lfsr</span>
 
-<span class="comment"># Test your own OpenROAD build</span>
-<span class="cmd">./tools/run_orfs.sh --openroad ~/OpenROAD/build/src/openroad designs/asap7/lfsr</span>
+<span class="comment"># Prepare every asap7 design as portable bundles</span>
+<span class="cmd">./tools/bazel_to_orfs.sh //designs/asap7/...</span>
 
-<span class="comment"># Re-synthesize from RTL in your own ORFS install (its Yosys + slang)</span>
-<span class="cmd">./tools/run_orfs.sh --resynth --flow-home ~/OpenROAD-flow-scripts designs/asap7/lfsr</span>
+<span class="comment"># Run a prepared bundle on any machine (needs an ORFS install with Yosys + slang)</span>
+<span class="cmd">FLOW_HOME=~/OpenROAD-flow-scripts OPENROAD_EXE=~/OpenROAD/build/src/openroad .run_orfs/asap7/lfsr/run.sh</span>
 
-<span class="comment"># Batch with a Bazel-style pattern: stage every asap7 design (no run), then run one later</span>
-<span class="cmd">./tools/run_orfs.sh --prepare-only //designs/asap7/...</span>
-<span class="cmd">OPENROAD_EXE=~/OpenROAD/build/src/openroad .run_orfs/asap7/lfsr/run.sh</span></code></div>
-          <p>The target can be one design or a Bazel-style pattern that expands to many &mdash; the flow runs once per design, continuing past failures: <code>//designs/asap7/...</code> (all asap7), <code>//designs/...</code> or <code>all</code> (everything), <code>asap7</code>&#8202;|&#8202;<code>nangate45</code>&#8202;|&#8202;<code>sky130hd</code> (one platform), or a container such as <code>designs/asap7/NVDLA</code> (all its partitions).</p>
-          <p><code>--prepare-only</code> writes each design's work dir (<code>config.mk</code> + the seeded golden netlist) and a self-contained <code>run.sh</code>, but stops before running &mdash; so you can prepare a batch, then run each <code>run.sh</code> anywhere, overriding <code>OPENROAD_EXE</code>, <code>FLOW_HOME</code>, or the make targets at run time.</p>
+<span class="comment"># Prepare + run locally against your own ORFS install</span>
+<span class="cmd">./tools/bazel_to_orfs.sh --run --flow-home ~/OpenROAD-flow-scripts designs/asap7/lfsr</span></code></div>
+          <p>The target can be one design or a Bazel-style pattern that expands to many &mdash; each is prepared (or, with <code>--run</code>, run) in turn, continuing past failures: <code>//designs/asap7/...</code> (all asap7), <code>//designs/...</code> or <code>all</code> (everything), <code>asap7</code>&#8202;|&#8202;<code>nangate45</code>&#8202;|&#8202;<code>sky130hd</code> (one platform), or a container such as <code>designs/asap7/NVDLA</code> (all its partitions).</p>
+          <p>By default it <strong>prepares only</strong> &mdash; a self-contained bundle you can copy anywhere and run with <code>./run.sh</code> (overriding <code>FLOW_HOME</code>, <code>OPENROAD_EXE</code>, or the make targets). Because the bundle synthesizes from RTL, the machine that runs it needs an OpenROAD-flow-scripts install with Yosys&#8202;+&#8202;yosys-slang; pass <code>--run</code> to also run it locally.</p>
         </div>
       </div>
     </div>
