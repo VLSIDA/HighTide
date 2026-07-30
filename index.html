@@ -466,6 +466,14 @@
       color: var(--gray-600);
     }
 
+    .flow-box .flow-desc code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.85em;
+      background: rgba(0,0,0,0.06);
+      padding: 0.05rem 0.3rem;
+      border-radius: 4px;
+    }
+
     .flow-box.flow-highlight {
       border-color: var(--navy);
       background: #e8eaf6;
@@ -663,6 +671,14 @@
 
     .skill-card ul li {
       margin-bottom: 0.3rem;
+    }
+
+    .skill-card code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.85em;
+      background: rgba(0,0,0,0.06);
+      padding: 0.05rem 0.3rem;
+      border-radius: 4px;
     }
 
     .claude-badge {
@@ -940,7 +956,7 @@
           </div>
           <div class="highlight-card">
             <h4>Actively Tracked</h4>
-            <p>Git submodules track upstream sources. Updates are summarized and applied with AI-assisted Claude Code skills.</p>
+            <p>Pinned upstream archives track sources hermetically. Updates are summarized and applied with AI-assisted Claude Code skills.</p>
           </div>
           <div class="highlight-card">
             <h4>Full-Flow Evaluation</h4>
@@ -971,7 +987,7 @@
         </div>
         <div class="feature-card">
           <h3>Versioned Releases</h3>
-          <p>Tagged Git releases provide stable, versioned snapshots while regularly incorporating upstream changes through Git submodules for reproducible evaluation.</p>
+          <p>Tagged Git releases provide stable, versioned snapshots while regularly incorporating upstream changes through pinned upstream archives for reproducible evaluation.</p>
         </div>
         <div class="feature-card">
           <h3>ML-Ready</h3>
@@ -1190,37 +1206,23 @@
     <div class="container">
       <h2 class="section-title">How It Works</h2>
       <p class="section-subtitle">
-        Bazel-ORFS partitions the RTL-to-GDSII flow into incremental build targets with remote caching
-        for fast rebuilds and reproducible baseline results.
+        Each design's RTL is fetched and generated hermetically inside Bazel-ORFS, which partitions the
+        RTL-to-GDSII flow into incremental build targets with remote caching for fast, reproducible results.
       </p>
       <div class="flow-pipeline">
-        <div class="flow-choice">
-          <div class="flow-choice-option">
-            <div class="flow-box flow-highlight" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-              <span class="flow-label">Pre-generated Verilog</span>
-              <span class="flow-desc">Release RTL checked into the repo</span>
-            </div>
-          </div>
-          <div class="flow-or">or</div>
-          <div class="flow-choice-option">
-            <div class="flow-subflow">
-              <div class="flow-subflow-title">Design Update (optional)</div>
-              <div class="flow-box">
-                <span class="flow-label">Git Submodule Pull</span>
-                <span class="flow-desc">Fetch upstream sources (Chisel, LiteX, SystemVerilog, etc.)</span>
-              </div>
-              <div class="flow-arrow">&#8595;</div>
-              <div class="flow-box">
-                <span class="flow-label">RTL Generation</span>
-                <span class="flow-desc">setup.sh compiles native HDL to Verilog</span>
-              </div>
-              <div class="flow-arrow">&#8595;</div>
-              <div class="flow-box">
-                <span class="flow-label">SRAM Macro Update</span>
-                <span class="flow-desc">Identify new memories, generate black-box macros</span>
-              </div>
-            </div>
-          </div>
+        <div class="flow-box flow-highlight">
+          <span class="flow-label">Pinned Upstream Archive</span>
+          <span class="flow-desc">Bazel fetches a fixed upstream commit via <code>http_archive</code>&mdash;no submodule, no vendored copy</span>
+        </div>
+        <div class="flow-arrow">&#8595;</div>
+        <div class="flow-box">
+          <span class="flow-label">Hermetic RTL Generation</span>
+          <span class="flow-desc">Native HDL (Chisel, SystemVerilog, LiteX, migen, &hellip;) compiled to Verilog with declarative patches, entirely inside the Bazel build</span>
+        </div>
+        <div class="flow-arrow">&#8595;</div>
+        <div class="flow-box">
+          <span class="flow-label">SRAM Black-Box Macros</span>
+          <span class="flow-desc">Embedded memories mapped to pin-accurate LEF/LIB macros so designs synthesize without an SRAM compiler</span>
         </div>
         <div class="flow-arrow">&#8595;</div>
         <div class="flow-box">
@@ -1239,9 +1241,9 @@
         </div>
       </div>
       <p class="workflow-note">
-        Baseline results for all designs are cached remotely. After tracking an upstream update,
-        Bazel re-executes only the stages whose inputs changed, drastically reducing rebuild times
-        for large designs.
+        Baseline results for all designs are cached remotely. After bumping a design's pinned upstream
+        archive, Bazel re-executes only the stages whose inputs changed, drastically reducing rebuild
+        times for large designs.
       </p>
     </div>
   </section>
@@ -1279,14 +1281,14 @@
           <h3>Integrate a New Design</h3>
           <p>
             Performs the full end-to-end process of adding a new open-source hardware design to the suite,
-            from submodule setup through RTL generation to flow configuration and testing.
+            from pinning the upstream source through hermetic RTL generation to flow configuration and testing.
           </p>
           <ul>
-            <li>Adds the upstream repo as a Git submodule</li>
-            <li>Creates setup scripts to compile from the design's native HDL to Verilog</li>
+            <li>Pins the upstream repo as a hermetic <code>http_archive</code></li>
+            <li>Wires up hermetic generation from the design's native HDL to Verilog inside Bazel</li>
             <li>Identifies embedded memories and generates SRAM black-box macros</li>
             <li>Creates platform-specific config, constraints, and power delivery</li>
-            <li>Generates release RTL and tests the full RTL-to-GDSII flow</li>
+            <li>Tests the full RTL-to-GDSII flow end to end</li>
             <li>Ports across ASAP7, NanGate45, and SKY130HD technology nodes</li>
           </ul>
         </div>
@@ -1298,7 +1300,7 @@
             and applies updates while maintaining flow compatibility.
           </p>
           <ul>
-            <li>Compares pinned submodule commits against upstream HEAD</li>
+            <li>Compares pinned archive commits against upstream HEAD</li>
             <li>Audits tool dependencies (sv2v, JDK, Python packages) for newer versions</li>
             <li>Classifies changes as minor, moderate, or major with recommendations</li>
             <li>Regenerates RTL, identifies new memories, and updates SRAM macros</li>
