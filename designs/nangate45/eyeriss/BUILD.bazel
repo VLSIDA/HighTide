@@ -12,7 +12,7 @@ filegroup(
 
 # Eyeriss v2 sparse-CNN accelerator on nangate45. Same RTL as asap7 — 2x2
 # cluster group array with 9 PEs per cluster — but FakeRAMs are regenerated
-# for the 45nm metal stack via designs/nangate45/eyeriss/sram/fakeram_nangate45.cfg.
+# for the 45nm metal stack via designs/src/eyeriss/dev/generated/fakeram_nangate45.cfg.
 hightide_design(
     name = "eyeriss",
     top = "TOP",

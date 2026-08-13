@@ -42,7 +42,7 @@ MACRO fakeram_7x512_1r1w
     END
   END w0_wd_in[3]
   PIN w0_wd_in[4]
-    DIRECTION OUTPUT ;
+    DIRECTION INPUT ;
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
@@ -51,7 +51,7 @@ MACRO fakeram_7x512_1r1w
     END
   END w0_wd_in[4]
   PIN w0_wd_in[5]
-    DIRECTION OUTPUT ;
+    DIRECTION INPUT ;
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
@@ -60,7 +60,7 @@ MACRO fakeram_7x512_1r1w
     END
   END w0_wd_in[5]
   PIN w0_wd_in[6]
-    DIRECTION OUTPUT ;
+    DIRECTION INPUT ;
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
