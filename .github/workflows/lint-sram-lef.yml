@@ -1,0 +1,21 @@
+name: Lint FakeRAM LEFs
+
+# Guards the wd_in pin-direction invariant on every committed FakeRAM LEF.
+# Cheap grep-only check — no toolchain, no LLM, no bazel cache.
+on:
+  pull_request:
+    paths:
+      - "designs/**/sram/lef/*.lef"
+      - "tools/check_sram_lef.sh"
+      - ".github/workflows/lint-sram-lef.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check-sram-lef:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./tools/check_sram_lef.sh

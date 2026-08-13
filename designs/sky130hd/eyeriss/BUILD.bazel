@@ -12,9 +12,9 @@ filegroup(
 
 # Eyeriss v2 sparse-CNN accelerator on sky130hd. Same RTL as asap7/nangate45
 # but FakeRAMs regenerated for the 130nm metal stack via
-# designs/sky130hd/eyeriss/sram/fakeram_sky130hd.cfg. The sky130hd memories
-# are roughly 30x the asap7 area, so floorplan utilization is intentionally
-# loose to give the placer room around ~157 macros.
+# designs/src/eyeriss/dev/generated/fakeram_sky130hd.cfg. The sky130hd
+# memories are still ~30x the asap7 area, so floorplan utilization is
+# intentionally loose to give the placer room around ~157 macros.
 hightide_design(
     name = "eyeriss",
     top = "TOP",

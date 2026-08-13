@@ -24,3 +24,4 @@ tmp/
 # tools/regenerate_sram.sh; the .lef/.lib that matter are copied into
 # designs/<platform>/<design>/sram/{lef,lib}/ and tracked there.
 designs/src/*/dev/generated/sram/
+scratch/
