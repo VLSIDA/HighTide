@@ -56,6 +56,8 @@ archive_override(
     patch_strip = 1,
     patches = [
         "//patches:0036-fix-bazel-orfs-bazel_dep-non-dev-for-load-visibility.patch",
+        "//patches:orfs-gt2n-flow-build.patch",
+        "//patches:orfs-no-rcx-spef-stub.patch",
     ],
     strip_prefix = "OpenROAD-flow-scripts-fb65d5b487d2afd443fc1892330f622c776a57ac",
     urls = ["https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/archive/fb65d5b487d2afd443fc1892330f622c776a57ac.tar.gz"],

@@ -1,0 +1,24 @@
+--- a/flow/BUILD
++++ b/flow/BUILD
+@@ -99,4 +99,14 @@
+                 "tcl",
+                 "v",
+             ],
++            "gt2n": [
++                "gds",
++                "lef",
++                "lib",
++                "lyt",
++                "lyp",
++                "mk",
++                "tcl",
++                "v",
++            ],
+             "ihp-sg13g2": [
+@@ -171,5 +181,6 @@
+     "ihp-sg13g2",
+     "nangate45",
+     "sky130hd",
+     "sky130hs",
++    "gt2n",
+ ]]
