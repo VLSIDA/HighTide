@@ -1,0 +1,16 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "lfsr",
+    top = "lfsr_prbs_gen",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/lfsr:rtl"],
+    sources = {"SDC_FILE": [":constraint.sdc"]},
+    arguments = {
+        "CORE_UTILIZATION": "80",
+        "PLACE_DENSITY": "0.85",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+    },
+)
