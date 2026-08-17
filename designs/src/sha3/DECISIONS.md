@@ -93,3 +93,21 @@ Mid-size combinational-heavy core (~20k stdcells, no macros).
 
 ### Known issues / open questions
 - None.
+
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-08-14
+
+### Configuration
+- `CORE_UTILIZATION = 75`, `PLACE_DENSITY = 0.85`
+- `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4`
+- `TNS_END_PERCENT = 100`
+- Clock: `425 ps` (period_min 423.17 ps, ratio 1.004)
+
+### Decisions
+- Reaches `_final` with 0 DRC/timing violations.
+- **`HOLD_SLACK_MARGIN = 3`**: needed to clear small IO-input-path hold violations at this clock target without paying a clock-period cost.
+
+### Known issues / open questions
+- None.
