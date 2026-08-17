@@ -1,0 +1,28 @@
+load("//:defs.bzl", "hightide_design")
+
+# partition_a has no FakeRAM macros (both SRAMs are FF arrays).
+hightide_design(
+    name = "partition_a",
+    top = "NV_NVDLA_partition_a",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/NVDLA:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
+    },
+    stage_data = {"synth": ["//designs/src/NVDLA:include"]},
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
+        # 272x16 + 256x16 FF arrays (4352 + 4096 bits) — the 4352-bit
+        # instance trips the ORFS default 4096 cap (same as every
+        # other platform's partition_a).
+        "SYNTH_MEMORY_MAX_BITS": "8192",
+        "CORE_UTILIZATION": "80",
+        "PLACE_DENSITY": "0.88",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+        "HOLD_SLACK_MARGIN": "20",
+    },
+)

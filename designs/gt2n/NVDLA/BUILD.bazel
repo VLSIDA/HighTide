@@ -1,0 +1,68 @@
+package(default_visibility = ["//designs/gt2n/NVDLA:__subpackages__"])
+
+# partition_p: 16x160, 65x160, 14x80, 66x80 (all stay as macros).
+filegroup(
+    name = "sram_lefs_p",
+    srcs = [
+        "sram/lef/fakeram_16x160_1r1w.lef",
+        "sram/lef/fakeram_65x160_1r1w.lef",
+        "sram/lef/fakeram_14x80_1r1w.lef",
+        "sram/lef/fakeram_66x80_1r1w.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs_p",
+    srcs = [
+        "sram/lib/fakeram_16x160_1r1w.lib",
+        "sram/lib/fakeram_65x160_1r1w.lib",
+        "sram/lib/fakeram_14x80_1r1w.lib",
+        "sram/lib/fakeram_66x80_1r1w.lib",
+    ],
+)
+
+# partition_o: 18x128, 8x256, 4x256, 7x256, 66x64, 15x80, 22x60, 32x128 (all stay as macros).
+filegroup(
+    name = "sram_lefs_o",
+    srcs = [
+        "sram/lef/fakeram_18x128_1r1w.lef",
+        "sram/lef/fakeram_8x256_1r1w.lef",
+        "sram/lef/fakeram_4x256_1r1w.lef",
+        "sram/lef/fakeram_7x256_1r1w.lef",
+        "sram/lef/fakeram_66x64_1r1w.lef",
+        "sram/lef/fakeram_15x80_1r1w.lef",
+        "sram/lef/fakeram_22x60_1r1w.lef",
+        "sram/lef/fakeram_32x128_1r1w.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs_o",
+    srcs = [
+        "sram/lib/fakeram_18x128_1r1w.lib",
+        "sram/lib/fakeram_8x256_1r1w.lib",
+        "sram/lib/fakeram_4x256_1r1w.lib",
+        "sram/lib/fakeram_7x256_1r1w.lib",
+        "sram/lib/fakeram_66x64_1r1w.lib",
+        "sram/lib/fakeram_15x80_1r1w.lib",
+        "sram/lib/fakeram_22x60_1r1w.lib",
+        "sram/lib/fakeram_32x128_1r1w.lib",
+    ],
+)
+
+# partition_c: 64x256, 11x128 (both stay as macros).
+filegroup(
+    name = "sram_lefs_c",
+    srcs = [
+        "sram/lef/fakeram_64x256_1r1w.lef",
+        "sram/lef/fakeram_11x128_1r1w.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs_c",
+    srcs = [
+        "sram/lib/fakeram_64x256_1r1w.lib",
+        "sram/lib/fakeram_11x128_1r1w.lib",
+    ],
+)

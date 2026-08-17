@@ -95,3 +95,25 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 - **GRT-0183** (`repair_antennas` heap underflow, triggered by sky130hd's high antenna count): fixed by `patches/openroad-grt-0183-fix.patch` (upstream PR #10743, merged 2026-06-24 — remove once OR pin advances past that date).
 - **SDC fix**: replaced `set_false_path -to [get_pin */RESETN|/SETN]` (asap7 pin names, silent no-ops on sky130hd) with port-level `-from` false-paths; added `set_ideal_network [get_nets {nvdla_core_rstn}]`.
 - WNS +0.03 ns, Fmax **66.80 MHz** (`period_min` 14.97 ns vs 15 ns), 0 DRC violations, `CORE_UTILIZATION` 25, `PLACE_DENSITY` 0.20, ~265 k logic cells, core 128.9 mm².
+
+## gt2n
+
+**Status**: finishing. Per-partition details and known issues below.
+
+### Configuration
+- **partition_a** (no macros, FF-array SRAMs): `CORE_UTILIZATION=80`, `PLACE_DENSITY=0.88`, `MAX_ROUTING_LAYER=M11`, `MIN_CLK_ROUTING_LAYER=M4`, `HOLD_SLACK_MARGIN=20`, `SYNTH_MEMORY_MAX_BITS=8192` (4352-bit FF instance trips the ORFS default 4096 cap). Clock: 895 ps (Fmax 1.12 GHz). Die area 4506 µm².
+- **partition_c** (65 SRAM macro instances, 2 macro types: `64x256`/`11x128`): `DIE_AREA="0 0 855.792 716.928"`, `CORE_AREA="1.008 1.008 854.784 715.808"`, `MAX_ROUTING_LAYER=M11`, `MIN_CLK_ROUTING_LAYER=M6`, `MACRO_BLOCKAGE_HALO=0.5`. Clock: 1300 ps, achieved Fmax 635.80 MHz.
+- **partition_m** (no SRAM macros): `CORE_UTILIZATION=82`, `PLACE_DENSITY=0.87`, `MAX_ROUTING_LAYER=M11`, `MIN_CLK_ROUTING_LAYER=M4`. Clock: 660 ps (Fmax 1.52 GHz). Die area 1334 µm².
+- **partition_o** (17 SRAM macro instances, 8 macro types): `CORE_UTILIZATION=46`, `MAX_ROUTING_LAYER=M11`, `MIN_CLK_ROUTING_LAYER=M4`, `MACRO_PLACE_HALO="8 8"`, `HOLD_SLACK_MARGIN=40`. Multi-clock: `nvdla_core_clk` (2270 ps, Fmax 440 MHz) + `nvdla_falcon_clk` tracked at the NVIDIA reference core:falcon ratio (1.25). Die area 54218 µm².
+- **partition_p** (6 SRAM macro instances, 4 macro types): `CORE_UTILIZATION=45`, `MAX_ROUTING_LAYER=M11`, `MIN_CLK_ROUTING_LAYER=M6`, `MACRO_PLACE_HALO="5 5"`, `MACRO_BLOCKAGE_HALO=0.5`, `HOLD_SLACK_MARGIN=50`. Clock: 1433 ps (Fmax 698 MHz). Die area 33257 µm².
+- `TNS_END_PERCENT=100` on all five.
+
+### Decisions
+- **asap7 is not a reliable reference for gt2n targets**: gt2n's per-square sheet resistance is dramatically higher than asap7's even at layers with near-identical pitch — e.g. M4 (0.042µm gt2n vs 0.048µm asap7, only ~12.5% apart) is 3.506 Ω/□ on gt2n vs 0.433 Ω/□ on asap7, an 8.1x gap that pitch differences can't explain. This isn't a material story either — gt2n uses ruthenium at the lower layers specifically because it scales better than copper at nanoscale linewidths, so a real process should look relatively *better* here, not 8x worse. The more plausible explanation is that asap7, an older predictive/academic PDK, is simply optimistic on interconnect resistance relative to what a real advanced-node process delivers. Fmax/area achieved on asap7 for the same RTL should not be treated as a dependable target for gt2n.
+- **FakeRAM cfg**: partitions c/o/p share `fakeram_gt2n.cfg` (14 SRAM macro configs).
+- **partition_c**: uses a hand-placed 8×8 SRAM bank grid (`macro_placement.tcl`) and applies an inter-partition I/O delay credit post-CTS (`pre_grt.tcl`) to more realistically model the clock-network latency that boundary signals would see if the partitions were connected as one die.
+- **partition_o / partition_p**: several inter-partition boundary signals are zero-logic passthroughs of primary inputs with no on-chip source register in the standalone per-partition build, so the blanket `set_input_delay` under-budgets their true minimum arrival. Both partitions add scoped `-min` overrides on those specific signals in `constraint.sdc`.
+
+### Known issues / open questions
+- **partition_o**: minor hold violations (8, worst −58.34 ps).
+- **partition_c**: incremental hold repair at global routing did not converge within ~18h (run setup-only instead) — may close with more time.
