@@ -17,9 +17,7 @@ hightide_design(
         # Die sized for logic density; io.tcl's pin placement is die-size-parametric
         # (queries ord::get_die_area at build time), so no manual re-tuning needed
         # when resizing. Pin-fit floor: 1598 × M3_pitch 0.028 + 2×end_margin(5) =
-        # 54.7 µm minimum die edge — far below the size used here. See
-        # scratch_logs/floonoc_gt2n/floonoc_gt2n_qor_comparison.md for the
-        # utilization/clock tightening sweep that landed on this config.
+        # 54.7 µm minimum die edge — far below the size used here.
         "DIE_AREA": "0 0 80 80",
         "CORE_AREA": "6 6 74 74",
         "MAX_ROUTING_LAYER": "M11",

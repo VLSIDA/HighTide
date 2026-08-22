@@ -33,9 +33,9 @@
 #   ver_offset = WIDTH/2 = 0.007 um  (center of first x-track)
 #   ver_pitch  = 0.028 um
 #
-# Pin-fit check (129×129 die, end_margin 5.0 um each side → 119 um effective edge):
-#   top/bottom (M3 vertical, 1598 gaps): 1598 × 0.028 = 44.744 um < 119 um  ✓
-#   left/right (M2 horizontal, 1598 gaps): 1598 × 0.024 = 38.352 um < 119 um  ✓
+# Pin-fit check (80×80 die, end_margin 5.0 um each side → 70 um effective edge):
+#   top/bottom (M3 vertical, 1598 gaps): 1598 × 0.028 = 44.744 um < 70 um  ✓
+#   left/right (M2 horizontal, 1598 gaps): 1598 × 0.024 = 38.352 um < 70 um  ✓
 #
 # PSM-0069 note: edge_margin is kept at 5.0 um (no sky130hd-style reduction needed).
 # The gt2n PDN is entirely backside: BPR followpins → BM1 → BM2, with only

@@ -1,7 +1,7 @@
 current_design NV_NVDLA_partition_p
 
 set clk_name nvdla_core_clk
-set clk_period 1433
+set clk_period 1635
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_name]
@@ -17,11 +17,14 @@ set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 
-# Scoped hold fix (2026-07-22)
+# Scoped hold fix (2026-07-22). -max set equal to -min (same zero-window assumption the
+# blanket delay above uses) so setup stays min<=max.
 set_input_delay -min 341 -clock $clk_name [get_ports {csb2sdp_req_pd*}]
+set_input_delay -max 341 -clock $clk_name [get_ports {csb2sdp_req_pd*}]
 
-# Second scoped hold fix (2026-07-22)
+# Second scoped hold fix (2026-07-22), same min<=max rationale as above.
 set_input_delay -min 311 -clock $clk_name [get_ports {mcif2sdp_wr_rsp_complete*}]
+set_input_delay -max 311 -clock $clk_name [get_ports {mcif2sdp_wr_rsp_complete*}]
 
 set_ideal_network [get_ports direct_reset_]
 set_ideal_network [get_ports dla_reset_rstn]

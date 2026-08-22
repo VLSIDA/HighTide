@@ -24,6 +24,5 @@ hightide_design(
         "MIN_CLK_ROUTING_LAYER": "M6",
         "MACRO_BLOCKAGE_HALO": "0.5",
         "TNS_END_PERCENT": "100",
-        "NUM_CORES": "16",
     },
 )

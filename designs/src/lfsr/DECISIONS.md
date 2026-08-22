@@ -78,7 +78,7 @@ The three RTL files are no longer a git submodule + checked-in vendored copy. Th
   - **bsg_fakeram bump**: gt2n analytical bitcell/timing/pin-layer support.
 - Reaches `_final` with WNS = 0, 0 DRC violations. Congestion never exceeded ~25% usage on any layer.
 - **No antenna cells**: gt2n PDK ships no antenna filler cells. GRT-0246 ("no antenna cell found in the design library") fires on every gt2n build — benign; the router uses wire-jumping to resolve antenna violations, reaching 0 antenna DRC violations in the final report.
-- **Backside PDN**: gt2n uses BSPDN (BPR followpins → BM1 → BM2 stripes, entirely on the backside stack). Signal layers M1–M13 carry no power. No `pdn.tcl` override is needed for std-cell-only designs — `platforms/gt2n/pdn.cfg` handles BSPDN correctly out of the box.
+- **Backside PDN**: gt2n uses BSPDN (BPR followpins → BM1 → BM2 stripes, entirely on the backside stack). Signal layers M1–M13 carry no power. No `pdn.tcl` override is needed for std-cell-only designs — `platforms/gt2n/pdn.tcl` handles BSPDN correctly out of the box.
 
 ### Known issues / open questions
 - None.

@@ -28,16 +28,20 @@ set_clock_transition -rise -max 0.1 [get_clocks $clk_falcon_name]
 set_clock_transition -fall -min 0.1 [get_clocks $clk_falcon_name]
 set_clock_transition -fall -max 0.1 [get_clocks $clk_falcon_name]
 
-set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] "^($clk_port|$clk_falcon_port)$"]
+set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
+set non_clock_inputs [lsearch -inline -all -not -exact $non_clock_inputs $clk_falcon_port]
 
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 
 # Scoped hold fixes: sdp2csb_resp_valid and cmac_b2csb_resp_valid are zero-logic passthrough
 # primary inputs from sibling gt2n partitions, with no on-chip source register to model skew
-# against, so the blanket -min under-budgets their minimum arrival.
+# against, so the blanket -min under-budgets their minimum arrival. -max set equal to -min
+# (same zero-window assumption the blanket delay above uses) so setup stays min<=max.
 set_input_delay -min 494 -clock $clk_name [get_ports {sdp2csb_resp_*}]
+set_input_delay -max 494 -clock $clk_name [get_ports {sdp2csb_resp_*}]
 set_input_delay -min 469 -clock $clk_name [get_ports {cmac_b2csb_resp_*}]
+set_input_delay -max 469 -clock $clk_name [get_ports {cmac_b2csb_resp_*}]
 
 set_ideal_network [get_ports test_mode]
 set_ideal_network [get_ports direct_reset_]

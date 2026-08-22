@@ -19,5 +19,6 @@ hightide_design(
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
         "TNS_END_PERCENT": "100",
+        "HOLD_SLACK_MARGIN": "5",
     },
 )
