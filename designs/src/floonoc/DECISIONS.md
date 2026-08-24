@@ -70,3 +70,22 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 
 ### Known issues / open questions
 - None.
+
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-08-15
+
+### Configuration
+- Custom `FOOTPRINT_TCL = io.tcl` — explicit pin placement for 6,395 IO pins (see Decisions)
+- `DIE_AREA = "0 0 80 80"`, `CORE_AREA = "6 6 74 74"`
+- `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4`
+- `HOLD_SLACK_MARGIN = 10`
+- `TNS_END_PERCENT = 100`
+- Clock: `958 ps` (Fmax 1.04 GHz)
+
+### Decisions
+- **Custom io.tcl**: mandatory for 6,395 IO pins — automated placement overflows routing at gt2n's tight pitches. Places pins on M2 (horizontal edges) / M3 (vertical edges), matching platform IO-placer defaults.
+
+### Known issues / open questions
+- None.

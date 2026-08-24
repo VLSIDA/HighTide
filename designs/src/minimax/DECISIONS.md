@@ -71,3 +71,21 @@ A small RISC-V core (~10–20k stdcells, no macros).  Used as a real-RTL smoke t
 
 ### Known issues / open questions
 - None.
+
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-08-13
+
+### Configuration
+- `CORE_UTILIZATION = 60`, `PLACE_DENSITY = 0.7`
+- `CORE_ASPECT_RATIO = 1.0`, `CORE_MARGIN = 4`
+- `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4`
+- `TNS_END_PERCENT = 100`
+- Fmax: `1.28 GHz` (780 ps clock period)
+
+### Decisions
+- Reaches `_final` with 0 DRC violations.
+
+### Known issues / open questions
+- None.

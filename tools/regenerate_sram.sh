@@ -28,9 +28,13 @@ if [[ ! -f "$CFG" ]]; then
   echo "error: no cfg at $CFG" >&2
   exit 1
 fi
-if [[ ! -x "$ROOT/tools/bsg_fakeram/tools/cacti/cacti" ]]; then
-  echo "error: CACTI binary not built; run 'cd tools/bsg_fakeram && make tools'" >&2
-  exit 1
+# Analytical tech nodes (7, 130, 2) skip CACTI entirely — only check if needed.
+_TECH_NM=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['tech_nm'])" "$CFG" 2>/dev/null || echo "0")
+if [[ "$_TECH_NM" != "7" && "$_TECH_NM" != "130" && "$_TECH_NM" != "2" ]]; then
+  if [[ ! -x "$ROOT/tools/bsg_fakeram/tools/cacti/cacti" ]]; then
+    echo "error: CACTI binary not built; run 'cd tools/bsg_fakeram && make tools'" >&2
+    exit 1
+  fi
 fi
 
 mkdir -p "$DST_LEF" "$DST_LIB"

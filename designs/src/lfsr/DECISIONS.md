@@ -59,3 +59,26 @@ The three RTL files are no longer a git submodule + checked-in vendored copy. Th
 
 ### Known issues / open questions
 - None.
+
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-08-13
+
+### Configuration
+- `CORE_UTILIZATION = 80`, `PLACE_DENSITY = 0.85`
+- `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4`
+- `TNS_END_PERCENT = 100`
+- Clock: `160 ps` (period_min 139.38 ps; ratio 1.15)
+
+### Decisions
+- **Platform bringup**: lfsr was the first gt2n design ported; two ORFS-side patches and a bsg_fakeram bump were required before any gt2n build could complete, and apply to every subsequent gt2n design (see the infra commit):
+  - **`orfs-gt2n-flow-build.patch`**: ORFS `flow/BUILD` hardcodes a per-platform allowlist for its Bazel glob/file-type rules; omitted gt2n.
+  - **`orfs-no-rcx-spef-stub.patch`**: gt2n has no OpenRCX rules file, so ORFS never writes a SPEF; Bazel's declared-output contract requires `6_final.spef` to exist. Patch writes an empty SPEF when RCX isn't enabled.
+  - **bsg_fakeram bump**: gt2n analytical bitcell/timing/pin-layer support.
+- Reaches `_final` with WNS = 0, 0 DRC violations. Congestion never exceeded ~25% usage on any layer.
+- **No antenna cells**: gt2n PDK ships no antenna filler cells. GRT-0246 ("no antenna cell found in the design library") fires on every gt2n build — benign; the router uses wire-jumping to resolve antenna violations, reaching 0 antenna DRC violations in the final report.
+- **Backside PDN**: gt2n uses BSPDN (BPR followpins → BM1 → BM2 stripes, entirely on the backside stack). Signal layers M1–M13 carry no power. No `pdn.tcl` override is needed for std-cell-only designs — `platforms/gt2n/pdn.tcl` handles BSPDN correctly out of the box.
+
+### Known issues / open questions
+- None.

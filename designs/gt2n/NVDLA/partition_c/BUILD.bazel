@@ -1,0 +1,28 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "partition_c",
+    top = "NV_NVDLA_partition_c",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/NVDLA:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/gt2n/NVDLA:sram_lefs_c"],
+        "ADDITIONAL_LIBS": ["//designs/gt2n/NVDLA:sram_libs_c"],
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_grt.tcl"],
+        "MACRO_PLACEMENT_TCL": [":macro_placement.tcl"],
+    },
+    stage_data = {"synth": ["//designs/src/NVDLA:include"]},
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
+        "DIE_AREA": "0 0 855.792 716.928",
+        "CORE_AREA": "1.008 1.008 854.784 715.808",
+        "MAX_ROUTING_LAYER": "M11",
+        # Macro heavy designs appear to benefit from raising the minimum clock routing layer to M6 on gt2n
+        "MIN_CLK_ROUTING_LAYER": "M6",
+        "MACRO_BLOCKAGE_HALO": "0.5",
+        "TNS_END_PERCENT": "100",
+    },
+)

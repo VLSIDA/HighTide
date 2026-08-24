@@ -1,0 +1,25 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "partition_o",
+    top = "NV_NVDLA_partition_o",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/NVDLA:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/gt2n/NVDLA:sram_lefs_o"],
+        "ADDITIONAL_LIBS": ["//designs/gt2n/NVDLA:sram_libs_o"],
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
+    },
+    stage_data = {"synth": ["//designs/src/NVDLA:include"]},
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
+        "CORE_UTILIZATION": "46",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "MACRO_PLACE_HALO": "8 8",
+        "TNS_END_PERCENT": "100",
+        "HOLD_SLACK_MARGIN": "40",
+    },
+)

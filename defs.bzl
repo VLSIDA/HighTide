@@ -5,6 +5,7 @@ load("@bazel-orfs//:openroad.bzl", "orfs_flow", "orfs_run")
 # PDK label mapping per platform
 PDKS = {
     "asap7": "@orfs//flow:asap7",
+    "gt2n": "@orfs//flow:gt2n",
     "nangate45": "@orfs//flow:nangate45",
     "sky130hd": "@orfs//flow:sky130hd",
 }

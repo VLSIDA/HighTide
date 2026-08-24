@@ -1,0 +1,28 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "floonoc",
+    top = "floonoc_mesh_top",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/floonoc:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "FOOTPRINT_TCL": [":io.tcl"],
+    },
+    stage_data = {"synth": ["//designs/src/floonoc:rtl_data"]},
+    arguments = {
+        "SYNTH_HDL_FRONTEND": "slang",
+        "VERILOG_INCLUDE_DIRS": "external/+_repo_rules+pulp_common_cells_src/include external/+_repo_rules+pulp_apb_src/include external/+_repo_rules+pulp_axi_src/include external/+_repo_rules+pulp_axi_stream_src/include external/+_repo_rules+pulp_obi_src/include external/+_repo_rules+pulp_register_interface_src/include external/+_repo_rules+floonoc_src/hw/include",
+        "VERILOG_DEFINES": "-D VERILATOR",
+        # Die sized for logic density; io.tcl's pin placement is die-size-parametric
+        # (queries ord::get_die_area at build time), so no manual re-tuning needed
+        # when resizing. Pin-fit floor: 1598 × M3_pitch 0.028 + 2×end_margin(5) =
+        # 54.7 µm minimum die edge — far below the size used here.
+        "DIE_AREA": "0 0 80 80",
+        "CORE_AREA": "6 6 74 74",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+        "HOLD_SLACK_MARGIN": "10",
+    },
+)
