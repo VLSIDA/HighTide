@@ -2,7 +2,7 @@ library(fakeram_512x128_1rw) {
     technology (cmos);
     delay_model : table_lookup;
     revision : 1.0;
-    date : "2026-05-15 14:21:01Z";
+    date : "2026-08-24 18:17:12Z";
     comment : "SRAM";
     time_unit : "1ns";
     voltage_unit : "1V";
@@ -74,24 +74,24 @@ library(fakeram_512x128_1rw) {
     type (fakeram_512x128_1rw_DATA) {
         base_type : array ;
         data_type : bit ;
-        bit_width : 512;
-        bit_from : 511;
+        bit_width : 128;
+        bit_from : 127;
         bit_to : 0 ;
         downto : true ;
     }
     type (fakeram_512x128_1rw_ADDRESS) {
         base_type : array ;
         data_type : bit ;
-        bit_width : 7;
-        bit_from : 6;
+        bit_width : 9;
+        bit_from : 8;
         bit_to : 0 ;
         downto : true ;
     }
     type (fakeram_512x128_1rw_WMASK) {
         base_type : array ;
         data_type : bit ;
-        bit_width : 512;
-        bit_from : 511;
+        bit_width : 16;
+        bit_from : 15;
         bit_to : 0 ;
         downto : true ;
     }
@@ -100,8 +100,8 @@ cell(fakeram_512x128_1rw) {
     interface_timing : true;
     memory() {
         type : ram;
-        address_width : 7;
-        word_width : 512;
+        address_width : 9;
+        word_width : 128;
     }
     pin(rw0_clk)   {
         direction : input;
