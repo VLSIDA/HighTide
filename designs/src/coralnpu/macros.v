@@ -1,3 +1,5 @@
+// FakeRAM wrappers. Module names are fakeram_<DEPTH>x<WIDTH>, so SIZE is the
+// depth and DATA_WIDTH the word width; wmask carries one strobe per byte.
 module fakeram_2048x128(
 	clock,
 	enable,
@@ -7,8 +9,8 @@ module fakeram_2048x128(
 	wdata,
     wmask
 );
-	parameter DATA_WIDTH = 2048;
-	parameter SIZE = 128;
+	parameter DATA_WIDTH = 128;
+	parameter SIZE = 2048;
 	parameter READ_DURING_WRITE = "NEW_DATA";
 	parameter ADDR_WIDTH = $clog2(SIZE);
 	input clock;
@@ -37,8 +39,8 @@ module fakeram_512x128(
 	wdata,
     wmask
 );
-	parameter DATA_WIDTH = 512;
-	parameter SIZE = 128;
+	parameter DATA_WIDTH = 128;
+	parameter SIZE = 512;
 	parameter READ_DURING_WRITE = "NEW_DATA";
 	parameter ADDR_WIDTH = $clog2(SIZE);
 	input clock;

@@ -295,7 +295,7 @@
 -  end
 -`endif // FFCP12_SRAM
 -
-+	fakeram_512x128 sramModules_0(
++	fakeram_2048x128 sramModules_0(
 +		.clock(clock),
 +		.enable(enable),
 +		.write(write),
