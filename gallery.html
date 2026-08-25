@@ -215,6 +215,39 @@
     .thumb-label.asap7 { background: #e3f2fd; color: #1565c0; }
     .thumb-label.nangate45 { background: #e8f5e9; color: #2e7d32; }
     .thumb-label.sky130hd { background: #fff3e0; color: #e65100; }
+    .thumb-label.gt2n { background: #f3e5f5; color: #6a1b9a; }
+
+    .platform-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 0 0 2.5rem;
+    }
+    .platform-filter .filter-label {
+      font-weight: 600;
+      color: var(--navy);
+      margin-right: 0.25rem;
+    }
+    .filter-toggle {
+      border: 1px solid #ccc;
+      background: var(--white);
+      color: #6c757d;
+      border-radius: 999px;
+      padding: 0.3rem 0.85rem;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: 0.55;
+      transition: opacity 0.15s;
+    }
+    .filter-toggle:hover { opacity: 0.85; }
+    .filter-toggle.active { opacity: 1; }
+    .filter-toggle.active.asap7 { background: #e3f2fd; color: #1565c0; border-color: #1565c0; }
+    .filter-toggle.active.nangate45 { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+    .filter-toggle.active.sky130hd { background: #fff3e0; color: #e65100; border-color: #e65100; }
+    .filter-toggle.active.gt2n { background: #f3e5f5; color: #6a1b9a; border-color: #6a1b9a; }
 
     .thumb-variant {
       display: block;
@@ -297,6 +330,14 @@
       Placement views and upstream links for each design in the HighTide benchmark suite.
     </p>
 
+    <div class="platform-filter">
+      <span class="filter-label">Platform:</span>
+      <button class="filter-toggle asap7 active" data-platform="asap7">asap7</button>
+      <button class="filter-toggle nangate45 active" data-platform="nangate45">nangate45</button>
+      <button class="filter-toggle sky130hd active" data-platform="sky130hd">sky130hd</button>
+      <button class="filter-toggle gt2n active" data-platform="gt2n">gt2n</button>
+    </div>
+
     <!-- BlackParrot -->
     <div class="design-card">
       <div class="design-header">
@@ -366,6 +407,7 @@
           <span class="platform-badge badge-asap7">asap7</span>
           <span class="platform-badge badge-nangate45">nangate45</span>
           <span class="platform-badge badge-sky130hd">sky130hd</span>
+          <span class="platform-badge badge-gt2n">gt2n</span>
         </div>
       </div>
       <div class="design-body">
@@ -374,6 +416,7 @@
             <a class="thumb-link" href="figures/sha3_asap7_b3c87801.png"><img src="figures/thumbs/sha3_asap7_b3c87801.jpg" alt="SHA3 asap7 final"><span class="thumb-label asap7">asap7</span></a>
             <a class="thumb-link" href="figures/sha3_nangate45_b3c87801.png"><img src="figures/thumbs/sha3_nangate45_b3c87801.jpg" alt="SHA3 nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
             <a class="thumb-link" href="figures/sha3_sky130hd_66ef90de.png"><img src="figures/thumbs/sha3_sky130hd_66ef90de.jpg" alt="SHA3 sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+            <a class="thumb-link" href="figures/sha3_gt2n_7a01fa6b.png"><img src="figures/thumbs/sha3_gt2n_7a01fa6b.jpg" alt="SHA3 gt2n final"><span class="thumb-label gt2n">gt2n</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -483,6 +526,7 @@
           <span class="platform-badge badge-asap7">asap7</span>
           <span class="platform-badge badge-nangate45">nangate45</span>
           <span class="platform-badge badge-sky130hd">sky130hd</span>
+          <span class="platform-badge badge-gt2n">gt2n</span>
         </div>
       </div>
       <div class="design-body">
@@ -491,6 +535,7 @@
             <a class="thumb-link" href="figures/minimax_asap7_13ea0da8.png"><img src="figures/thumbs/minimax_asap7_13ea0da8.jpg" alt="Minimax asap7 final"><span class="thumb-label asap7">asap7</span></a>
             <a class="thumb-link" href="figures/minimax_nangate45_13ea0da8.png"><img src="figures/thumbs/minimax_nangate45_13ea0da8.jpg" alt="Minimax nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
             <a class="thumb-link" href="figures/minimax_sky130hd_13ea0da8.png"><img src="figures/thumbs/minimax_sky130hd_13ea0da8.jpg" alt="Minimax sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+            <a class="thumb-link" href="figures/minimax_gt2n_934f62f7.png"><img src="figures/thumbs/minimax_gt2n_934f62f7.jpg" alt="Minimax gt2n final"><span class="thumb-label gt2n">gt2n</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -636,6 +681,7 @@
           <span class="platform-badge badge-asap7">asap7</span>
           <span class="platform-badge badge-nangate45">nangate45</span>
           <span class="platform-badge badge-sky130hd">sky130hd</span>
+          <span class="platform-badge badge-gt2n">gt2n</span>
         </div>
       </div>
       <div class="design-body">
@@ -656,6 +702,10 @@
             <a class="thumb-link" href="figures/partition_m_sky130hd_b3c87801.png"><img src="figures/thumbs/partition_m_sky130hd_b3c87801.jpg" alt="NVDLA partition_m sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_m</span></a>
             <a class="thumb-link" href="figures/partition_o_sky130hd_79da6274.png"><img src="figures/thumbs/partition_o_sky130hd_79da6274.jpg" alt="NVDLA partition_o sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_o</span></a>
             <a class="thumb-link" href="figures/partition_p_sky130hd_c919ca69.png"><img src="figures/thumbs/partition_p_sky130hd_c919ca69.jpg" alt="NVDLA partition_p sky130hd final"><span class="thumb-label sky130hd">sky130hd</span><span class="thumb-variant">partition_p</span></a>
+            <a class="thumb-link" href="figures/partition_a_gt2n_b2098088.png"><img src="figures/thumbs/partition_a_gt2n_b2098088.jpg" alt="NVDLA partition_a gt2n final"><span class="thumb-label gt2n">gt2n</span><span class="thumb-variant">partition_a</span></a>
+            <a class="thumb-link" href="figures/partition_m_gt2n_412b3838.png"><img src="figures/thumbs/partition_m_gt2n_412b3838.jpg" alt="NVDLA partition_m gt2n final"><span class="thumb-label gt2n">gt2n</span><span class="thumb-variant">partition_m</span></a>
+            <a class="thumb-link" href="figures/partition_o_gt2n_412b3838.png"><img src="figures/thumbs/partition_o_gt2n_412b3838.jpg" alt="NVDLA partition_o gt2n final"><span class="thumb-label gt2n">gt2n</span><span class="thumb-variant">partition_o</span></a>
+            <a class="thumb-link" href="figures/partition_p_gt2n_412b3838.png"><img src="figures/thumbs/partition_p_gt2n_412b3838.jpg" alt="NVDLA partition_p gt2n final"><span class="thumb-label gt2n">gt2n</span><span class="thumb-variant">partition_p</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -679,6 +729,7 @@
           <span class="platform-badge badge-asap7">asap7</span>
           <span class="platform-badge badge-nangate45">nangate45</span>
           <span class="platform-badge badge-sky130hd">sky130hd</span>
+          <span class="platform-badge badge-gt2n">gt2n</span>
         </div>
       </div>
       <div class="design-body">
@@ -687,6 +738,7 @@
             <a class="thumb-link" href="figures/floonoc_asap7_68afbcb7.png"><img src="figures/thumbs/floonoc_asap7_68afbcb7.jpg" alt="FlooNoC asap7 final"><span class="thumb-label asap7">asap7</span></a>
             <a class="thumb-link" href="figures/floonoc_nangate45_68afbcb7.png"><img src="figures/thumbs/floonoc_nangate45_68afbcb7.jpg" alt="FlooNoC nangate45 final"><span class="thumb-label nangate45">nangate45</span></a>
             <a class="thumb-link" href="figures/floonoc_sky130hd_68afbcb7.png"><img src="figures/thumbs/floonoc_sky130hd_68afbcb7.jpg" alt="FlooNoC sky130hd final"><span class="thumb-label sky130hd">sky130hd</span></a>
+            <a class="thumb-link" href="figures/floonoc_gt2n_412b3838.png"><img src="figures/thumbs/floonoc_gt2n_412b3838.jpg" alt="FlooNoC gt2n final"><span class="thumb-label gt2n">gt2n</span></a>
           </div>
         </div>
         <div class="design-info">
@@ -793,6 +845,36 @@
   <footer>
     <a href="index.html">Back to HighTide</a> &middot; <a href="results.html">Build Results</a>
   </footer>
+
+  <script>
+    (function () {
+      const btns = document.querySelectorAll('.filter-toggle');
+      const cards = document.querySelectorAll('.design-card');
+      const PLATFORMS = ['asap7', 'nangate45', 'sky130hd', 'gt2n'];
+      function platformOf(link) {
+        const lbl = link.querySelector('.thumb-label');
+        return lbl ? (PLATFORMS.find(p => lbl.classList.contains(p)) || null) : null;
+      }
+      function apply() {
+        const active = new Set(
+          Array.from(btns).filter(b => b.classList.contains('active')).map(b => b.dataset.platform)
+        );
+        cards.forEach(card => {
+          const links = card.querySelectorAll('.thumb-link');
+          let visible = 0;
+          links.forEach(link => {
+            const p = platformOf(link);
+            const show = p ? active.has(p) : true;
+            link.style.display = show ? '' : 'none';
+            if (show) visible++;
+          });
+          card.style.display = (links.length === 0 || visible > 0) ? '' : 'none';
+        });
+      }
+      btns.forEach(b => b.addEventListener('click', () => { b.classList.toggle('active'); apply(); }));
+      apply();
+    })();
+  </script>
 
 </body>
 </html>
