@@ -1,0 +1,40 @@
+load("//:defs.bzl", "hightide_design")
+
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["sram/lef/*.lef"]),
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["sram/lib/*.lib"]),
+)
+
+hightide_design(
+    name = "snitch_cluster",
+    top = "snitch_cluster_wrapper",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/snitch_cluster:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "IO_CONSTRAINTS": [":io.tcl"],
+        "FOOTPRINT_TCL": [":io.tcl"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+    },
+    stage_data = {"synth": ["//designs/src/snitch_cluster:rtl_data"]},
+    arguments = {
+        "SYNTH_HDL_FRONTEND": "slang",
+        "VERILOG_INCLUDE_DIRS": "external/+_repo_rules+snitch_common_cells_src/include external/+_repo_rules+pulp_apb_src/include external/+_repo_rules+snitch_axi_src/include external/+_repo_rules+pulp_axi_stream_src/include external/+_repo_rules+pulp_obi_src/include external/+_repo_rules+pulp_register_interface_src/include external/+_repo_rules+pulp_idma_src/src/include external/+_repo_rules+pulp_idma_src/target/rtl/include external/+_repo_rules+snitch_cluster_src/hw/dca_interface/include external/+_repo_rules+snitch_cluster_src/hw/mem_interface/include external/+_repo_rules+snitch_cluster_src/hw/reqrsp_interface/include external/+_repo_rules+snitch_cluster_src/hw/snitch/include external/+_repo_rules+snitch_cluster_src/hw/snitch_fp_ss/include external/+_repo_rules+snitch_cluster_src/hw/snitch_ssr/include external/+_repo_rules+snitch_cluster_src/hw/tcdm_interface/include",
+        "VERILOG_DEFINES": "-D VERILATOR",
+        "SYNTH_MEMORY_MAX_BITS": "8193",
+        "SYNTH_HIERARCHICAL": "1",
+        "SYNTH_ARGS": "-noshare",
+        "CORE_UTILIZATION": "55",
+        "PLACE_DENSITY": "0.67",
+        "MACRO_PLACE_HALO": "8 8",
+        "TNS_END_PERCENT": "100",
+        "MIN_CLK_ROUTING_LAYER" : "M4",
+        "MAX_ROUTING_LAYER" : "M11",
+    },
+)
