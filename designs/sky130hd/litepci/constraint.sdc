@@ -6,14 +6,16 @@ current_design litepcie_core
 # `set_output_delay` timing the CTS buffer tree as data.
 
 set clk_name      sys_clk
-# 20 ns / 50 MHz — sky130hd baseline.  Real critical path is FakeRAM
-# clk-to-Q + DMA datapath.
-# NOTE: previously `set clk_period 20000` and refclk `-period 10000` — those
-# were ps-magnitude values in an ns-unit file (1000x unit error). Corrected to
-# 20 ns (sys_clk) / 10 ns (100 MHz PCIe refclk). This design still does not
-# route on the new GRT (issue #204), independent of the clock.
 set clk_period    20
 set clk_io_pct    0.2
+
+# 20 ns / 50 MHz — sky130hd baseline.  Real critical path is FakeRAM
+# clk-to-Q + DMA datapath.
+# Earlier 20000 ps and 10000 ps values were used for the user and reference
+# clocks. Those values were written in picoseconds in this nanosecond-unit file.
+# The user clock is now 20 ns and the 100 MHz PCIe reference clock is 10 ns.
+# This design still does not route on the new GRT (issue #204), independent of
+# the clock.
 
 create_clock -name $clk_name -period $clk_period [get_pins pcie_us/user_clk]
 create_clock -name pcie_refclk -period 10 [get_ports pcie_clk_p]

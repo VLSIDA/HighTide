@@ -288,6 +288,16 @@ Two new-tools issues surfaced (both k8s-verified fixes):
 **sky130hd**: still **flagged — does not route** (GRT congestion, unchanged from the 553c1c3
 section above; its stage ODBs also bust the Cloudflare cache cap). asap7 + nangate45 pass.
 
+### 2026-09: sky130hd clock-period parser regression
+
+The sky130hd SDC placed a historical reference-clock example before the real 20 ns
+clock-period assignment. The extraction expression in the pinned ORFS revision therefore
+returned `10000` with a trailing backtick instead of `20`, stopping the synthesis rule
+while generating `clock_period.txt` ([HighTide#238](https://github.com/VLSIDA/HighTide/issues/238)).
+The real assignment now precedes the historical note, and the note no longer contains the
+parser's conflicting token. This restores synthesis startup only; the later sky130hd GRT
+congestion tracked in [HighTide#204](https://github.com/VLSIDA/HighTide/issues/204) is unchanged.
+
 ## Bug workarounds in the real-FakeRAM build
 
 | Knob | Reason |
