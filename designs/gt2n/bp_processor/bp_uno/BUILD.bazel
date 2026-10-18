@@ -1,0 +1,33 @@
+load("//:defs.bzl", "hightide_design")
+load("//designs/src/bp_processor:defs.bzl", "BP_COMMON_ARGS")
+
+_ARGS = dict(BP_COMMON_ARGS)
+
+_ARGS.update({
+    # RTLMP auto macro placement, no hand-placed grid.
+    # Auto-sized via CORE_UTILIZATION rather than a fixed DIE_AREA/CORE_AREA.
+    "CORE_UTILIZATION": "35",
+    "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
+    "MACRO_PLACE_HALO": "8 8",
+    "PLACE_DENSITY": "0.42",
+    "MAX_ROUTING_LAYER": "M11",
+    "MIN_CLK_ROUTING_LAYER": "M4",
+    "TNS_END_PERCENT": "100",
+    "NUM_CORES": "16",
+})
+
+hightide_design(
+    name = "bp_processor",
+    platform = "gt2n",
+    verilog_files = [
+        "//designs/src/bp_processor:rtl",
+        "//designs/gt2n/bp_processor:macros",
+    ],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": ["//designs/gt2n/bp_processor:sram_lefs"],
+        "ADDITIONAL_LIBS": ["//designs/gt2n/bp_processor:sram_libs"],
+    },
+    arguments = _ARGS,
+    stage_data = {"synth": ["//designs/src/bp_processor:rtl_data"]},
+)

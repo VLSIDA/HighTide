@@ -113,3 +113,28 @@ existing config.
   (+6.1 %), power 523 mW.
 - **sky130hd**: 368 735 logic cells (+0.4 %), WNS **+3489 ps** (met; base +4144), Fmax 0.035 GHz
   (+15.1 %), power 488 mW. Detail route converged cleanly (1307 → 154 → 27 → 0 violations).
+
+## gt2n — bp_uno (2026-09-25)
+
+**Status**: finishing (not fully clean)
+**Last updated**: 2026-09-25
+
+### Configuration
+- `CORE_UTILIZATION = 35` (`PLACE_DENSITY = 0.42`) — auto-sized via `CORE_UTILIZATION`, unlike the
+  fixed `DIE_AREA` every other bp_uno port needed. RTLMP auto-placement handles the macros here with
+  no hand-placed grid (unlike bp_uno-sky130hd / NVDLA partition_c-gt2n).
+- `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4` — `M6` (NVDLA partition_c's macro-heavy
+  recommendation) was tried and made zero measurable difference; reverted to `M4`.
+- Clock: `4628 ps` (Fmax 216.1 MHz, `period_min` 4620 ps)
+- No `SKIP_INCREMENTAL_REPAIR` — unlike asap7/nangate45, gt2n needs incremental repair enabled to
+  close (matches the snitch_cluster-gt2n finding); skipping it left 671 setup + 2329 hold violations.
+
+### Decisions
+- **2026-09-25**: initial gt2n port. Setup nearly closes (WNS -16.84 ps, 1 violation). Hold
+  violations remained irrespective of loosening/tightening the clock period. `HOLD_SLACK_MARGIN`
+  was tried and reduced hold violations but severely impacted setup timing (WNS to -572.83 ps);
+  not used.
+
+### Known issues / open questions
+- Not fully clean: 1 setup violation (-16.84 ps), 17 hold violations (worst -9.06 ps). Root cause
+  not isolated — further closure may need investigation beyond SDC/margin knobs.
