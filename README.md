@@ -59,7 +59,9 @@ tools/bazel_to_orfs.sh --benchmark-dir .hightide_export all
   designs/<platform>/<design>/
     inputs/                   RTL, includes, SDC, macro LEF/LIB, design Tcl
     manifest.json             design inputs and selected configuration
-    config.mk                 ORFS configuration; no run.sh by default
+    config.mk                 ORFS configuration
+    run_orfs.sh               runs the full ORFS flow from RTL against your
+                              own ORFS install (FLOW_HOME + OPENROAD_EXE)
 ```
 
 Consumers can read the versioned JSON without Make. Paths are relative to

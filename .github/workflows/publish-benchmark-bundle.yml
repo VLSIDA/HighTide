@@ -59,7 +59,7 @@ jobs:
           test "$platform_count" -gt 0
           test "$platform_manifest_count" -eq "$platform_count"
           while IFS= read -r config; do
-            test ! -e "$(dirname "$config")/run.sh"
+            test -x "$(dirname "$config")/run_orfs.sh"
           done < <(find "$BUNDLE/designs" -name config.mk -type f)
 
           mkdir -p dist
@@ -82,7 +82,9 @@ jobs:
           - ${PLATFORM_COUNT} shared ORFS platform directories
           - Tool-neutral JSON manifests plus ORFS-compatible config.mk files
           - Materialized RTL, SDC, macro LEF/Liberty, and design configuration
-          - No synthesis, place-and-route results, or runner scripts
+          - A per-design \`run_orfs.sh\` that runs the full ORFS flow from RTL
+            against your own ORFS install (yosys + yosys-slang + openroad)
+          - No synthesis or place-and-route results included
 
           Set \`HIGHTIDE_BUNDLE_ROOT\` to the extracted top-level directory
           when resolving a design's \`config.mk\`.
