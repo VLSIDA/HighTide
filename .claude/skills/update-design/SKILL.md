@@ -14,54 +14,70 @@ If `$ARGUMENTS` is empty or `all`, run the **Upstream Audit** first. Otherwise, 
 
 Check all designs and their tool dependencies for upstream changes. Present a summary so the user can decide what's worth updating.
 
-### 1. Audit design submodules
+### 1. Audit design source pins
 
-For each design submodule in `.gitmodules`, compare the pinned commit to upstream HEAD:
+Every design's upstream source is a hermetic `http_archive` in the root
+`MODULE.bazel` (`@<design>_src`, plus shared deps such as the PULP
+`@pulp_*_src` / `@snitch_*_src` archives) — there are no design git
+submodules and no vendored RTL. The pinned commit is the SHA in the
+archive's `urls` / `strip_prefix`:
 
 ```bash
-# For each submodule path (e.g., designs/src/minimax/dev/repo):
-git -C <submodule-path> rev-parse HEAD          # our pinned commit
-git -C <submodule-path> ls-remote origin HEAD    # upstream latest
+# List every source pin: repo name, upstream URL (commit SHA embedded)
+grep -n -A6 '^http_archive(' MODULE.bazel | grep -E 'name =|urls ='
+
+# Upstream latest for one archive (owner/repo from its URL)
+git ls-remote https://github.com/<owner>/<repo>.git HEAD
+gh api repos/<owner>/<repo>/compare/<pinned-sha>...HEAD --jq '.ahead_by, (.commits[].commit.message | split("\n")[0])'
 ```
 
-If the submodule is not initialized, use `git ls-remote` with the URL from `.gitmodules` and compare against the commit recorded in the superproject:
+Worked example (ternip — plain SystemVerilog read by yosys-slang, plus a
+shared `@basejump_stl_src` dependency):
+
 ```bash
-git ls-submodule <submodule-path>                # pinned commit in superproject
-git ls-remote <url> HEAD                         # upstream latest
+grep -n -A5 'name = "ternip_src"' MODULE.bazel
+#   urls = [".../sifferman/ternip/archive/187957b57e2a....tar.gz"]
+gh api repos/sifferman/ternip/compare/187957b57e2a0d4f74374a354e189d158a38ba13...HEAD \
+  --jq '.ahead_by, .commits[-1].commit.committer.date'
 ```
 
-For each submodule that has new commits upstream, summarize:
+Archives pinned to a release tarball (e.g. `sv2v`) or a Maven/PyPI version
+are audited in step 2 instead.
+
+For each pin that has new commits upstream, summarize:
 - **Design name** and upstream repo URL
-- **Commits behind**: how many commits between pinned and upstream HEAD
+- **Commits behind**: `ahead_by` from the compare API
 - **Recency**: date of the most recent upstream commit
-- **Extent of changes**: use `git log --oneline <pinned>..origin/HEAD` (or the GitHub API via `gh api`) to show a summary of what changed. Categorize as:
+- **Extent of changes**: the compare API commit list (or `git log --oneline <pinned>..HEAD` in a scratch clone). Categorize as:
   - **Minor**: documentation, CI, test-only changes, cosmetic fixes
   - **Moderate**: bug fixes, small feature additions, dependency bumps
   - **Major**: new features, architectural changes, API/interface changes, new memory modules
+- **Patches at risk**: if the archive carries `patches = [...]`, note whether upstream touched the patched files (the patches may no longer apply)
 - **Recommendation**: whether the changes are likely to affect generated RTL or just ancillary files
 
-### 2. Audit tool dependencies in setup.sh files
+### 2. Audit RTL-generation tool pins
 
-For each design with a `setup.sh`, check pinned tool versions against latest:
-- **pip packages pinned to git commits** (e.g., migen, litex, liteeth in `designs/src/liteeth/dev/setup.sh`): check if the pinned commit is behind the upstream default branch
-- **pip packages pinned to versions** (e.g., `pyyaml==6.0.2`): check PyPI for newer versions
-- **Tool binaries** (sv2v, JDK, sbt): note the pinned version and whether a newer release exists
+Converters are pinned in `MODULE.bazel`, not installed by a `setup.sh`:
+- **Python generators** (LiteX / migen / liteeth / litedram / litepcie, NNgen, floogen, snitch clustergen): the `pip.parse(...)` hubs and their `requirements_lock.txt` files, and any generator shipped as its own `http_archive` — check for newer upstream commits / PyPI releases
+- **Chisel / Scala** (gemmini, sha3, coralnpu): the `maven.install(...)` artifact versions, `scala_config`, and the `rules_chisel` / firtool pin
+- **sv2v**: the pinned release archive (`name = "sv2v"`)
+- **yosys-slang** (SystemVerilog read directly by synthesis): pinned via `//:yosys_slang.bzl`; bumps go through `/upgrade-tools`
 
 Summarize each with the same minor/moderate/major classification.
 
-### 3. Audit ORFS pin
+### 3. Audit the EDA toolchain pin
 
-The OpenROAD-flow-scripts pin lives in `MODULE.bazel` (`bazel_dep(name = "orfs")` + `git_override(... commit = "...")`). To audit:
+ORFS / OpenROAD / OpenSTA / Yosys are pinned by the `bazel-orfs` submodule;
+the root `MODULE.bazel` mirrors bazel-orfs's root-only overrides
+(`archive_override(module_name = "orfs", ...)` etc.). Report how far the
+pin is behind, but **do not bump it here** — toolchain bumps are the
+`/upgrade-tools` skill's job (it re-validates every passing design and
+drops fixed-bug workarounds).
+
 ```bash
-# Read current pin
-grep -A4 'module_name = "orfs"' MODULE.bazel
-
-# Compare to upstream HEAD
-git ls-remote https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git HEAD
+git -C bazel-orfs rev-parse --short HEAD
+git ls-remote https://github.com/The-OpenROAD-Project/bazel-orfs.git HEAD
 ```
-
-The `bazel-orfs` submodule is the source of truth for the recommended ORFS / OpenROAD / Qt pins — check its `MODULE.bazel` for the upstream's chosen versions and bump the root pins in sync (see `MODULE.bazel` header comment).
-Summarize the nature of ORFS / OpenROAD / Yosys changes (new features, bug fixes, platform updates, etc.).
 
 ### 4. Present summary table
 
@@ -70,11 +86,11 @@ Format the results as a table:
 ```
 | Design/Tool        | Pinned     | Upstream   | Behind | Last Activity | Severity | Recommendation     |
 |--------------------|------------|------------|--------|---------------|----------|--------------------|
-| minimax            | abc1234    | def5678    | 12     | 2026-02-15    | Moderate | Bug fixes, review  |
-| liteeth            | ef5f9ee    | 1a2b3c4    | 45     | 2026-03-10    | Major    | New features       |
+| minimax            | cb62251    | def5678    | 12     | 2026-02-15    | Moderate | Bug fixes, review  |
+| ternip             | 187957b    | 1a2b3c4    | 45     | 2026-03-10    | Major    | New features       |
 | verilog-lfsr       | 789abcd    | 789abcd    | 0      | 2025-01-03    | -        | Up to date         |
-| litex (pip)        | a25eeec    | b36ff0d    | 8      | 2026-03-12    | Minor    | Docs only          |
-| ORFS               | v3.0-...   | v3.1-...   | 200+   | 2026-03-14    | Major    | Platform updates   |
+| litex (pip lock)   | a25eeec    | b36ff0d    | 8      | 2026-03-12    | Minor    | Docs only          |
+| bazel-orfs         | 6c1bbca    | 9f0e1d2    | 40     | 2026-03-14    | Major    | → /upgrade-tools   |
 ```
 
 Let the user decide which updates to apply. Small changes that don't affect RTL generation (docs, tests, CI) are usually not worth updating for. Major changes that affect RTL output, fix synthesis bugs, or add new features are worth considering.
@@ -188,7 +204,11 @@ If the only change is regenerating RTL from upstream with no flow-config impact,
 1. **Re-pin the `http_archive` in `MODULE.bazel`:** point the `@$0_src`
    archive's `urls` (and `strip_prefix`) at the new commit SHA. Set
    `sha256` to a bogus value, run the build once, and paste the real
-   hash Bazel prints back into the stanza.
+   hash Bazel prints back into the stanza. E.g. for ternip, replace both
+   occurrences of `187957b57e2a…` in the `ternip_src` stanza. Shared
+   dependency archives (ternip's `@basejump_stl_src`, the PULP
+   `@pulp_*_src` set used by floonoc/snitch_cluster) are re-pinned the
+   same way — check every design that consumes them.
 
 2. **Check declarative patches still apply:** if the `http_archive` has
    `patches = [...]`, a re-fetch against the new sources may fail to
@@ -204,7 +224,7 @@ If the only change is regenerating RTL from upstream with no flow-config impact,
 
 4. **Check for new or changed memories:**
    - Compare the new RTL against the old to identify any new memory modules
-   - If new memories are found, create FakeRAM LEF/LIB files following the patterns in `designs/$1/$0/sram/` or other designs like NyuziProcessor/liteeth
+   - If new memories are found, add them to `designs/src/$0/dev/generated/fakeram_<platform>.cfg` and regenerate with `tools/regenerate_sram.sh $0 <platform>` (see section D and `/generate-sram`)
    - Update the design's `BUILD.bazel` `sources` dict (`ADDITIONAL_LEFS` / `ADDITIONAL_LIBS` filegroups) if new FakeRAM files were added
 
 5. **Check if the RTL file set changed:**
@@ -220,8 +240,8 @@ If the only change is regenerating RTL from upstream with no flow-config impact,
    designs and parallel platform builds may exhaust memory.
 
 7. **Refresh the webpage (once, before opening the PR):** after every
-   supported platform for this design has built green (1–3 platforms,
-   whichever the design has), run the `/update-results` skill **once**
+   supported platform for this design has built green (whichever of
+   asap7 / nangate45 / sky130hd / gt2n the design has), run the `/update-results` skill **once**
    so `webpage/results.html`, the Design Portfolio badges in
    `webpage/index.html`, `webpage/gallery.html`, and the per-row layout
    PNGs in `webpage/figures/` reflect the new builds together. Commit
@@ -289,10 +309,21 @@ tool bump is a pin bump in `MODULE.bazel` (or the design's build files):
    - Large register files, SRAMs, caches, deep FIFOs
    - Typically >32 entries or >256 total bits
 
-2. **Create LEF and LIB files** for each memory:
-   - Use naming convention: `fakeram_<width>x<depth>_<ports>.{lef,lib}`
-   - Use existing FakeRAM files from the same platform as templates
-   - Place in `designs/$1/$0/sram/lef/` and `designs/$1/$0/sram/lib/`
+2. **Generate LEF and LIB with bsg_fakeram** (never hand-edit a template —
+   see `/generate-sram`):
+   - Add one entry per macro to `designs/src/$0/dev/generated/fakeram_$1.cfg`
+     (width / depth / banks / ports / `no_wmask`). asap7 cfgs must use the
+     camelCase `snapWidth_nm` / `snapHeight_nm` keys (see the snap-grid row
+     in CLAUDE.md's bug table).
+   - Run `tools/regenerate_sram.sh $0 $1`; it copies the result into
+     `designs/$1/$0/sram/{lef,lib}/`. ternip is the minimal example: one
+     `fakeram7_512x16` entry in `designs/src/ternip/dev/generated/fakeram_asap7.cfg`.
+   - Review the size change with `tools/diff_sram_size.sh $0 $1` and confirm
+     no `*_wd_in` pin is `DIRECTION OUTPUT` in the LEF.
+   - Memories below the generator's range (depth ≤ 16, very narrow, < ~1 Kb)
+     get a behavioural Verilog stub in the `:rtl` filegroup instead and are
+     synthesized as flip-flops (see NVDLA `gen_ff_rams.py`, vortex
+     `designs/src/vortex/VX_dp_ram.sv`).
 
 3. **Update `BUILD.bazel`** to reference the new FakeRAM files:
    ```python
@@ -314,9 +345,15 @@ tool bump is a pin bump in `MODULE.bazel` (or the design's build files):
    ```
    (`GDS_ALLOW_EMPTY = fakeram.*` is the default from `hightide_design()`.)
 
-4. **Ensure the design's `rtl` filegroup does not include the memory module source** so synthesis instantiates the black-box macro instead.
+4. **Swap the memory for the macro in the RTL** — as a declarative patch on
+   the `http_archive` (NyuziProcessor's fakeram-swap patch) or by excluding
+   the behavioural module from the `:rtl` filegroup — so synthesis
+   instantiates the black-box macro instead.
 
 ### E. Port to a new platform
+
+Prefer the `/port-design` skill, which calibrates clock/area scaling from
+designs already on both platforms. The minimal manual steps are:
 
 1. **Create the platform directory:**
    ```bash
@@ -332,6 +369,7 @@ tool bump is a pin bump in `MODULE.bazel` (or the design's build files):
    - asap7 (7nm): 500-1000 ps
    - nangate45 (45nm): 2-10 ns
    - sky130hd (130nm): 10-50 ns
+   - gt2n (2nm nanosheet, backside PDN): 400-1600 ps; no OpenRCX rules and no antenna cells — see an existing gt2n DECISIONS.md section (e.g. `designs/src/sha3/DECISIONS.md`)
 
 4. **Test the new platform:**
    ```bash
