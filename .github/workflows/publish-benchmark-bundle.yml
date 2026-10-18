@@ -1,0 +1,100 @@
+name: Publish benchmark input bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmark-bundle-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # HighTide needs the top-level bazel-orfs submodule. Avoid recursive
+          # checkout because some upstream design repositories have stale
+          # nested submodule URLs.
+          submodules: true
+
+      - name: Reclaim runner disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Install Bazelisk
+        run: |
+          sudo curl -fsSL -o /usr/local/bin/bazel \
+            https://github.com/bazelbuild/bazelisk/releases/download/v1.22.1/bazelisk-linux-amd64
+          sudo chmod +x /usr/local/bin/bazel
+          bazel --version
+
+      - name: Export benchmark inputs
+        run: |
+          # The output base already retains action outputs for this one-shot
+          # job; disable the second local disk-cache copy to conserve space.
+          echo 'build --disk_cache=' > .bazelrc.user
+          short_sha=${GITHUB_SHA::12}
+          bundle="hightide-benchmark-${short_sha}"
+          echo "BUNDLE=${bundle}" >> "$GITHUB_ENV"
+          tools/bazel_to_orfs.sh --benchmark-dir "$bundle" all
+
+      - name: Validate and archive bundle
+        run: |
+          test -d "$BUNDLE/designs"
+          test -d "$BUNDLE/platforms"
+          design_count=$(find "$BUNDLE/designs" -name config.mk -type f | wc -l)
+          manifest_count=$(find "$BUNDLE/designs" -name manifest.json -type f | wc -l)
+          platform_count=$(find "$BUNDLE/platforms" -mindepth 2 -maxdepth 2 \
+            -name config.mk -type f | wc -l)
+          platform_manifest_count=$(find "$BUNDLE/platforms" -mindepth 2 -maxdepth 2 \
+            -name manifest.json -type f | wc -l)
+          test "$design_count" -gt 0
+          test "$manifest_count" -eq "$design_count"
+          test "$platform_count" -gt 0
+          test "$platform_manifest_count" -eq "$platform_count"
+          while IFS= read -r config; do
+            test ! -e "$(dirname "$config")/run.sh"
+          done < <(find "$BUNDLE/designs" -name config.mk -type f)
+
+          mkdir -p dist
+          zip -q -r -9 "dist/${BUNDLE}.zip" "$BUNDLE"
+          (cd dist && sha256sum "${BUNDLE}.zip" > "${BUNDLE}.zip.sha256")
+          du -h "dist/${BUNDLE}.zip"
+          echo "DESIGN_COUNT=${design_count}" >> "$GITHUB_ENV"
+          echo "PLATFORM_COUNT=${platform_count}" >> "$GITHUB_ENV"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="benchmark-inputs-${GITHUB_SHA::12}"
+          cat > release-notes.md <<EOF
+          Portable HighTide benchmark inputs generated from commit
+          [${GITHUB_SHA::12}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}).
+
+          - ${DESIGN_COUNT} platform/design configurations
+          - ${PLATFORM_COUNT} shared ORFS platform directories
+          - Tool-neutral JSON manifests plus ORFS-compatible config.mk files
+          - Materialized RTL, SDC, macro LEF/Liberty, and design configuration
+          - No synthesis, place-and-route results, or runner scripts
+
+          Set \`HIGHTIDE_BUNDLE_ROOT\` to the extracted top-level directory
+          when resolving a design's \`config.mk\`.
+          EOF
+
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" \
+              --target "$GITHUB_SHA" \
+              --title "HighTide benchmark inputs ${GITHUB_SHA::12}" \
+              --notes-file release-notes.md \
+              --latest=false
+          fi
+          gh release upload "$tag" --clobber \
+            "dist/${BUNDLE}.zip" \
+            "dist/${BUNDLE}.zip.sha256"

@@ -46,7 +46,42 @@ tools/bazel_to_orfs.sh --run --flow-home ~/OpenROAD-flow-scripts \
   designs/asap7/lfsr synth floorplan place
 ```
 
-**What it produces.** For each design it materializes the RTL via bazel
+For a tool-neutral input export, add `--benchmark-dir`:
+
+```bash
+tools/bazel_to_orfs.sh --benchmark-dir .hightide_export all
+```
+
+```
+.hightide_export/
+  platforms/common/
+  platforms/<platform>/        shared pinned platform files + manifest.json
+  designs/<platform>/<design>/
+    inputs/                   RTL, includes, SDC, macro LEF/LIB, design Tcl
+    manifest.json             design inputs and selected configuration
+    config.mk                 ORFS configuration; no run.sh by default
+```
+
+Consumers can read the versioned JSON without Make. Paths are relative to
+the manifest containing them. `design.name` is the RTL top module;
+`rtl.files` preserves source order, expanding generated directories in place.
+The platform manifest describes its default LEF/Liberty/GDS files, placement
+site, routing limits, and setup scripts. Design routing fields override the
+corresponding platform defaults.
+
+This is a portable input contract, not a complete tool-independent flow:
+synthesis arguments and Tcl scripts still use Yosys/Slang/OpenROAD syntax.
+Other tools need adapters, including synthesis-mode defines such as
+`SYNTHESIS`; absent fields do not encode every ORFS default or workaround.
+The retained `config.mk` files provide the ORFS configuration. Set
+`HIGHTIDE_BUNDLE_ROOT` to the extracted export directory when resolving them.
+
+Export requires Linux/Bazel and builds only RTL generators and configuration
+output groups—not synthesis or physical design. Use a new output directory
+after changing the platform pin. Adding `--run --flow-home <ORFS>` explicitly
+creates a runner and runs ORFS after export.
+
+**What the default ORFS mode produces.** For each design it materializes the RTL via bazel
 (fetching the hermetic `http_archive` sources / running any RTL genrules —
 but *not* synthesis), extracts the resolved `config.mk`, and copies every
 input into a self-contained, relocatable bundle:

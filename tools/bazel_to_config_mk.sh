@@ -225,6 +225,22 @@ EOF
             function is_pathvar(k) {
                 return (k ~ /^(VERILOG_FILES|SDC_FILE|ADDITIONAL_LEFS|ADDITIONAL_LIBS|ADDITIONAL_GDS|IO_CONSTRAINTS|FOOTPRINT_TCL|MACRO_PLACEMENT_TCL|VERILOG_INCLUDE_DIRS|PDN_TCL)$/) || (k ~ /_TCL$/)
             }
+            function emit_pathvar(lhs, val) {
+                n = split(val, toks, /[[:space:]]+/)
+                out = ""
+                for (i = 1; i <= n; i++) {
+                    t = toks[i]
+                    if (t == "") continue
+                    if (abs == "1" && t !~ /^\// && t !~ /^-/ && t !~ /^\$/) {
+                        if (t ~ /^external\//)
+                            t = outbase "/" t
+                        else
+                            t = root "/" t
+                    }
+                    out = (out == "" ? t : out " " t)
+                }
+                print lhs out
+            }
             {
                 pos = index($0, "?=")
                 if (pos == 0) next
@@ -237,29 +253,34 @@ EOF
                 if (key ~ skip)   next
                 if (seen[key]++)  next
 
-                if (abs == "1" && is_pathvar(key)) {
+                # Slang-specific -I options must be staged like other include
+                # directories, not silently discarded by the JSON exporter.
+                if (key == "SYNTH_SLANG_ARGS") {
                     n = split(val, toks, /[[:space:]]+/)
                     out = ""
                     for (i = 1; i <= n; i++) {
                         t = toks[i]
-                        if (t == "") continue
-                        # Absolutize relative paths; leave abs paths and
-                        # make/flag tokens (-, $) untouched.  external/ tokens
-                        # (hermetic http_archive RTL + include dirs) live under
-                        # the output base; everything else — repo source and
-                        # bazel-out/ genrule outputs (via the repo-root
-                        # bazel-out symlink) — under the repo root.
-                        if (t !~ /^\// && t !~ /^-/ && t !~ /^\$/) {
-                            if ((t ~ /^external\//) && outbase != "")
-                                t = outbase "/" t
-                            else
-                                t = root "/" t
+                        if (t == "-I") {
+                            slang_includes = slang_includes " " toks[++i]
+                        } else if (t ~ /^-I/) {
+                            slang_includes = slang_includes " " substr(t, 3)
+                        } else {
+                            out = (out == "" ? t : out " " t)
                         }
-                        out = (out == "" ? t : out " " t)
                     }
                     val = out
                 }
-                print lhs val
+                if (key == "VERILOG_INCLUDE_DIRS") {
+                    include_dirs = val
+                } else if (is_pathvar(key)) {
+                    emit_pathvar(lhs, val)
+                } else {
+                    print lhs val
+                }
+            }
+            END {
+                if (slang_includes != "" || seen["VERILOG_INCLUDE_DIRS"])
+                    emit_pathvar("export VERILOG_INCLUDE_DIRS?=", include_dirs " " slang_includes)
             }' \
         | sort
 }
