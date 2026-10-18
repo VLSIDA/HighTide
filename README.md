@@ -81,6 +81,18 @@ output groups—not synthesis or physical design. Use a new output directory
 after changing the platform pin. Adding `--run --flow-home <ORFS>` explicitly
 creates a runner and runs ORFS after export.
 
+### Published bundles: `publish-benchmark-bundle.yml`
+
+To publish a ready-made export, run the **Publish benchmark input bundle**
+GitHub Actions workflow (Actions tab → *Run workflow*, or
+`gh workflow run publish-benchmark-bundle.yml`). It runs the
+`--benchmark-dir all` export and attaches the zipped bundle + its `.sha256`
+to a GitHub **Release** tagged `benchmark-inputs-<commit>`. The workflow is
+manual (`workflow_dispatch`) only — never automatic — exports inputs only
+(no synthesis or place-and-route), and is free on this public repo (Release
+assets are unmetered; the per-asset cap is 2 GB). Each run publishes a new
+release, so prune stale ones occasionally.
+
 **What the default ORFS mode produces.** For each design it materializes the RTL via bazel
 (fetching the hermetic `http_archive` sources / running any RTL genrules —
 but *not* synthesis), extracts the resolved `config.mk`, and copies every

@@ -35,6 +35,18 @@ bazel build //designs/asap7/lfsr:lfsr_place
 
 Note: `hightide_design()` exposes the per-stage `orfs_flow` targets (`_synth` … `_final`), `_generate_abstract` / `_generate_metadata`, and `_<design>_gallery` (renders the layout PNG; `src = :<design>_final`). There is no aggregate `:<design>` target. **Build `:<design>_gallery` for sweeps** — it runs the whole flow *and* renders+caches the gallery image, so `update-results` (and k8s/run.sh, which now targets `_gallery`) becomes a pure cache fetch with no per-design local re-render. Use `:<design>_final` only when you explicitly don't want the image.
 
+## Exporting designs (portable / tool-agnostic bundles)
+
+Three tools export a design's resolved inputs *out* of bazel so it can run under plain ORFS or a non-OpenROAD PD tool (README's "Two tools bridge the gap" has full usage):
+
+- **`tools/bazel_to_config_mk.sh [--abs] <design> <out.config.mk>`** — extracts just an ORFS-compatible `config.mk` (cheap bazel *analysis* only, no synth/PnR).
+- **`tools/bazel_to_orfs.sh <design>`** — materializes the RTL + copies every input into a self-contained, relocatable ORFS bundle (`.orfs_bundles/<platform>/<design>/` with a `run.sh`); `--run` runs it against your own ORFS install.
+- **`tools/bazel_to_orfs.sh --benchmark-dir <dir> all`** — a **tool-neutral** export: `platforms/` + `designs/<platform>/<design>/`, each carrying a versioned **`manifest.json`** (RTL top, inputs, LEF/Liberty/GDS, placement/routing config) alongside the ORFS `config.mk`. Inputs only — no synth/PnR results. Implemented by `tools/benchmark_manifest.py` + `stage_platform.py` / `stage_prepared_inputs.py`.
+
+**Publishing:** the `publish-benchmark-bundle.yml` Actions workflow (manual `workflow_dispatch` only) runs the `--benchmark-dir all` export and attaches the zipped bundle to a **GitHub Release** `benchmark-inputs-<sha>`. Free (public repo; Release assets aren't metered) and it does **not** run synthesis/PnR. Each run creates a new release — prune old ones occasionally; the per-asset cap is 2 GB.
+
+Caveat: this is a portable *input* contract, not a complete tool-independent flow — synth args/Tcl are still Yosys/Slang/OpenROAD syntax, and extracted workaround vars (`SKIP_CTS_REPAIR_TIMING`, etc.) may be stale against a different ORFS, so re-validate QoR on your own toolchain.
+
 ## Architecture
 
 ### Key Relationships
