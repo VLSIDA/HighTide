@@ -59,7 +59,22 @@ Large macro-heavy ML accelerator with FakeRAM black-boxes for the accumulator an
 ### Known issues / open questions
 - None.
 
-## sky130hd
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-08-30 (commit `369d583`)
+
+### Configuration
+- `CORE_UTILIZATION = 87` (`PLACE_DENSITY = 0.94`) — much higher than the other platforms' 30-35%; unlike asap7/nangate45/sky130hd, gt2n handles this design's macro pin density well at high utilization. 40% was tried and performed far worse (timing-repair non-convergence, 3.3x cell-count blowup); 90% failed outright (GPL-0301, real GP utilization hit 103% against the 90% nominal target).
+- `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4`
+- Clock: `1450 ps` (Fmax 689.7 MHz)
+- Input delay set to standard `clk_io_pct * period` + 67 ps (357 ps vs 290 ps) to relieve hold at the IO boundary — the worst hold violations are on input port feedthrough paths, not reg to reg (which closes clean).
+
+### Decisions
+- **2026-08-30 `369d583`**: initial gt2n port. Setup closes cleanly (WNS +2.38 ps, 0 violations). Hold has 15 residual violations (worst -9.83 ps, TNS -31.85 ps). `HOLD_SLACK_MARGIN` was evaluated as an alternative to the input-delay bump but any value large enough to help (e.g. 67) caused CTS-time repair to insert tens of thousands of hold buffers, congesting detailed placement to a hard failure (DPL-0036); smaller values (5, 10) avoided the crash but didn't reliably improve on the input-delay-only result.
+
+### Known issues / open questions
+- Hold not fully closed (15 violations, worst -9.83 ps). Further input-delay tuning showed diminishing/non-monotonic returns; not yet resolved.
 
 **Status**: finishing
 **Last updated**: 2026-05-03 (commit `45b54bd1`)

@@ -1,0 +1,18 @@
+load("//:defs.bzl", "hightide_design")
+
+hightide_design(
+    name = "gemmini",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/gemmini:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "FOOTPRINT_TCL": [":io.tcl"],
+    },
+    arguments = {
+        "CORE_UTILIZATION": "87",
+        "PLACE_DENSITY": "0.94",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+    },
+)
