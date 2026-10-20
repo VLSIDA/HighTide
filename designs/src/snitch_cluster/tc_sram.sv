@@ -30,11 +30,11 @@ module tc_sram #(
 );
 
   // ──────────────────────────────────────────────────────────────────
-  // 256x256: direct → fakeram7_256x256
+  // 256x256: direct → fakeram_256x256
   // ──────────────────────────────────────────────────────────────────
   if (NumPorts == 1 && NumWords == 256 && DataWidth == 256) begin : gen_256x256
 
-    fakeram7_256x256 i_mem (
+    fakeram_256x256 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -44,7 +44,7 @@ module tc_sram #(
     );
 
   // ──────────────────────────────────────────────────────────────────
-  // 512x256: address-banked → 2x fakeram7_256x256
+  // 512x256: address-banked → 2x fakeram_256x256
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 512 && DataWidth == 256) begin : gen_512x256
 
@@ -56,7 +56,7 @@ module tc_sram #(
     assign bank_sel  = addr_i[0][8];
     assign bank_addr = addr_i[0][7:0];
     
-    fakeram7_256x256 i_bank0 (
+    fakeram_256x256 i_bank0 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & ~bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -65,7 +65,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd0 )
     );
     
-    fakeram7_256x256 i_bank1 (
+    fakeram_256x256 i_bank1 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -82,7 +82,7 @@ module tc_sram #(
     assign rdata_o[0] = bank_sel_q ? rd1 : rd0;
 
   // ──────────────────────────────────────────────────────────────────
-  // Nx512: width-split → 2x fakeram7_256x256
+  // Nx512: width-split → 2x fakeram_256x256
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords <= 256 && DataWidth == 512) begin : gen_Nx512
 
@@ -91,7 +91,7 @@ module tc_sram #(
     
     logic [255:0] rd_lo, rd_hi;
     
-    fakeram7_256x256 i_lo (
+    fakeram_256x256 i_lo (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -100,7 +100,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd_lo )
     );
     
-    fakeram7_256x256 i_hi (
+    fakeram_256x256 i_hi (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -112,7 +112,7 @@ module tc_sram #(
     assign rdata_o[0] = {rd_hi, rd_lo};
 
   // ──────────────────────────────────────────────────────────────────
-  // 256x(<256): width-padded → fakeram7_256x256
+  // 256x(<256): width-padded → fakeram_256x256
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 256 && DataWidth < 256 && DataWidth > 128) begin : gen_256xpad256
 
@@ -123,7 +123,7 @@ module tc_sram #(
     logic [255:0] wd_padded;
     assign wd_padded = {{256-DataWidth{1'b0}}, wdata_i[0]};
     
-    fakeram7_256x256 i_mem (
+    fakeram_256x256 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -135,11 +135,11 @@ module tc_sram #(
     assign rdata_o[0] = rd_padded[DataWidth-1:0];
 
   // ──────────────────────────────────────────────────────────────────
-  // 64x512: direct → fakeram7_64x512
+  // 64x512: direct → fakeram_64x512
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 64 && DataWidth == 512) begin : gen_64x512
 
-    fakeram7_64x512 i_mem (
+    fakeram_64x512 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -149,7 +149,7 @@ module tc_sram #(
     );
 
   // ──────────────────────────────────────────────────────────────────
-  // 128x512: address-banked → 2x fakeram7_64x512
+  // 128x512: address-banked → 2x fakeram_64x512
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 128 && DataWidth == 512) begin : gen_128x512
 
@@ -161,7 +161,7 @@ module tc_sram #(
     assign bank_sel  = addr_i[0][6];
     assign bank_addr = addr_i[0][5:0];
     
-    fakeram7_64x512 i_bank0 (
+    fakeram_64x512 i_bank0 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & ~bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -170,7 +170,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd0 )
     );
     
-    fakeram7_64x512 i_bank1 (
+    fakeram_64x512 i_bank1 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -187,7 +187,7 @@ module tc_sram #(
     assign rdata_o[0] = bank_sel_q ? rd1 : rd0;
 
   // ──────────────────────────────────────────────────────────────────
-  // Nx1024: width-split → 2x fakeram7_64x512
+  // Nx1024: width-split → 2x fakeram_64x512
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords <= 64 && DataWidth == 1024) begin : gen_Nx1024
 
@@ -196,7 +196,7 @@ module tc_sram #(
     
     logic [511:0] rd_lo, rd_hi;
     
-    fakeram7_64x512 i_lo (
+    fakeram_64x512 i_lo (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -205,7 +205,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd_lo )
     );
     
-    fakeram7_64x512 i_hi (
+    fakeram_64x512 i_hi (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -217,7 +217,7 @@ module tc_sram #(
     assign rdata_o[0] = {rd_hi, rd_lo};
 
   // ──────────────────────────────────────────────────────────────────
-  // 64x(<512): width-padded → fakeram7_64x512
+  // 64x(<512): width-padded → fakeram_64x512
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 64 && DataWidth < 512 && DataWidth > 256) begin : gen_64xpad512
 
@@ -228,7 +228,7 @@ module tc_sram #(
     logic [511:0] wd_padded;
     assign wd_padded = {{512-DataWidth{1'b0}}, wdata_i[0]};
     
-    fakeram7_64x512 i_mem (
+    fakeram_64x512 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -240,11 +240,11 @@ module tc_sram #(
     assign rdata_o[0] = rd_padded[DataWidth-1:0];
 
   // ──────────────────────────────────────────────────────────────────
-  // 256x64: direct → fakeram7_256x64
+  // 256x64: direct → fakeram_256x64
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 256 && DataWidth == 64) begin : gen_256x64
 
-    fakeram7_256x64 i_mem (
+    fakeram_256x64 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -254,7 +254,7 @@ module tc_sram #(
     );
 
   // ──────────────────────────────────────────────────────────────────
-  // 512x64: address-banked → 2x fakeram7_256x64
+  // 512x64: address-banked → 2x fakeram_256x64
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 512 && DataWidth == 64) begin : gen_512x64
 
@@ -266,7 +266,7 @@ module tc_sram #(
     assign bank_sel  = addr_i[0][8];
     assign bank_addr = addr_i[0][7:0];
     
-    fakeram7_256x64 i_bank0 (
+    fakeram_256x64 i_bank0 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & ~bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -275,7 +275,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd0 )
     );
     
-    fakeram7_256x64 i_bank1 (
+    fakeram_256x64 i_bank1 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -292,7 +292,7 @@ module tc_sram #(
     assign rdata_o[0] = bank_sel_q ? rd1 : rd0;
 
   // ──────────────────────────────────────────────────────────────────
-  // Nx128: width-split → 2x fakeram7_256x64
+  // Nx128: width-split → 2x fakeram_256x64
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords <= 256 && DataWidth == 128) begin : gen_Nx128
 
@@ -301,7 +301,7 @@ module tc_sram #(
     
     logic [63:0] rd_lo, rd_hi;
     
-    fakeram7_256x64 i_lo (
+    fakeram_256x64 i_lo (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -310,7 +310,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd_lo )
     );
     
-    fakeram7_256x64 i_hi (
+    fakeram_256x64 i_hi (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -322,7 +322,7 @@ module tc_sram #(
     assign rdata_o[0] = {rd_hi, rd_lo};
 
   // ──────────────────────────────────────────────────────────────────
-  // 256x(<64): width-padded → fakeram7_256x64
+  // 256x(<64): width-padded → fakeram_256x64
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 256 && DataWidth < 64 && DataWidth > 32) begin : gen_256xpad64
 
@@ -333,7 +333,7 @@ module tc_sram #(
     logic [63:0] wd_padded;
     assign wd_padded = {{64-DataWidth{1'b0}}, wdata_i[0]};
     
-    fakeram7_256x64 i_mem (
+    fakeram_256x64 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -345,11 +345,11 @@ module tc_sram #(
     assign rdata_o[0] = rd_padded[DataWidth-1:0];
 
   // ──────────────────────────────────────────────────────────────────
-  // 128x48: direct → fakeram7_128x48
+  // 128x48: direct → fakeram_128x48
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 128 && DataWidth == 48) begin : gen_128x48
 
-    fakeram7_128x48 i_mem (
+    fakeram_128x48 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -359,7 +359,7 @@ module tc_sram #(
     );
 
   // ──────────────────────────────────────────────────────────────────
-  // 256x48: address-banked → 2x fakeram7_128x48
+  // 256x48: address-banked → 2x fakeram_128x48
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 256 && DataWidth == 48) begin : gen_256x48
 
@@ -371,7 +371,7 @@ module tc_sram #(
     assign bank_sel  = addr_i[0][7];
     assign bank_addr = addr_i[0][6:0];
     
-    fakeram7_128x48 i_bank0 (
+    fakeram_128x48 i_bank0 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & ~bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -380,7 +380,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd0 )
     );
     
-    fakeram7_128x48 i_bank1 (
+    fakeram_128x48 i_bank1 (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] & bank_sel ),
       .rw0_we_in   ( we_i[0] ),
@@ -397,7 +397,7 @@ module tc_sram #(
     assign rdata_o[0] = bank_sel_q ? rd1 : rd0;
 
   // ──────────────────────────────────────────────────────────────────
-  // Nx96: width-split → 2x fakeram7_128x48
+  // Nx96: width-split → 2x fakeram_128x48
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords <= 128 && DataWidth == 96) begin : gen_Nx96
 
@@ -406,7 +406,7 @@ module tc_sram #(
     
     logic [47:0] rd_lo, rd_hi;
     
-    fakeram7_128x48 i_lo (
+    fakeram_128x48 i_lo (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -415,7 +415,7 @@ module tc_sram #(
       .rw0_rd_out  ( rd_lo )
     );
     
-    fakeram7_128x48 i_hi (
+    fakeram_128x48 i_hi (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),
@@ -427,7 +427,7 @@ module tc_sram #(
     assign rdata_o[0] = {rd_hi, rd_lo};
 
   // ──────────────────────────────────────────────────────────────────
-  // 128x(<48): width-padded → fakeram7_128x48
+  // 128x(<48): width-padded → fakeram_128x48
   // ──────────────────────────────────────────────────────────────────
   end else if (NumPorts == 1 && NumWords == 128 && DataWidth < 48 && DataWidth > 24) begin : gen_128xpad48
 
@@ -438,7 +438,7 @@ module tc_sram #(
     logic [47:0] wd_padded;
     assign wd_padded = {{48-DataWidth{1'b0}}, wdata_i[0]};
     
-    fakeram7_128x48 i_mem (
+    fakeram_128x48 i_mem (
       .rw0_clk     ( clk_i ),
       .rw0_ce_in   ( req_i[0] ),
       .rw0_we_in   ( we_i[0] ),

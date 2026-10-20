@@ -16,10 +16,10 @@ hightide_design(
     top = "ternip_core",
     verilog_files = [
         "//designs/src/ternip:rtl",
-        # Reuse the asap7 wrapper — fakeram macro name is identical across
-        # platforms (just regenerated with each platform's tech params via
+        # Shared FakeRAM wrapper — the macro name is identical across platforms
+        # (just regenerated with each platform's tech params via
         # tools/regenerate_sram.sh), so the same wrapper binds correctly.
-        "//designs/asap7/ternip:ternip_pipelined_mem_fakeram7.v",
+        "//designs/src/ternip:ternip_pipelined_mem_fakeram.v",
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],

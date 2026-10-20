@@ -16,7 +16,7 @@ hightide_design(
     top = "ternip_core",
     verilog_files = [
         "//designs/src/ternip:rtl",
-        "//designs/asap7/ternip:ternip_pipelined_mem_fakeram7.v",
+        "//designs/src/ternip:ternip_pipelined_mem_fakeram.v",
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],

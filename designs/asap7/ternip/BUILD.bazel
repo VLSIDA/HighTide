@@ -1,14 +1,5 @@
 load("//:defs.bzl", "hightide_design")
 
-# Shared FakeRAM wrapper — instantiates fakeram7_512x16 banks. The macro name
-# is identical across platforms (just regenerated with each platform's tech
-# params via tools/regenerate_sram.sh), so nangate45/ternip and sky130hd/ternip
-# reuse this same wrapper via "//designs/asap7/ternip:ternip_pipelined_mem_fakeram7.v".
-exports_files(
-    ["ternip_pipelined_mem_fakeram7.v"],
-    visibility = ["//designs:__subpackages__"],
-)
-
 filegroup(
     name = "sram_lefs",
     srcs = glob(["sram/lef/*.lef"]),
@@ -25,7 +16,7 @@ hightide_design(
     top = "ternip_core",
     verilog_files = [
         "//designs/src/ternip:rtl",
-        ":ternip_pipelined_mem_fakeram7.v",
+        "//designs/src/ternip:ternip_pipelined_mem_fakeram.v",
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],

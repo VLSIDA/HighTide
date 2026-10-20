@@ -1,5 +1,15 @@
 load("//:defs.bzl", "hightide_design")
 
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["sram/lef/*.lef"]),
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["sram/lib/*.lib"]),
+)
+
 hightide_design(
     name = "snitch_cluster",
     top = "snitch_cluster_wrapper",
@@ -9,8 +19,8 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
         "IO_CONSTRAINTS": [":io.tcl"],
         "FOOTPRINT_TCL": [":io.tcl"],
-        "ADDITIONAL_LEFS": ["//designs/src/snitch_cluster:sram_lefs"],
-        "ADDITIONAL_LIBS": ["//designs/src/snitch_cluster:sram_libs"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
     },
     stage_data = {"synth": ["//designs/src/snitch_cluster:rtl_data"]},
     arguments = {

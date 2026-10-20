@@ -1,17 +1,17 @@
 VERSION 5.7 ;
 BUSBITCHARS "[]" ;
-MACRO fakeram7_256x64
-  FOREIGN fakeram7_256x64 0 0 ;
+MACRO fakeram_256x64
+  FOREIGN fakeram_256x64 0 0 ;
   SYMMETRY X Y R90 ;
-  SIZE 109.060 BY 166.600 ;
+  SIZE 69.160 BY 43.400 ;
   CLASS BLOCK ;
   PIN rw0_wd_in[0]
     DIRECTION INPUT ;
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 0.805 0.210 0.875 ;
+      LAYER M4 ;
+      RECT 0.000 0.276 0.072 0.300 ;
     END
   END rw0_wd_in[0]
   PIN rw0_wd_in[1]
@@ -19,8 +19,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 8.925 0.210 8.995 ;
+      LAYER M4 ;
+      RECT 0.000 2.388 0.072 2.412 ;
     END
   END rw0_wd_in[1]
   PIN rw0_wd_in[2]
@@ -28,8 +28,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 17.045 0.210 17.115 ;
+      LAYER M4 ;
+      RECT 0.000 4.500 0.072 4.524 ;
     END
   END rw0_wd_in[2]
   PIN rw0_wd_in[3]
@@ -37,8 +37,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 25.165 0.210 25.235 ;
+      LAYER M4 ;
+      RECT 0.000 6.612 0.072 6.636 ;
     END
   END rw0_wd_in[3]
   PIN rw0_wd_in[4]
@@ -46,8 +46,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 33.285 0.210 33.355 ;
+      LAYER M4 ;
+      RECT 0.000 8.724 0.072 8.748 ;
     END
   END rw0_wd_in[4]
   PIN rw0_wd_in[5]
@@ -55,8 +55,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 41.405 0.210 41.475 ;
+      LAYER M4 ;
+      RECT 0.000 10.836 0.072 10.860 ;
     END
   END rw0_wd_in[5]
   PIN rw0_wd_in[6]
@@ -64,8 +64,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 49.525 0.210 49.595 ;
+      LAYER M4 ;
+      RECT 0.000 12.948 0.072 12.972 ;
     END
   END rw0_wd_in[6]
   PIN rw0_wd_in[7]
@@ -73,8 +73,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 57.645 0.210 57.715 ;
+      LAYER M4 ;
+      RECT 0.000 15.060 0.072 15.084 ;
     END
   END rw0_wd_in[7]
   PIN rw0_wd_in[8]
@@ -82,8 +82,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 65.765 0.210 65.835 ;
+      LAYER M4 ;
+      RECT 0.000 17.172 0.072 17.196 ;
     END
   END rw0_wd_in[8]
   PIN rw0_wd_in[9]
@@ -91,8 +91,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 73.885 0.210 73.955 ;
+      LAYER M4 ;
+      RECT 0.000 19.284 0.072 19.308 ;
     END
   END rw0_wd_in[9]
   PIN rw0_wd_in[10]
@@ -100,8 +100,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 82.005 0.210 82.075 ;
+      LAYER M4 ;
+      RECT 0.000 21.396 0.072 21.420 ;
     END
   END rw0_wd_in[10]
   PIN rw0_wd_in[11]
@@ -109,8 +109,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 90.125 0.210 90.195 ;
+      LAYER M4 ;
+      RECT 0.000 23.508 0.072 23.532 ;
     END
   END rw0_wd_in[11]
   PIN rw0_wd_in[12]
@@ -118,8 +118,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 98.245 0.210 98.315 ;
+      LAYER M4 ;
+      RECT 0.000 25.620 0.072 25.644 ;
     END
   END rw0_wd_in[12]
   PIN rw0_wd_in[13]
@@ -127,8 +127,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 106.365 0.210 106.435 ;
+      LAYER M4 ;
+      RECT 0.000 27.732 0.072 27.756 ;
     END
   END rw0_wd_in[13]
   PIN rw0_wd_in[14]
@@ -136,8 +136,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 114.485 0.210 114.555 ;
+      LAYER M4 ;
+      RECT 0.000 29.844 0.072 29.868 ;
     END
   END rw0_wd_in[14]
   PIN rw0_wd_in[15]
@@ -145,8 +145,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 122.605 0.210 122.675 ;
+      LAYER M4 ;
+      RECT 0.000 31.956 0.072 31.980 ;
     END
   END rw0_wd_in[15]
   PIN rw0_wd_in[16]
@@ -154,8 +154,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 0.805 109.060 0.875 ;
+      LAYER M4 ;
+      RECT 69.088 0.276 69.160 0.300 ;
     END
   END rw0_wd_in[16]
   PIN rw0_wd_in[17]
@@ -163,8 +163,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 8.925 109.060 8.995 ;
+      LAYER M4 ;
+      RECT 69.088 2.388 69.160 2.412 ;
     END
   END rw0_wd_in[17]
   PIN rw0_wd_in[18]
@@ -172,8 +172,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 17.045 109.060 17.115 ;
+      LAYER M4 ;
+      RECT 69.088 4.500 69.160 4.524 ;
     END
   END rw0_wd_in[18]
   PIN rw0_wd_in[19]
@@ -181,8 +181,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 25.165 109.060 25.235 ;
+      LAYER M4 ;
+      RECT 69.088 6.612 69.160 6.636 ;
     END
   END rw0_wd_in[19]
   PIN rw0_wd_in[20]
@@ -190,8 +190,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 33.285 109.060 33.355 ;
+      LAYER M4 ;
+      RECT 69.088 8.724 69.160 8.748 ;
     END
   END rw0_wd_in[20]
   PIN rw0_wd_in[21]
@@ -199,8 +199,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 41.405 109.060 41.475 ;
+      LAYER M4 ;
+      RECT 69.088 10.836 69.160 10.860 ;
     END
   END rw0_wd_in[21]
   PIN rw0_wd_in[22]
@@ -208,8 +208,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 49.525 109.060 49.595 ;
+      LAYER M4 ;
+      RECT 69.088 12.948 69.160 12.972 ;
     END
   END rw0_wd_in[22]
   PIN rw0_wd_in[23]
@@ -217,8 +217,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 57.645 109.060 57.715 ;
+      LAYER M4 ;
+      RECT 69.088 15.060 69.160 15.084 ;
     END
   END rw0_wd_in[23]
   PIN rw0_wd_in[24]
@@ -226,8 +226,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 65.765 109.060 65.835 ;
+      LAYER M4 ;
+      RECT 69.088 17.172 69.160 17.196 ;
     END
   END rw0_wd_in[24]
   PIN rw0_wd_in[25]
@@ -235,8 +235,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 73.885 109.060 73.955 ;
+      LAYER M4 ;
+      RECT 69.088 19.284 69.160 19.308 ;
     END
   END rw0_wd_in[25]
   PIN rw0_wd_in[26]
@@ -244,8 +244,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 82.005 109.060 82.075 ;
+      LAYER M4 ;
+      RECT 69.088 21.396 69.160 21.420 ;
     END
   END rw0_wd_in[26]
   PIN rw0_wd_in[27]
@@ -253,8 +253,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 90.125 109.060 90.195 ;
+      LAYER M4 ;
+      RECT 69.088 23.508 69.160 23.532 ;
     END
   END rw0_wd_in[27]
   PIN rw0_wd_in[28]
@@ -262,8 +262,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 98.245 109.060 98.315 ;
+      LAYER M4 ;
+      RECT 69.088 25.620 69.160 25.644 ;
     END
   END rw0_wd_in[28]
   PIN rw0_wd_in[29]
@@ -271,8 +271,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 106.365 109.060 106.435 ;
+      LAYER M4 ;
+      RECT 69.088 27.732 69.160 27.756 ;
     END
   END rw0_wd_in[29]
   PIN rw0_wd_in[30]
@@ -280,8 +280,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 114.485 109.060 114.555 ;
+      LAYER M4 ;
+      RECT 69.088 29.844 69.160 29.868 ;
     END
   END rw0_wd_in[30]
   PIN rw0_wd_in[31]
@@ -289,8 +289,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 122.605 109.060 122.675 ;
+      LAYER M4 ;
+      RECT 69.088 31.956 69.160 31.980 ;
     END
   END rw0_wd_in[31]
   PIN rw0_wd_in[32]
@@ -298,8 +298,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 1.105 0.000 1.175 0.210 ;
+      LAYER M3 ;
+      RECT 0.207 0.000 0.225 0.054 ;
     END
   END rw0_wd_in[32]
   PIN rw0_wd_in[33]
@@ -307,8 +307,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 2.625 0.000 2.695 0.210 ;
+      LAYER M3 ;
+      RECT 1.251 0.000 1.269 0.054 ;
     END
   END rw0_wd_in[33]
   PIN rw0_wd_in[34]
@@ -316,8 +316,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 4.145 0.000 4.215 0.210 ;
+      LAYER M3 ;
+      RECT 2.295 0.000 2.313 0.054 ;
     END
   END rw0_wd_in[34]
   PIN rw0_wd_in[35]
@@ -325,8 +325,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 5.665 0.000 5.735 0.210 ;
+      LAYER M3 ;
+      RECT 3.339 0.000 3.357 0.054 ;
     END
   END rw0_wd_in[35]
   PIN rw0_wd_in[36]
@@ -334,8 +334,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 7.185 0.000 7.255 0.210 ;
+      LAYER M3 ;
+      RECT 4.383 0.000 4.401 0.054 ;
     END
   END rw0_wd_in[36]
   PIN rw0_wd_in[37]
@@ -343,8 +343,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 8.705 0.000 8.775 0.210 ;
+      LAYER M3 ;
+      RECT 5.427 0.000 5.445 0.054 ;
     END
   END rw0_wd_in[37]
   PIN rw0_wd_in[38]
@@ -352,8 +352,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 10.225 0.000 10.295 0.210 ;
+      LAYER M3 ;
+      RECT 6.471 0.000 6.489 0.054 ;
     END
   END rw0_wd_in[38]
   PIN rw0_wd_in[39]
@@ -361,8 +361,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 11.745 0.000 11.815 0.210 ;
+      LAYER M3 ;
+      RECT 7.515 0.000 7.533 0.054 ;
     END
   END rw0_wd_in[39]
   PIN rw0_wd_in[40]
@@ -370,8 +370,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 13.265 0.000 13.335 0.210 ;
+      LAYER M3 ;
+      RECT 8.559 0.000 8.577 0.054 ;
     END
   END rw0_wd_in[40]
   PIN rw0_wd_in[41]
@@ -379,8 +379,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 14.785 0.000 14.855 0.210 ;
+      LAYER M3 ;
+      RECT 9.603 0.000 9.621 0.054 ;
     END
   END rw0_wd_in[41]
   PIN rw0_wd_in[42]
@@ -388,8 +388,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 16.305 0.000 16.375 0.210 ;
+      LAYER M3 ;
+      RECT 10.647 0.000 10.665 0.054 ;
     END
   END rw0_wd_in[42]
   PIN rw0_wd_in[43]
@@ -397,8 +397,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 17.825 0.000 17.895 0.210 ;
+      LAYER M3 ;
+      RECT 11.691 0.000 11.709 0.054 ;
     END
   END rw0_wd_in[43]
   PIN rw0_wd_in[44]
@@ -406,8 +406,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 19.345 0.000 19.415 0.210 ;
+      LAYER M3 ;
+      RECT 12.735 0.000 12.753 0.054 ;
     END
   END rw0_wd_in[44]
   PIN rw0_wd_in[45]
@@ -415,8 +415,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 20.865 0.000 20.935 0.210 ;
+      LAYER M3 ;
+      RECT 13.779 0.000 13.797 0.054 ;
     END
   END rw0_wd_in[45]
   PIN rw0_wd_in[46]
@@ -424,8 +424,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 22.385 0.000 22.455 0.210 ;
+      LAYER M3 ;
+      RECT 14.823 0.000 14.841 0.054 ;
     END
   END rw0_wd_in[46]
   PIN rw0_wd_in[47]
@@ -433,8 +433,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 23.905 0.000 23.975 0.210 ;
+      LAYER M3 ;
+      RECT 15.867 0.000 15.885 0.054 ;
     END
   END rw0_wd_in[47]
   PIN rw0_wd_in[48]
@@ -442,8 +442,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 25.425 0.000 25.495 0.210 ;
+      LAYER M3 ;
+      RECT 16.911 0.000 16.929 0.054 ;
     END
   END rw0_wd_in[48]
   PIN rw0_wd_in[49]
@@ -451,8 +451,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 26.945 0.000 27.015 0.210 ;
+      LAYER M3 ;
+      RECT 17.955 0.000 17.973 0.054 ;
     END
   END rw0_wd_in[49]
   PIN rw0_wd_in[50]
@@ -460,8 +460,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 28.465 0.000 28.535 0.210 ;
+      LAYER M3 ;
+      RECT 18.999 0.000 19.017 0.054 ;
     END
   END rw0_wd_in[50]
   PIN rw0_wd_in[51]
@@ -469,8 +469,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 29.985 0.000 30.055 0.210 ;
+      LAYER M3 ;
+      RECT 20.043 0.000 20.061 0.054 ;
     END
   END rw0_wd_in[51]
   PIN rw0_wd_in[52]
@@ -478,8 +478,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 31.505 0.000 31.575 0.210 ;
+      LAYER M3 ;
+      RECT 21.087 0.000 21.105 0.054 ;
     END
   END rw0_wd_in[52]
   PIN rw0_wd_in[53]
@@ -487,8 +487,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 33.025 0.000 33.095 0.210 ;
+      LAYER M3 ;
+      RECT 22.131 0.000 22.149 0.054 ;
     END
   END rw0_wd_in[53]
   PIN rw0_wd_in[54]
@@ -496,8 +496,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 34.545 0.000 34.615 0.210 ;
+      LAYER M3 ;
+      RECT 23.175 0.000 23.193 0.054 ;
     END
   END rw0_wd_in[54]
   PIN rw0_wd_in[55]
@@ -505,8 +505,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 36.065 0.000 36.135 0.210 ;
+      LAYER M3 ;
+      RECT 24.219 0.000 24.237 0.054 ;
     END
   END rw0_wd_in[55]
   PIN rw0_wd_in[56]
@@ -514,8 +514,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 37.585 0.000 37.655 0.210 ;
+      LAYER M3 ;
+      RECT 25.263 0.000 25.281 0.054 ;
     END
   END rw0_wd_in[56]
   PIN rw0_wd_in[57]
@@ -523,8 +523,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 39.105 0.000 39.175 0.210 ;
+      LAYER M3 ;
+      RECT 26.307 0.000 26.325 0.054 ;
     END
   END rw0_wd_in[57]
   PIN rw0_wd_in[58]
@@ -532,8 +532,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 40.625 0.000 40.695 0.210 ;
+      LAYER M3 ;
+      RECT 27.351 0.000 27.369 0.054 ;
     END
   END rw0_wd_in[58]
   PIN rw0_wd_in[59]
@@ -541,8 +541,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 42.145 0.000 42.215 0.210 ;
+      LAYER M3 ;
+      RECT 28.395 0.000 28.413 0.054 ;
     END
   END rw0_wd_in[59]
   PIN rw0_wd_in[60]
@@ -550,8 +550,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 43.665 0.000 43.735 0.210 ;
+      LAYER M3 ;
+      RECT 29.439 0.000 29.457 0.054 ;
     END
   END rw0_wd_in[60]
   PIN rw0_wd_in[61]
@@ -559,8 +559,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 45.185 0.000 45.255 0.210 ;
+      LAYER M3 ;
+      RECT 30.483 0.000 30.501 0.054 ;
     END
   END rw0_wd_in[61]
   PIN rw0_wd_in[62]
@@ -568,8 +568,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 46.705 0.000 46.775 0.210 ;
+      LAYER M3 ;
+      RECT 31.527 0.000 31.545 0.054 ;
     END
   END rw0_wd_in[62]
   PIN rw0_wd_in[63]
@@ -577,8 +577,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 48.225 0.000 48.295 0.210 ;
+      LAYER M3 ;
+      RECT 32.571 0.000 32.589 0.054 ;
     END
   END rw0_wd_in[63]
   PIN rw0_rd_out[0]
@@ -586,8 +586,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 49.745 0.000 49.815 0.210 ;
+      LAYER M3 ;
+      RECT 33.615 0.000 33.633 0.054 ;
     END
   END rw0_rd_out[0]
   PIN rw0_rd_out[1]
@@ -595,8 +595,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 51.265 0.000 51.335 0.210 ;
+      LAYER M3 ;
+      RECT 34.659 0.000 34.677 0.054 ;
     END
   END rw0_rd_out[1]
   PIN rw0_rd_out[2]
@@ -604,8 +604,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 52.785 0.000 52.855 0.210 ;
+      LAYER M3 ;
+      RECT 35.703 0.000 35.721 0.054 ;
     END
   END rw0_rd_out[2]
   PIN rw0_rd_out[3]
@@ -613,8 +613,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 54.305 0.000 54.375 0.210 ;
+      LAYER M3 ;
+      RECT 36.747 0.000 36.765 0.054 ;
     END
   END rw0_rd_out[3]
   PIN rw0_rd_out[4]
@@ -622,8 +622,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 55.825 0.000 55.895 0.210 ;
+      LAYER M3 ;
+      RECT 37.791 0.000 37.809 0.054 ;
     END
   END rw0_rd_out[4]
   PIN rw0_rd_out[5]
@@ -631,8 +631,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 57.345 0.000 57.415 0.210 ;
+      LAYER M3 ;
+      RECT 38.835 0.000 38.853 0.054 ;
     END
   END rw0_rd_out[5]
   PIN rw0_rd_out[6]
@@ -640,8 +640,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 58.865 0.000 58.935 0.210 ;
+      LAYER M3 ;
+      RECT 39.879 0.000 39.897 0.054 ;
     END
   END rw0_rd_out[6]
   PIN rw0_rd_out[7]
@@ -649,8 +649,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 60.385 0.000 60.455 0.210 ;
+      LAYER M3 ;
+      RECT 40.923 0.000 40.941 0.054 ;
     END
   END rw0_rd_out[7]
   PIN rw0_rd_out[8]
@@ -658,8 +658,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 61.905 0.000 61.975 0.210 ;
+      LAYER M3 ;
+      RECT 41.967 0.000 41.985 0.054 ;
     END
   END rw0_rd_out[8]
   PIN rw0_rd_out[9]
@@ -667,8 +667,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 63.425 0.000 63.495 0.210 ;
+      LAYER M3 ;
+      RECT 43.011 0.000 43.029 0.054 ;
     END
   END rw0_rd_out[9]
   PIN rw0_rd_out[10]
@@ -676,8 +676,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 64.945 0.000 65.015 0.210 ;
+      LAYER M3 ;
+      RECT 44.055 0.000 44.073 0.054 ;
     END
   END rw0_rd_out[10]
   PIN rw0_rd_out[11]
@@ -685,8 +685,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 66.465 0.000 66.535 0.210 ;
+      LAYER M3 ;
+      RECT 45.099 0.000 45.117 0.054 ;
     END
   END rw0_rd_out[11]
   PIN rw0_rd_out[12]
@@ -694,8 +694,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 67.985 0.000 68.055 0.210 ;
+      LAYER M3 ;
+      RECT 46.143 0.000 46.161 0.054 ;
     END
   END rw0_rd_out[12]
   PIN rw0_rd_out[13]
@@ -703,8 +703,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 69.505 0.000 69.575 0.210 ;
+      LAYER M3 ;
+      RECT 47.187 0.000 47.205 0.054 ;
     END
   END rw0_rd_out[13]
   PIN rw0_rd_out[14]
@@ -712,8 +712,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 71.025 0.000 71.095 0.210 ;
+      LAYER M3 ;
+      RECT 48.231 0.000 48.249 0.054 ;
     END
   END rw0_rd_out[14]
   PIN rw0_rd_out[15]
@@ -721,8 +721,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 72.545 0.000 72.615 0.210 ;
+      LAYER M3 ;
+      RECT 49.275 0.000 49.293 0.054 ;
     END
   END rw0_rd_out[15]
   PIN rw0_rd_out[16]
@@ -730,8 +730,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 74.065 0.000 74.135 0.210 ;
+      LAYER M3 ;
+      RECT 50.319 0.000 50.337 0.054 ;
     END
   END rw0_rd_out[16]
   PIN rw0_rd_out[17]
@@ -739,8 +739,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 75.585 0.000 75.655 0.210 ;
+      LAYER M3 ;
+      RECT 51.363 0.000 51.381 0.054 ;
     END
   END rw0_rd_out[17]
   PIN rw0_rd_out[18]
@@ -748,8 +748,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 77.105 0.000 77.175 0.210 ;
+      LAYER M3 ;
+      RECT 52.407 0.000 52.425 0.054 ;
     END
   END rw0_rd_out[18]
   PIN rw0_rd_out[19]
@@ -757,8 +757,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 78.625 0.000 78.695 0.210 ;
+      LAYER M3 ;
+      RECT 53.451 0.000 53.469 0.054 ;
     END
   END rw0_rd_out[19]
   PIN rw0_rd_out[20]
@@ -766,8 +766,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 80.145 0.000 80.215 0.210 ;
+      LAYER M3 ;
+      RECT 54.495 0.000 54.513 0.054 ;
     END
   END rw0_rd_out[20]
   PIN rw0_rd_out[21]
@@ -775,8 +775,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 81.665 0.000 81.735 0.210 ;
+      LAYER M3 ;
+      RECT 55.539 0.000 55.557 0.054 ;
     END
   END rw0_rd_out[21]
   PIN rw0_rd_out[22]
@@ -784,8 +784,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 83.185 0.000 83.255 0.210 ;
+      LAYER M3 ;
+      RECT 56.583 0.000 56.601 0.054 ;
     END
   END rw0_rd_out[22]
   PIN rw0_rd_out[23]
@@ -793,8 +793,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 84.705 0.000 84.775 0.210 ;
+      LAYER M3 ;
+      RECT 57.627 0.000 57.645 0.054 ;
     END
   END rw0_rd_out[23]
   PIN rw0_rd_out[24]
@@ -802,8 +802,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 86.225 0.000 86.295 0.210 ;
+      LAYER M3 ;
+      RECT 58.671 0.000 58.689 0.054 ;
     END
   END rw0_rd_out[24]
   PIN rw0_rd_out[25]
@@ -811,8 +811,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 87.745 0.000 87.815 0.210 ;
+      LAYER M3 ;
+      RECT 59.715 0.000 59.733 0.054 ;
     END
   END rw0_rd_out[25]
   PIN rw0_rd_out[26]
@@ -820,8 +820,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 89.265 0.000 89.335 0.210 ;
+      LAYER M3 ;
+      RECT 60.759 0.000 60.777 0.054 ;
     END
   END rw0_rd_out[26]
   PIN rw0_rd_out[27]
@@ -829,8 +829,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 90.785 0.000 90.855 0.210 ;
+      LAYER M3 ;
+      RECT 61.803 0.000 61.821 0.054 ;
     END
   END rw0_rd_out[27]
   PIN rw0_rd_out[28]
@@ -838,8 +838,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 92.305 0.000 92.375 0.210 ;
+      LAYER M3 ;
+      RECT 62.847 0.000 62.865 0.054 ;
     END
   END rw0_rd_out[28]
   PIN rw0_rd_out[29]
@@ -847,8 +847,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 93.825 0.000 93.895 0.210 ;
+      LAYER M3 ;
+      RECT 63.891 0.000 63.909 0.054 ;
     END
   END rw0_rd_out[29]
   PIN rw0_rd_out[30]
@@ -856,8 +856,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 95.345 0.000 95.415 0.210 ;
+      LAYER M3 ;
+      RECT 64.935 0.000 64.953 0.054 ;
     END
   END rw0_rd_out[30]
   PIN rw0_rd_out[31]
@@ -865,8 +865,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 96.865 0.000 96.935 0.210 ;
+      LAYER M3 ;
+      RECT 65.979 0.000 65.997 0.054 ;
     END
   END rw0_rd_out[31]
   PIN rw0_rd_out[32]
@@ -874,8 +874,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 1.105 166.390 1.175 166.600 ;
+      LAYER M3 ;
+      RECT 0.207 43.346 0.225 43.400 ;
     END
   END rw0_rd_out[32]
   PIN rw0_rd_out[33]
@@ -883,8 +883,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 4.145 166.390 4.215 166.600 ;
+      LAYER M3 ;
+      RECT 2.151 43.346 2.169 43.400 ;
     END
   END rw0_rd_out[33]
   PIN rw0_rd_out[34]
@@ -892,8 +892,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 7.185 166.390 7.255 166.600 ;
+      LAYER M3 ;
+      RECT 4.095 43.346 4.113 43.400 ;
     END
   END rw0_rd_out[34]
   PIN rw0_rd_out[35]
@@ -901,8 +901,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 10.225 166.390 10.295 166.600 ;
+      LAYER M3 ;
+      RECT 6.039 43.346 6.057 43.400 ;
     END
   END rw0_rd_out[35]
   PIN rw0_rd_out[36]
@@ -910,8 +910,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 13.265 166.390 13.335 166.600 ;
+      LAYER M3 ;
+      RECT 7.983 43.346 8.001 43.400 ;
     END
   END rw0_rd_out[36]
   PIN rw0_rd_out[37]
@@ -919,8 +919,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 16.305 166.390 16.375 166.600 ;
+      LAYER M3 ;
+      RECT 9.927 43.346 9.945 43.400 ;
     END
   END rw0_rd_out[37]
   PIN rw0_rd_out[38]
@@ -928,8 +928,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 19.345 166.390 19.415 166.600 ;
+      LAYER M3 ;
+      RECT 11.871 43.346 11.889 43.400 ;
     END
   END rw0_rd_out[38]
   PIN rw0_rd_out[39]
@@ -937,8 +937,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 22.385 166.390 22.455 166.600 ;
+      LAYER M3 ;
+      RECT 13.815 43.346 13.833 43.400 ;
     END
   END rw0_rd_out[39]
   PIN rw0_rd_out[40]
@@ -946,8 +946,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 25.425 166.390 25.495 166.600 ;
+      LAYER M3 ;
+      RECT 15.759 43.346 15.777 43.400 ;
     END
   END rw0_rd_out[40]
   PIN rw0_rd_out[41]
@@ -955,8 +955,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 28.465 166.390 28.535 166.600 ;
+      LAYER M3 ;
+      RECT 17.703 43.346 17.721 43.400 ;
     END
   END rw0_rd_out[41]
   PIN rw0_rd_out[42]
@@ -964,8 +964,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 31.505 166.390 31.575 166.600 ;
+      LAYER M3 ;
+      RECT 19.647 43.346 19.665 43.400 ;
     END
   END rw0_rd_out[42]
   PIN rw0_rd_out[43]
@@ -973,8 +973,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 34.545 166.390 34.615 166.600 ;
+      LAYER M3 ;
+      RECT 21.591 43.346 21.609 43.400 ;
     END
   END rw0_rd_out[43]
   PIN rw0_rd_out[44]
@@ -982,8 +982,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 37.585 166.390 37.655 166.600 ;
+      LAYER M3 ;
+      RECT 23.535 43.346 23.553 43.400 ;
     END
   END rw0_rd_out[44]
   PIN rw0_rd_out[45]
@@ -991,8 +991,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 40.625 166.390 40.695 166.600 ;
+      LAYER M3 ;
+      RECT 25.479 43.346 25.497 43.400 ;
     END
   END rw0_rd_out[45]
   PIN rw0_rd_out[46]
@@ -1000,8 +1000,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 43.665 166.390 43.735 166.600 ;
+      LAYER M3 ;
+      RECT 27.423 43.346 27.441 43.400 ;
     END
   END rw0_rd_out[46]
   PIN rw0_rd_out[47]
@@ -1009,8 +1009,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 46.705 166.390 46.775 166.600 ;
+      LAYER M3 ;
+      RECT 29.367 43.346 29.385 43.400 ;
     END
   END rw0_rd_out[47]
   PIN rw0_rd_out[48]
@@ -1018,8 +1018,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 49.745 166.390 49.815 166.600 ;
+      LAYER M3 ;
+      RECT 31.311 43.346 31.329 43.400 ;
     END
   END rw0_rd_out[48]
   PIN rw0_rd_out[49]
@@ -1027,8 +1027,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 52.785 166.390 52.855 166.600 ;
+      LAYER M3 ;
+      RECT 33.255 43.346 33.273 43.400 ;
     END
   END rw0_rd_out[49]
   PIN rw0_rd_out[50]
@@ -1036,8 +1036,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 55.825 166.390 55.895 166.600 ;
+      LAYER M3 ;
+      RECT 35.199 43.346 35.217 43.400 ;
     END
   END rw0_rd_out[50]
   PIN rw0_rd_out[51]
@@ -1045,8 +1045,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 58.865 166.390 58.935 166.600 ;
+      LAYER M3 ;
+      RECT 37.143 43.346 37.161 43.400 ;
     END
   END rw0_rd_out[51]
   PIN rw0_rd_out[52]
@@ -1054,8 +1054,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 61.905 166.390 61.975 166.600 ;
+      LAYER M3 ;
+      RECT 39.087 43.346 39.105 43.400 ;
     END
   END rw0_rd_out[52]
   PIN rw0_rd_out[53]
@@ -1063,8 +1063,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 64.945 166.390 65.015 166.600 ;
+      LAYER M3 ;
+      RECT 41.031 43.346 41.049 43.400 ;
     END
   END rw0_rd_out[53]
   PIN rw0_rd_out[54]
@@ -1072,8 +1072,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 67.985 166.390 68.055 166.600 ;
+      LAYER M3 ;
+      RECT 42.975 43.346 42.993 43.400 ;
     END
   END rw0_rd_out[54]
   PIN rw0_rd_out[55]
@@ -1081,8 +1081,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 71.025 166.390 71.095 166.600 ;
+      LAYER M3 ;
+      RECT 44.919 43.346 44.937 43.400 ;
     END
   END rw0_rd_out[55]
   PIN rw0_rd_out[56]
@@ -1090,8 +1090,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 74.065 166.390 74.135 166.600 ;
+      LAYER M3 ;
+      RECT 46.863 43.346 46.881 43.400 ;
     END
   END rw0_rd_out[56]
   PIN rw0_rd_out[57]
@@ -1099,8 +1099,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 77.105 166.390 77.175 166.600 ;
+      LAYER M3 ;
+      RECT 48.807 43.346 48.825 43.400 ;
     END
   END rw0_rd_out[57]
   PIN rw0_rd_out[58]
@@ -1108,8 +1108,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 80.145 166.390 80.215 166.600 ;
+      LAYER M3 ;
+      RECT 50.751 43.346 50.769 43.400 ;
     END
   END rw0_rd_out[58]
   PIN rw0_rd_out[59]
@@ -1117,8 +1117,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 83.185 166.390 83.255 166.600 ;
+      LAYER M3 ;
+      RECT 52.695 43.346 52.713 43.400 ;
     END
   END rw0_rd_out[59]
   PIN rw0_rd_out[60]
@@ -1126,8 +1126,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 86.225 166.390 86.295 166.600 ;
+      LAYER M3 ;
+      RECT 54.639 43.346 54.657 43.400 ;
     END
   END rw0_rd_out[60]
   PIN rw0_rd_out[61]
@@ -1135,8 +1135,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 89.265 166.390 89.335 166.600 ;
+      LAYER M3 ;
+      RECT 56.583 43.346 56.601 43.400 ;
     END
   END rw0_rd_out[61]
   PIN rw0_rd_out[62]
@@ -1144,8 +1144,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 92.305 166.390 92.375 166.600 ;
+      LAYER M3 ;
+      RECT 58.527 43.346 58.545 43.400 ;
     END
   END rw0_rd_out[62]
   PIN rw0_rd_out[63]
@@ -1153,8 +1153,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 95.345 166.390 95.415 166.600 ;
+      LAYER M3 ;
+      RECT 60.471 43.346 60.489 43.400 ;
     END
   END rw0_rd_out[63]
   PIN rw0_addr_in[0]
@@ -1162,8 +1162,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 130.725 0.210 130.795 ;
+      LAYER M4 ;
+      RECT 0.000 34.068 0.072 34.092 ;
     END
   END rw0_addr_in[0]
   PIN rw0_addr_in[1]
@@ -1171,8 +1171,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 138.845 0.210 138.915 ;
+      LAYER M4 ;
+      RECT 0.000 36.180 0.072 36.204 ;
     END
   END rw0_addr_in[1]
   PIN rw0_addr_in[2]
@@ -1180,8 +1180,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 146.965 0.210 147.035 ;
+      LAYER M4 ;
+      RECT 0.000 38.292 0.072 38.316 ;
     END
   END rw0_addr_in[2]
   PIN rw0_addr_in[3]
@@ -1189,8 +1189,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 0.000 155.085 0.210 155.155 ;
+      LAYER M4 ;
+      RECT 0.000 40.404 0.072 40.428 ;
     END
   END rw0_addr_in[3]
   PIN rw0_addr_in[4]
@@ -1198,8 +1198,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 130.725 109.060 130.795 ;
+      LAYER M4 ;
+      RECT 69.088 34.068 69.160 34.092 ;
     END
   END rw0_addr_in[4]
   PIN rw0_addr_in[5]
@@ -1207,8 +1207,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 138.845 109.060 138.915 ;
+      LAYER M4 ;
+      RECT 69.088 36.180 69.160 36.204 ;
     END
   END rw0_addr_in[5]
   PIN rw0_addr_in[6]
@@ -1216,8 +1216,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 146.965 109.060 147.035 ;
+      LAYER M4 ;
+      RECT 69.088 38.292 69.160 38.316 ;
     END
   END rw0_addr_in[6]
   PIN rw0_addr_in[7]
@@ -1225,8 +1225,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal3 ;
-      RECT 108.850 155.085 109.060 155.155 ;
+      LAYER M4 ;
+      RECT 69.088 40.404 69.160 40.428 ;
     END
   END rw0_addr_in[7]
   PIN rw0_we_in
@@ -1234,8 +1234,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 98.385 166.390 98.455 166.600 ;
+      LAYER M3 ;
+      RECT 62.415 43.346 62.433 43.400 ;
     END
   END rw0_we_in
   PIN rw0_ce_in
@@ -1243,8 +1243,8 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 101.425 166.390 101.495 166.600 ;
+      LAYER M3 ;
+      RECT 64.359 43.346 64.377 43.400 ;
     END
   END rw0_ce_in
   PIN rw0_clk
@@ -1252,134 +1252,147 @@ MACRO fakeram7_256x64
     USE SIGNAL ;
     SHAPE ABUTMENT ;
     PORT
-      LAYER metal2 ;
-      RECT 104.465 166.390 104.535 166.600 ;
+      LAYER M3 ;
+      RECT 66.303 43.346 66.321 43.400 ;
     END
   END rw0_clk
   PIN VSS
     DIRECTION INOUT ;
     USE GROUND ;
     PORT
-      LAYER metal4 ;
-      RECT 1.000 0.840 1.280 165.760 ;
-      RECT 3.240 0.840 3.520 165.760 ;
-      RECT 5.480 0.840 5.760 165.760 ;
-      RECT 7.720 0.840 8.000 165.760 ;
-      RECT 9.960 0.840 10.240 165.760 ;
-      RECT 12.200 0.840 12.480 165.760 ;
-      RECT 14.440 0.840 14.720 165.760 ;
-      RECT 16.680 0.840 16.960 165.760 ;
-      RECT 18.920 0.840 19.200 165.760 ;
-      RECT 21.160 0.840 21.440 165.760 ;
-      RECT 23.400 0.840 23.680 165.760 ;
-      RECT 25.640 0.840 25.920 165.760 ;
-      RECT 27.880 0.840 28.160 165.760 ;
-      RECT 30.120 0.840 30.400 165.760 ;
-      RECT 32.360 0.840 32.640 165.760 ;
-      RECT 34.600 0.840 34.880 165.760 ;
-      RECT 36.840 0.840 37.120 165.760 ;
-      RECT 39.080 0.840 39.360 165.760 ;
-      RECT 41.320 0.840 41.600 165.760 ;
-      RECT 43.560 0.840 43.840 165.760 ;
-      RECT 45.800 0.840 46.080 165.760 ;
-      RECT 48.040 0.840 48.320 165.760 ;
-      RECT 50.280 0.840 50.560 165.760 ;
-      RECT 52.520 0.840 52.800 165.760 ;
-      RECT 54.760 0.840 55.040 165.760 ;
-      RECT 57.000 0.840 57.280 165.760 ;
-      RECT 59.240 0.840 59.520 165.760 ;
-      RECT 61.480 0.840 61.760 165.760 ;
-      RECT 63.720 0.840 64.000 165.760 ;
-      RECT 65.960 0.840 66.240 165.760 ;
-      RECT 68.200 0.840 68.480 165.760 ;
-      RECT 70.440 0.840 70.720 165.760 ;
-      RECT 72.680 0.840 72.960 165.760 ;
-      RECT 74.920 0.840 75.200 165.760 ;
-      RECT 77.160 0.840 77.440 165.760 ;
-      RECT 79.400 0.840 79.680 165.760 ;
-      RECT 81.640 0.840 81.920 165.760 ;
-      RECT 83.880 0.840 84.160 165.760 ;
-      RECT 86.120 0.840 86.400 165.760 ;
-      RECT 88.360 0.840 88.640 165.760 ;
-      RECT 90.600 0.840 90.880 165.760 ;
-      RECT 92.840 0.840 93.120 165.760 ;
-      RECT 95.080 0.840 95.360 165.760 ;
-      RECT 97.320 0.840 97.600 165.760 ;
-      RECT 99.560 0.840 99.840 165.760 ;
-      RECT 101.800 0.840 102.080 165.760 ;
-      RECT 104.040 0.840 104.320 165.760 ;
-      RECT 106.280 0.840 106.560 165.760 ;
-      RECT 108.520 0.840 108.800 165.760 ;
+      LAYER M4 ;
+      RECT 0.216 0.240 68.944 0.336 ;
+      RECT 0.216 1.008 68.944 1.104 ;
+      RECT 0.216 1.776 68.944 1.872 ;
+      RECT 0.216 2.544 68.944 2.640 ;
+      RECT 0.216 3.312 68.944 3.408 ;
+      RECT 0.216 4.080 68.944 4.176 ;
+      RECT 0.216 4.848 68.944 4.944 ;
+      RECT 0.216 5.616 68.944 5.712 ;
+      RECT 0.216 6.384 68.944 6.480 ;
+      RECT 0.216 7.152 68.944 7.248 ;
+      RECT 0.216 7.920 68.944 8.016 ;
+      RECT 0.216 8.688 68.944 8.784 ;
+      RECT 0.216 9.456 68.944 9.552 ;
+      RECT 0.216 10.224 68.944 10.320 ;
+      RECT 0.216 10.992 68.944 11.088 ;
+      RECT 0.216 11.760 68.944 11.856 ;
+      RECT 0.216 12.528 68.944 12.624 ;
+      RECT 0.216 13.296 68.944 13.392 ;
+      RECT 0.216 14.064 68.944 14.160 ;
+      RECT 0.216 14.832 68.944 14.928 ;
+      RECT 0.216 15.600 68.944 15.696 ;
+      RECT 0.216 16.368 68.944 16.464 ;
+      RECT 0.216 17.136 68.944 17.232 ;
+      RECT 0.216 17.904 68.944 18.000 ;
+      RECT 0.216 18.672 68.944 18.768 ;
+      RECT 0.216 19.440 68.944 19.536 ;
+      RECT 0.216 20.208 68.944 20.304 ;
+      RECT 0.216 20.976 68.944 21.072 ;
+      RECT 0.216 21.744 68.944 21.840 ;
+      RECT 0.216 22.512 68.944 22.608 ;
+      RECT 0.216 23.280 68.944 23.376 ;
+      RECT 0.216 24.048 68.944 24.144 ;
+      RECT 0.216 24.816 68.944 24.912 ;
+      RECT 0.216 25.584 68.944 25.680 ;
+      RECT 0.216 26.352 68.944 26.448 ;
+      RECT 0.216 27.120 68.944 27.216 ;
+      RECT 0.216 27.888 68.944 27.984 ;
+      RECT 0.216 28.656 68.944 28.752 ;
+      RECT 0.216 29.424 68.944 29.520 ;
+      RECT 0.216 30.192 68.944 30.288 ;
+      RECT 0.216 30.960 68.944 31.056 ;
+      RECT 0.216 31.728 68.944 31.824 ;
+      RECT 0.216 32.496 68.944 32.592 ;
+      RECT 0.216 33.264 68.944 33.360 ;
+      RECT 0.216 34.032 68.944 34.128 ;
+      RECT 0.216 34.800 68.944 34.896 ;
+      RECT 0.216 35.568 68.944 35.664 ;
+      RECT 0.216 36.336 68.944 36.432 ;
+      RECT 0.216 37.104 68.944 37.200 ;
+      RECT 0.216 37.872 68.944 37.968 ;
+      RECT 0.216 38.640 68.944 38.736 ;
+      RECT 0.216 39.408 68.944 39.504 ;
+      RECT 0.216 40.176 68.944 40.272 ;
+      RECT 0.216 40.944 68.944 41.040 ;
+      RECT 0.216 41.712 68.944 41.808 ;
+      RECT 0.216 42.480 68.944 42.576 ;
+      RECT 0.216 43.248 68.944 43.344 ;
     END
   END VSS
   PIN VDD
     DIRECTION INOUT ;
     USE POWER ;
     PORT
-      LAYER metal4 ;
-      RECT 1.000 0.840 1.280 165.760 ;
-      RECT 3.240 0.840 3.520 165.760 ;
-      RECT 5.480 0.840 5.760 165.760 ;
-      RECT 7.720 0.840 8.000 165.760 ;
-      RECT 9.960 0.840 10.240 165.760 ;
-      RECT 12.200 0.840 12.480 165.760 ;
-      RECT 14.440 0.840 14.720 165.760 ;
-      RECT 16.680 0.840 16.960 165.760 ;
-      RECT 18.920 0.840 19.200 165.760 ;
-      RECT 21.160 0.840 21.440 165.760 ;
-      RECT 23.400 0.840 23.680 165.760 ;
-      RECT 25.640 0.840 25.920 165.760 ;
-      RECT 27.880 0.840 28.160 165.760 ;
-      RECT 30.120 0.840 30.400 165.760 ;
-      RECT 32.360 0.840 32.640 165.760 ;
-      RECT 34.600 0.840 34.880 165.760 ;
-      RECT 36.840 0.840 37.120 165.760 ;
-      RECT 39.080 0.840 39.360 165.760 ;
-      RECT 41.320 0.840 41.600 165.760 ;
-      RECT 43.560 0.840 43.840 165.760 ;
-      RECT 45.800 0.840 46.080 165.760 ;
-      RECT 48.040 0.840 48.320 165.760 ;
-      RECT 50.280 0.840 50.560 165.760 ;
-      RECT 52.520 0.840 52.800 165.760 ;
-      RECT 54.760 0.840 55.040 165.760 ;
-      RECT 57.000 0.840 57.280 165.760 ;
-      RECT 59.240 0.840 59.520 165.760 ;
-      RECT 61.480 0.840 61.760 165.760 ;
-      RECT 63.720 0.840 64.000 165.760 ;
-      RECT 65.960 0.840 66.240 165.760 ;
-      RECT 68.200 0.840 68.480 165.760 ;
-      RECT 70.440 0.840 70.720 165.760 ;
-      RECT 72.680 0.840 72.960 165.760 ;
-      RECT 74.920 0.840 75.200 165.760 ;
-      RECT 77.160 0.840 77.440 165.760 ;
-      RECT 79.400 0.840 79.680 165.760 ;
-      RECT 81.640 0.840 81.920 165.760 ;
-      RECT 83.880 0.840 84.160 165.760 ;
-      RECT 86.120 0.840 86.400 165.760 ;
-      RECT 88.360 0.840 88.640 165.760 ;
-      RECT 90.600 0.840 90.880 165.760 ;
-      RECT 92.840 0.840 93.120 165.760 ;
-      RECT 95.080 0.840 95.360 165.760 ;
-      RECT 97.320 0.840 97.600 165.760 ;
-      RECT 99.560 0.840 99.840 165.760 ;
-      RECT 101.800 0.840 102.080 165.760 ;
-      RECT 104.040 0.840 104.320 165.760 ;
-      RECT 106.280 0.840 106.560 165.760 ;
-      RECT 108.520 0.840 108.800 165.760 ;
+      LAYER M4 ;
+      RECT 0.216 0.624 68.944 0.720 ;
+      RECT 0.216 1.392 68.944 1.488 ;
+      RECT 0.216 2.160 68.944 2.256 ;
+      RECT 0.216 2.928 68.944 3.024 ;
+      RECT 0.216 3.696 68.944 3.792 ;
+      RECT 0.216 4.464 68.944 4.560 ;
+      RECT 0.216 5.232 68.944 5.328 ;
+      RECT 0.216 6.000 68.944 6.096 ;
+      RECT 0.216 6.768 68.944 6.864 ;
+      RECT 0.216 7.536 68.944 7.632 ;
+      RECT 0.216 8.304 68.944 8.400 ;
+      RECT 0.216 9.072 68.944 9.168 ;
+      RECT 0.216 9.840 68.944 9.936 ;
+      RECT 0.216 10.608 68.944 10.704 ;
+      RECT 0.216 11.376 68.944 11.472 ;
+      RECT 0.216 12.144 68.944 12.240 ;
+      RECT 0.216 12.912 68.944 13.008 ;
+      RECT 0.216 13.680 68.944 13.776 ;
+      RECT 0.216 14.448 68.944 14.544 ;
+      RECT 0.216 15.216 68.944 15.312 ;
+      RECT 0.216 15.984 68.944 16.080 ;
+      RECT 0.216 16.752 68.944 16.848 ;
+      RECT 0.216 17.520 68.944 17.616 ;
+      RECT 0.216 18.288 68.944 18.384 ;
+      RECT 0.216 19.056 68.944 19.152 ;
+      RECT 0.216 19.824 68.944 19.920 ;
+      RECT 0.216 20.592 68.944 20.688 ;
+      RECT 0.216 21.360 68.944 21.456 ;
+      RECT 0.216 22.128 68.944 22.224 ;
+      RECT 0.216 22.896 68.944 22.992 ;
+      RECT 0.216 23.664 68.944 23.760 ;
+      RECT 0.216 24.432 68.944 24.528 ;
+      RECT 0.216 25.200 68.944 25.296 ;
+      RECT 0.216 25.968 68.944 26.064 ;
+      RECT 0.216 26.736 68.944 26.832 ;
+      RECT 0.216 27.504 68.944 27.600 ;
+      RECT 0.216 28.272 68.944 28.368 ;
+      RECT 0.216 29.040 68.944 29.136 ;
+      RECT 0.216 29.808 68.944 29.904 ;
+      RECT 0.216 30.576 68.944 30.672 ;
+      RECT 0.216 31.344 68.944 31.440 ;
+      RECT 0.216 32.112 68.944 32.208 ;
+      RECT 0.216 32.880 68.944 32.976 ;
+      RECT 0.216 33.648 68.944 33.744 ;
+      RECT 0.216 34.416 68.944 34.512 ;
+      RECT 0.216 35.184 68.944 35.280 ;
+      RECT 0.216 35.952 68.944 36.048 ;
+      RECT 0.216 36.720 68.944 36.816 ;
+      RECT 0.216 37.488 68.944 37.584 ;
+      RECT 0.216 38.256 68.944 38.352 ;
+      RECT 0.216 39.024 68.944 39.120 ;
+      RECT 0.216 39.792 68.944 39.888 ;
+      RECT 0.216 40.560 68.944 40.656 ;
+      RECT 0.216 41.328 68.944 41.424 ;
+      RECT 0.216 42.096 68.944 42.192 ;
+      RECT 0.216 42.864 68.944 42.960 ;
     END
   END VDD
   OBS
-    LAYER metal1 ;
-    RECT 0 0 109.060 166.600 ;
-    LAYER metal2 ;
-    RECT 0 0 109.060 166.600 ;
-    LAYER metal3 ;
-    RECT 0 0 109.060 166.600 ;
-    LAYER metal4 ;
-    RECT 0 0 109.060 166.600 ;
-    LAYER OVERLAP ;
-    RECT 0 0 109.060 166.600 ;
+    LAYER M1 ;
+    RECT 0 0 69.160 43.400 ;
+    LAYER M2 ;
+    RECT 0 0 69.160 43.400 ;
+    LAYER M3 ;
+    RECT 0 0 69.160 43.400 ;
+    LAYER M4 ;
+    RECT 0 0 69.160 43.400 ;
   END
-END fakeram7_256x64
+END fakeram_256x64
 
 END LIBRARY

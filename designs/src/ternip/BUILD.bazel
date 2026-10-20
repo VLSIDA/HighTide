@@ -2,9 +2,9 @@
 #
 # RTL is fetched hermetically from upstream: the ternip core from @ternip_src
 # (rtl/) and the BaseJump STL subset from @basejump_stl_src.  No dev/repo /
-# dev/basejump_stl submodules, no setup.sh.  The per-platform FakeRAM memory
-# (ternip_pipelined_mem_fakeram*.v) is added by each platform's BUILD, so
-# common/ternip_pipelined_mem.sv is intentionally excluded below.
+# dev/basejump_stl submodules, no setup.sh.  The shared FakeRAM memory wrapper
+# (ternip_pipelined_mem_fakeram.v, committed here) is added by each platform's
+# BUILD, so common/ternip_pipelined_mem.sv is intentionally excluded below.
 
 # File order follows the FuseSoC manifest (ternip.core): package first,
 # then leaf modules, then top-level ternip_core.sv last.
@@ -14,7 +14,7 @@ _TERNIP_FILES = [
     "common/ternip_gearbox_fifo.sv",
     "common/ternip_multioperand_accumulator.sv",
     "common/ternip_pipelined_interconnect.sv",
-    # common/ternip_pipelined_mem.sv replaced by ternip_pipelined_mem_fakeram7.v (FakeRAM, per platform)
+    # common/ternip_pipelined_mem.sv replaced by ternip_pipelined_mem_fakeram.v (shared FakeRAM wrapper)
     "math/ternip_add.sv",
     "math/ternip_sub.sv",
     "math/ternip_mul.sv",
@@ -87,6 +87,14 @@ filegroup(
     srcs = ["@ternip_src//:rtl/" + f for f in _TERNIP_FILES] +
            ["@basejump_stl_src//:" + f for f in _BSG_FILES],
     visibility = ["//visibility:public"],
+)
+
+# Shared FakeRAM wrapper — instantiates fakeram_512x16 banks. The macro name
+# is identical across platforms (regenerated with each platform's tech params
+# via tools/regenerate_sram.sh), so every platform BUILD adds this same file.
+exports_files(
+    ["ternip_pipelined_mem_fakeram.v"],
+    visibility = ["//designs:__subpackages__"],
 )
 
 # Compile sources + upstream .svh headers + the local config header, staged
