@@ -15,13 +15,13 @@ import os
 
 # (width, depth) pairs for ternip's banked pipelined memories.  Each
 # pipelined_mem instance is split into multiple macros by the wrapper
-# at designs/asap7/ternip/ternip_pipelined_mem_fakeram7.v:
+# at designs/src/ternip/ternip_pipelined_mem_fakeram.v:
 #
-#   vector_registers.pipelined_mem (16 × 4096) → 8 × fakeram7_512x16  (depth-banked)
-#   tmatmul.exportvector           (16 × 1024) → 2 × fakeram7_512x16  (depth-banked)
+#   vector_registers.pipelined_mem (16 × 4096) → 8 × fakeram_512x16  (depth-banked)
+#   tmatmul.exportvector           (16 × 1024) → 2 × fakeram_512x16  (depth-banked)
 #   tmatmul.importvector           (1024 × 16) → flip-flops          (too small for a macro)
 #
-# fakeram7_512x16 is shared between the two depth-banked memories.
+# fakeram_512x16 is shared between the two depth-banked memories.
 SRAM_SIZES = [
     (16, 512),   # 8 Kb bank — depth-bank for the two 16-bit-wide memories
 ]

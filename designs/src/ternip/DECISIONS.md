@@ -6,7 +6,27 @@ Per-platform notes for the ternip SystemVerilog ternary matmul inference acceler
 |---|---|
 | `ternip_core` | Single-issue accelerator with a vector register file and a 16-bit tile matmul (TMATMUL) datapath. |
 
-FakeRAM macros live at `designs/asap7/ternip/sram/{lef,lib}/`.
+FakeRAM macros live at `designs/<platform>/ternip/sram/{lef,lib}/`; the shared
+memory wrapper is `designs/src/ternip/ternip_pipelined_mem_fakeram.v`.
+
+## SRAM macro rename to platform-neutral `fakeram_*` (2026-10)
+
+Renamed `fakeram7_512x16` → `fakeram_512x16` on all three platforms (same
+suite-wide cleanup as snitch_cluster, PR #248): the `7` was asap7 naming carried
+onto nangate45/sky130hd. In the same pass:
+
+- The shared wrapper moved from `designs/asap7/ternip/ternip_pipelined_mem_fakeram7.v`
+  to `designs/src/ternip/ternip_pipelined_mem_fakeram.v` (it was always
+  platform-neutral; nangate45/sky130hd referenced it cross-platform).
+- **asap7 snap-grid key fix**: the cfg used the buggy snake_case
+  `snap_width_nm`/`snap_height_nm` keys (silently ignored → 1 nm grid); now
+  camelCase, macro lands exactly on the 0.190/1.400 µm site grid
+  (34.560×43.200 → 34.580×43.400, +0.06/+0.5 %).
+- nangate45/sky130hd regenerated at identical sizes; internal PG-strap
+  offsets shifted ~1.1 µm because the committed LEFs predated the current
+  bsg_fakeram pin (`2db2c32`) — pins and size unchanged.
+
+All three platforms' cached results invalidate and rebuild.
 
 ## FakeRAM regeneration (2026-05-13)
 

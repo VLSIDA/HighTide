@@ -101,8 +101,8 @@ end
 // Banked FakeRAM SRAM macros — replace the behavioral reg array.
 // The FakeRAMs have a synchronous registered output, which replaces read_data_q2.
 //
-//   (16, 4096) → 8 × fakeram7_512x16  (depth-banked, 8 Kb per bank)
-//   (16, 1024) → 2 × fakeram7_512x16  (depth-banked, 8 Kb per bank)
+//   (16, 4096) → 8 × fakeram_512x16  (depth-banked, 8 Kb per bank)
+//   (16, 1024) → 2 × fakeram_512x16  (depth-banked, 8 Kb per bank)
 //   (1024, 16) → flip-flop register file (16 entries is too small for a macro)
 //
 // Depth banking: addr[high] selects which bank's ce_in fires; the bank's
@@ -131,7 +131,7 @@ generate
 
         for (genvar b = 0; b < NUM_BANKS; b++) begin : gen_bank
             wire bank_ce = fakeram_ce && (bank_sel == BANK_SEL_BITS'(b));
-            fakeram7_512x16 sram (
+            fakeram_512x16 sram (
                 .rw0_clk(clk_i),
                 .rw0_ce_in(bank_ce),
                 .rw0_we_in(fakeram_we),
@@ -155,7 +155,7 @@ generate
 
         for (genvar b = 0; b < NUM_BANKS; b++) begin : gen_bank
             wire bank_ce = fakeram_ce && (bank_sel == BANK_SEL_BITS'(b));
-            fakeram7_512x16 sram (
+            fakeram_512x16 sram (
                 .rw0_clk(clk_i),
                 .rw0_ce_in(bank_ce),
                 .rw0_we_in(fakeram_we),
