@@ -57,18 +57,10 @@ rm -rf "$$OUTDIR"
     tools = [":snitch_cluster_gen"],
 )
 
-# SRAM macro LEF/LIB (fakeram7_*; behavioural tc_sram.sv override committed).
-filegroup(
-    name = "sram_lefs",
-    srcs = glob(["dev/generated/sram/*/*.lef"]),
-    visibility = ["//visibility:public"],
-)
-
-filegroup(
-    name = "sram_libs",
-    srcs = glob(["dev/generated/sram/*/*.lib"]),
-    visibility = ["//visibility:public"],
-)
+# SRAM macros (fakeram_*): per-platform LEF/LIB are committed under
+# designs/<platform>/snitch_cluster/sram/{lef,lib}/ (regenerate via
+# tools/regenerate_sram.sh from dev/generated/fakeram_<platform>.cfg);
+# the behavioural tc_sram.sv override is committed here.
 
 # Full curated source list: upstream RTL (pinned archives) + clustergen output
 # + committed bootrom / tc_sram overrides.
