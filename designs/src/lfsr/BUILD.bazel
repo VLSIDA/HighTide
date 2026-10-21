@@ -6,3 +6,28 @@ alias(
     actual = "@lfsr_src//:rtl",
     visibility = ["//visibility:public"],
 )
+
+# Upstream verification testbenches (fetched with the RTL). See external.BUILD.
+alias(
+    name = "sim_sources",
+    actual = "@lfsr_src//:sim_sources",
+    visibility = ["//visibility:public"],
+)
+
+# (lfsr's other upstream TBs are myhdl-coupled and out of scope — verification
+# is the cocotb segment only; see external.BUILD.bazel.)
+
+# One-line verification: `bazel run //designs/src/lfsr:lfsr_cocotb` runs the
+# upstream lfsr_prbs_gen cocotb testbench (icarus, the backend upstream's
+# Makefile documents; override with `... -- --sim=<backend>`). Testbench +
+# DUT come from @lfsr_src.
+load("//tools/sim:cocotb.bzl", "cocotb_test")
+
+cocotb_test(
+    name = "lfsr_cocotb",
+    hdl_toplevel = "lfsr_prbs_gen",
+    test_module = "test_lfsr_prbs_gen",
+    verilog_sources = ":rtl",
+    test_module_sources = ":sim_sources",
+    simulator = "icarus",
+)

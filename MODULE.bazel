@@ -540,6 +540,16 @@ pip.parse(
 )
 use_repo(pip, "pip_nngen")
 
+# Cocotb (verification-testbench runner) deps for tools/sim — the simulator-
+# agnostic testbench harness. Separate hub so its version set is isolated from
+# the LiteX/floogen/clustergen/nngen generator hubs.
+pip.parse(
+    hub_name = "pip_cocotb",
+    python_version = "3.13",
+    requirements_lock = "//tools/sim:requirements_lock.txt",
+)
+use_repo(pip, "pip_cocotb")
+
 # --- Scala/Chisel toolchain (for the Chisel-generated designs sha3/gemmini) ---
 # Runs the Chisel emitters under Bazel (scala_binary) instead of sbt-from-curl.
 # Pinned to Chisel 3.6.1 / Scala 2.13.12 to reproduce the exact committed RTL
