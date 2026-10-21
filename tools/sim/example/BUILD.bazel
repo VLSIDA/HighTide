@@ -1,0 +1,8 @@
+# tools/sim/example — the harness self-test fixtures: a cocotb suite
+# (test_counter.py + dut.v, Pattern A) and a plain self-checking TB
+# (tb_counter.v, Pattern B) over the same trivial counter DUT.
+exports_files([
+    "dut.v",
+    "tb_counter.v",
+    "test_counter.py",
+])

@@ -4,6 +4,14 @@ Per-platform notes on tuning, workarounds, and platform-specific quirks for `lfs
 
 This is a small std-cell-only design (~200 cells, no macros) used as a smoke test for the flow on every platform.
 
+## Verification surface (cocotb-only)
+
+Verification scope is the upstream `tb/lfsr_prbs_gen/test_lfsr_prbs_gen.py` cocotb test only (the `lfsr_cocotb` target in `designs/src/lfsr/BUILD.bazel`): `bazel run //designs/src/lfsr:lfsr_cocotb`.
+
+- **2026-10-21**: `simulator = "icarus"` with no `build_args` — mirrors upstream's Makefile icarus branch exactly (the icarus branch needs no warning suppressions). Before this the pin shipped the runner's default verilator plus `-Wno-SELRANGE,-Wno-WIDTH,-Wno-COMBDLY` (upstream's verilator-branch flags, `-Wno-COMBDLY` being a local addition). Those suppressions are now only relevant as a `-- --sim=verilator` override (pass `--build-args=...` alongside it).
+- **Backend-override syntax fixed (2026-10-21)**: the previously documented form `bazel run ... -- <simulator>` was a latent harness bug — an appended bare token is swallowed by an earlier `nargs="+"` option (`--pythonpath`) and the run silently proceeds with the default backend. Correct form everywhere is `bazel run ... -- --sim=<backend>`; the runner now errors on a swallowed backend token rather than silently compiling with the wrong one. Docs updated (`tools/sim/cocotb.bzl`, verify-design skill).
+- **Not verified**: upstream's `tb/test_*.v` plain-Verilog harnesses are myhdl-coupled (`$from_myhdl`/`$to_myhdl` PLI stubs; verilator/iverilog reject them); only the cocotb segment is wired.
+
 ## Hermetic RTL sourcing (2026-07, gallery-style)
 
 The three RTL files are no longer a git submodule + checked-in vendored copy. They are fetched by Bazel from a pinned `http_archive` (`@lfsr_src`, `alexforencich/verilog-lfsr` in the root `MODULE.bazel`), exposed as a `filegroup` via `external.BUILD.bazel`. `designs/src/lfsr/BUILD.bazel` is a thin `alias(name = "rtl", actual = "@lfsr_src//:rtl")`, so the consumer label `//designs/src/lfsr:rtl` is unchanged. No `dev/repo` submodule, no `dev/setup.sh`, no `//:update_rtl` select. Upstream RTL is byte-identical to the previously-vendored files.

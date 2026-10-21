@@ -1,0 +1,45 @@
+# tools/sim — simulator-agnostic verification-testbench harness (see the
+# verify-design skill). The runner drives cocotb.runner, which selects a
+# simulator backend (verilator/icarus/vcs/questa/...) at run time, so the
+# harness is backend-agnostic.
+#
+# The cocotb_runner py_binary pulls cocotb from the pip_cocotb hub. Because
+# cocotb.runner shells out to the host simulator + compiler at run time, run
+# it with `bazel run` (host execution env), not a sandboxed `bazel test`, and
+# make sure the backend (e.g. verilator) is on PATH. A design's cocotb_test
+# target rewraps this runner (see tools/sim/cocotb.bzl) so a design can be run
+# with `bazel run //designs/src/<d>:<...>cocotb`.
+load("@rules_python//python:defs.bzl", "py_binary")
+
+# Export the runner entry point so the design-agnostic cocotb_test macro can
+# reuse it as a py_binary `main` from any design package.
+exports_files(["cocotb_runner.py"])
+
+py_binary(
+    name = "cocotb_runner",
+    srcs = ["cocotb_runner.py"],
+    main = "cocotb_runner.py",
+    deps = [
+        "@pip_cocotb//find_libpython",
+        "@pip_cocotb//cocotb",
+    ],
+    tags = ["manual"],  # needs a host simulator backend at run time
+    visibility = ["//visibility:public"],
+)
+
+exports_files([
+    "plain_tb_runner.py",  # shared runner for plain_tb_test (tools/sim/plain_tb.bzl)
+])
+
+# Pattern-B demonstrator (uniform command, no cocotb): plain self-checking TB
+# for tools/sim/example/dut.v. `bazel run //tools/sim:plain_counter_tb`.
+load("//tools/sim:plain_tb.bzl", "plain_tb_test")
+
+plain_tb_test(
+    name = "plain_counter_tb",
+    toplevel = "tb_counter",
+    sources = [
+        "//tools/sim/example:dut.v",
+        "//tools/sim/example:tb_counter.v",
+    ],
+)
