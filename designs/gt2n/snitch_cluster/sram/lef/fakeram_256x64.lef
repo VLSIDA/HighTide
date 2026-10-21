@@ -1,7 +1,7 @@
 VERSION 5.7 ;
 BUSBITCHARS "[]" ;
-MACRO fakeram7_256x64
-  FOREIGN fakeram7_256x64 0 0 ;
+MACRO fakeram_256x64
+  FOREIGN fakeram_256x64 0 0 ;
   SYMMETRY X Y R90 ;
   SIZE 58.716 BY 36.720 ;
   CLASS BLOCK ;
@@ -1471,6 +1471,6 @@ MACRO fakeram7_256x64
     LAYER M4 ;
     RECT 0 0 58.716 36.720 ;
   END
-END fakeram7_256x64
+END fakeram_256x64
 
 END LIBRARY
