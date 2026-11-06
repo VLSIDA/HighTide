@@ -82,9 +82,18 @@ archive_override(
 
 # OpenROAD pins sv-lang 10.0.bcr.2, which is not yet published in BCR.
 # Force the latest published version (fork registry, via .bazelrc).
+# 2026-11-06: GitHub regenerated the slang f04e8156 archive tarball
+# (.git_archival.txt describe-name gained one hash character), changing
+# its sha256 and breaking every fresh fetch against the fork registry's
+# pinned integrity (same class as the slang-elab incident in CLAUDE.md).
+# //registry mirrors the fork registry's sv-lang module verbatim (overlay
+# files verified against its recorded integrities; old vs new tarball
+# extract byte-identical except .git_archival.txt) with only the source
+# integrity updated to the regenerated tarball's hash.
 single_version_override(
     module_name = "sv-lang",
     version = "10.0.1-20260316-f04e8156",
+    registry = "file://%workspace%/registry",
 )
 
 # The fork sv-lang pulls boost.unordered@1.87.0 (old compat_level 108700)
