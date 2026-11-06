@@ -56,7 +56,7 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 ## sky130hd
 
 **Status**: finishing
-**Last updated**: 2026-06-26 (commit `bbc7fd0`)
+**Last updated**: 2026-06-26 (commit `68afbcb7`)
 
 ### Configuration
 - `TNS_END_PERCENT = 100`
@@ -66,7 +66,7 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 ### Decisions
 - **2026-04-29 `ec7be591`**: gave the same treatment as the working platforms (io.tcl + 20 ns clock) but synthesis still doesn't reach `_final` on sky130hd.  Stops at `1_synth` per `tools/summary.sh` "Incomplete builds" output.
 - **2026-06-04 toolchain upgrade (bazel-orfs 553c1c3 / OpenROAD 299f3015 / yosys 0.64)**: big step forward — the old-tools synth stall is gone and the flow runs all the way to `6_final.odb`. **But the final report fails PSM-0069**: `Check connectivity failed on VSS` — many TAP/FILLER/stdcell `VGND` pins are left unconnected by the default sky130hd PDN under the new tools (PSM-0039 warnings precede it). So it produces a routed DB but not a clean signoff. **Flagged** — needs a PDN fix (followpin/strap coverage of VSS, likely a `pdn.tcl`) to close PSM; out of scope for the flow-knob upgrade. asap7 + nangate45 floonoc pass clean.
-- **2026-06-26 `bbc7fd0`**: PSM-0069 root cause found and fixed. The 1598 bottom-edge IO pins on met2 at `edge_margin=5.0 µm` had their spacing-expanded obstruction (obs_yMax=5381 nm) overlapping the row-0 VSS via area (y_min=5200 nm); `pdngen` silently dropped all row-0 met1×met4 via candidates with no PDN-0110 warning. Fix: reduced `edge_margin` to **4.37 µm** (nearest valid met2 y-track below the 4.82 µm threshold); obs_yMax drops to 4751 nm, clearing the via area. `_final` passes with `[INFO PSM-0040] All shapes on net VSS are connected.` See CLAUDE.md bugs table for the threshold formula.
+- **2026-06-26 `68afbcb7`** (committed 2026-07-03; the `bbc7fd0` SHA previously cited here was a stale pre-rebase SHA): PSM-0069 root cause found and fixed. The 1598 bottom-edge IO pins on met2 at `edge_margin=5.0 µm` had their spacing-expanded obstruction (obs_yMax=5381 nm) overlapping the row-0 VSS via area (y_min=5200 nm); `pdngen` silently dropped all row-0 met1×met4 via candidates with no PDN-0110 warning. Fix: reduced `edge_margin` to **4.37 µm** (nearest valid met2 y-track below the 4.82 µm threshold); obs_yMax drops to 4751 nm, clearing the via area. `_final` passes with `[INFO PSM-0040] All shapes on net VSS are connected.` See CLAUDE.md bugs table for the threshold formula.
 
 ### Known issues / open questions
 - None.
