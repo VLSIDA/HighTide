@@ -77,6 +77,18 @@ def hightide_design(name, platform, verilog_files, top = None, arguments = {}, s
     merged_arguments = dict(arguments)
     merged_arguments.setdefault("GDS_ALLOW_EMPTY", "fakeram.*")
 
+    # HighTide times asap7 at the typical (TT) corner, unlike ORFS's
+    # BC (FF) default: fast-corner Fmax numbers are optimistic, and TC is
+    # the corner consistent with the suite's single-corner FakeRAM
+    # liberty models (nom_process 1, 25C) - timing SS stdcells against
+    # typical macro models would skew every macro-relative path on the
+    # macro-heavy designs.  Per-design override via arguments["CORNER"]
+    # (WC for a sign-off-shaped bound).  Eventual goal: multi-corner STA
+    # via ORFS's CORNERS support, with corner-split FakeRAM models.
+    # (nangate45 / sky130hd / gt2n ship a single TT corner - no choice.)
+    if platform == "asap7":
+        merged_arguments.setdefault("CORNER", "TC")
+
     flow_kwargs = dict(
         name = name,
         verilog_files = verilog_files,
