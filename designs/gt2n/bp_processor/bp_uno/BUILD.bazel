@@ -8,7 +8,7 @@ _ARGS.update({
     # Auto-sized via CORE_UTILIZATION rather than a fixed DIE_AREA/CORE_AREA.
     "CORE_UTILIZATION": "35",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
-    "MACRO_PLACE_HALO": "8 8",
+    "RTLMP_MIN_CHANNEL_SIZE": "16 16",  # was MACRO_PLACE_HALO 8 8 (halo x,y ~ channel 2x,2y)
     "PLACE_DENSITY": "0.42",
     "MAX_ROUTING_LAYER": "M11",
     "MIN_CLK_ROUTING_LAYER": "M4",

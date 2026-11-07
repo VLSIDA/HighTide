@@ -1,0 +1,1 @@
+../bazel-orfs/patches/0001-rules_verilator-drop-latomic-under-zero-sysroot-llvm.patch

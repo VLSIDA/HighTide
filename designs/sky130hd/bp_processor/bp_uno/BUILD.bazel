@@ -22,7 +22,6 @@ _ARGS.update({
     "DIE_AREA": "0 0 8000 8000",
     "CORE_AREA": "20 20 7980 7980",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
-    "MACRO_BLOCKAGE_HALO": "0.5",
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })
 

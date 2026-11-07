@@ -27,7 +27,7 @@ hightide_design(
         "SYNTH_HIERARCHICAL": "1",
         "CORE_UTILIZATION": "20",
         "PLACE_DENSITY": "0.15",
-        "MACRO_PLACE_HALO": "30 30",
+        "RTLMP_MIN_CHANNEL_SIZE": "60 60",  # was MACRO_PLACE_HALO 30 30 (halo x,y ~ channel 2x,2y)
         "ROUTING_LAYER_ADJUSTMENT": "0.25",
         "TNS_END_PERCENT": "100",
     },

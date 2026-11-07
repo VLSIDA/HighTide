@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @litedram_src (enjoy-digital/litedram).  Imported as
 # top-level `litedram`; carries the standalone-core generator litedram/gen.py.
 py_library(

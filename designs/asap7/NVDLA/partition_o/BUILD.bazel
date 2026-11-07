@@ -22,7 +22,7 @@ hightide_design(
         # 40 restores routability. Flow knob, +die area only.
         "CORE_UTILIZATION": "40",
         "PLACE_DENSITY_LB_ADDON": "0.15",
-        "MACRO_PLACE_HALO": "7 7",
+        "RTLMP_MIN_CHANNEL_SIZE": "14 14",  # was MACRO_PLACE_HALO 7 7 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
     },
 )

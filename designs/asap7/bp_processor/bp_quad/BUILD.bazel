@@ -12,8 +12,7 @@ _ARGS.update({
     "DIE_AREA": "0 0 4000 4000",
     "CORE_AREA": "10 10 3990 3990",
     "PLACE_PINS_ARGS": "-min_distance 30 -min_distance_in_tracks",
-    "MACRO_PLACE_HALO": "6 6",
-    "MACRO_BLOCKAGE_HALO": "0.5",
+    "RTLMP_MIN_CHANNEL_SIZE": "12 12",  # was MACRO_PLACE_HALO 6 6 (halo x,y ~ channel 2x,2y)
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # New-resizer (2026-07 tools, OpenROAD b65c274c) repair_timing does not
     # converge on bp_quad's worst reg2reg path — a structural memory path with

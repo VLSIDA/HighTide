@@ -7,8 +7,7 @@ _ARGS.update({
     "DIE_AREA": "0 0 900 900",
     "CORE_AREA": "10 10 890 890",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
-    "MACRO_PLACE_HALO": "6 6",
-    "MACRO_BLOCKAGE_HALO": "0.5",
+    "RTLMP_MIN_CHANNEL_SIZE": "12 12",  # was MACRO_PLACE_HALO 6 6 (halo x,y ~ channel 2x,2y)
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # Post-GRT repair_timing hangs silently for 2h+ on k8s under the
     # new bsg_fakeram macros — same non-convergence pattern as

@@ -1,12 +1,2 @@
-load("//:merge_share.bzl", "merge_yosys_share")
-
-# Merge BCR yosys share tree with the yosys-slang plugin built from
-# source.  Wired into orfs.default(yosys_share=...) in MODULE.bazel
-# so designs using SYNTH_HDL_FRONTEND=slang (bp_processor, vortex,
-# floonoc, snitch_cluster) pick up share/yosys/plugins/slang.so.
-merge_yosys_share(
-    name = "yosys_share_with_slang",
-    plugins = ["@yosys-slang//:slang.so"],
-    share = "@yosys//:yosys_share",
-    visibility = ["//visibility:public"],
-)
+# Root package: HighTide currently defines no root targets; the slang
+# yosys plugin comes from @sv-elab via orfs.default(yosys_plugins=...).

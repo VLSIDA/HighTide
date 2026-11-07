@@ -1,10 +1,11 @@
---- a/flow/scripts/final_report.tcl
-+++ b/flow/scripts/final_report.tcl
-@@ -56,4 +56,6 @@
- } else {
-   puts "OpenRCX is not enabled for this platform."
+--- a/flow/scripts/final_outputs.tcl
++++ b/flow/scripts/final_outputs.tcl
+@@ -61,6 +61,8 @@
    puts "Falling back to global route-based estimates."
    log_cmd estimate_parasitics -global_routing
+   set final_parasitics global_routing
 +  # No RCX rules: write an empty SPEF so declared build outputs are satisfied.
 +  close [open $::env(RESULTS_DIR)/6_final.spef w]
  }
+ write_endpoint_slack 6_final $final_parasitics
+ 
