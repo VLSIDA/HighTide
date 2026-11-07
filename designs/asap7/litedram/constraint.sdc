@@ -1,4 +1,4 @@
-current_design litedram_core
+current_design litedram_asic
 
 set clk_name    clk
 set clk_port    [get_ports clk]
