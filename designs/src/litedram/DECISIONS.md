@@ -108,3 +108,25 @@ Cell breakdown: 4393 sequential, 6287 multi_input_combinational, 275 inverter, 8
 - The controller has a single clock domain (`clk` → `user_clk` is a buffered pass-through). The SDC declares `user_clk` as a generated clock with `-divide_by 1 -source clk` so the launch/capture edges line up; without that, OpenROAD treats `user_clk` as a separate primary clock and the AXI / Wishbone / native interfaces look async.
 - The 16-bit SDR data bus + 13-bit address + bank + control signals total 75 ports / 534 port bits. That's a lot of I/O for a ~25k-cell design — placement at the higher utilization values is dominated by IO-pin placement and the surrounding repair_design buffering.
 - `repair_timing` plateaus on `user_*` output paths because the launching FF is buried deep in the controller (multi-stage AXI ID FIFO) and the path runs cleanly to a top-level output — no hierarchy boundary for the resizer to insert into. Loosening `clk_io_pct` from 0.2 to a smaller value would help, but only marginally. The cleanest fix is a slower clock; the next-cleanest is `SKIP_INCREMENTAL_REPAIR`.
+
+## 2026-11 toolchain upgrade: BLOCKED (needs an RTL-boundary decision)
+
+yosys 0.68 / ORFS 3f8ab4eb hard-fails litedram synthesis on every platform:
+`check -assert` finds the 16 `$_TBUF_` tristates behind the `inout
+sdram_dq` bus unmapped (ASIC libs carry no tristate cells). The old pin
+"passed" by accident: SYNTH_HIERARCHICAL kept each TRELLIS_IO as a module
+shell, and the unmapped TBUFs shipped inside them. The new synth flow
+surfaces them and correctly refuses. SYNTH_HDL_FRONTEND=slang does not
+help: slang legalizes internal tristates (`tribuf -logic`) but these
+drive a top-level inout port, which cannot be resolved to logic.
+
+No flow knob fixes this. Candidate fixes (both HighTide-authored RTL,
+needs maintainer sign-off):
+  a) ASIC top wrapper: new top `litedram_asic` splitting `sdram_dq` into
+     `sdram_dq_i` / `sdram_dq_o` / `sdram_dq_oe` ports, keeping the
+     tristate net internal where `tribuf -logic` legally converts it to
+     mux logic. Preserves the full write datapath; standard pad-ring
+     boundary treatment; changes the benchmark's port interface.
+  b) Rewrite the TRELLIS_IO stub input-only (drop the B driver) — loses
+     the write-data output path from the netlist (logic prunes); not
+     recommended.
