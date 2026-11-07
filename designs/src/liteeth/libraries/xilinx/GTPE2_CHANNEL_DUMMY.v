@@ -750,7 +750,10 @@ module GTPE2_CHANNEL_DUMMY #(
       rxosintdone_reg <= RXOSINTEN;
       rxphaligndone_reg <= RXPHALIGNEN;
       
-      if (RXCOMMADETEN && (rxdata_reg[7:0] == ALIGN_COMMA_VALUE[7:0])) begin
+      // ALIGN_COMMA_VALUE does not exist in GTPE2 (yosys's permissive frontend
+      // ignored the undeclared identifier; slang rejects it). The comma the
+      // dummy detects is the positive-disparity K28.5, ALIGN_PCOMMA_VALUE.
+      if (RXCOMMADETEN && (rxdata_reg[7:0] == ALIGN_PCOMMA_VALUE[7:0])) begin
         rxcommadet_reg <= 1'b1;
         rxchariscomma_reg[0] <= 1'b1;
       end else begin
