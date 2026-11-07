@@ -164,3 +164,7 @@ as a separate wrapper file (a passthrough wrapper would duplicate the
 Interface change note: the benchmark's port list changes (3 unidirectional
 16-bit buses replace one bidirectional one; +32 port bits). Any external
 harness driving `sdram_dq` must adapt.
+**Validation (2026-11-06, all three platforms PASS as `litedram_asic`):**
+- **asap7** (TC corner now): WS **+46 ps** at the pushed 1047 ps clock (period_min 1001 ps), TNS 0, 24 754 logic cells, zero DRC/slew/cap violations. Closing the old BC-corner push target with margin on the *slower* TT libs — the flat-synth netlist (post-SYNTH_HIERARCHICAL) is at least as good as the old hierarchical one.
+- **nangate45**: WS +0.14 ns at 1.98 ns (period_min 1.84 ns), 17 843 cells, zero violations.
+- **sky130hd**: WS +2.08 ns at 9.59 ns (period_min 7.51 ns), 11 373 cells, zero violations. (period_min says ~7.5 ns is reachable — a frequency-push follow-up candidate, see the io-feedthrough/period_min protocol in CLAUDE.md.)
