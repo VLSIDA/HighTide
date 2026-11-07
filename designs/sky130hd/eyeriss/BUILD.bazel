@@ -25,7 +25,18 @@ hightide_design(
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
     },
+    # eyeriss stays on the yosys Verilog frontend: the upstream FPGA-class
+    # Verilog-2001 has a trailing comma in a port list and ~10 uses of
+    # never-declared identifiers (layer*_flag / psum_acc_times, implicit
+    # 1-bit nets under yosys) that slang correctly rejects. Patching the
+    # source to satisfy slang would mean inventing semantics for broken
+    # upstream logic and changing the benchmark netlist vs baseline.
+    yosys_frontend_reason = "upstream Verilog-2001 relies on implicit nets " +
+                            "(undeclared layer*_flag/psum_acc_times) and a " +
+                            "trailing port-list comma that slang rejects; " +
+                            "yosys preserves baseline netlist semantics",
     arguments = {
+        "SYNTH_HDL_FRONTEND": "",
         "SYNTH_HIERARCHICAL": "1",
         # Util 20 / halo 40 left the floorplan at 17.4 mm² and 22 %
         # filled — the TOP_controller → pSumSRAM2 critical path (single-

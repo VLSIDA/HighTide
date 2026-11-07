@@ -25,6 +25,29 @@ Macro-heavy (GLB iact/Psum SRAM spads). Uses RTLMP for macro placement.
   each cluster's macro sub-region so annealing converges (flow knob; costs die area). See the
   asap7 section for the result.
 
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+- **Frontend fallback (all 3 platforms)**: the new bazel-orfs defaults `SYNTH_HDL_FRONTEND`
+  to slang, and slang correctly rejects the upstream FPGA-class Verilog-2001: a trailing
+  comma after the last port of `SCNN_shape_info_compiler` (line 16751) and ~10 uses of
+  never-declared identifiers (`layer0..4_flag`, `psum_acc_times` — only
+  `psum_acc_times_bound` exists), which old-yosys elaborated as implicit 1-bit nets.
+  Patching the RTL would mean inventing semantics for broken upstream logic and changing
+  the benchmark netlist vs baseline, so the BUILDs set `SYNTH_HDL_FRONTEND = ""` (ORFS
+  yosys read_verilog branch) with a `yosys_frontend_reason`. **Paper bugs-table candidate**
+  (upstream RTL defects exposed by a stricter frontend).
+- **asap7**: finishes clean on the new TC corner (BC→TC policy). WS −246 ps @ 2500 ps
+  (advisory per corner policy), period_min 2746 ps → re-derive clock ≈ 3.0 ns in the
+  later asap7 constraints pass. 308 598 logic cells (+1.0 % vs 305 514), 193 macros. Pass
+  (timing advisory).
+- **nangate45**: WS +0.32 ns @ 4.5 ns, period_min 4.18 ns (≈ baseline floor). 297 381
+  logic cells (−3.3 %). Pass.
+- **sky130hd**: WS −1.68 ns @ 25 ns (−6.7 %), TNS −19.7 ns, period_min 25.0 → 26.68 ns.
+  220 030 logic cells (−1.8 %). The baseline was swept to its floor (+0.15 ns slack), so
+  the new pin's floor shift shows as a marginal setup miss just past the ~5 % gate —
+  **flagged marginal**, accepted without knob-chasing; candidate clock re-derivation
+  ≈ 29 ns (26.68 × 1.10) if the floor holds after the suite-wide validation.
+
 ## 2026-08 FakeRAM regeneration (HighTide#234)
 
 eyeriss was the **only** design whose FakeRAM cfgs lived at
