@@ -170,7 +170,7 @@ verilog_files=$(bazel cquery --output=files \
     "labels(verilog_files, //${pkg}:${name}_synth)" 2>/dev/null | tr '\n' ' ')
 
 # Bazel output base: hermetic designs source RTL from http_archives, whose
-# files live at $output_base/external/+_repo_rules+<repo>/... — NOT under the
+# files live at $output_base/external/+http_archive+<repo>/... — NOT under the
 # repo root (there is no repo-root external/ symlink). This location is always
 # present once the repo is fetched, unlike execroot/external/, which Bazel only
 # materializes per-action and prunes on cache hits. --abs routes external/

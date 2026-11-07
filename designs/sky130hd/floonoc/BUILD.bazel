@@ -12,7 +12,7 @@ hightide_design(
     stage_data = {"synth": ["//designs/src/floonoc:rtl_data"]},
     arguments = {
         "SYNTH_HDL_FRONTEND": "slang",
-        "VERILOG_INCLUDE_DIRS": "external/+_repo_rules+pulp_common_cells_src/include external/+_repo_rules+pulp_apb_src/include external/+_repo_rules+pulp_axi_src/include external/+_repo_rules+pulp_axi_stream_src/include external/+_repo_rules+pulp_obi_src/include external/+_repo_rules+pulp_register_interface_src/include external/+_repo_rules+floonoc_src/hw/include",
+        "VERILOG_INCLUDE_DIRS": "external/+http_archive+pulp_common_cells_src/include external/+http_archive+pulp_apb_src/include external/+http_archive+pulp_axi_src/include external/+http_archive+pulp_axi_stream_src/include external/+http_archive+pulp_obi_src/include external/+http_archive+pulp_register_interface_src/include external/+http_archive+floonoc_src/hw/include",
         "VERILOG_DEFINES": "-D VERILATOR",
         "DIE_AREA": "0 0 1800 1800",
         "CORE_AREA": "5 5 1795 1795",
