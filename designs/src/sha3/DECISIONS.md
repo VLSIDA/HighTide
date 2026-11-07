@@ -44,6 +44,8 @@ Mid-size combinational-heavy core (~20k stdcells, no macros).
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: **setup-positive even at TC** -- WNS +73.28 ps, period_min 855.72 ps (Fmax 1.17 GHz), 17994 logic cells. No change needed.
+
 
 ## nangate45
 
@@ -61,6 +63,8 @@ Mid-size combinational-heavy core (~20k stdcells, no macros).
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: clean, WNS +0.33 ns, period_min 1.76 ns (Fmax 568 MHz), 16932 logic cells.
+
 
 ## sky130hd
 
@@ -93,6 +97,8 @@ Mid-size combinational-heavy core (~20k stdcells, no macros).
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: the new global router tips util 35 into GRT-0116 (42 overflow violations, capacity 15 vs usage 17) -- same routability-trade class as litedram-sky130hd in the 2026-06 upgrade. Relaxed CORE_UTILIZATION 35->30: routes clean, WNS +0.86 ns, period_min 9.14 ns (Fmax 109 MHz), 16870 logic cells.
+
 
 ## gt2n
 
