@@ -26,7 +26,7 @@ hightide_design(
     arguments = {
         "SYNTH_HDL_FRONTEND": "slang",
         "SYNTH_HIERARCHICAL": "0",
-        "VERILOG_INCLUDE_DIRS": "designs/src/ternip external/+_repo_rules+ternip_src/rtl external/+_repo_rules+basejump_stl_src/bsg_misc external/+_repo_rules+basejump_stl_src/bsg_dataflow external/+_repo_rules+basejump_stl_src/bsg_mem",
+        "VERILOG_INCLUDE_DIRS": "designs/src/ternip external/+http_archive+ternip_src/rtl external/+http_archive+basejump_stl_src/bsg_misc external/+http_archive+basejump_stl_src/bsg_dataflow external/+http_archive+basejump_stl_src/bsg_mem",
         "VERILOG_DEFINES": "-DCONFIG_FILENAME=\\\"config/hightide.svh\\\" -DSYNTHESIS",
         "CORE_UTILIZATION": "65",
         "PLACE_DENSITY": "0.70",
