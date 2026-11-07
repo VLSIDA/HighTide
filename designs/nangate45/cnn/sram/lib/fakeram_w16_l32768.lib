@@ -2,7 +2,7 @@ library(fakeram_w16_l32768) {
     technology (cmos);
     delay_model : table_lookup;
     revision : 1.0;
-    date : "2026-05-15 13:21:42Z";
+    date : "2026-11-06 03:13:05Z";
     comment : "SRAM";
     time_unit : "1ns";
     voltage_unit : "1V";
@@ -132,7 +132,7 @@ cell(fakeram_w16_l32768) {
     bus(rw0_rd_out)   {
         bus_type : fakeram_w16_l32768_DATA;
         direction : output;
-        max_capacitance : 0.500;
+        max_capacitance : 0.5;
         memory_read() {
             address : r0_addr_in;
         }
@@ -142,7 +142,7 @@ cell(fakeram_w16_l32768) {
             timing_sense : non_unate;
             cell_rise(fakeram_w16_l32768_mem_out_delay_template) {
                 index_1 ("0.009, 0.227");
-                index_2 ("0.005, 0.500");
+                index_2 ("0.005, 0.5");
                 values ( \
                   "1.624, 1.624", \
                   "1.624, 1.624" \
@@ -150,18 +150,18 @@ cell(fakeram_w16_l32768) {
             }
             cell_fall(fakeram_w16_l32768_mem_out_delay_template) {
                 index_1 ("0.009, 0.227");
-                index_2 ("0.005, 0.500");
+                index_2 ("0.005, 0.5");
                 values ( \
                   "1.624, 1.624", \
                   "1.624, 1.624" \
                 )
             }
             rise_transition(fakeram_w16_l32768_mem_out_slew_template) {
-                index_1 ("0.005, 0.500");
+                index_1 ("0.005, 0.5");
                 values ("0.009, 0.227")
             }
             fall_transition(fakeram_w16_l32768_mem_out_slew_template) {
-                index_1 ("0.005, 0.500");
+                index_1 ("0.005, 0.5");
                 values ("0.009, 0.227")
             }
         }
@@ -169,7 +169,7 @@ cell(fakeram_w16_l32768) {
     bus(rw1_rd_out)   {
         bus_type : fakeram_w16_l32768_DATA;
         direction : output;
-        max_capacitance : 0.500;
+        max_capacitance : 0.5;
         memory_read() {
             address : r1_addr_in;
         }
@@ -179,7 +179,7 @@ cell(fakeram_w16_l32768) {
             timing_sense : non_unate;
             cell_rise(fakeram_w16_l32768_mem_out_delay_template) {
                 index_1 ("0.009, 0.227");
-                index_2 ("0.005, 0.500");
+                index_2 ("0.005, 0.5");
                 values ( \
                   "1.624, 1.624", \
                   "1.624, 1.624" \
@@ -187,18 +187,18 @@ cell(fakeram_w16_l32768) {
             }
             cell_fall(fakeram_w16_l32768_mem_out_delay_template) {
                 index_1 ("0.009, 0.227");
-                index_2 ("0.005, 0.500");
+                index_2 ("0.005, 0.5");
                 values ( \
                   "1.624, 1.624", \
                   "1.624, 1.624" \
                 )
             }
             rise_transition(fakeram_w16_l32768_mem_out_slew_template) {
-                index_1 ("0.005, 0.500");
+                index_1 ("0.005, 0.5");
                 values ("0.009, 0.227")
             }
             fall_transition(fakeram_w16_l32768_mem_out_slew_template) {
-                index_1 ("0.005, 0.500");
+                index_1 ("0.005, 0.5");
                 values ("0.009, 0.227")
             }
         }
