@@ -314,3 +314,10 @@ absorb anyway — but it does mean the ~11 k count is fully unrepaired.
 `hightide_design()` defaults to `fakeram.*`. Each platform extends that to
 `fakeram.*|pcie_us` so OpenROAD doesn't insist on a GDS body for the PCIe
 hard-IP blackbox.
+
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+- **asap7 PASS** (TC corner now, timing advisory): WS +1097 ps at the 3600 ps clock (io-feedthrough-dominated as always; reg2reg met, TNS 0), 71 916 logic cells (+0.8 % vs 71 328), zero violations. `SKIP_INCREMENTAL_REPAIR` kept (forwarded-clock path remains structural).
+- **nangate45 PASS**: WS +5.87 ns at the relaxed 10 ns probe clock (vs +4.27 ns), **61 140 logic cells (−11.3 % vs 68 910 — a real synth-side improvement from yosys/abc 0.68 + slang; opposite sign to the minimax-n45 +12.3 % growth, so the new synth is a mixed bag per-design)**, zero violations. The `period_min × 1.10` tightening follow-up from 2026-07 still stands.
+- sky130hd remains non-finishing (GRT congestion, pre-existing) — not retried this rung.
+
