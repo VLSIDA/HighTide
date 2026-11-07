@@ -42,6 +42,7 @@ Large macro-heavy ML accelerator with FakeRAM black-boxes for the accumulator an
 ### Known issues / open questions
 - None.
 
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68, asap7 BC→TC corner)**: finishes clean (zero DRC/slew/cap violations), 660 386 logic cells (−2.2 % vs 675 388). Timing shows the corner swap: WS −205 ps on the 1.5 ns clock, period_min 1705 ps — advisory per the TC-corner policy; re-derive the clock to ~1.9 ns (period_min × 1.10) in the constraints pass.
 ## nangate45
 
 **Status**: finishing
@@ -59,6 +60,7 @@ Large macro-heavy ML accelerator with FakeRAM black-boxes for the accumulator an
 ### Known issues / open questions
 - None.
 
+- **2026-11 toolchain upgrade**: passes unchanged — WS +0.10 ns at the pushed 2.94 ns clock (period_min 2.84 ns), 368 041 logic cells (−2.1 %), zero violations.
 ## gt2n
 
 **Status**: finishing
@@ -76,6 +78,8 @@ Large macro-heavy ML accelerator with FakeRAM black-boxes for the accumulator an
 ### Known issues / open questions
 - Hold not fully closed (15 violations, worst -9.83 ps). Further input-delay tuning showed diminishing/non-monotonic returns; not yet resolved.
 
+## sky130hd
+
 **Status**: finishing
 **Last updated**: 2026-05-03 (commit `45b54bd1`)
 
@@ -90,3 +94,4 @@ Large macro-heavy ML accelerator with FakeRAM black-boxes for the accumulator an
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade**: passes unchanged — WS +0.40 ns at the 13 ns clock (period_min 12.6 ns), 319 293 logic cells (−1.3 %), zero violations. (Also restored the `## sky130hd` header lost in an earlier edit — this section had been orphaned inside gt2n.)
