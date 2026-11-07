@@ -35,8 +35,7 @@ hightide_design(
         # R4: with tiny macros, std cells can pack at typical density.
         "PLACE_DENSITY": "0.35",
         # R4: small macros don't need 300um keep-out anymore.
-        "MACRO_PLACE_HALO": "80 80",
-        "MACRO_BLOCKAGE_HALO": "0.5",
+        "RTLMP_MIN_CHANNEL_SIZE": "160 160",  # was MACRO_PLACE_HALO 80 80 (halo x,y ~ channel 2x,2y)
         # FINISHES (2026-05-16): full RTL-to-GDS, 0 GRT overflow on every
         # layer (met2 1.46%), detail route 100% with 0 violations. Three
         # combined fixes resolved what looked like a hard limitation:

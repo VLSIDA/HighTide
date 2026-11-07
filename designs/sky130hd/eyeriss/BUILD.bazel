@@ -37,7 +37,7 @@ hightide_design(
         # ~33 % so that critical signal traverses fewer buffers.
         "CORE_UTILIZATION": "30",
         "PLACE_DENSITY_LB_ADDON": "0.15",
-        "MACRO_PLACE_HALO": "30 30",
+        "RTLMP_MIN_CHANNEL_SIZE": "60 60",  # was MACRO_PLACE_HALO 30 30 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         # Same ODB-1200 pattern as asap7 — drop split_load from the move
         # sequence to keep the rest of repair_timing active.

@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @liteiclink_src (enjoy-digital/liteiclink).  Imported as
 # top-level `liteiclink`; required by liteeth's USP_GTH_1000BASEX PHY.
 py_library(

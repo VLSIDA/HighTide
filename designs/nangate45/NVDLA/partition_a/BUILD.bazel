@@ -17,7 +17,7 @@ hightide_design(
         "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
         "CORE_UTILIZATION": "40",
         "PLACE_DENSITY_LB_ADDON": "0.20",
-        "MACRO_PLACE_HALO": "20 20",
+        "RTLMP_MIN_CHANNEL_SIZE": "40 40",  # was MACRO_PLACE_HALO 20 20 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         # 272x16 + 256x16 are FF arrays (4352 + 4096 bits) — the
         # 4352-bit instance trips the ORFS default 4096 cap.

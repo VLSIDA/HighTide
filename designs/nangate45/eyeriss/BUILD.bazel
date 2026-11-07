@@ -31,7 +31,7 @@ hightide_design(
         # was originally fixed at ≥ 15 µm, 20 was margin).
         "CORE_UTILIZATION": "38",
         "PLACE_DENSITY_LB_ADDON": "0.15",
-        "MACRO_PLACE_HALO": "15 15",
+        "RTLMP_MIN_CHANNEL_SIZE": "30 30",  # was MACRO_PLACE_HALO 15 15 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         # Same ODB-1200 pattern as asap7 — drop split_load from the move
         # sequence to keep the rest of repair_timing active.

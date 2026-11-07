@@ -18,8 +18,7 @@ hightide_design(
         "CORE_UTILIZATION": "45",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M6",
-        "MACRO_PLACE_HALO": "5 5",
-        "MACRO_BLOCKAGE_HALO": "0.5",
+        "RTLMP_MIN_CHANNEL_SIZE": "10 10",  # was MACRO_PLACE_HALO 5 5 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         "HOLD_SLACK_MARGIN": "50",
     },
