@@ -8,7 +8,7 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
     },
     arguments = {
-        "CORE_UTILIZATION": "35",
+        "CORE_UTILIZATION": "30",  # 35 routed on OpenROAD b65c274c; 687848dd GRT overflows (cap 15 vs 17, 42 viols) - relax for routability
         "PLACE_DENSITY": "0.42",
         "TNS_END_PERCENT": "100",
     },
