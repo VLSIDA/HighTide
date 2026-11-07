@@ -24,6 +24,8 @@ The three RTL files are no longer a git submodule + checked-in vendored copy. Th
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: clean to GDS at the new TC corner. period_min 735.56 ps (Fmax 1.36 GHz), 159 logic cells. WNS -35.56 ps against the BC-era SDC -- advisory only; asap7 clock constraints get re-derived at TC after the upgrade settles.
+
 
 ## nangate45
 
@@ -42,6 +44,8 @@ The three RTL files are no longer a git submodule + checked-in vendored copy. Th
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: clean, WNS +0.04 ns, period_min 0.31 ns (Fmax 3.22 GHz), 123 logic cells. No change needed.
+
 
 ## sky130hd
 
@@ -59,6 +63,8 @@ The three RTL files are no longer a git submodule + checked-in vendored copy. Th
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: clean, WNS +0.09 ns, period_min 1.31 ns (Fmax 766 MHz), 124 logic cells. No change needed.
+
 
 ## gt2n
 
