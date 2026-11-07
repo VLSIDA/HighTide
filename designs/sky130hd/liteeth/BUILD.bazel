@@ -34,7 +34,7 @@ hightide_design(
     },
     arguments = {
         "VERILOG_DEFINES": "-D USE_SKY130HD_CELLS",
-        "CORE_UTILIZATION": "52",
+        "CORE_UTILIZATION": "45",  # 52 routed on OpenROAD b65c274c; 687848dd GRT overflows (63 viols) - relax for routability
         "PLACE_DENSITY": "0.57",
         "RTLMP_MIN_CHANNEL_SIZE": "60 60",  # was MACRO_PLACE_HALO 30 30 (halo x,y ~ channel 2x,2y)
         "ROUTING_LAYER_ADJUSTMENT": "0.2",
