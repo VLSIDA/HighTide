@@ -44,7 +44,7 @@ hightide_design(
         # macro sub-region so annealing converges (flow knob; +die area).
         "CORE_UTILIZATION": "30",
         "PLACE_DENSITY_LB_ADDON": "0.20",
-        "MACRO_PLACE_HALO": "5 5",
+        "RTLMP_MIN_CHANNEL_SIZE": "10 10",  # was MACRO_PLACE_HALO 5 5 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         # ODB-1200 in CTS repair_timing — split_load load-list invalidation
         # trips InsertBufferBeforeLoads on the GLB iact SRAMs (OpenROAD #75).

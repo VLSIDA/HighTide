@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @snitch_cluster_src (pulp-platform/snitch_cluster).
 # Exposes the cluster hardware RTL (hw/**, selected by srcs.bzl — including the
 # pre-generated snitch_cluster_peripheral_reg[_pkg].sv that ship in-tree) and

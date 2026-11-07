@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @migen_src (m-labs/migen).  Pure-Python HDL library;
 # imported as top-level `migen`.
 py_library(

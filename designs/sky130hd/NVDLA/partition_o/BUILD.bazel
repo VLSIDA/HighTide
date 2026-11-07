@@ -16,7 +16,7 @@ hightide_design(
         "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
         "CORE_UTILIZATION": "20",
         "PLACE_DENSITY_LB_ADDON": "0.15",
-        "MACRO_PLACE_HALO": "60 60",
+        "RTLMP_MIN_CHANNEL_SIZE": "120 120",  # was MACRO_PLACE_HALO 60 60 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
     },
 )

@@ -22,7 +22,6 @@ hightide_design(
         "MAX_ROUTING_LAYER": "M11",
         # Macro heavy designs appear to benefit from raising the minimum clock routing layer to M6 on gt2n
         "MIN_CLK_ROUTING_LAYER": "M6",
-        "MACRO_BLOCKAGE_HALO": "0.5",
         "TNS_END_PERCENT": "100",
     },
 )

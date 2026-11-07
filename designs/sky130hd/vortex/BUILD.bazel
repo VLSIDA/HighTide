@@ -42,7 +42,7 @@ hightide_design(
         "VERILOG_INCLUDE_DIRS": _INCLUDE_DIRS,
         "CORE_UTILIZATION": "30",
         "PLACE_DENSITY_LB_ADDON": "0.30",
-        "MACRO_PLACE_HALO": "80 80",
+        "RTLMP_MIN_CHANNEL_SIZE": "160 160",  # was MACRO_PLACE_HALO 80 80 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
     },
     stage_data = {"synth": ["//designs/src/vortex:rtl_data"]},

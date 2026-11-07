@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @litepci_src (enjoy-digital/litepcie).  Imported as
 # top-level `litepcie`; carries the standalone-core generator litepcie/gen.py.
 # Reuses the shared LiteX toolchain (@litex_src, pip_litex hub).

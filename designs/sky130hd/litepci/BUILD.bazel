@@ -50,7 +50,7 @@ hightide_design(
         # measurement.
         "CORE_UTILIZATION": "24",  # 30->24 on upgrade: new GRT loops congestion iters at 30
         "PLACE_DENSITY": "0.40",
-        "MACRO_PLACE_HALO": "100 100",
+        "RTLMP_MIN_CHANNEL_SIZE": "200 200",  # was MACRO_PLACE_HALO 100 100 (halo x,y ~ channel 2x,2y)
         "GDS_ALLOW_EMPTY": "fakeram.*|pcie_us",
         "SETUP_MOVE_SEQUENCE": "unbuffer,sizeup,swap,buffer,clone",
         # bazel-orfs 553c1c3 / OpenROAD 299f3015: post-GRT repair_timing does

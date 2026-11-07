@@ -47,7 +47,7 @@ hightide_design(
         # real-timing measurement.
         "CORE_UTILIZATION": "60",
         "PLACE_DENSITY": "0.70",
-        "MACRO_PLACE_HALO": "15 15",
+        "RTLMP_MIN_CHANNEL_SIZE": "30 30",  # was MACRO_PLACE_HALO 15 15 (halo x,y ~ channel 2x,2y)
         "GDS_ALLOW_EMPTY": "fakeram.*|pcie_us",
         # Skip the post-GRT repair_timing block (same as asap7 litepci):
         # ODB-1200 hold-pass split_load crash + new-resizer non-convergence on

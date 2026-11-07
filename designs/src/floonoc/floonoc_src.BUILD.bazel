@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @floonoc_src (pulp-platform/FlooNoC).  Exposes both the
 # hardware RTL (hw/**, selected by designs/src/floonoc/srcs.bzl) and the FlooGen
 # NoC generator (the floogen/ Python package), which runs under Bazel via the
