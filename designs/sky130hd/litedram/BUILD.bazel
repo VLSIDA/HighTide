@@ -3,18 +3,15 @@ load("//:defs.bzl", "hightide_design")
 hightide_design(
     name = "litedram",
     platform = "sky130hd",
-    top = "litedram_core",
+    # litedram_asic (2026-11): sdram_dq split into _i/_o/_oe at the top
+    # boundary — no tristates, so SYNTH_HIERARCHICAL dropped and synth
+    # runs flat. (See asap7/litedram/BUILD.bazel for the long form.)
+    top = "litedram_asic",
     verilog_files = ["//designs/src/litedram:litedram_rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
     },
     arguments = {
-        # GENSDRPHY drives the SDR DQ bus through 16 TRELLIS_IO tristate
-        # buffers tied to a top-level `inout sdram_dq[*]`. Flat synth
-        # trips yosys' multi-driver check; hierarchical synth keeps each
-        # TRELLIS_IO as a module boundary so abc sees only one driver
-        # per pin. (See asap7/litedram/BUILD.bazel for the long form.)
-        "SYNTH_HIERARCHICAL": "1",
         # All 9 internal memories are 16-deep — synthesize as flop
         # arrays. No FakeRAM needed for litedram on sky130hd.
         # Util 68 was the OLD-tools GRT ceiling; the OpenROAD 299f3015

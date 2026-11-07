@@ -25,11 +25,11 @@ This is the first memory-controller design in the suite. One variant only — `S
 
 ## Patches applied to generated `litedram_core.v`
 
-- **`patch/litedram_core.patch`**: change `sdram_dq` port from `input` to `inout`. LiteX's gen.py declares the bidirectional DQ bus as a plain `input` (Lattice-platform-style — the tristate buffer at the IOB drives it), but the generated module also instantiates 16 `TRELLIS_IO` cells that internally drive `B` (= `sdram_dq[i]`) when OE is low. With `input`, flat synthesis trips yosys' `check -assert` multi-driver test on all 16 DQ bits. Setting the port to `inout` is the cleanest fix — yosys' tristate inference takes over, and the synthesized OE-gated drivers no longer conflict with the external driver on the same wire.
+- ~~**`patch/litedram_core.patch`**: change `sdram_dq` port from `input` to `inout`.~~ **Superseded 2026-11** by the `litedram_asic` port split (see the 2026-11 section at the bottom): the patch is deleted and the genrule now seds the generated netlist instead. Original rationale kept for history: LiteX's gen.py declares the bidirectional DQ bus as a plain `input` (Lattice-platform-style — the tristate buffer at the IOB drives it), but the generated module also instantiates 16 `TRELLIS_IO` cells that internally drive `B` (= `sdram_dq[i]`) when OE is low. With `input`, flat synthesis trips yosys' `check -assert` multi-driver test on all 16 DQ bits. Setting the port to `inout` is the cleanest fix — yosys' tristate inference takes over, and the synthesized OE-gated drivers no longer conflict with the external driver on the same wire.
 
 ## Active workarounds (per-platform)
 
-- **`SYNTH_HIERARCHICAL = 1`** — required on every platform. With flat synth, abc inlines each `TRELLIS_IO` and the resulting INV cell (from the tristate optimization) collides with the `inout sdram_dq[*]` declaration. Hierarchical synth keeps each `TRELLIS_IO` as a module boundary so the multi-driver check sees only one driver per pin. Same approach as `liteeth_udp_raw_rgmii` for its `rgmii_mdio` MDIO pin.
+- ~~**`SYNTH_HIERARCHICAL = 1`** — required on every platform.~~ **Removed 2026-11**: the `litedram_asic` port split eliminates every tristate, so the hierarchy shield is no longer needed and synth runs flat (see the 2026-11 section). Original rationale: With flat synth, abc inlines each `TRELLIS_IO` and the resulting INV cell (from the tristate optimization) collides with the `inout sdram_dq[*]` declaration. Hierarchical synth keeps each `TRELLIS_IO` as a module boundary so the multi-driver check sees only one driver per pin. Same approach as `liteeth_udp_raw_rgmii` for its `rgmii_mdio` MDIO pin.
 - ~~**`SKIP_INCREMENTAL_REPAIR = 1`** — asap7.~~ **Removed 2026-06-04** on the bazel-orfs 553c1c3 / OpenROAD 299f3015 upgrade. It guarded against the post-GRT hold-fix tripping ODB-1200 (`InsertBufferBeforeLoads`), now fixed upstream. Post-GRT `repair_timing` runs again; the design closes with ~+14.9 ns setup slack at the relaxed clock and no ODB-1200.
 
 ## Upstream history
@@ -109,7 +109,7 @@ Cell breakdown: 4393 sequential, 6287 multi_input_combinational, 275 inverter, 8
 - The 16-bit SDR data bus + 13-bit address + bank + control signals total 75 ports / 534 port bits. That's a lot of I/O for a ~25k-cell design — placement at the higher utilization values is dominated by IO-pin placement and the surrounding repair_design buffering.
 - `repair_timing` plateaus on `user_*` output paths because the launching FF is buried deep in the controller (multi-stage AXI ID FIFO) and the path runs cleanly to a top-level output — no hierarchy boundary for the resizer to insert into. Loosening `clk_io_pct` from 0.2 to a smaller value would help, but only marginally. The cleanest fix is a slower clock; the next-cleanest is `SKIP_INCREMENTAL_REPAIR`.
 
-## 2026-11 toolchain upgrade: BLOCKED (needs an RTL-boundary decision)
+## 2026-11 toolchain upgrade: RESOLVED — `litedram_asic` port split (option a)
 
 yosys 0.68 / ORFS 3f8ab4eb hard-fails litedram synthesis on every platform:
 `check -assert` finds the 16 `$_TBUF_` tristates behind the `inout
@@ -130,3 +130,37 @@ needs maintainer sign-off):
   b) Rewrite the TRELLIS_IO stub input-only (drop the B driver) — loses
      the write-data output path from the netlist (logic prunes); not
      recommended.
+
+**Resolution (2026-11-06, maintainer-approved option a):** the top is now
+`litedram_asic` — the generated `litedram_core` with `sdram_dq` split into
+the standard pad-ring triple `sdram_dq_i` / `sdram_dq_o` / `sdram_dq_oe`
+(16 bits each). Implemented at the generated-netlist boundary rather than
+as a separate wrapper file (a passthrough wrapper would duplicate the
+~77-port interface and drift when `litedram.yml` changes):
+
+- `gen_litedram_core` genrule seds the generated file: module renamed
+  `litedram_core` → `litedram_asic`, the `sdram_dq` port declaration split
+  into `_i`/`_o`/`_oe`, and each of the 16 `TRELLIS_IO` instances' `.B
+  (sdram_dq[N])` rewired to `.B_i/.B_o/.B_oe` — with hard assertions
+  (module name present, exactly 16 rewired instances, zero unsplit
+  `sdram_dq` references) so a generator-output drift fails the build
+  instead of silently missing a bit.
+- The HighTide-authored `TRELLIS_IO` stub now has split pad ports (`B_i`
+  in, `B_o`/`B_oe` out) and **no tristate**: `B_o = I`, `B_oe = ~T`,
+  `O = T ? B_i : I` (keeps the primitive's drive-readback semantics).
+  Full write datapath preserved; a pad ring / board model reconstructs
+  the bidirectional bus as `dq = oe ? dq_o : 1'bz; dq_i = dq`.
+- The old `input → inout` patch (`litedram_core_sdram_dq_inout.patch`) is
+  deleted, and **`SYNTH_HIERARCHICAL = 1` is dropped on all three
+  platforms** — its only purpose was hiding the unmapped `$_TBUF_` cells
+  inside unexpanded `TRELLIS_IO` shells, so litedram now synthesizes flat
+  like the rest of the suite (expect some QoR shift from flat abc).
+- SDCs: `current_design litedram_asic`; io delays already use
+  `all_inputs`/`all_outputs`, so no per-port constraint edits.
+- Verified by direct hermetic yosys 0.68 + slang elaboration of the
+  transformed netlist: `check -assert` 0 problems, 0 tristates, top
+  elaborates with 77 ports / 566 port bits.
+
+Interface change note: the benchmark's port list changes (3 unidirectional
+16-bit buses replace one bidirectional one; +32 port bits). Any external
+harness driving `sdram_dq` must adapt.
