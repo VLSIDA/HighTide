@@ -78,6 +78,8 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 - **2026-05-11 PPA area sweep**: UTIL 35→50 / DENSITY 0.30→0.55. Die area 41,896 → 29,439 µm² (**−30 %**). UTIL=55 fails MPL-0003 (macros + default halo cannot tile in the smaller core).
 - **2026-06-04 toolchain upgrade (bazel-orfs 553c1c3 / OpenROAD 299f3015 / yosys 0.64)**: the new synth/place produces a ~128 ps slower critical path on the 920 ps clock, so at the prior util 43 the design closed at WNS −29.9 ps (timing miss). Relaxed `CORE_UTILIZATION` 43→38 (a flow knob, no SDC/RTL change): recovers WNS to **+111.7 ps** (≥ the pre-upgrade +98 ps), Fmax 1.22→1.24 GHz, cells +0.4 %, instance area +2.1 %, power −3 %. Cost is die area +13 % (util-driven whitespace only). Kept `SKIP_CTS_REPAIR_TIMING` + `SKIP_INCREMENTAL_REPAIR` (see Active workarounds — repair over-buffers here).
 
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68, asap7 BC→TC corner)**: slang is now the default HDL frontend — three source fixes needed (dead same-name wrapper modules in macros.v deleted, GTPE2 dummy param name, net-initializer strip in the genrule sed; commit be634774). Closes at the pushed 1022 ps clock with WS −0.31 ps (period_min 1022.31 ps — i.e. dead-on the old BC-corner push target while now timing on the *slower* TC libs; asap7 timing advisory this upgrade, constraints to be re-derived). 18 032 logic cells, zero DRC/slew/cap violations.
+
 ## nangate45
 
 **Status**: finishing
@@ -93,6 +95,8 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 - nangate45 closes without the ODB-1200 workaround that asap7 needs — the bug is sensitive to the specific resizer-state interaction triggered by asap7's smaller cells.
 - **2026-05-11 PPA area sweep**: UTIL 45→60 / DENSITY 0.40→0.65. Die area 746,271 → 560,103 µm² (**−25 %**). This was the headline single-variant win on nangate45.
 - **2026-06-04 toolchain upgrade**: removed `SKIP_INCREMENTAL_REPAIR` (RSZ-0074 fixed in OpenROAD 299f3015). QoR essentially unchanged — WNS +5950 ps (relaxed 10 ns clock, unchanged), 17950 logic cells (−2 %), die −0.1 %.
+
+- **2026-11 toolchain upgrade (TC n/a — single corner)**: passes unchanged — WS +0.12 ns at the pushed 1.66 ns clock (period_min 1.54 ns), 18 110 logic cells (+0.9 %), zero violations.
 
 ## sky130hd
 
@@ -110,3 +114,4 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 - ODB-1200 doesn't trigger on sky130hd, same as nangate45.
 - **2026-05-11 PPA area sweep**: UTIL 50→52 / DENSITY 0.40→0.57. Die area 3,864,920 → 3,716,410 µm² (−4 %). The baseline at UTIL=50 already had 50 max-slew + 4 max-cap DRV violations; UTIL=52 improves both (46/0). UTIL=55 fails global-route congestion.
 - **2026-06-04 toolchain upgrade**: removed `SKIP_INCREMENTAL_REPAIR` (RSZ-0074 fixed in OpenROAD 299f3015). Closes with large margin (WNS +731 ps), instance area +1.4 %, die +0.02 % — within tolerance.
+- **2026-11 toolchain upgrade**: the new GRT tips util 52 into GRT-0116 congestion (same pattern as sha3/coralnpu on sky130hd); relaxed `CORE_UTILIZATION` 52→45 (committed with the fakeram strap regen, 9fde5e9d). Passes with WS +1.00 ns at the 10 ns clock (period_min 9.00 ns), 14 726 logic cells, zero violations.
