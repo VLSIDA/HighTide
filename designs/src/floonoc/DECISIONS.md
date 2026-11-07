@@ -36,6 +36,7 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 ### Known issues / open questions
 - None.
 
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68, asap7 BC→TC corner)**: still closes the pushed 821 ps clock on the slower TT libs — WS +36 ps (period_min 785 ps), zero violations. 92 610 logic cells (+15.7 % vs 80 073): corner-driven sizing, not synth growth — the resizer works harder to make 821 ps on TT than on the old FF libs. Expect it to deflate if the constraints pass relaxes the asap7 clocks.
 ## nangate45
 
 **Status**: finishing
@@ -53,6 +54,7 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 ### Known issues / open questions
 - None.
 
+- **2026-11 toolchain upgrade**: passes — WS +0.18 ns at the pushed 1.98 ns clock (period_min 1.80 ns), 69 475 logic cells (−3.1 %), zero violations.
 ## sky130hd
 
 **Status**: finishing
@@ -71,6 +73,7 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 ### Known issues / open questions
 - None.
 
+- **2026-11 toolchain upgrade**: passes — WS +8.88 ns at the 20 ns clock (period_min 11.1 ns), 65 174 logic cells, zero violations. The 4.37 µm `edge_margin` PSM-0069 fix (68afbcb7) still holds under the new pdngen/PSM — `_final` connectivity clean.
 ## gt2n
 
 **Status**: finishing
