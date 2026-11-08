@@ -27,15 +27,21 @@ Macro-heavy (GLB iact/Psum SRAM spads). Uses RTLMP for macro placement.
 
 ## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
 
-- **Frontend fallback (all 3 platforms)**: the new bazel-orfs defaults `SYNTH_HDL_FRONTEND`
-  to slang, and slang correctly rejects the upstream FPGA-class Verilog-2001: a trailing
-  comma after the last port of `SCNN_shape_info_compiler` (line 16751) and ~10 uses of
-  never-declared identifiers (`layer0..4_flag`, `psum_acc_times` — only
-  `psum_acc_times_bound` exists), which old-yosys elaborated as implicit 1-bit nets.
-  Patching the RTL would mean inventing semantics for broken upstream logic and changing
-  the benchmark netlist vs baseline, so the BUILDs set `SYNTH_HDL_FRONTEND = ""` (ORFS
-  yosys read_verilog branch) with a `yosys_frontend_reason`. **Paper bugs-table candidate**
-  (upstream RTL defects exposed by a stricter frontend).
+- **Slang elaboration fixups in the RTL generator (all 3 platforms)**: the new bazel-orfs
+  defaults `SYNTH_HDL_FRONTEND` to slang, which rejects two legacy (pre-2001-style)
+  constructs in `SCNN_shape_info_compiler`: a trailing comma after the last port, and
+  uses of undeclared identifiers (`layer0..4_flag`, `psum_acc_times`) that older
+  standards/tools treat as implicit 1-bit nets. These are legal-under-older-practice
+  Verilog, not RTL defects — slang has no flag to allow the undeclared-identifier form
+  (even with `--compat=vcs`), so the `gen_eyeriss` genrule seds the assembled
+  `eyeriss.v`: drops the trailing comma and declares the six nets as plain wires, scoped
+  to that one file section. The nets feed only the unused `psum_acc_done` wire there
+  (implicit 1-bit and undriven under old yosys too), so the optimized netlist is
+  identical to the baseline semantics; eyeriss stays on the default slang frontend.
+  (An earlier interim fix had kept the yosys frontend via `yosys_frontend_reason` —
+  reverted in favor of this generator-level fix.)
+- _QoR below is from the interim yosys-frontend build; slang-frontend re-validation
+  in progress — update these numbers when it lands._
 - **asap7**: finishes clean on the new TC corner (BC→TC policy). WS −246 ps @ 2500 ps
   (advisory per corner policy), period_min 2746 ps → re-derive clock ≈ 3.0 ns in the
   later asap7 constraints pass. 308 598 logic cells (+1.0 % vs 305 514), 193 macros. Pass
