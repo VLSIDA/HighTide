@@ -23,6 +23,16 @@ for f in $$(echo '$(locations @eyeriss_src//:src_v)' | tr ' ' '\\n' | sort); do
     echo "" >> "$$OUT"
 done
 sed -i "s/else if()/else if (1'b0)/g" "$$OUT"
+# slang strict-elaboration fixups, scoped to SCNN_shape_info_compiler.v
+# (legacy pre-2001-style Verilog, fine under yosys but rejected by slang):
+# drop a trailing port-list comma, and declare the layer*_flag /
+# psum_acc_times nets the code leaves implicit (1-bit, undriven — they
+# feed only the unused psum_acc_done wire in this module, so the
+# optimized netlist is unchanged).
+sed -i '\\#^// ===== FPGA_design/src/TOP/SCNN_shape_info_compiler.v =====#,\\#^endmodule# {
+s/\\(psum_read_out_channel_bound\\)[[:space:]]*,[[:space:]]*$$/\\1/
+s/^wire psum_acc_done = (layer0_flag/wire layer0_flag, layer1_flag, layer2_flag, layer3_flag, layer4_flag, psum_acc_times;\\nwire psum_acc_done = (layer0_flag/
+}' "$$OUT"
 cat $(location dev/macros_template.v) >> "$$OUT"
 """,
 )
