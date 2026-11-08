@@ -40,19 +40,19 @@ Macro-heavy (GLB iact/Psum SRAM spads). Uses RTLMP for macro placement.
   identical to the baseline semantics; eyeriss stays on the default slang frontend.
   (An earlier interim fix had kept the yosys frontend via `yosys_frontend_reason` —
   reverted in favor of this generator-level fix.)
-- _QoR below is from the interim yosys-frontend build; slang-frontend re-validation
-  in progress — update these numbers when it lands._
-- **asap7**: finishes clean on the new TC corner (BC→TC policy). WS −246 ps @ 2500 ps
-  (advisory per corner policy), period_min 2746 ps → re-derive clock ≈ 3.0 ns in the
-  later asap7 constraints pass. 308 598 logic cells (+1.0 % vs 305 514), 193 macros. Pass
-  (timing advisory).
-- **nangate45**: WS +0.32 ns @ 4.5 ns, period_min 4.18 ns (≈ baseline floor). 297 381
-  logic cells (−3.3 %). Pass.
-- **sky130hd**: WS −1.68 ns @ 25 ns (−6.7 %), TNS −19.7 ns, period_min 25.0 → 26.68 ns.
-  220 030 logic cells (−1.8 %). The baseline was swept to its floor (+0.15 ns slack), so
-  the new pin's floor shift shows as a marginal setup miss just past the ~5 % gate —
-  **flagged marginal**, accepted without knob-chasing; candidate clock re-derivation
-  ≈ 29 ns (26.68 × 1.10) if the floor holds after the suite-wide validation.
+- QoR below is the final slang-frontend validation (the interim yosys-frontend build
+  closed slightly worse on every platform — asap7 WS −246 ps / pm 2746, nangate45
+  WS +0.32 ns / pm 4.18, sky130hd WS −1.68 ns / pm 26.68 flagged marginal — all
+  superseded by the generator-level slang fix).
+- **asap7**: finishes clean on the new TC corner (BC→TC policy). WS −127 ps @ 2500 ps
+  (advisory per corner policy), TNS −3.5 ns, period_min 2627 ps → re-derive clock
+  ≈ 2.9 ns in the later asap7 constraints pass. 308 897 logic cells (+1.1 % vs
+  305 514), 193 macros. Pass (timing advisory).
+- **nangate45**: WS +0.22 ns @ 4.5 ns, period_min 4.28 ns (baseline floor 4.18 ns,
+  +2.4 %). 300 951 logic cells (−2.1 %). Pass.
+- **sky130hd**: WS +1.13 ns @ 25 ns, TNS 0, period_min 23.87 ns — **better than the
+  25.0 ns baseline floor** (Fmax +4.7 %). 219 481 logic cells (−2.0 %). Pass; the
+  yosys-frontend marginal flag is gone.
 
 ## 2026-08 FakeRAM regeneration (HighTide#234)
 
