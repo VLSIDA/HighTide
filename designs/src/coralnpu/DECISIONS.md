@@ -57,6 +57,7 @@ See the per-platform QoR captured after this port lands.
 ### Decisions
 - **2026-04-26 `643ba623`**: initial close.  Halo 6×6 chosen to keep std cells out of macro shadow but avoid wasting die area.
 - **2026-06-04**: validated on the bazel-orfs 553c1c3 / OpenROAD 299f3015 / yosys 0.64 upgrade. Closes clean: WNS +123 ps on the 3000 ps clock, util 40.5%, 156858 logic cells, 2 macros. No change needed.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)**: reaches `_final` with no knob changes. WS −1347 ps @ 3000 ps on the new TC corner (advisory per the BC→TC corner policy), period_min 4347 ps → re-derive clock ≈ 4.8 ns in the later asap7 constraints pass. 187 079 logic cells (+19 % vs 156 858) — corner-driven upsizing (TC libs are slower, synth/repair compensate with drive strength), not a flow regression.
 
 ### Known issues / open questions
 - None.
@@ -75,14 +76,15 @@ See the per-platform QoR captured after this port lands.
 ### Decisions
 - **2026-04-26 `643ba623`**: halo bumped to 40×40 (vs asap7's 6×6) — same number of stdcell tracks of macro clearance, just expressed in micrometers at nangate45's pitch.
 - **2026-06-04**: validated on the bazel-orfs 553c1c3 / OpenROAD 299f3015 / yosys 0.64 upgrade. Closes clean: WNS +998 ps on the 9 ns clock, util 40.3%, 140663 logic cells, 2 macros. No change needed.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)**: reaches `_final` with no knob changes. WS −0.09 ns @ 9 ns, same async reset-removal check path as the sky130hd 2026-06 precedent below (accepted; fixing it would be a constraint change). period_min 9.09 ns. 149 845 logic cells (+6.5 % vs 140 663) — **flagged** (above the ~5 % guideline) but accepted: growth is in timing-repair buffering, no knob recovered it without hurting timing.
 
 ### Known issues / open questions
 - None.
 
 ## sky130hd
 
-**Status**: finishing
-**Last updated**: 2026-04-26 (commit `6d6f2dc2`)
+**Status**: blocked on the 2026-11 pin (new-GRT congestion); last finishing on the 2026-07 pin
+**Last updated**: 2026-11-08
 
 ### Configuration
 - `CORE_UTILIZATION = 20` — much lower than asap7/nangate45; sky130hd's coarse pitches plus this design's macro count create heavy local-density hot spots
@@ -94,5 +96,19 @@ See the per-platform QoR captured after this port lands.
 - **2026-04-26 `6d6f2dc2`**: util dropped to 20%, density set explicitly to 0.15 to relieve sky130hd routing congestion on this macro-heavy NPU.
 - **2026-06-04 toolchain upgrade (bazel-orfs 553c1c3 / OpenROAD 299f3015 / yosys 0.64)**: reaches `_final`; 148 566 logic cells (−1.2 % vs baseline 150 363), util 23.1 %. Reported WNS +507 → −269 ps on the 30 ns clock — that is −0.9 % of the clock period (achievable Fmax change ~2.3 %, within tolerance) and the worst path is a **reset-removal check** (`csr/resetReg → mcycle[59]`), not a functional setup path. Accepted as-is; no SDC/RTL change (recovering it would require a reset-removal false-path = constraint change).
 
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68): does NOT
+  validate — deferred.** The new GRT reports GRT-0116 congestion on ~28.7k scattered
+  capacity:0/usage:1 gcells (IO/macro-pin nets crossing fully-blocked met1/met2 gcells) that
+  the old GRT did not count as overflow; overall usage is only ~21 % at util 20.
+  Tried and failed: (a) `ROUTING_LAYER_ADJUSTMENT` 0.25 vs 0.15 — byte-identical congestion
+  table, so it is not adjustment rounding; (b) `-allow_congestion` hand-off to detail route —
+  DRT went 334 763 → ~2 300 violations but plateaued from ~iteration 35 of 64 (run stopped at
+  54; partial log in session scratch). The old pin's detail route closed this same structure
+  at 0 DRC, so this is a new-GRT/DRT behavior change, not a design change. Knobs reverted to
+  the 2026-07 configuration. Candidate next steps (not yet tried): lower util 20→15 (more
+  die), macro channel/halo rework, raising GRT min routing layer off met1/met2, or an
+  upstream issue with the reduced congestion report.
+
 ### Known issues / open questions
 - Reported WNS marginally negative (−269 ps, a reset-removal check ≈ −0.9 % of period) after the 2026-06 upgrade; design routes and reaches 6_final with area unchanged.
+- sky130hd does not reach `_final` on the 2026-11 pin — see the 2026-11 decision entry above.
