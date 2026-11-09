@@ -57,6 +57,14 @@ cp "$$CFGROM" "$$WORK/outdir/nv_small/vmod/nvdla/cfgrom/NV_NVDLA_cfgrom.v"
 mkdir -p $(RULEDIR)/vmod
 cp -rL "$$WORK/outdir/nv_small/vmod/." $(RULEDIR)/vmod/
 find $(RULEDIR)/vmod -name '*.vcp' -delete
+# slang strict-elaboration fixups (legacy implicit-net reliance in the
+# generated SDP RTL, fine under yosys but rejected by slang): declare the
+# nine identifiers that are only ever read. They are undriven implicit
+# 1-bit nets under old yosys, so plain wire declarations preserve the
+# baseline netlist semantics.
+sed -i 's/^assign lut_oflow_sum\\[4:0\\] = lut_in_oflow0;$$/wire lut_in_oflow0, lut_in_uflow0, lut_in_hybrid0, lut_in_le_hit0, lut_in_lo_hit0;\\nassign lut_oflow_sum[4:0] = lut_in_oflow0;/' $(RULEDIR)/vmod/nvdla/sdp/NV_NVDLA_SDP_CORE_Y_lut.v
+sed -i 's/^assign chn_lut_in_prdy = chn_lut_in_prdy0;$$/wire chn_lut_in_prdy0, chn_lut_out_pvld0;\\nassign chn_lut_in_prdy = chn_lut_in_prdy0;/' $(RULEDIR)/vmod/nvdla/sdp/NV_NVDLA_SDP_HLS_Y_idx_top.v
+sed -i 's/^assign chn_inp_in_prdy = chn_inp_in_prdy0;$$/wire chn_inp_in_prdy0, chn_inp_out_pvld0;\\nassign chn_inp_in_prdy = chn_inp_in_prdy0;/' $(RULEDIR)/vmod/nvdla/sdp/NV_NVDLA_SDP_HLS_Y_inp_top.v
 rm -rf "$$WORK"
 """,
 )
