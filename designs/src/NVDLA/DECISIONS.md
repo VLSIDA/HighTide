@@ -90,6 +90,15 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   - **sky130hd**: WS +1.10 ns (TNS 0), period_min 6.48 ns → Fmax 154 MHz (+2.9 %
     vs 0.15 GHz), 35 070 cells (−2.4 %). Pass.
 
+- **partition_m QoR vs results.html baselines** (no knob changes, all TNS 0):
+  - **asap7**: WS +100 ps, period_min 1399.82 ps → Fmax 714 MHz (−30.7 % vs
+    1.03 GHz — the BC→TC corner swap, advisory per corner policy), 19 868 logic
+    cells (+1.0 %). Pass.
+  - **nangate45**: WS +0.30 ns, period_min 1.91 ns → Fmax 522 MHz (+2.4 %),
+    12 953 cells (−0.9 %). Pass.
+  - **sky130hd**: WS +1.23 ns, period_min 8.95 ns → Fmax 112 MHz (+1.5 %),
+    11 098 cells (+0.6 %). Pass.
+
 ## asap7
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
