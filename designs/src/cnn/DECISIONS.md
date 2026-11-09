@@ -46,9 +46,30 @@ CACTI's optimizer minimises cycle time for an L3-cache-like target; with cnn's 1
 
 nangate45 stays on CACTI; its aspects come out 1.2–1.6 for cnn's four sizes.
 
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+- **Slang frontend (new default) — behavioral fakeram stubs removed from `:rtl`**: cnn's
+  first pass through slang failed at the yosys-canonicalize hierarchy pass on all 3
+  platforms: the committed `fakeram_w*_l*.v` stubs declare `parameter corrupt_mem_on_X_p`,
+  slang specializes the macro instances with it, and the instances then fail to bind to
+  the parameterless liberty blackbox. The stubs only existed so old-yosys elaboration
+  could resolve the macro modules; under slang the macros are blackboxed via
+  `--blackboxed-module` (derived from `ADDITIONAL_LIBS`, same as eyeriss/coralnpu), so
+  they were dropped from the filegroup (files kept for simulation reference).
+- **asap7**: major recovery of the 2026-06 RTLMP macro regression. WS −1566 ps @ 1000 ps
+  sweep clock (vs −2869 baseline), period_min 2566 ps → Fmax 0.390 GHz (vs 0.22, **+77 %**),
+  204 517 logic cells (−17 % vs 247 053). TC corner (advisory) and it still improves. Pass.
+- **nangate45**: WS −0.58 ns @ 2.5 ns (vs −0.31 baseline), period_min 3.08 ns → Fmax
+  0.325 GHz (vs 0.36, **−9.7 % — flagged**, past the ~5 % gate). 186 471 cells (+1.2 %).
+  Accepted without knob-chasing given cnn's documented RTLMP volatility and the big wins
+  on the other two platforms; candidate recovery per the 2026-06 precedent below is
+  giving RTLMP more room (die/halo/density re-sweep) in a later pass.
+- **sky130hd**: WS +0.34 ns @ 10 ns (vs **−4.69 ns** baseline), period_min 9.66 ns → Fmax
+  0.104 GHz (vs 0.07, **+48 %**), 155 759 cells (−4.9 %). Pass — large improvement.
+
 ## asap7
 
-**Status**: reaches `_final` on bazel-orfs 553c1c3 via the k8s param sweep; **WNS still flagged-negative.**
+**Status**: reaches `_final` on bazel-orfs 553c1c3 via the k8s param sweep; **WNS still flagged-negative** (improved substantially on the 2026-11 pin — see above).
 
 `hightide_design()` with `CORE_UTILIZATION=60`, `PLACE_DENSITY=0.40`. Default RTLMP places the four `fakeram_w16_l32768` macros. **MPL-0040** workaround required — see CLAUDE.md bug table: `macros.tcl` pre-places the fakeram macros (FIRM) before RTLMP runs.
 
