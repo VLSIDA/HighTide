@@ -10,6 +10,10 @@ hightide_design(
         # partition_a's two SRAM sizes (256x16, 272x16) became FF arrays
         # in this migration — no LEF/LIB needed. The behavioural .v
         # stubs ship through //designs/src/NVDLA:rtl.
+        # 2026-11: no-op repair_clock_inverters — upstream SEGV in
+        # rsz::Resizer::cloneClkInverter on this netlist (see pre_cts.tcl
+        # and DECISIONS.md).
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
     },
     stage_data = {"synth": ["//designs/src/NVDLA:include"]},
     arguments = {
