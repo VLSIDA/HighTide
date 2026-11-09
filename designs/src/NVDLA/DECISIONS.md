@@ -61,6 +61,35 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 | o | 18x128, 8x256, 4x256, 7x256, 66x64, 15x80, 22x60, 32x128 | 9x80 |
 | p | 16x160, 65x160, 14x80, 66x80 | – |
 
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+- **Slang elaboration fixups in `gen_vmod` (all partitions)**: slang (new default
+  frontend) rejects nine uses of undeclared identifiers in the generated SDP RTL
+  (`NV_NVDLA_SDP_CORE_Y_lut.v`: `lut_in_{oflow,uflow,hybrid,le_hit,lo_hit}0`;
+  `NV_NVDLA_SDP_HLS_Y_{idx,inp}_top.v`: `chn_{lut,inp}_{in_prdy,out_pvld}0`) —
+  legacy implicit-net reliance, fine under yosys. All nine are only ever read
+  (undriven implicit 1-bit nets under old yosys), so `gen_vmod` now seds in plain
+  `wire` declarations, preserving baseline netlist semantics. Verified: standalone
+  slang elaboration of all five partitions passes with 0 errors.
+- **partition_a nangate45 — `repair_clock_inverters` SEGV workaround**: on the new
+  pin, cts.tcl's `repair_clock_inverters` crashes deterministically on this placed
+  netlist — gdb stack `rsz::Resizer::cloneClkInverter → odb::dbNet::destroy`
+  (repro: `read_liberty` + `read_db 3_place.odb` + `read_sdc` +
+  `repair_clock_inverters`; crashes with and without `-hier`; same netlist passed
+  this step on the 2026-07 pin; partition_a asap7/sky130hd pass it on the new
+  pin). Upstream issue candidate — not yet filed. Workaround: `PRE_CTS_TCL`
+  (`pre_cts.tcl`) shadows the command to a warning no-op; CTS buffers the inverted
+  clock itself. QoR cost ≈ none (see below).
+- **partition_a QoR vs results.html baselines**:
+  - **asap7**: WS +199 ps (TNS 0), period_min 948.93 ps → Fmax 1.054 GHz (−5.9 %
+    vs 1.12, advisory on the new TC corner), 67 691 logic cells (+8.5 % vs
+    62 394 — corner-driven upsizing, same pattern as coralnpu-asap7). Pass.
+  - **nangate45** (with the repair_clock_inverters no-op): WS +0.13 ns (TNS 0),
+    period_min 1.57 ns → Fmax 637 MHz (−2.0 % vs 0.65 GHz), 48 142 cells
+    (−10.3 %). Pass.
+  - **sky130hd**: WS +1.10 ns (TNS 0), period_min 6.48 ns → Fmax 154 MHz (+2.9 %
+    vs 0.15 GHz), 35 070 cells (−2.4 %). Pass.
+
 ## asap7
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
