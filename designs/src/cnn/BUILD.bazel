@@ -8,8 +8,13 @@
 # matching bsg_fakeram macro (byte-identical to the retired shell flow).
 #
 # The behavioural fakeram_w*_l*.v stubs (HighTide/bsg_fakeram, not upstream
-# NNgen) stay committed so yosys elaboration resolves the macro modules; the
-# per-platform FakeRAM LEF/LIB live under designs/<platform>/cnn/sram/.
+# NNgen) are kept for simulation reference but are NOT in the :rtl filegroup:
+# under the slang frontend (2026-11 default) the macros are blackboxed via
+# --blackboxed-module (derived from ADDITIONAL_LIBS), and feeding the stubs
+# to slang attaches their corrupt_mem_on_X_p parameter to the specialized
+# instances, which then fail to bind to the parameterless liberty blackbox
+# at the yosys hierarchy pass. The per-platform FakeRAM LEF/LIB live under
+# designs/<platform>/cnn/sram/.
 
 load("@rules_python//python:defs.bzl", "py_binary")
 
@@ -58,10 +63,6 @@ filegroup(
     name = "rtl",
     srcs = [
         ":gen_cnn",
-        "fakeram_w16_l32768.v",
-        "fakeram_w16_l512.v",
-        "fakeram_w16_l8192.v",
-        "fakeram_w64_l256.v",
     ],
     visibility = ["//visibility:public"],
 )
