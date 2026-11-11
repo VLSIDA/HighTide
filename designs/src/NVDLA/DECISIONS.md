@@ -90,6 +90,37 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   - **sky130hd**: WS +1.10 ns (TNS 0), period_min 6.48 ns → Fmax 154 MHz (+2.9 %
     vs 0.15 GHz), 35 070 cells (−2.4 %). Pass.
 
+- **partition_p asap7 — `repair_clock_inverters` SEGV root cause + modnet-strip
+  workaround**: same crash family as partition_a nangate45 above, now
+  root-caused. `rsz::Resizer::cloneClkInverter` resolves the inverter's output
+  net via `network_->net(out_pin)`, which prefers the hierarchical `dbModNet`;
+  `dbNetwork::deleteNet` then does `staToDb(net)`, which returns **nullptr for a
+  dbModNet**, and `dbNet::destroy(nullptr)` faults on its first field read
+  (verified by disassembly). This netlist has three synthesized clock inverters
+  driving gated-clock nets with 1518–2423 register loads each, so the
+  partition_a-style no-op is **not** viable here: skipping the repair leaves one
+  INVx1 driving ~2.4k clock sinks → ~2.4k hold endpoints → RSZ-0060 max-buffer
+  abort in both CTS and GRT repair_timing (both tried, both die; so does
+  `SKIP_CTS_REPAIR_TIMING`, which just moves the storm to GRT). Working fix
+  without an OpenROAD rebuild (cache preserved): `PRE_CTS_TCL` (`pre_cts.tcl`)
+  strips the modnet association from the clock-inverter output iterms
+  (`disconnectDbModNet`) so `net(pin)` resolves to the flat dbNet, and the
+  **real** `repair_clock_inverters` then runs (repro-verified on
+  `3_place.odb` + `read_sdc`). The partition_a nangate45 no-op should be
+  migrated to this strip. A C++ fix (type-discriminating `deleteNet`) is the
+  upstream patch; not applied locally to avoid invalidating the suite cache.
+- **partition_p QoR vs results.html baselines** (nangate45/sky130hd no knob
+  changes; asap7 adds the `PRE_CTS_TCL` strip above):
+  - **asap7**: WNS −40.6 ps @1500 ps (TNS −65 ps — advisory on the new TC
+    corner), period_min 1439.08 ps → Fmax 695 MHz (−33 % vs 1.04 GHz, the
+    BC→TC corner swap, same pattern as partition_m), 111 260 logic cells
+    (+12.4 % vs 99 019 — corner upsizing plus per-load clock-inverter cloning:
+    6753 clock inverters post-CTS), route 0 DRC. Pass (finish-ability bar).
+  - **nangate45**: WS +0.06 ns (TNS 0), period_min 1.97 ns → Fmax 507 MHz
+    (−4.3 % vs 0.53 GHz), 69 998 cells (+0.3 %). Pass.
+  - **sky130hd**: WS +0.60 ns (TNS 0), period_min 10.14 ns → Fmax 98.6 MHz
+    (−1.4 % vs 0.10 GHz), 64 576 cells (−1.6 %). Pass.
+
 - **partition_m QoR vs results.html baselines** (no knob changes, all TNS 0):
   - **asap7**: WS +100 ps, period_min 1399.82 ps → Fmax 714 MHz (−30.7 % vs
     1.03 GHz — the BC→TC corner swap, advisory per corner policy), 19 868 logic
