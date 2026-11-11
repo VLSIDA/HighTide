@@ -3,6 +3,32 @@
 Per-platform notes for `snitch_cluster` (PULP Snitch multi-core cluster, top
 `snitch_cluster_wrapper`). See `CLAUDE.md` (root) for the canonical upstream-bug index.
 
+## 2026-10-18 timing validity finding
+
+The exhaustive native synthesis audit reports 160 combinational cycles across
+all five cores (49/29/29/29/24). None has a constant-valued cycle pin under the
+current constraints. The first includes `exception`, operand selection and
+load/store misalignment logic. In the upstream core, exception sanitization
+clears `is_acc_inst`, while `is_fp_inst` depends on that signal and influences
+operand selection used to compute the misalignment exception.
+
+These findings require core-level functional investigation. No new false paths,
+case assumptions, or pipeline cuts are introduced to suppress the warnings.
+Keep this design's physical QoR as diagnostic data; its all-path timing is not
+a validated reference. The original and reviewed compact tables carry this
+limitation in `known_invalid_reasons`. Raw loops, native constant checks and
+source hashes are retained with the baseline artifacts.
+The COPIFT operand-selection enable is a software-writable CSR. Its reset
+default of zero does not justify treating it as permanently disabled in STA.
+
+The original routed final audit reports 324 loops. The native arc check
+resolves every reported edge but finds no constant-disabled arc in any loop.
+The raw report and checker are retained in
+`artifacts/asap7-baseline-20261017-runtime/snitch-final-loop-validation/`.
+Reported setup +163.964 ps, hold −63.4951 ps (26 endpoints), DRC 0,
+26700 slew violations and six cap violations are diagnostic at the unchanged
+6000 ps target and corrected 1500 ps input-latency contract.
+
 Very large logic design (~1.5M std cells), no hard macros on asap7 beyond the 38 the
 wrapper instantiates. Carries `SKIP_CTS_REPAIR_TIMING` + `SKIP_INCREMENTAL_REPAIR`
 (repair non-convergence on the RTL-bounded endpoints) and, on asap7, a DPL-0036
@@ -46,6 +72,13 @@ invalidate and both rebuild (nangate45 ~14 h). gt2n (PR #240) must regenerate
 its macros with the new names after this lands.
 
 ## asap7
+
+- **2026-10 baseline audit**: corrected the inverted input-arrival window
+  (`-max 10`, `-min 1500` ps). Both bounds now use 1500 ps, preserving the
+  documented external clock-latency assumption while charging setup analysis
+  for the same arrival used by hold analysis. This is an assumed interface
+  contract, not an externally characterized delay. Earlier positive-slack
+  results used the inconsistent window and are not the corrected baseline.
 
 **Status**: finishing on bazel-orfs 553c1c3.
 

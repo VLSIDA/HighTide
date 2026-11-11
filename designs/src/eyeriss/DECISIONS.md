@@ -5,6 +5,35 @@ See `CLAUDE.md` (root) for the canonical upstream-bug index.
 
 Macro-heavy (GLB iact/Psum SRAM spads). Uses RTLMP for macro placement.
 
+## 2026-10-18 partial-sum router width correction
+
+The upstream `Psum_Router` routes signed 21-bit ports through a scalar
+`internal_data` wire, truncating every selected value to bit zero. The declared
+archive patch `patches/eyeriss-psum-router-width.patch` makes that wire signed
+21-bit. Both router input selections, both destinations, walking bits, negative
+values and all handshake inputs pass 5888 simulation cases. The same test fails
+on the pinned original source. Run `tools/check_eyeriss_psum_router.py --help`.
+Original baseline physical results predate this fix and are diagnostic only;
+the reviewed baseline must resynthesize and route the corrected datapath.
+
+The synthesis coverage audit also reports 3195 structural combinational cycles.
+Native constant propagation finds constant-valued pins in 3192; the remaining
+three traverse AO21 A2-to-Y arcs with A1 tied low by the existing controller.
+These are inactive routing paths, not additional timing exceptions. Preserve
+the raw warnings and repeat this inspection on the final physical database.
+
+The default static STA loop breaker nevertheless cuts 18 edges that are not
+constant-disabled. The ASAP7 flow now enables `sta_dynamic_loop_breaking` in
+the source SDC and its design-local physical-stage PRE hooks, retaining the platform's
+existing Liberty suppressions. This preserves active path segments across
+stages without adding timing exceptions or changing the 2500 ps clock / 500 ps
+I/O budgets. On the same original synthesis database, both modes report setup
+638.98 ps and hold 5.21 ps; matching worst slack alone does not certify every
+path. The early width-only static trial was retired before floorplan completed.
+The selected combined trial is `asap7-eyeriss-width-hooks-20261018`; validation
+requires the setting in every physical-stage log and uses the frozen policy
+for native final-database checks.
+
 ## 2026-10 SRAM depth-banking correction
 
 The committed macro names retain aggregate depth, but their LEF/LIB interfaces
@@ -152,3 +181,8 @@ asap7 macros are 2–4× larger.
 **Status**: finishing — WNS +147.2 ps, hold −374.2 ps (52 violations), util 32.3 %,
 224 313 logic cells, Fmax 0.04 GHz, die 37 526 200 µm², 0 DRC. Setup headroom is now thin
 (`period_min` 24.85 ns against a 25 ns clock); see the 2026-08 section above.
+
+The attempted `PLATFORM_TCL` override was ineffective because the ASAP7 platform
+Makefile assigns it after design defaults. That early trial was retired; stage
+PRE hooks apply after the normal platform setup. Actual stage-log assertions
+prevent accepting a configuration that merely declares the desired setting.

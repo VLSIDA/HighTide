@@ -45,6 +45,14 @@ See the per-platform QoR captured after this port lands.
 
 ## asap7
 
+- **2026-10 baseline audit (current Chisel-7 RTL)**: builds to final with
+  route DRC 0. At the unchanged 3000 ps target, setup WNS is -207.310 ps
+  (296 violations), hold +14.9612 ps (0 violations), reported Fmax
+  0.311788 GHz, 168700 logic cells, stdcell area 21027.8 um², power
+  73.6218 mW. There are 691 slew violations; cap/fanout counts are zero.
+  This is a setup-negative reference for the ported RTL, not the earlier
+  sv2v/Chisel baseline. Clock and interface constraints were not relaxed.
+
 **Status**: finishing
 **Last updated**: 2026-04-26 (commit `643ba623`)
 

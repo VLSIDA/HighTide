@@ -1,5 +1,46 @@
 # litepci — design decisions
 
+## 2026-10-18 selected valid-clock baseline
+
+The restored forwarded clock passes native final-DB reachability; every native
+constraint check passes. Final setup is +1067.78 ps, hold −209.868 ps with 578
+violations, route DRC 0, slew violations 2120, cap/fanout violations 0. The
+3600 ps system target and data I/O budgets are unchanged. Routed hold-only
+repair with a 20 ps guard improves the implementation but does not close hold;
+the failure remains explicit. No memory timing path is waived.
+
+The selected run is `artifacts/asap7-litepci-clock-reconnect-20261018`, with
+seven physical output files archived. Compact stats are in
+`baselines/asap7/2026-10-17/litepci-clock-repaired.csv` and matching JSON/metadata.
+Reported `sys_clk` Fmax is 0.394911 GHz; it does not certify hold closure.
+
+- **2026-10 forwarded-clock connectivity audit (validated above)**:
+  `STA-1062` in the completed flow exposed a physical connectivity defect.
+  Synthesis/floorplan connect `pcie_us/user_clk` directly to `clk`; placement
+  inserts `output1181`, with its input still connected. CTS disconnects that
+  buffer's input, and the final netlist contains `output1181 (.Y(clk))` with
+  no input. Those original results are not a functional reference for the
+  forwarded output. Excluding that port buffer caused overlapping-clock
+  rejection in CTS; explicit-root and deferred-alias experiments also failed
+  the combined connectivity/timing checks and were rejected. The current
+  `PRE_CTS_TCL` wrapper restores the buffer input's original source connection
+  immediately after clock-tree construction, before legalization and timing
+  repair. A native check on the original final DB confirms clock reachability
+  and finite timing paths after this exact reconnection, with no STA-1062.
+  Original CTS slack was the no-path sentinel `1e42`, not a timing pass.
+  RTL and SDC are unchanged. Full flow validation remains pending.
+
+- **2026-10 ASAP7 baseline audit (validation pending)**: final setup WNS
+  +1042.54 ps, but hold WNS -271.403 ps on a synchronous register-to-FakeRAM
+  path (`subfragments_syncfifo8_produce[6]` to the write side of
+  `u_storage_25_fakeram_1rw1r_230w128d_sram`). The candidate re-enables the
+  incremental global-route repair block with a hook selecting **hold-only**
+  timing repair and a 20 ps hold margin. This retains the workaround for
+  non-converging setup repair. The recovered user-clock definition, 3600 ps
+  period, I/O delays and asynchronous refclk grouping remain unchanged.
+  Final timing, DRCs and any resizer regressions must be checked before
+  accepting this candidate as a baseline.
+
 litepci is the [enjoy-digital/litepcie](https://github.com/enjoy-digital/litepcie)
 LitePCIe controller (TLP + DMA + MSI + Wishbone), generated from
 `examples/kcu105.yml` (UltraScale+ `USPCIEPHY`, x4 Gen3, 128-bit data path,

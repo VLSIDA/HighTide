@@ -1,3 +1,24 @@
+## 2026-10-18 ASAP7 measured baseline
+
+The final target completes with routing DRC 0, but setup −7356.8 ps
+(26545 violations) and hold −1358.77 ps (389 violations), at the existing
+1000 ps clock and 10 ps I/O budget. The worst setup path is from
+`inst_ram_w16_l512_id3_0/u_ram_w16_l512_id3_0_mem` to
+`__variable_wdata_1330[13]`. Native `check_setup` passes all checks: no missing
+clock/delay coverage, generated-clock errors, or combinational loops were
+found. These are real failures of this implemented benchmark point, not a
+successful timing-closure result. Keep the period and RTL unchanged for the
+comparison baseline; no path is waived to hide the misses.
+
+There are 34714 slew and 1341 cap violations (fanout count is in the saved
+stats), 251214 logic cells, 47784.7 um² standard-cell area, and 523.031 mW
+under default activity assumptions. These electrical violations remain
+explicit. `ENABLE_RESISTANCE_AWARE=0` is already committed and effective in
+this original run. No CNN source/configuration change was made in this audit.
+Raw reports, extracted parasitics, physical database and native coverage proof
+are retained in `artifacts/asap7-baseline-20261017-runtime`; use the full label
+`//designs/asap7/cnn:cnn_final` in the comparison tables.
+
 # cnn Design Decisions
 
 Per-platform notes for the cnn benchmark — a NNgen-generated CNN inference accelerator (Verilog produced by the upstream NNgen Python toolchain), exercising 2rw on-chip SRAMs as activation / weight buffers.

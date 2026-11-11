@@ -6,6 +6,11 @@
   lhdsweep.py run KEY TAG [--set k=v]...   one LiveHD variant: lhd synth+place, then score
   lhdsweep.py report [KEY...]              results table (best per design, objective)
 
+`--set reader=orfs` starts from the OpenROAD flow's own synthesized netlist instead of the
+RTL: ref/<design>/1_2_yosys.v is flattened once by OpenROAD (read_verilog + link_design +
+write_verilog, cached in netlists/) and read by `lhd synth` with compile.slang.liberty_cells,
+so the ORFS cells stay instances; per-design compile.* front-end sets are dropped.
+
 Boundary: RTL -> `lhd synth` (mapping + native DREAMPlace, pre-CTS) -> common
 OpenSTA scoring (score_flow.tcl, placement RC, ideal clocks, the reference SDC and
 Liberty set) versus the same scorer on the OpenROAD flow's 3_place.odb.
@@ -116,6 +121,9 @@ class Design:
             else:
                 skipped.append(t)
             i += 1
+        tp = self.vars.get('VERILOG_TOP_PARAMS', '').split()  # ORFS: `name value ...` top-level parameter overrides
+        for n, v in zip(tp[::2], tp[1::2]):
+            keep += ['-G', '%s=%s' % (n, v)]
         return keep, skipped
 
     def utilization(self):
@@ -133,7 +141,7 @@ class Design:
 
 def discover():
     designs = []
-    for odb in sorted((HT / 'bazel-bin/designs/asap7').glob('**/results/asap7/*/base/3_place.odb')):
+    for odb in sorted((HT / 'bazel-bin/designs/asap7').glob('**/results/asap7/*/base/3_place.mk')):
         if '.runfiles' in str(odb):
             continue
         rel = odb.relative_to(HT / 'bazel-bin/designs/asap7')
@@ -294,6 +302,27 @@ def macro_libs(d):
 
 
 # ------------------------------------------------------------------------ run
+def orfs_netlist(d):
+    """The ORFS synthesized netlist (ref/<design>/1_2_yosys.v) flattened by OpenROAD, cached
+    under netlists/ and generated under a lock (parallel variants of one design share it)."""
+    import fcntl
+    src = d.ref_dir / '1_2_yosys.v'
+    out = SWEEP / 'netlists' / ('%s.flat.v' % d.safe)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(str(out) + '.lock', 'w') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        if out.exists():
+            return out
+        tmp = Path(str(out) + '.tmp.%d' % os.getpid())
+        tcl = Path(str(out) + '.tcl')
+        tcl.write_text(''.join('read_lef {%s}\n' % p for p in d.lef_list()) +
+                       'read_verilog {%s}\nlink_design %s\nwrite_verilog {%s}\n' % (src, d.name, tmp))
+        with open(str(out) + '.log', 'w') as log:
+            subprocess.run([str(OPENROAD), '-no_init', '-exit', str(tcl)], stdout=log, stderr=subprocess.STDOUT, check=True)
+        os.replace(tmp, out)
+    return out
+
+
 def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, rundir=None, log=None,
                 timing_unmeasured=None, check_placement='error'):
     """One lhd synth+place run, then OpenSTA scoring. A `sets` value of None removes that key
@@ -327,29 +356,38 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
         'pass.abc.drop_init': 'true',
         # Registers on a gated/derived clock must map to cells (ASAP7 ICGs are dont_use), and Yosys's
         # `setundef -zero` ties x constants low; both keep designs placeable and are inert elsewhere.
-        'pass.abc.derived_clock': 'true',
         'synth.place.unknown_const': 'zero',
     }
-    if util:
-        base_sets['synth.place.utilization'] = '%g' % util
+    # Same area as the OpenROAD reference: its die/core (the fixed ORFS DIE_AREA/CORE_AREA, or the die its
+    # utilization derived), not a die LiveHD derives from its own utilization.
+    base_sets['synth.place.die'] = ','.join('%g' % x for x in ref['die_um'])
+    base_sets['synth.place.core'] = ','.join('%g' % x for x in ref['core_um'])
     merged = dict(base_sets)
     cfg_file = TOOLS / 'design_config.json'
     if cfg_file.exists():  # per-design defaults found during bring-up (reader, frontend flags, ...)
         merged.update(json.loads(cfg_file.read_text()).get(d.key, {}).get('sets', {}))
     merged.update(sets)
+    if 'synth.place.floorplan' in merged:  # the imported floorplan carries die, core, rows and fixed macros
+        merged.pop('synth.place.die', None); merged.pop('synth.place.core', None)
     merged = {k: v for k, v in merged.items() if v is not None}
     slang_args = ['-D', 'SYNTHESIS', '--compat=vcs', '--timescale=1ns/1ps']
     reader = merged.pop('reader', 'native')  # a harness-level choice, not an lhd option
-    if reader == 'native':
+    if reader == 'orfs':  # start from the ORFS netlist: RTL front-end sets do not apply
+        merged = {k: v for k, v in merged.items() if not k.startswith('compile.') or k in sets}
+        merged['compile.slang.liberty_cells'] = 'true'
+        files = [orfs_netlist(d)]
+    if reader in ('native', 'orfs'):
         # ORFS runs yosys-slang with --ignore-assertions; LiveHD's own reader has the same opt-in.
         slang_args.insert(2, '--ignore-assertions')
-    for inc in d.include_dirs():
-        slang_args += ['-I', str(inc)]
-    slang_args += d.defines()
-    extra, skipped = d.extra_slang()
-    slang_args += extra
+    skipped = []
+    if reader != 'orfs':
+        for inc in d.include_dirs():
+            slang_args += ['-I', str(inc)]
+        slang_args += d.defines()
+        extra, skipped = d.extra_slang()
+        slang_args += extra
     sources = [str(p) for p in (files or d.verilog_files())]
-    if reader == 'native':
+    if reader in ('native', 'orfs'):
         cmd = [LHD, 'synth'] + sources
         cmd += ['--top', d.name, '--workdir', rundir / 'w', '--emit-dir', 'def:%s/' % (rundir / 'def'),
                 '--emit-dir', 'report:%s/' % (rundir / 'rep'), '--stats', '--result-json', rundir / 'result.json']
