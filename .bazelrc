@@ -3,6 +3,12 @@
 # submodule not being checked out doesn't break bazel invocations.
 try-import %workspace%/bazel-orfs/.bazelrc
 
+# bazel-orfs/.bazelrc (imported above) sets workspace_status_command to a
+# script that only exists in bazel-orfs's own checkout; reset it (later
+# lines win over the import).  Its downloader_config suffers the same but
+# is already retargeted to tools/downloader.cfg further down.
+build --workspace_status_command=
+
 # Build OpenROAD from source with the GUI enabled (needed by the _gallery
 # image render, which runs `openroad -gui` under xvfb).  bazel-orfs carried
 # this in its own .bazelrc until 553c1c3 dropped it; declare it here so the
