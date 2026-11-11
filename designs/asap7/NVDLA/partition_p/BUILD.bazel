@@ -7,6 +7,7 @@ hightide_design(
     verilog_files = ["//designs/src/NVDLA:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/asap7/NVDLA:sram_lefs_p"],
         "ADDITIONAL_LIBS": ["//designs/asap7/NVDLA:sram_libs_p"],
     },
