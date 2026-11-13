@@ -131,12 +131,15 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
     (−1.4 % vs 0.10 GHz), 64 576 cells (−1.6 %). Pass.
 
 - **partition_o sky130hd — post-DRT antenna repair skipped (2026-11-13)**: on
-  this pin the jumper-only post-DRT antenna-repair loop (sky130hd has no CORE
-  ANTENNACELL diode, GRT-0246) **diverges in runtime** — incremental DRT
-  cycles grew 1 435 s → 4 794 s → 26 656 s → 158 899 s (44 h) while antenna
-  pin violations shrank only 1676 → 1067 → 667 — and the final incremental
-  DRT (DRT-0627 marker-resume) reported 0 DRC + ANT 0/0 while leaving 1000+
-  nets wholly unrouted, so `design_is_routed` failed the stage after ~53 h
+  this pin the post-DRT antenna-repair loop **diverges in runtime** — the
+  repair *does* insert diodes each cycle (3936 / 1827 / 1157 / 686; an
+  earlier note blaming a missing sky130hd ANTENNACELL / GRT-0246 was wrong —
+  that warning came from the asap7 build sharing the same log), but the
+  incremental DRT cycles grew 1 435 s → 4 794 s → 26 656 s → 158 899 s
+  (44 h) while net violations shrank only 1946 → 1169 → 778 → 514 — and the
+  final incremental DRT (DRT-0627 marker-resume, just 175 s) reported 0 DRC
+  + ANT 0/0 while leaving 1000+ nets wholly unrouted, so `design_is_routed`
+  failed the stage after ~53 h
   (verified via a temporary POST_DETAIL_ROUTE `design_is_routed -verbose`
   hook, since removed). The 2026-07 pin converged the same repair 5391 → 23
   in ~10 h, so this is a pin regression (marker-resume net dropping looks
