@@ -197,14 +197,17 @@ def def_extra_lefs(d, def_dir):
 
 
 def adapt_sdc(src, dst):
-    """Copy an SDC for scoring a LiveHD DEF: LiveHD may prefix hierarchy containers on instance
-    names (`sub_16.pcie_us/user_clk`), so a literal `get_pins {a/b}` becomes `get_pins {*a/b}`."""
+    """Copy an SDC for scoring a LiveHD DEF: LiveHD may add hierarchy containers to instance names,
+    in front (`sub_16.pcie_us/user_clk`) and, with nested regions (pass.usyn), between the levels
+    (`BUFG_GT_1.__flat___sub_20.clk_buf/Y`), so a literal `get_pins {a.b/c}` becomes
+    `get_pins {*a.*b/c}`."""
     text = Path(src).read_text()
     def fix(m):
         name = m.group(2)
         if '*' in name or '[' in name or '/' not in name:
             return m.group(0)
-        return m.group(1) + '*' + name + m.group(3)
+        inst, pin = name.rsplit('/', 1)
+        return m.group(1) + '*' + inst.replace('.', '.*') + '/' + pin + m.group(3)
     text = re.sub(r'(get_pins\s+\{?\s*)([^\s\]\}]+)(\s*\}?)', fix, text)
     Path(dst).write_text(text)
     return dst
