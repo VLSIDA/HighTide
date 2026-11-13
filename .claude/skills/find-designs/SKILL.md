@@ -34,7 +34,7 @@ And should meet at least one of these motivations:
 Check the existing designs before proposing:
 - gemmini (ML systolic array accelerator) — asap7, nangate45
 - minimax (RISC-V core) — asap7, nangate45, sky130hd
-- NyuziProcessor (RISC processor) — asap7, nangate45
+- nyuzi (NyuziProcessor, RISC processor) — asap7, nangate45
 - lfsr (LFSR/PRBS generator) — asap7, nangate45, sky130hd
 - liteeth (Ethernet MAC, 6 variants) — asap7, nangate45, sky130hd
 - cnn (CNN accelerator via NNgen/Veriloggen) — asap7, nangate45

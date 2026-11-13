@@ -3,7 +3,7 @@
 
 Reconstruct a bsg_fakeram cfg from a design's *committed* LEF macro set.
 
-Used for Section B designs (coralnpu, vortex, NyuziProcessor) whose original
+Used for Section B designs (coralnpu, vortex, nyuzi) whose original
 cfgs were lost, drifted from the committed LEFs, or never existed. The
 committed LEF macro set is the ground truth for what the design's RTL
 instantiates, so deriving (width, depth, ports, write_granularity) by

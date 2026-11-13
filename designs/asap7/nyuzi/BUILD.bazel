@@ -11,9 +11,10 @@ filegroup(
 )
 
 hightide_design(
-    name = "NyuziProcessor",
+    name = "nyuzi",
+    top = "NyuziProcessor",
     platform = "asap7",
-    verilog_files = ["//designs/src/NyuziProcessor:rtl"],
+    verilog_files = ["//designs/src/nyuzi:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],

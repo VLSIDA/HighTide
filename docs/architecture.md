@@ -52,7 +52,7 @@ Each design's `BUILD.bazel` exposes a stable `:rtl` alias pointing at the fetche
 | Source Language | Conversion Tool | Examples |
 |----------------|----------------|----------|
 | Verilog | None (direct) | lfsr, sha3 |
-| SystemVerilog | sv2v or yosys-slang | minimax (sv2v), NyuziProcessor (yosys-slang), bp_processor (yosys-slang) |
+| SystemVerilog | sv2v or yosys-slang | minimax (sv2v), nyuzi (sv2v), bp_processor (yosys-slang) |
 | Chisel/Scala | JDK + sbt | gemmini |
 | LiteX/Python | Python venv + LiteX | liteeth |
 | Veriloggen/Python | Python venv + NNgen | cnn |

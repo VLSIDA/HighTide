@@ -19,7 +19,7 @@ _INCLUDE_DIRS = VORTEX_INCLUDE_DIRS_RELEASE_STR + " " + VORTEX_INCLUDE_DIRS_DEV_
 
 # Mirrors designs/asap7/vortex/BUILD.bazel; per-platform tuning:
 #   - clock period scales 1100 ps → 3.0 ns (~2.7x, calibrated against
-#     NyuziProcessor 1600 ps → 4.5 ns)
+#     nyuzi 1600 ps → 4.5 ns)
 #   - utilization eased from 50 → 35 to give nangate45 placer headroom
 #   - macro halo grown to 40 40 for the 45 nm feature pitch
 hightide_design(
