@@ -130,6 +130,24 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   - **sky130hd**: WS +0.60 ns (TNS 0), period_min 10.14 ns → Fmax 98.6 MHz
     (−1.4 % vs 0.10 GHz), 64 576 cells (−1.6 %). Pass.
 
+- **partition_o sky130hd — post-DRT antenna repair skipped (2026-11-13)**: on
+  this pin the jumper-only post-DRT antenna-repair loop (sky130hd has no CORE
+  ANTENNACELL diode, GRT-0246) **diverges in runtime** — incremental DRT
+  cycles grew 1 435 s → 4 794 s → 26 656 s → 158 899 s (44 h) while antenna
+  pin violations shrank only 1676 → 1067 → 667 — and the final incremental
+  DRT (DRT-0627 marker-resume) reported 0 DRC + ANT 0/0 while leaving 1000+
+  nets wholly unrouted, so `design_is_routed` failed the stage after ~53 h
+  (verified via a temporary POST_DETAIL_ROUTE `design_is_routed -verbose`
+  hook, since removed). The 2026-07 pin converged the same repair 5391 → 23
+  in ~10 h, so this is a pin regression (marker-resume net dropping looks
+  like an upstream bug; not yet filed). Decision (MRG 2026-11-13): set
+  `SKIP_ANTENNA_REPAIR_POST_DRT=1` — first-pass DRT is clean, the design
+  finishes, and the remaining post-route antenna violations (~514 nets at
+  last measurement, logged in `drt_antennas.log`) are **waived and
+  documented** rather than repaired. Retry full repair on the next pin bump;
+  `MAX_REPAIR_ANTENNAS_ITER_DRT` is the fallback middle ground if a bounded
+  partial repair is ever wanted.
+
 - **partition_m QoR vs results.html baselines** (no knob changes, all TNS 0):
   - **asap7**: WS +100 ps, period_min 1399.82 ps → Fmax 714 MHz (−30.7 % vs
     1.03 GHz — the BC→TC corner swap, advisory per corner policy), 19 868 logic

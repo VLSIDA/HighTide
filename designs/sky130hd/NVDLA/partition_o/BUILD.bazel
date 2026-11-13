@@ -18,5 +18,12 @@ hightide_design(
         "PLACE_DENSITY_LB_ADDON": "0.15",
         "RTLMP_MIN_CHANNEL_SIZE": "120 120",  # was MACRO_PLACE_HALO 60 60 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
+        # 2026-11 pin: the jumper-only post-DRT antenna repair (no sky130hd
+        # ANTENNACELL diode, GRT-0246) diverges in runtime (final cycle 44 h)
+        # and its marker-resume incremental DRT drops 1000+ nets while
+        # reporting clean, failing design_is_routed. Skip it and waive the
+        # remaining antenna violations; retry on the next pin bump.
+        # See designs/src/NVDLA/DECISIONS.md.
+        "SKIP_ANTENNA_REPAIR_POST_DRT": "1",
     },
 )
