@@ -142,11 +142,23 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   in ~10 h, so this is a pin regression (marker-resume net dropping looks
   like an upstream bug; not yet filed). Decision (MRG 2026-11-13): set
   `SKIP_ANTENNA_REPAIR_POST_DRT=1` — first-pass DRT is clean, the design
-  finishes, and the remaining post-route antenna violations (~514 nets at
-  last measurement, logged in `drt_antennas.log`) are **waived and
+  finishes, and the remaining post-route antenna violations are **waived and
   documented** rather than repaired. Retry full repair on the next pin bump;
   `MAX_REPAIR_ANTENNAS_ITER_DRT` is the fallback middle ground if a bounded
   partial repair is ever wanted.
+- **partition_o sky130hd — passes 2026-11 validation with the skip
+  (2026-11-13)**: clean `_final`, route 0 DRC; first-pass DRT is only ~21 min
+  wall (46 555 s CPU at 128 threads) — the prior 53 h was entirely the
+  antenna-repair loop. Waived antenna violations (final `check_antennas`):
+  **1946 nets / 2934 pins** (5317 GRT-phase antenna cells still inserted
+  pre-DRT). QoR vs results.html baseline (79da6274): setup WS +0.44 ns
+  (TNS 0), period_min core 18.54 ns / falcon 2.56 ns → Fmax 390 MHz (+2.7 %
+  vs 0.38 GHz), logic cells 182 178 (−1.8 % vs 185 458; seq 39 208 ≈
+  identical, bufinv 29 542 −10.3 %), util 23.5 %, power 185 mW (vs 310 mW —
+  STA-2402 power-activity propagation did not converge, treat as
+  non-comparable). Hold WS −0.246 ns / TNS −3.8 ns over 18 endpoints
+  (library-hold / clock-gating checks; advisory per the 2026-11 gate
+  policy). Pass.
 
 - **partition_m QoR vs results.html baselines** (no knob changes, all TNS 0):
   - **asap7**: WS +100 ps, period_min 1399.82 ps → Fmax 714 MHz (−30.7 % vs
