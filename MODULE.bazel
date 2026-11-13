@@ -923,7 +923,7 @@ http_archive(
 )
 
 # --- sv2v (SystemVerilog -> Verilog-2005) prebuilt release binary ---
-# Shared by the sv2v-lowered designs (minimax, NyuziProcessor).  Pinning the
+# Shared by the sv2v-lowered designs (minimax, nyuzi).  Pinning the
 # prebuilt v0.0.13 release replaces building sv2v from an unpinned Haskell
 # Stack checkout of master.
 http_archive(
@@ -950,12 +950,12 @@ http_archive(
 # provided by the checked-in cache_lru.v / macros.v instead.
 http_archive(
     name = "nyuzi_src",
-    build_file = "//designs/src/NyuziProcessor:external.BUILD.bazel",
+    build_file = "//designs/src/nyuzi:external.BUILD.bazel",
     # Use GNU patch (fuzz-tolerant); Bazel's native patcher is stricter and
     # rejects the minor context drift in a couple of hunks.
     patch_args = ["-p0"],
     patch_tool = "patch",
-    patches = ["//designs/src/NyuziProcessor:patches/fakeram-swap.patch"],
+    patches = ["//designs/src/nyuzi:patches/fakeram-swap.patch"],
     sha256 = "39b8881b67c1b59afd3cbcbea06e11eda10e09f120b7d285750609ae0adc5428",
     strip_prefix = "NyuziProcessor-ed5c1a50b77af80e54800e21bd8b62822c3f496a",
     urls = ["https://github.com/jbush001/NyuziProcessor/archive/ed5c1a50b77af80e54800e21bd8b62822c3f496a.tar.gz"],

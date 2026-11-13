@@ -20,7 +20,7 @@ The authoritative list of designs and the (platform, design) build matrix lives 
 
 This catalog intentionally does not duplicate that list — the web page is regenerated from cached build state, so referring to it avoids the two-source-of-truth drift this file used to have.
 
-Memory-bearing designs (e.g. CNN, NyuziProcessor, BlackParrot, NVDLA, LiteDRAM, LiteEth, LitePCI) use [bsg_fakeram](https://github.com/bespoke-silicon-group/bsg_fakeram)-generated SRAM macros — pin-accurate LEF / LIB black-boxes with no internal logic.
+Memory-bearing designs (e.g. CNN, nyuzi, BlackParrot, NVDLA, LiteDRAM, LiteEth, LitePCI) use [bsg_fakeram](https://github.com/bespoke-silicon-group/bsg_fakeram)-generated SRAM macros — pin-accurate LEF / LIB black-boxes with no internal logic.
 
 ## Build targets
 

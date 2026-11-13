@@ -1,4 +1,4 @@
-# NyuziProcessor Design Decisions
+# nyuzi (upstream jbush001/NyuziProcessor) Design Decisions
 
 Per-platform notes for `NyuziProcessor` (Jeff Bush) — an open-source GPGPU written in SystemVerilog, with a 4-thread × 16-lane vector ISA. The HighTide port uses 8 vector lanes (halved from upstream 16 to reach a tractable cache-line width) and 2 L2 cache ways (halved from upstream 4) to fit asap7/nangate45/sky130hd floorplans.
 
@@ -35,7 +35,7 @@ by **sv2v pinned to the v0.0.13 prebuilt release** (`@sv2v`), replacing the
   converges to the same design. If synth wall-time becomes a problem, pin a
   newer sv2v release or set `SYNTH_MINIMUM_KEEP_SIZE` / disable `extract_fa`.
 
-FakeRAM macros live at `designs/<platform>/NyuziProcessor/sram/{lef,lib}/` and are wrapped by `designs/src/NyuziProcessor/macros.v`.
+FakeRAM macros live at `designs/<platform>/nyuzi/sram/{lef,lib}/` and are wrapped by `designs/src/nyuzi/macros.v`.
 
 ## asap7
 
