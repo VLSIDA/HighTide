@@ -109,6 +109,15 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   `3_place.odb` + `read_sdc`). The partition_a nangate45 no-op should be
   migrated to this strip. A C++ fix (type-discriminating `deleteNet`) is the
   upstream patch; not applied locally to avoid invalidating the suite cache.
+- **partition_a nangate45 — migrated to the modnet strip (2026-11-13)**:
+  `pre_cts.tcl` now strips the clock-inverter modnet association (FLW-9902
+  reports 1 stripped) and the **real** `repair_clock_inverters` runs; clean
+  `_final`, no SEGV, no RSZ-0060. QoR vs the earlier no-op validation run:
+  56 140 cells (+16.6 % — the real repair clones inverters and hold-buffers the
+  gated clocks), period_min 1.60 ns -> Fmax 626 MHz (−1.7 %), setup WS +86 ps,
+  hold WS −18 ps (clock-gating hold check; advisory). Vs results.html baseline:
+  cells +4.6 %, Fmax −3.7 %. Pass (advisory gates). Both strips drop once the
+  pin passes upstream PR #12251.
 - **partition_p QoR vs results.html baselines** (nangate45/sky130hd no knob
   changes; asap7 adds the `PRE_CTS_TCL` strip above):
   - **asap7**: WNS −40.6 ps @1500 ps (TNS −65 ps — advisory on the new TC
