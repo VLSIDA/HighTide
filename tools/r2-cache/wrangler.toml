@@ -1,0 +1,20 @@
+# Cloudflare Worker fronting the HighTide bazel R2 cache.
+# Deploy: npx wrangler deploy   (from this directory; needs `wrangler login`
+# or CLOUDFLARE_API_TOKEN with Workers + R2 edit permissions)
+
+name = "hightide-bazel-cache"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# First deploy serves on <name>.<account-subdomain>.workers.dev.
+# To serve on the zone instead, uncomment after testing:
+# routes = [
+#   { pattern = "r2cache.hightide-benchmarks.dev", custom_domain = true }
+# ]
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "hightide-bazel-cache"
+
+[observability]
+enabled = true
