@@ -34,6 +34,7 @@ hightide_design(
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "IO_CONSTRAINTS": [":io.tcl"],
         "ADDITIONAL_LEFS": ["//designs/asap7/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/asap7/bp_processor:sram_libs"],

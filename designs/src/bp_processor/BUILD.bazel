@@ -41,3 +41,10 @@ filegroup(
     ],
     visibility = ["//visibility:public"],
 )
+
+# repair_clock_inverters SEGV workaround (OpenROAD #12250, 2026-11 pin):
+# shared modnet-strip PRE_CTS_TCL for the whole bp family — bp_uno crashed
+# identically on nangate45 and asap7 (first CTS on this pin), and bp_quad
+# shares the netlist structure. A netlist without affected inverters makes
+# the strip a no-op (FLW-9902 reports 0). See CLAUDE.md workaround table.
+exports_files(["pre_cts.tcl"])

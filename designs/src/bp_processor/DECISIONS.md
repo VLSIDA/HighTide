@@ -150,3 +150,14 @@ same block as the NVDLA partitions; watch FLW-9902 for the stripped
 count). Per-design on nangate45 only; asap7/sky130hd/gt2n bp_uno get the
 strip if and when they show the same crash. Remove the strips once the
 pin passes the upstream fix (PR #12251).
+
+### Family-wide strip hoist (2026-11-14, same day)
+
+asap7 bp_uno then crashed at the identical site (Signal 11 after setRC =
+repair_clock_inverters), 2-for-2 across platforms, so the strip was
+hoisted to a shared designs/src/bp_processor/pre_cts.tcl referenced by
+all bp_uno and bp_quad BUILDs (the nangate45 per-design copy from
+earlier today was replaced by the shared reference). Rationale: the bp
+netlist family shares its clock-inverter structure, each un-stripped
+CTS costs a multi-hour run, and a strip on an unaffected netlist is a
+no-op (FLW-9902 = 0).

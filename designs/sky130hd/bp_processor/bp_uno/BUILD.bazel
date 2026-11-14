@@ -34,6 +34,7 @@ hightide_design(
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/sky130hd/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/sky130hd/bp_processor:sram_libs"],
         "MACRO_PLACEMENT_TCL": [":macro_placement.tcl"],

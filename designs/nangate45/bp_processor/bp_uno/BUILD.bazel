@@ -31,7 +31,7 @@ hightide_design(
         # repair_clock_inverters SEGV (OpenROAD #12250) on this netlist too —
         # first bp_uno-nangate45 CTS on the 2026-11 pin; same modnet strip as
         # the NVDLA partitions (see CLAUDE.md workaround table).
-        "PRE_CTS_TCL": [":pre_cts.tcl"],
+        "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/nangate45/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/nangate45/bp_processor:sram_libs"],
     },
