@@ -39,6 +39,17 @@ FakeRAM macros live at `designs/<platform>/nyuzi/sram/{lef,lib}/` and are wrappe
 
 ## asap7
 
+### SYNTH_MEMORY_MAX_BITS 8192 (2026-11 pin, yosys 0.68)
+
+yosys 0.68 keeps the HighTide wrapper's 8-deep interface FIFOs (8x613 =
+4,904 bits and 8x545 = 4,360 bits, module NyuziProcessor) as inferred
+memories where 0.64 FF-mapped them implicitly, so ORFS's mem_dump gate
+(default SYNTH_MEMORY_MAX_BITS = 4096, unchanged across pins) newly
+fails synth. Raised to 8192 on asap7 + nangate45 so yosys FF-maps them
+again — depth 8 is in the suite's sub-CACTI FF-fallback class, so no
+fakeram macro is warranted. ~5k extra FFs on a 934k-instance design.
+
+
 **Status**: finishing (PR #185, 2026-05-30)
 
 ### Configuration
@@ -99,6 +110,17 @@ The flow reports WNS = −653 ps at the 3000 ps target. That's not a real timing
 - **ODB-0445** in post-GRT repair_timing — only surfaces at util ≥ 65 here; no upstream issue filed yet.
 
 ## nangate45
+
+### SYNTH_MEMORY_MAX_BITS 8192 (2026-11 pin, yosys 0.68)
+
+yosys 0.68 keeps the HighTide wrapper's 8-deep interface FIFOs (8x613 =
+4,904 bits and 8x545 = 4,360 bits, module NyuziProcessor) as inferred
+memories where 0.64 FF-mapped them implicitly, so ORFS's mem_dump gate
+(default SYNTH_MEMORY_MAX_BITS = 4096, unchanged across pins) newly
+fails synth. Raised to 8192 on asap7 + nangate45 so yosys FF-maps them
+again — depth 8 is in the suite's sub-CACTI FF-fallback class, so no
+fakeram macro is warranted. ~5k extra FFs on a 934k-instance design.
+
 
 **Status**: finishing (long-running baseline)
 

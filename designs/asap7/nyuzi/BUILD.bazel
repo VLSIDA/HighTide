@@ -26,6 +26,11 @@ hightide_design(
     },
     arguments = {
         "SYNTH_HIERARCHICAL": "1",
+        # yosys 0.68 keeps the wrapper's 8-deep interface FIFOs (8x613 =
+        # 4904 bits, 8x545) as inferred memories where 0.64 FF-mapped them;
+        # raise the gate so they FF-map again (depth 8 is sub-CACTI, so the
+        # suite's FF-fallback convention applies, not a fakeram macro).
+        "SYNTH_MEMORY_MAX_BITS": "8192",
         "CORE_UTILIZATION": "65",
         "PLACE_DENSITY_LB_ADDON": "0.22",
         "RTLMP_MIN_CHANNEL_SIZE": "12 12",  # was MACRO_PLACE_HALO 6 6 (halo x,y ~ channel 2x,2y)
