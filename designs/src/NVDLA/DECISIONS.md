@@ -209,6 +209,15 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 
 ## gt2n
 
+### partition_a: repair_clock_inverters SEGV strip (2026-11 pin)
+
+First k8s run on the 2026-11 pin SEGV'd in CTS (Signal 11 right after
+sourcing pre_cts.tcl): the known OpenROAD #12250 repair_clock_inverters
+modnet crash, same as partition_p-asap7 / partition_a-nangate45. gt2n's
+pre_cts.tcl predated the strip (it only set clock wire RC), so the strip
+block was appended 2026-11-14; watch FLW-9902 for the stripped count.
+Remove with the other strips once the pin passes the upstream fix.
+
 **Status**: finishing. Per-partition details and known issues below.
 
 ### Configuration
