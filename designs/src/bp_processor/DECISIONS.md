@@ -138,3 +138,15 @@ existing config.
 ### Known issues / open questions
 - Not fully clean: 1 setup violation (-16.84 ps), 17 hold violations (worst -9.06 ps). Root cause
   not isolated — further closure may need investigation beyond SDC/margin knobs.
+
+## 2026-11 toolchain upgrade (OpenROAD 687848dd) — bp_uno
+
+### nangate45: repair_clock_inverters SEGV strip (2026-11-14)
+
+First bp_uno-nangate45 CTS on the 2026-11 pin SEGV'd (Signal 11 right
+after setRC, i.e. in repair_clock_inverters) — the known OpenROAD #12250
+modnet crash. Added the standard PRE_CTS_TCL modnet strip (pre_cts.tcl,
+same block as the NVDLA partitions; watch FLW-9902 for the stripped
+count). Per-design on nangate45 only; asap7/sky130hd/gt2n bp_uno get the
+strip if and when they show the same crash. Remove the strips once the
+pin passes the upstream fix (PR #12251).
