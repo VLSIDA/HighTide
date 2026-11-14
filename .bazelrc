@@ -9,18 +9,17 @@ try-import %workspace%/bazel-orfs/.bazelrc
 # gallery targets keep working across submodule bumps.
 build --@openroad//:platform=gui
 
-# Remote cache (self-hosted bazel-remote on donut, fronted by Cloudflare Tunnel) —
+# Remote cache (R2-backed Cloudflare Worker, see tools/r2-cache/) —
 # publicly readable, auth required to write.  To enable writes, add to .bazelrc.user
 # (gitignored):
 #   build --remote_cache=https://USER:TOKEN@cache.hightide-benchmarks.dev
 #   build --remote_upload_local_results=true
 build --remote_cache=https://cache.hightide-benchmarks.dev
 build --remote_upload_local_results=false
-# Compress payloads on the wire.  ORFS produces multi-100-MB stage ODBs
-# (2_floorplan.odb, 3_place.odb on big designs like NVDLA partition_c)
-# that exceed Cloudflare's free-tier 100 MB request-body limit on upload.
-# zstd compression typically gets ODBs well under that ceiling.
-build --remote_cache_compression
+# Do NOT enable --remote_cache_compression against this endpoint: the Worker
+# stores bytes verbatim, and mixing zstd-compressed and raw clients on one
+# bucket corrupts reads.  Blobs over the 100 MB Worker PUT cap are published
+# afterward via tools/r2-cache/s3-backfill.sh (the S3 API bypasses the cap).
 
 # Local disk cache as fallback
 build --disk_cache=~/.cache/bazel-disk-cache
