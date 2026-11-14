@@ -59,7 +59,7 @@ spec:
           #     headlessly on k8s; without it the gallery action fails
           #     with "xvfb-run: command not found" (Error 127)
           apt-get update -qq && apt-get install -y -qq \
-            curl git build-essential time libxml2 xvfb \
+            curl git build-essential time libxml2 xvfb awscli \
             python3 python3-yaml python3-numpy \
             libx11-xcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
             libxcb-keysyms1 libxcb-randr0 libxcb-render0 libxcb-render-util0 \
@@ -88,6 +88,11 @@ spec:
             CACHE_FLAGS="--remote_cache=https://cache.hightide-benchmarks.dev"
           fi
 
+          # Per-pod disk cache (fresh emptyDir): everything this job executes
+          # lands here, so the post-build S3 backfill below can publish the
+          # blobs too big for the Worker's 100 MB PUT cap.
+          CACHE_FLAGS="$CACHE_FLAGS --disk_cache=/disk-cache"
+
           # When uploading artifacts, force download of all intermediate
           # outputs (logs, reports, results) so we capture them on cache hits.
           if [ "__UPLOAD_ARTIFACTS__" = "true" ]; then
@@ -97,6 +102,19 @@ spec:
           # Capture build exit code so we can save artifacts even on failure
           BUILD_RC=0
           bazel build $CACHE_FLAGS __BAZEL_TARGET__ || BUILD_RC=$?
+
+          # Backfill oversized blobs over the R2 S3 API (bazel's own uploads
+          # through the Worker 413 above 100 MB and are skipped with a
+          # warning).  Runs whenever the r2-s3-creds Secret is present; never
+          # fails the job.  The disk cache is this job's output set, so the
+          # walk is cheap and objects already in the bucket are skipped.
+          if [ -n "${R2_ENDPOINT:-}" ]; then
+            echo "Backfilling oversized cache blobs over S3..."
+            bash tools/r2-cache/s3-backfill.sh --cache-dir /disk-cache \
+              || echo "WARNING: S3 backfill failed (build result unaffected)"
+          else
+            echo "No r2-s3-creds Secret; skipping oversized-blob backfill"
+          fi
 
           # Copy build artifacts to persistent storage (when enabled)
           if [ "__UPLOAD_ARTIFACTS__" = "true" ]; then
@@ -131,9 +149,31 @@ spec:
               name: bazel-cache-creds
               key: url
               optional: true
+        # R2 S3 API credentials for the oversized-blob backfill (optional;
+        # jobs without the Secret just skip the backfill step).
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: r2-s3-creds
+              key: AWS_ACCESS_KEY_ID
+              optional: true
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: r2-s3-creds
+              key: AWS_SECRET_ACCESS_KEY
+              optional: true
+        - name: R2_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: r2-s3-creds
+              key: R2_ENDPOINT
+              optional: true
         volumeMounts:
         - name: repo
           mountPath: /repo
+        - name: disk-cache
+          mountPath: /disk-cache
         - name: artifacts
           mountPath: /artifacts
         resources:
@@ -147,6 +187,8 @@ spec:
             ephemeral-storage: __EPH_LIMIT__
       volumes:
       - name: repo
+        emptyDir: {}
+      - name: disk-cache
         emptyDir: {}
       - name: artifacts
         persistentVolumeClaim:
