@@ -36,6 +36,15 @@ spec:
         volumeMounts:
         - name: repo
           mountPath: /repo
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+            ephemeral-storage: 10Gi
+          limits:
+            memory: 512Mi
+            cpu: 500m
+            ephemeral-storage: 10Gi
       containers:
       - name: build
         image: ubuntu:24.04
