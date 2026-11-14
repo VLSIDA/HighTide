@@ -18,3 +18,6 @@ bucket_name = "hightide-bazel-cache"
 
 [observability]
 enabled = true
+# Cache traffic is millions of near-identical requests per sweep; log 1%
+# so errors stay visible without burning the Observability event allowance.
+head_sampling_rate = 0.01
