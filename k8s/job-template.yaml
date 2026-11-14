@@ -58,8 +58,13 @@ spec:
           #     <design>_gallery render (xvfb-run + OpenROAD -gui) works
           #     headlessly on k8s; without it the gallery action fails
           #     with "xvfb-run: command not found" (Error 127)
+          # default-jre-headless — rules_jvm_external's coursier (maven deps
+          #   for the Chisel designs: sha3, gemmini, coralnpu) execs `java`
+          #   from PATH during repository fetch; bazel's remotejdk does not
+          #   cover repo rules
           apt-get update -qq && apt-get install -y -qq \
             curl git build-essential time libxml2 xvfb awscli \
+            default-jre-headless \
             python3 python3-yaml python3-numpy \
             libx11-xcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
             libxcb-keysyms1 libxcb-randr0 libxcb-render0 libxcb-render-util0 \
