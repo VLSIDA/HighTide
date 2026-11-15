@@ -19,7 +19,13 @@ create_clock -name phy_ref_clk -period 6400 $phy_clk_port
 # the top-level wire aliases; the explicit primitive output pins survive.
 set phy_clocks [get_clocks phy_ref_clk]
 foreach {domain buffer} {tx BUFG_GT_1 rx BUFG_GT_3} {
-    set driver [get_pins -quiet ${buffer}.clk_buf/Y]
+    # Match the original top-level or LiveHD-flattened buffer. CTS inverter clones
+    # can share its suffix, but they are not additional clock definitions.
+    set pin ${buffer}.clk_buf/Y
+    set driver [get_pins -quiet [list $pin __flat_*.$pin]]
+    if {[llength $driver] > 1} {
+        error "Ambiguous LiteEth $domain half-clock driver: $pin"
+    }
     if {[llength $driver] == 1} {
         create_generated_clock -name phy_${domain}_half_clk -source $phy_clk_port \
             -divide_by 2 $driver
