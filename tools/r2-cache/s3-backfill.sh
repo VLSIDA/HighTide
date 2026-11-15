@@ -61,7 +61,8 @@ for kind in cas ac; do
       skipped=$((skipped + 1))
       continue
     fi
-    size=$(stat -c%s "$f")
+    # The disk-cache GC can delete a candidate between find and here.
+    size=$(stat -c%s "$f" 2>/dev/null) || continue
     if [[ $DRY_RUN -eq 1 ]]; then
       echo "would upload $key ($((size / 1024 / 1024)) MB)"
     else
