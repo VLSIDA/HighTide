@@ -1,5 +1,10 @@
 #!/bin/bash
 # Fetch cached build results from the remote cache without building.
+#
+# NOTE: if you only need REPORTS (6_finish.rpt / 6_report.json / gallery
+# png), use tools/fetch_results.sh instead — it reads the published
+# results/ index over plain HTTP with no bazel at all. This script is for
+# materializing full build artifacts (ODBs etc.) into bazel-bin.
 # Uses a short timeout so only designs with cached results are fetched.
 #
 # Usage:

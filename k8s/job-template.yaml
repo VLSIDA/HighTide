@@ -145,6 +145,25 @@ spec:
             echo "No r2-s3-creds Secret; skipping oversized-blob backfill"
           fi
 
+          # Publish the small report/log files to a browsable S3 prefix so
+          # consumers (QoR harvests, update-results, fetch_results.sh) can
+          # read them with plain HTTP/S3 — no bazel needed. Content-addressed
+          # cache entries stay the source of truth for builds; this is a
+          # convenience index keyed by design + git sha.
+          if [ -n "${R2_ENDPOINT:-}" ]; then
+            TARGET="__BAZEL_TARGET__"
+            DESIGN_PATH="${TARGET#//}"; DESIGN_PATH="${DESIGN_PATH%%:*}"
+            GIT_SHA=$(git -C /repo rev-parse --short HEAD 2>/dev/null || echo unknown)
+            PFX="s3://hightide-bazel-cache/results/${DESIGN_PATH#designs/}/$GIT_SHA"
+            for f in $(find bazel-bin/$DESIGN_PATH -name '6_finish.rpt' -o -name '6_report.json' -o -name '*_gallery.png' 2>/dev/null | head -20); do
+              sz=$(stat -c%s "$f" 2>/dev/null || echo 0)
+              [ "$sz" -gt 52428800 ] && continue
+              aws s3 cp "$f" "$PFX/$(basename $f)" --endpoint-url "$R2_ENDPOINT" --no-progress >/dev/null 2>&1 || true
+            done
+            echo "$GIT_SHA" | aws s3 cp - "s3://hightide-bazel-cache/results/${DESIGN_PATH#designs/}/latest" --endpoint-url "$R2_ENDPOINT" >/dev/null 2>&1 || true
+            echo "Published reports to $PFX"
+          fi
+
           # Copy build artifacts to persistent storage (when enabled)
           if [ "__UPLOAD_ARTIFACTS__" = "true" ]; then
             # Extract design path from bazel target //designs/<platform>/<design>:<name>
