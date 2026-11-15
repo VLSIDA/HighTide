@@ -37,7 +37,15 @@ if [[ -z "${R2_ENDPOINT:-}" && -r "${HOME}/.hightide-r2-s3-env" ]]; then
 fi
 : "${R2_ENDPOINT:?R2_ENDPOINT not set (source ~/.hightide-r2-s3-env)}"
 
-uploaded=0 skipped=0 bytes=0
+# Script-scoped AWS config: 64 MB multipart chunks (a 2 GB blob is ~30 parts
+# instead of ~230 at the 8 MB default — fewer chances for R2 to drop a part
+# and fail CompleteMultipartUpload with InvalidPart).
+_AWSCFG=$(mktemp)
+printf '[default]\ns3 =\n  multipart_chunksize = 64MB\n' > "$_AWSCFG"
+export AWS_CONFIG_FILE="$_AWSCFG"
+trap 'rm -f "$_AWSCFG"' EXIT
+
+uploaded=0 skipped=0 bytes=0 failed=0
 for kind in cas ac; do
   [[ -d "$CACHE_DIR/$kind" ]] || continue
   while IFS= read -r f; do
@@ -54,12 +62,21 @@ for kind in cas ac; do
       echo "would upload $key ($((size / 1024 / 1024)) MB)"
     else
       echo "uploading $key ($((size / 1024 / 1024)) MB)"
-      aws s3 cp "$f" "s3://$BUCKET/$key" \
-        --endpoint-url "$R2_ENDPOINT" --no-progress
+      # Tolerate per-blob failures (transient R2 InvalidPart etc.): retry
+      # once, then record and continue — never abort the remaining blobs.
+      if ! aws s3 cp "$f" "s3://$BUCKET/$key" \
+             --endpoint-url "$R2_ENDPOINT" --no-progress \
+         && ! aws s3 cp "$f" "s3://$BUCKET/$key" \
+             --endpoint-url "$R2_ENDPOINT" --no-progress; then
+        echo "upload FAILED after retry: $key"
+        failed=$((failed + 1))
+        continue
+      fi
     fi
     uploaded=$((uploaded + 1))
     bytes=$((bytes + size))
   done < <(find "$CACHE_DIR/$kind" -type f -size +"${MIN_MB}"M 2>/dev/null)
 done
 
-echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present"
+echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present, $failed failed"
+[[ $failed -eq 0 ]]
