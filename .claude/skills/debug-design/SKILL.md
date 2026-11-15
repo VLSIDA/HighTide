@@ -4,7 +4,7 @@ description: Analyze and debug a failing HighTide design. Diagnose synthesis pro
 argument-hint: "<platform>/<design> [stage] [issue-description]"
 ---
 
-Per-stage knob references (every ORFS env var with defaults, plus command-level *_ARGS options): `.claude/skills/shared/knobs/{synth,floorplan,place,cts,grt,route,final}.md`. For macro-placement and floorplan strategy see the optimize-ppa skill (macro placement & floorplan section).
+For macro-placement and floorplan tuning (RTLMP knobs and their real ORFS plumbing, fixed grids, congestion-near-macros diagnosis), see the floorplan-design skill.
 
 # Debug a Failing Design
 

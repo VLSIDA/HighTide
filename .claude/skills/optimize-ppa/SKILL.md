@@ -4,6 +4,8 @@ description: Optimize power, performance, and area (PPA) for a HighTide design. 
 argument-hint: "<platform>/<design>"
 ---
 
+For macro-placement and floorplan tuning (RTLMP knobs and their real ORFS plumbing, fixed grids, congestion-near-macros diagnosis), see the floorplan-design skill.
+
 # Optimize PPA for a Design
 
 You are optimizing the PPA (power, performance, area) of the design at `designs/$0`. The goals are:
