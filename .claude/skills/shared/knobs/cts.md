@@ -7,6 +7,26 @@
 
 Set these in `hightide_design(arguments = {...})`. Unknown/misspelled vars are SILENT NO-OPS — verify against this list.
 
+## *_ARGS passthroughs (CTS)
+
+### `CTS_ARGS` -> `clock_tree_synthesis` (OVERRIDES the ORFS-generated arguments — restate what you still need)
+
+    clock_tree_synthesis [-wire_unit u] [-buf_list l] [-root_buf b]
+       [-clk_nets nets] [-tree_buf b] [-distance_between_buffers]
+       [-branching_point_buffers_distance] [-clustering_exponent]
+       [-clustering_unbalance_ratio] [-sink_clustering_size]
+       [-sink_clustering_max_diameter] [-macro_clustering_size]
+       [-macro_clustering_max_diameter] [-sink_clustering_enable]
+       [-balance_levels] [-sink_clustering_levels n] [-num_static_layers]
+       [-sink_clustering_buffer] [-obstruction_aware] [-no_obstruction_aware]
+       [-apply_ndr strategy] [-sink_buffer_max_cap_derate]
+       [-dont_use_dummy_load] [-delay_buffer_derate] [-library]
+       [-repair_clock_nets] [-no_insertion_delay] [-useful_skew]
+
+Key levers: sink/macro clustering size+diameter (tree depth vs skew),
+`-useful_skew`, `-apply_ndr` (wider/spaced clock wires), `-obstruction_aware`.
+Refresh with `help clock_tree_synthesis` on the pinned openroad.
+
 <!-- GENERATED-LIST -->
 - **`ASAP7_USE_VT`** (default: `RVT`): A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.
 - **`CELL_PAD_IN_SITES_DETAIL_PLACEMENT`** (default: `0`): Cell padding on both sides in site widths to ease routability in detail placement.

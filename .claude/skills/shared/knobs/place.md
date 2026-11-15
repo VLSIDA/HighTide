@@ -25,6 +25,52 @@ density mechanism. When a logic hotspot survives the defaults, strengthen it:
 Uniform (global) spreading instead: `PLACE_DENSITY_LB_ADDON` (raises the density
 lower bound suite-wide). Prefer the routability knobs for localized hotspots.
 
+### `GLOBAL_PLACEMENT_ARGS` -> `global_placement` (appended to ORFS defaults) — full option set
+
+    global_placement [-skip_initial_place] [-force_center_initial_place]
+       [-skip_nesterov_place] [-timing_driven] [-timing_driven_repair_timing]
+       [-power_driven] [-routability_driven] [-virtual_cts] [-incremental]
+       [-skip_io] [-place_ios] [-bin_grid_count grid_count]
+       [-density target_density] [-init_density_penalty v] [-init_wirelength_coef v]
+       [-min_phi_coef v] [-max_phi_coef v] [-reference_hpwl v] [-overflow v]
+       [-initial_place_max_iter v] [-initial_place_max_fanout v]
+       [-routability_use_grt] [-routability_target_rc_metric v]
+       [... -routability_* (see table above)]
+
+Non-routability highlights: `-density` overrides PLACE_DENSITY for this call;
+`-overflow` is the convergence stop (lower = tighter placement, longer run);
+`-bin_grid_count` refines the density grid; `-timing_driven_repair_timing`
+runs repair inside GPL iterations; `-virtual_cts` models ideal clock buffering.
+
+### `DETAIL_PLACEMENT_ARGS` -> `detailed_placement`
+
+    detailed_placement [-max_displacement disp|{disp_x disp_y}]
+       [-disallow_one_site_gaps] [-incremental] [-report_file_name f]
+       [-use_diamond_legalizer] [-pdn_aware] [-site_search_window sites]
+       [-row_search_window rows] [-drc_penalty penalty]
+       [-disable_window_extension] [-quiet]
+
+NOTE: CTS's internal detailed_placement call ignores this var (DPL-0036 row
+in CLAUDE.md) — use a PRE_CTS_TCL wrapper there.
+
+### `PLACE_PINS_ARGS` -> `place_pins`
+
+    place_pins [-hor_layers h] [-ver_layers v] [-random_seed s] [-random]
+       [-corner_avoidance dist] [-min_distance d] [-min_distance_in_tracks]
+       [-exclude region] [-group_pins list] [-annealing]
+       [-minimize_displacement] [-write_pin_placement f]
+
+### `BUFFER_PORTS_ARGS` -> `buffer_ports` (only if port buffering enabled)
+
+    buffer_ports [-inputs] [-outputs] [-max_utilization u] [-buffer_cell c] [-verbose]
+
+### `CLUSTER_FLOPS_ARGS` -> `cluster_flops` (only when CLUSTER_FLOPS set)
+
+    cluster_flops [-tray_weight w] [-timing_weight w] [-max_split_size n]
+       [-num_paths n] [-clock_power_weight w]
+
+Refresh any of these with `help <command>` on the pinned openroad binary.
+
 <!-- GENERATED-LIST -->
 - **`ASAP7_USE_VT`** (default: `RVT`): A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.
 - **`BALANCE_ROWS`** (default: `0`): Balance rows during placement.

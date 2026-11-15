@@ -7,6 +7,23 @@
 
 Set these in `hightide_design(arguments = {...})`. Unknown/misspelled vars are SILENT NO-OPS — verify against this list.
 
+## *_ARGS passthroughs (detailed route)
+
+### `DETAILED_ROUTE_ARGS` -> `detailed_route` (appended; mostly debug/limits)
+
+    detailed_route [-output_maze f] [-output_drc f] [-output_guide_coverage f]
+       [-drc_report_iter_step s] [-db_process_node name] [-disable_via_gen]
+       [-droute_end_iter iter] [-via_in_pin_bottom_layer l]
+       [-via_in_pin_top_layer l] [-via_access_layer l] [-or_seed s] [-or_k k]
+       [-bottom_routing_layer l] [-top_routing_layer l] [-verbose level]
+       [-distributed ...] [-clean_patches] [-no_pin_access]
+       [-min_access_points n] [-save_guide_updates] [-repair_pdn_vias l]
+       [-single_step_dr]
+
+Key levers: `-droute_end_iter` (cap DRT iterations on divergent designs),
+`-output_drc` + `-drc_report_iter_step` (watch violation trajectory).
+Refresh with `help detailed_route` on the pinned openroad.
+
 <!-- GENERATED-LIST -->
 - **`ASAP7_USE_VT`** (default: `RVT`): A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.
 - **`CORNERS`**: List of timing corner names for multi-corner analysis (e.g. "slow fast"). When set, liberty files are loaded per corner using uppercase <CORNER>_LIB_FILES environment variables (e.g. corner "slow" reads SLOW_LIB_FILES) and timing models are generated per corner.

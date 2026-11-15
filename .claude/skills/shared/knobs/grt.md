@@ -7,6 +7,23 @@
 
 Set these in `hightide_design(arguments = {...})`. Unknown/misspelled vars are SILENT NO-OPS — verify against this list.
 
+## *_ARGS passthroughs (global route)
+
+### `GLOBAL_ROUTE_ARGS` -> `global_route` (REPLACES the ORFS defaults — re-include `-congestion_iterations`/`-verbose` as needed)
+
+    global_route [-guide_file f] [-congestion_iterations n]
+       [-congestion_report_file f] [-congestion_report_iter_step s]
+       [-grid_origin origin] [-critical_nets_percentage p]
+       [-res_aware_nets_percentage p] [-skip_large_fanout_nets fanout]
+       [-allow_congestion] [-snapshot_batched_width w] [-backing_file f]
+       [-no_incremental] [-verbose] [-start_incremental] [-end_incremental]
+       [-unguided_only] [-use_cugr] [-resistance_aware] [-infinite_cap]
+
+Key levers: `-congestion_iterations` (rip-up budget), `-allow_congestion`
+(finish anyway — diagnosis runs), `-critical_nets_percentage` (timing-driven
+routing share), `-congestion_report_file` (where the hotspots are).
+Refresh with `help global_route` on the pinned openroad.
+
 <!-- GENERATED-LIST -->
 - **`ASAP7_USE_VT`** (default: `RVT`): A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.
 - **`CELL_PAD_IN_SITES_DETAIL_PLACEMENT`** (default: `0`): Cell padding on both sides in site widths to ease routability in detail placement.
