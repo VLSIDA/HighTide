@@ -33,7 +33,13 @@ hightide_design(
         # force local spread (utilization is already 20; area is not the
         # problem). See shared/knobs/place.md.
         "GLOBAL_PLACEMENT_ARGS": "-routability_max_inflation_ratio 4 -routability_inflation_ratio_coef 5 -routability_max_density 0.6",
-        "RTLMP_MIN_CHANNEL_SIZE": "60 60",  # was MACRO_PLACE_HALO 30 30 (halo x,y ~ channel 2x,2y)
+        # GRT-0116 fix attempt 3 (2026-11-15): attempt 2 (inflation) left
+        # 25k overflow concentrated on met1/met2 at 20.7% total usage —
+        # local pin-access density, not capacity. Suite default padding is
+        # 0; pad cells apart so pin shapes stop stacking (die is 80% empty,
+        # the area cost is free here).
+        "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": "2",
+        "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": "1",
         "ROUTING_LAYER_ADJUSTMENT": "0.25",
         "TNS_END_PERCENT": "100",
     },

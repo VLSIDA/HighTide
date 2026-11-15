@@ -26,7 +26,12 @@ hightide_design(
         # pre-migration MACRO_PLACE_HALO intent; 24um pin-aware channels.
         # Keep CORE_UTILIZATION 46 — BSPDN density is the platform's point;
         # treat congestion as a channel problem first (optimize-ppa skill).
-        "RTLMP_ARGS": "-target_util 0.40 -halo_width 8 -halo_height 8 -min_channel_size 24 -pin_aware_channels",
+        # Attempt-1 revision: 8um halos + 24um channels together tripped
+        # MPL-0065 (movable cells don't fit) — this pin deprecates
+        # -halo_width/-halo_height (MPL-0074) and folds halo spacing into
+        # channels, so the halos double-reserved area. Channels alone carry
+        # the spacing intent.
+        "RTLMP_ARGS": "-target_util 0.40 -min_channel_size 24 -pin_aware_channels",
         # GRT-0232 fix attempt 2 (2026-11-15): heatmap shows a saturated
         # open-core logic blob (macro channels were clean) — strengthen
         # GPL routability-driven inflation to spread it locally; keep
