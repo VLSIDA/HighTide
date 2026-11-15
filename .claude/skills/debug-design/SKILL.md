@@ -4,8 +4,6 @@ description: Analyze and debug a failing HighTide design. Diagnose synthesis pro
 argument-hint: "<platform>/<design> [stage] [issue-description]"
 ---
 
-Per-stage knob references (every ORFS env var with defaults, plus command-level *_ARGS options): `.claude/skills/shared/knobs/{synth,floorplan,place,cts,grt,route,final}.md`. For macro-placement and floorplan strategy see the optimize-ppa skill (macro placement & floorplan section).
-
 # Debug a Failing Design
 
 You are debugging the design at `designs/$0`. The user may have specified a stage (`$1`) and/or an issue description (`$2`). If the stage or issue is not provided, determine them by examining build artifacts and logs.
