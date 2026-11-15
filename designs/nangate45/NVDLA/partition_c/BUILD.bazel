@@ -7,6 +7,9 @@ hightide_design(
     verilog_files = ["//designs/src/NVDLA:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        # repair_clock_inverters SEGV (OpenROAD #12250) — same modnet strip
+        # as partition_a (Signal 11 in CTS, first 2026-11-pin run).
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/nangate45/NVDLA:sram_lefs_c"],
         "ADDITIONAL_LIBS": ["//designs/nangate45/NVDLA:sram_libs_c"],
     },
