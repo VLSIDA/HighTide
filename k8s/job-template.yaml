@@ -130,7 +130,7 @@ spec:
 
           # Capture build exit code so we can save artifacts even on failure
           BUILD_RC=0
-          bazel build $CACHE_FLAGS __BAZEL_TARGET__ || BUILD_RC=$?
+          bazel build --repository_cache=/repo-cache $CACHE_FLAGS __BAZEL_TARGET__ || BUILD_RC=$?
 
           # Backfill oversized blobs over the R2 S3 API (bazel's own uploads
           # through the Worker 413 above 100 MB and are skipped with a
@@ -222,6 +222,10 @@ spec:
           mountPath: /repo
         - name: disk-cache
           mountPath: /disk-cache
+        # Shared, content-addressed bazel repository cache (module tarballs,
+        # http_archive downloads): warm across all jobs, safe concurrently.
+        - name: repo-cache
+          mountPath: /repo-cache
         - name: artifacts
           mountPath: /artifacts
         resources:
@@ -238,6 +242,9 @@ spec:
         emptyDir: {}
       - name: disk-cache
         emptyDir: {}
+      - name: repo-cache
+        persistentVolumeClaim:
+          claimName: hightide-repo-cache
       - name: artifacts
         persistentVolumeClaim:
           claimName: hightide-artifacts
