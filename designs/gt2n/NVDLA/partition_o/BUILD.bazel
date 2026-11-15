@@ -18,7 +18,15 @@ hightide_design(
         "CORE_UTILIZATION": "46",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
-        "RTLMP_MIN_CHANNEL_SIZE": "16 16",  # was MACRO_PLACE_HALO 8 8 (halo x,y ~ channel 2x,2y)
+        # GRT-0232 congestion fix attempt 1 (2026-11-15): the former
+        # RTLMP_MIN_CHANNEL_SIZE "16 16" was a silent no-op (not plumbed on
+        # this ORFS pin), so the failing run had NO channel/halo control.
+        # RTLMP_ARGS replaces the whole generated arg list: -target_util
+        # re-states gt2n's PLACE_DENSITY (0.40, no addon); halo 8x8 is the
+        # pre-migration MACRO_PLACE_HALO intent; 24um pin-aware channels.
+        # Keep CORE_UTILIZATION 46 — BSPDN density is the platform's point;
+        # treat congestion as a channel problem first (optimize-ppa skill).
+        "RTLMP_ARGS": "-target_util 0.40 -halo_width 8 -halo_height 8 -min_channel_size 24 -pin_aware_channels",
         "TNS_END_PERCENT": "100",
         "HOLD_SLACK_MARGIN": "40",
     },
