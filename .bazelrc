@@ -29,6 +29,10 @@ build --remote_upload_local_results=false
 
 # Local disk cache as fallback
 build --disk_cache=~/.cache/bazel-disk-cache
+# Override bazel-orfs's 2G disk-cache GC cap (later lines win over the
+# try-import): 2G evicts single big-design ODBs mid-campaign (it raced and
+# ate backfill candidates and AC entries on 2026-11-15). donut has TBs.
+build --experimental_disk_cache_gc_max_size=500G
 
 # Mirror flaky GNU hosts (download.savannah.gnu.org, ftp.gnu.org) to a byte-
 # identical netcologne mirror. Applies to all commands so module resolution
