@@ -121,6 +121,10 @@ spec:
           # lands here, so the post-build S3 backfill below can publish the
           # blobs too big for the Worker's 100 MB PUT cap.
           CACHE_FLAGS="$CACHE_FLAGS --disk_cache=/disk-cache"
+          # Materialize the small report files even on full-cache-hit builds
+          # (default download mode skips intermediate outputs, leaving the
+          # results-index publish step with nothing to copy).
+          CACHE_FLAGS="$CACHE_FLAGS --remote_download_regex=.*(6_finish\.rpt|6_report\.json)$"
 
           # When uploading artifacts, force download of all intermediate
           # outputs (logs, reports, results) so we capture them on cache hits.
