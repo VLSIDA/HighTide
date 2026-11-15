@@ -78,5 +78,31 @@ for kind in cas ac; do
   done < <(find "$CACHE_DIR/$kind" -type f -size +"${MIN_MB}"M 2>/dev/null)
 done
 
-echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present, $failed failed"
+# Second pass: action-cache entries, ALL sizes. When an action has an
+# oversized output, bazel's own 413'd blob upload makes it skip writing
+# the AC entry — so without this pass, big-output actions never become
+# cache hits even though the pass above published their blobs. AC files
+# are tiny; one that references a missing CAS blob is harmless (bazel
+# falls back to executing the action).
+ac_up=0 ac_skip=0
+if [[ -d "$CACHE_DIR/ac" ]]; then
+  while IFS= read -r f; do
+    hash=$(basename "$f")
+    [[ "$hash" =~ ^[0-9a-f]{64}$ ]] || continue
+    key="ac/$hash"
+    if aws s3api head-object --bucket "$BUCKET" --key "$key" \
+         --endpoint-url "$R2_ENDPOINT" >/dev/null 2>&1; then
+      ac_skip=$((ac_skip + 1)); continue
+    fi
+    if [[ $DRY_RUN -eq 1 ]]; then
+      echo "would upload $key"
+    elif ! aws s3 cp "$f" "s3://$BUCKET/$key" \
+           --endpoint-url "$R2_ENDPOINT" --no-progress >/dev/null; then
+      echo "AC upload FAILED: $key"; failed=$((failed + 1)); continue
+    fi
+    ac_up=$((ac_up + 1))
+  done < <(find "$CACHE_DIR/ac" -type f 2>/dev/null)
+fi
+
+echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present, $failed failed; AC: $ac_up uploaded, $ac_skip present"
 [[ $failed -eq 0 ]]
