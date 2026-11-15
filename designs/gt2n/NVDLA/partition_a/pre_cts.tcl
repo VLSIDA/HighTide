@@ -15,7 +15,7 @@ set_wire_rc -clock -layer M4
 set _rci_block [ord::get_db_block]
 set _rci_stripped 0
 foreach _rci_inst [$_rci_block getInsts] {
-  if {[string match "INV*" [[$_rci_inst getMaster] getName]]} {
+  if {[string match -nocase "*inv*" [[$_rci_inst getMaster] getName]]} {
     foreach _rci_it [$_rci_inst getITerms] {
       if {[$_rci_it getIoType] eq "OUTPUT"} {
         set _rci_net [$_rci_it getNet]
