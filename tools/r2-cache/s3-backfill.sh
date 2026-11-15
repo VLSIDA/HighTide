@@ -18,6 +18,9 @@
 set -euo pipefail
 
 MIN_MB=95          # just under the 100 MB Worker cap
+AC_DAYS=2          # AC pass looks at entries modified in the last N days
+                   # (bounds the walk on hosts with months-old disk caches;
+                   # pod emptyDir caches are always fully recent)
 CACHE_DIR="${HOME}/.cache/bazel-disk-cache"
 BUCKET=hightide-bazel-cache
 DRY_RUN=0
@@ -27,6 +30,7 @@ while [[ $# -gt 0 ]]; do
     --min-size-mb) MIN_MB="$2"; shift 2 ;;
     --dry-run)     DRY_RUN=1; shift ;;
     --cache-dir)   CACHE_DIR="$2"; shift 2 ;;
+    --ac-days)     AC_DAYS="$2"; shift 2 ;;
     *) echo "unknown arg: $1" >&2; exit 1 ;;
   esac
 done
@@ -101,7 +105,7 @@ if [[ -d "$CACHE_DIR/ac" ]]; then
       echo "AC upload FAILED: $key"; failed=$((failed + 1)); continue
     fi
     ac_up=$((ac_up + 1))
-  done < <(find "$CACHE_DIR/ac" -type f 2>/dev/null)
+  done < <(find "$CACHE_DIR/ac" -type f -mtime -"$AC_DAYS" 2>/dev/null)
 fi
 
 echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present, $failed failed; AC: $ac_up uploaded, $ac_skip present"
