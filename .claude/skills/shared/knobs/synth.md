@@ -7,16 +7,6 @@
 
 Set these in `hightide_design(arguments = {...})`. Unknown/misspelled vars are SILENT NO-OPS — verify against this list.
 
-## *_ARGS passthroughs (synthesis)
-
-- **`SYNTH_ARGS`** -> extra flags appended to yosys's `synth` macro-command
-  (e.g. `-flatten`, `-noshare`, `-abc9`). Refresh the option list with
-  `yosys -p 'help synth'` on the pinned yosys.
-- **`SYNTH_OPERATIONS_ARGS`** -> REPLACES the default Yosys synth operations
-  list when set — you own the whole sequence.
-- **`SYNTH_SLANG_ARGS`** -> extra flags for the yosys-slang frontend
-  (SystemVerilog parsing; e.g. defines, single-unit mode).
-
 <!-- GENERATED-LIST -->
 - **`ABC_AREA`** (default: `0`): Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.
 - **`ABC_CLOCK_PERIOD_IN_PS`**: Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.

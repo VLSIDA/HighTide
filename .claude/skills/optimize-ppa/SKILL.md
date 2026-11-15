@@ -268,6 +268,8 @@ The per-iteration table from Step 6's comparison output transplants directly —
 
 # Macro placement & floorplan tuning
 
+Exhaustive per-stage knob lists (generated from the pin's variables.json, regenerable via shared/knobs/generate.py): `.claude/skills/shared/knobs/{synth,floorplan,place,cts,grt,route,final}.md`.
+
 For raw OpenROAD command syntax see the `openroad-tcl` skill (`refs/mpl.md`).
 
 Strategy layer for macro placement. For raw OpenROAD command syntax see the
