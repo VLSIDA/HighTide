@@ -4,7 +4,7 @@ description: Analyze and debug a failing HighTide design. Diagnose synthesis pro
 argument-hint: "<platform>/<design> [stage] [issue-description]"
 ---
 
-For macro-placement and floorplan tuning (RTLMP knobs and their real ORFS plumbing, fixed grids, congestion-near-macros diagnosis), see the floorplan-design skill.
+For macro-placement and floorplan tuning (RTLMP knobs and their real ORFS plumbing, fixed grids, congestion-near-macros diagnosis), see the optimize-ppa skill (macro placement & floorplan section).
 
 # Debug a Failing Design
 

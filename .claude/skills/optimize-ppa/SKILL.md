@@ -4,8 +4,6 @@ description: Optimize power, performance, and area (PPA) for a HighTide design. 
 argument-hint: "<platform>/<design>"
 ---
 
-For macro-placement and floorplan tuning (RTLMP knobs and their real ORFS plumbing, fixed grids, congestion-near-macros diagnosis), see the floorplan-design skill.
-
 # Optimize PPA for a Design
 
 You are optimizing the PPA (power, performance, area) of the design at `designs/$0`. The goals are:
@@ -269,8 +267,6 @@ The per-iteration table from Step 6's comparison output transplants directly —
 **Do not** add the PPA narrative to `CLAUDE.md`. CLAUDE.md's "Build status" is a pure index; per-design narrative lives in DECISIONS.md. Update CLAUDE.md only if a (design, platform) pair moved between the cached / local-only / not-finishing lists.
 
 # Macro placement & floorplan tuning
-
-Exhaustive per-stage knob lists (generated from the pin's variables.json, regenerable via shared/knobs/generate.py): `.claude/skills/shared/knobs/{synth,floorplan,place,cts,grt,route,final}.md`.
 
 For raw OpenROAD command syntax see the `openroad-tcl` skill (`refs/mpl.md`).
 
