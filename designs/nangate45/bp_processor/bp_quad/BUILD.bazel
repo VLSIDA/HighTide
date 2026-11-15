@@ -5,14 +5,18 @@ _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
     "VERILOG_TOP_PARAMS": "bp_params_p 11",
-    # bp_quad has 560 macros. First attempt at 8000x8000 + halo=6 hit
-    # PDN-0179 — same lesson as bp_uno-nangate45: halo=6 too tight for
-    # nangate45 power stripes between macros. Keep 8000x8000 die but
-    # bump halo to 25 (bp_uno-n45's working value).
-    "DIE_AREA": "0 0 8000 8000",
-    "CORE_AREA": "10 10 7990 7990",
+    # 2026-11-15: byte-mask macro rebind (560 -> 88 macros, 2.10 Mum2 of
+    # macro vs 5.30 before). The old 8000x8000 die was sized for RTLMP
+    # headroom at 560 macros and ran at ~15% occupancy (85% fill cells,
+    # clumped placement, mid-edge pin clusters). Resize to 5000x5000
+    # (~24% occupancy: ~6.1 Mum2 instances in a 25 Mum2 core) —
+    # deliberately roomy first pass; tighten in a later PPA round.
+    "DIE_AREA": "0 0 5000 5000",
+    "CORE_AREA": "10 10 4990 4990",
     "PLACE_DENSITY_LB_ADDON": "0.10",
-    "RTLMP_MIN_CHANNEL_SIZE": "50 50",  # was MACRO_PLACE_HALO 25 25 (halo x,y ~ channel 2x,2y)
+    # Spread the IO pins (mirrors asap7 bp_quad); without it place_pins
+    # packs them mid-edge toward the interior logic.
+    "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
     # See asap7 bp_quad: new-resizer repair_timing does not converge on the
     # structural -4900 ps memory path; skip the CTS-time and post-GRT repair
     # passes so the flow finishes (route still hold-repairs).

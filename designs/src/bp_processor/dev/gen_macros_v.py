@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 """Generate designs/<platform>/bp_processor/macros.v.
 
-The Black-Parrot BSG library uses ``bsg_mem_1rw_sync_synth`` and
-``bsg_mem_1rw_sync_mask_write_bit_synth`` for its parameterised memory
+The Black-Parrot BSG library uses ``bsg_mem_1rw_sync_synth``,
+``bsg_mem_1rw_sync_mask_write_bit_synth``, and
+``bsg_mem_1rw_sync_mask_write_byte_synth`` for its parameterised memory
 arrays. This script emits a macros.v that:
 
   - for each (depth, width) in ``LARGE_CONFIGS``: instantiates the
     matching ``fakeram_DxW_1rw`` macro (bsg_fakeram-generated LEF/LIB
     + behavioural .v), wiring the new ``rw0_*`` pin names.
+  - for each (depth, width) in ``BYTE_MASK_CONFIGS``: binds the
+    byte-masked flavour to the same wide ``fakeram_DxW_1rw`` macro,
+    expanding the per-byte mask to the macro's per-bit ``rw0_wmask_in``
+    (the same collapse BSG's own ``hard/fakeram`` headers perform).
+    Without this binding, BSG's generic byte_synth slices every
+    byte-masked RAM into W/8 separate 8-bit macros - bp_quad carried
+    512 such slices (256x fakeram_512x8 + 256x fakeram_128x8), which
+    is what pushed its macro count to 560 and broke RTLMP annealing
+    (MPL-0040) on nangate45.
   - for any other (depth, width): falls back to a register-array
-    implementation, which yosys synthesises to flip-flops.
+    implementation (or, for the byte flavour, BSG's own byte slicing
+    over ``bsg_mem_1rw_sync``), which yosys synthesises to flip-flops.
 
 The implicit-mask flavour (``bsg_mem_1rw_sync_synth``) broadcasts
 ``w_i`` across all wmask bits; the per-bit-mask flavour passes
@@ -43,6 +54,14 @@ LARGE_CONFIGS = [
     ( 64,  50),
     ( 32,  48),
     (128,   8),
+]
+
+# (depth, width) pairs of byte-masked memories bound to one wide macro
+# each (per-byte mask expanded to the macro's per-bit wmask). Every
+# entry must also have its fakeram_DxW_1rw in the platform cfgs.
+BYTE_MASK_CONFIGS = [
+    (512,  64),
+    (128, 256),
 ]
 
 # Where the generated macros.v lands. Same content per platform.
@@ -162,11 +181,96 @@ endmodule
 """
 
 
+# Byte-masked flavour: one wide macro per RAM, per-byte mask expanded to
+# the macro's per-bit wmask. Port/parameter names follow BSG's
+# bsg_mem_1rw_sync_mask_write_byte_synth exactly (data_width_p,
+# write_mask_i). Unbound sizes keep BSG's own behaviour: byte slices
+# over bsg_mem_1rw_sync (whose synth leaf is the module above).
+BYTE_INSTANCE_TMPL = """\
+\t\telse if ((els_p == {depth}) && (data_width_p == {width})) begin : fakeram_{depth}x{width}
+\t\t\twire [{width} - 1:0] wmask_bits;
+\t\t\tgenvar gb;
+\t\t\tfor (gb = 0; gb < {nbytes}; gb = gb + 1) begin : expand
+\t\t\t\tassign wmask_bits[(gb * 8)+:8] = {{8{{write_mask_i[gb]}}}};
+\t\t\tend
+\t\t\tfakeram_{depth}x{width}_1rw mem (
+\t\t\t\t.rw0_clk(clk_i),
+\t\t\t\t.rw0_ce_in(v_i),
+\t\t\t\t.rw0_we_in(w_i),
+\t\t\t\t.rw0_wmask_in(wmask_bits),
+\t\t\t\t.rw0_addr_in(addr_i),
+\t\t\t\t.rw0_wd_in(data_i),
+\t\t\t\t.rw0_rd_out(data_o)
+\t\t\t);
+\t\tend
+"""
+
+
+def make_byte_module():
+    """Build bsg_mem_1rw_sync_mask_write_byte_synth."""
+    blocks = "".join(BYTE_INSTANCE_TMPL.format(
+        depth=depth, width=width, nbytes=width // 8)
+        for depth, width in BYTE_MASK_CONFIGS)
+    return f"""\
+module bsg_mem_1rw_sync_mask_write_byte_synth (
+\tclk_i,
+\treset_i,
+\tv_i,
+\tw_i,
+\taddr_i,
+\tdata_i,
+\twrite_mask_i,
+\tdata_o
+);
+\tparameter els_p = 0;
+\tparameter addr_width_lp = ((els_p == 1) || (els_p == 0) ? 1 : $clog2(els_p));
+\tparameter latch_last_read_p = 0;
+\tparameter data_width_p = 0;
+\tparameter write_mask_width_lp = data_width_p >> 3;
+\tinput clk_i;
+\tinput reset_i;
+\tinput v_i;
+\tinput w_i;
+\tinput [addr_width_lp - 1:0] addr_i;
+\tinput [(data_width_p < 1 ? 0 : data_width_p - 1):0] data_i;
+\tinput [(write_mask_width_lp < 1 ? 0 : write_mask_width_lp - 1):0] write_mask_i;
+\toutput wire [(data_width_p < 1 ? 0 : data_width_p - 1):0] data_o;
+\twire unused = reset_i;
+\tgenerate
+\t\tif ((data_width_p == 0) || (els_p == 0)) begin : z
+\t\t\twire unused0 = &{{clk_i, v_i, w_i, addr_i, data_i, write_mask_i}};
+\t\t\tassign data_o = 1'sb0;
+\t\tend
+{blocks}\t\telse begin : nz
+\t\t\tgenvar i;
+\t\t\tfor (i = 0; i < write_mask_width_lp; i = i + 1) begin : bk
+\t\t\t\tbsg_mem_1rw_sync #(
+\t\t\t\t\t.width_p(8),
+\t\t\t\t\t.els_p(els_p),
+\t\t\t\t\t.latch_last_read_p(latch_last_read_p)
+\t\t\t\t) mem_1rw_sync (
+\t\t\t\t\t.clk_i(clk_i),
+\t\t\t\t\t.reset_i(reset_i),
+\t\t\t\t\t.data_i(data_i[(i * 8)+:8]),
+\t\t\t\t\t.addr_i(addr_i),
+\t\t\t\t\t.v_i(v_i & (w_i ? write_mask_i[i] : 1'b1)),
+\t\t\t\t\t.w_i(w_i & write_mask_i[i]),
+\t\t\t\t\t.data_o(data_o[(i * 8)+:8])
+\t\t\t\t);
+\t\t\tend
+\t\tend
+\tendgenerate
+endmodule
+"""
+
+
 def main():
     body = HEADER + "\n"
     body += make_module("bsg_mem_1rw_sync_synth", "broadcast")
     body += "\n"
     body += make_module("bsg_mem_1rw_sync_mask_write_bit_synth", "w_mask_i")
+    body += "\n"
+    body += make_byte_module()
 
     # Locate the repo root: this script lives at designs/src/bp_processor/dev/
     here = os.path.dirname(os.path.abspath(__file__))

@@ -20,6 +20,9 @@ load("//designs/src/bp_processor:srcs.bzl", "BP_SRCS")
 _EXCLUDED_SUFFIXES = [
     "bsg_mem_1rw_sync_synth.sv",
     "bsg_mem_1rw_sync_mask_write_bit_synth.sv",
+    # Byte-masked RAMs bind to one wide per-bit-wmask macro instead of
+    # BSG's W/8 separate 8-bit slices (bp_quad: 560 -> 88 macros).
+    "bsg_mem_1rw_sync_mask_write_byte_synth.sv",
 ]
 
 filegroup(

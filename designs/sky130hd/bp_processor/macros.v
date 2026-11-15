@@ -233,3 +233,85 @@ module bsg_mem_1rw_sync_mask_write_bit_synth (
 		end
 	endgenerate
 endmodule
+
+module bsg_mem_1rw_sync_mask_write_byte_synth (
+	clk_i,
+	reset_i,
+	v_i,
+	w_i,
+	addr_i,
+	data_i,
+	write_mask_i,
+	data_o
+);
+	parameter els_p = 0;
+	parameter addr_width_lp = ((els_p == 1) || (els_p == 0) ? 1 : $clog2(els_p));
+	parameter latch_last_read_p = 0;
+	parameter data_width_p = 0;
+	parameter write_mask_width_lp = data_width_p >> 3;
+	input clk_i;
+	input reset_i;
+	input v_i;
+	input w_i;
+	input [addr_width_lp - 1:0] addr_i;
+	input [(data_width_p < 1 ? 0 : data_width_p - 1):0] data_i;
+	input [(write_mask_width_lp < 1 ? 0 : write_mask_width_lp - 1):0] write_mask_i;
+	output wire [(data_width_p < 1 ? 0 : data_width_p - 1):0] data_o;
+	wire unused = reset_i;
+	generate
+		if ((data_width_p == 0) || (els_p == 0)) begin : z
+			wire unused0 = &{clk_i, v_i, w_i, addr_i, data_i, write_mask_i};
+			assign data_o = 1'sb0;
+		end
+		else if ((els_p == 512) && (data_width_p == 64)) begin : fakeram_512x64
+			wire [64 - 1:0] wmask_bits;
+			genvar gb;
+			for (gb = 0; gb < 8; gb = gb + 1) begin : expand
+				assign wmask_bits[(gb * 8)+:8] = {8{write_mask_i[gb]}};
+			end
+			fakeram_512x64_1rw mem (
+				.rw0_clk(clk_i),
+				.rw0_ce_in(v_i),
+				.rw0_we_in(w_i),
+				.rw0_wmask_in(wmask_bits),
+				.rw0_addr_in(addr_i),
+				.rw0_wd_in(data_i),
+				.rw0_rd_out(data_o)
+			);
+		end
+		else if ((els_p == 128) && (data_width_p == 256)) begin : fakeram_128x256
+			wire [256 - 1:0] wmask_bits;
+			genvar gb;
+			for (gb = 0; gb < 32; gb = gb + 1) begin : expand
+				assign wmask_bits[(gb * 8)+:8] = {8{write_mask_i[gb]}};
+			end
+			fakeram_128x256_1rw mem (
+				.rw0_clk(clk_i),
+				.rw0_ce_in(v_i),
+				.rw0_we_in(w_i),
+				.rw0_wmask_in(wmask_bits),
+				.rw0_addr_in(addr_i),
+				.rw0_wd_in(data_i),
+				.rw0_rd_out(data_o)
+			);
+		end
+		else begin : nz
+			genvar i;
+			for (i = 0; i < write_mask_width_lp; i = i + 1) begin : bk
+				bsg_mem_1rw_sync #(
+					.width_p(8),
+					.els_p(els_p),
+					.latch_last_read_p(latch_last_read_p)
+				) mem_1rw_sync (
+					.clk_i(clk_i),
+					.reset_i(reset_i),
+					.data_i(data_i[(i * 8)+:8]),
+					.addr_i(addr_i),
+					.v_i(v_i & (w_i ? write_mask_i[i] : 1'b1)),
+					.w_i(w_i & write_mask_i[i]),
+					.data_o(data_o[(i * 8)+:8])
+				);
+			end
+		end
+	endgenerate
+endmodule
