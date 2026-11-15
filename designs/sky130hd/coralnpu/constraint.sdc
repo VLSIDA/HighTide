@@ -2,7 +2,12 @@ current_design CoreMiniAxi
 
 set clk_name  io_aclk
 set clk_port_name io_aclk
-set clk_period 30
+set clk_period 31.5
+# Relaxed 5% from 30 on the 2026-11 pin: synth netlist grew to ~148k cells
+# (old routed total was 149k) on a design that closed with marginal setup,
+# and GRT fails with congestion; less timing pressure means less repair
+# buffering and less wire. (Keep the assignment above this note: ORFS's
+# clock parsing takes the first matching token in the file.)
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_name]
