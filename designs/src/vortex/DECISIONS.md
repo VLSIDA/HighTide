@@ -25,6 +25,21 @@ Compare cell counts against post-fallback baselines only.
   builds and parses Vortex cleanly against **yosys 0.64** after the 2026-06-04 upgrade
   (`read_slang` runs without the multidriver/`1'x` error).
 
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+All three platforms re-validated 2026-11-16 on NRP (first jobs through the new
+`_final_report` QoR publish path):
+
+- **asap7**: finishes; period_min 1260 ps (Fmax 0.79 GHz vs 0.96 BC-corner
+  baseline, −17 % — covered by the accepted BC→TC corner switch), WS −160 ps on
+  the 1100 ps clock (−135 at 2026-06), hold +28 ps, power 168 mW. The worst path
+  is still the signed-off SRAM-access-bound dcache read.
+- **nangate45**: PASS — period_min 2232 ps (Fmax 0.448 vs 0.46, −2.6 %), WS
+  +228 ps, hold +21 ps, power −2.4 %.
+- **sky130hd**: PASS — period_min 10 ns (Fmax 0.100, exactly baseline), WS
+  −0.4 ps (effectively closed; the old −162 ps marginal-setup flag has
+  **resolved** on this pin), hold +59 ps, power +0.5 %.
+
 ## asap7
 
 **Status**: reaches `_final` (setup-critical — worst path is SRAM-access bound; WNS negative)
