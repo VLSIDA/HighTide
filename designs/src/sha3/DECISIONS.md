@@ -103,17 +103,27 @@ Mid-size combinational-heavy core (~20k stdcells, no macros).
 ## gt2n
 
 **Status**: finishing
-**Last updated**: 2026-08-14
+**Last updated**: 2026-11-16
 
 ### Configuration
-- `CORE_UTILIZATION = 75`, `PLACE_DENSITY = 0.85`
+- `CORE_UTILIZATION = 85`, `PLACE_DENSITY = 0.90` (was 75/0.85)
 - `MAX_ROUTING_LAYER = M11`, `MIN_CLK_ROUTING_LAYER = M4`
 - `TNS_END_PERCENT = 100`
-- Clock: `425 ps` (period_min 423.17 ps, ratio 1.004)
+- Clock: `425 ps` (period_min 423.17 ps, ratio 1.004 — at util 75; re-measure at 85 on next sweep)
 
 ### Decisions
 - Reaches `_final` with 0 DRC/timing violations.
 - **`HOLD_SLACK_MARGIN = 3`**: needed to clear small IO-input-path hold violations at this clock target without paying a clock-period cost.
+- **2026-11-16 utilization push (75 → 85)**: BSPDN-headroom probe swept
+  util {85, 90, 95} × {stock, CELL_PAD 1/1, ROUTING_LAYER_ADJUSTMENT
+  0.65}. util 85 = **96.2% actual GPL utilization** (post-floorplan
+  growth ≈ +13%) and closes clean on stock knobs: 0 DRT violations,
+  0 antenna, +0.86 ns clock slack. util ≥ 90 is infeasible outright
+  (GPL-0301 > 100% actual) — every knob variant fails identically, so
+  the ceiling is area accounting, not routing. Neither padding nor
+  layer adjustment was needed: gt2n local routing capacity is not the
+  limiter at full occupancy. Die area −21%.
 
 ### Known issues / open questions
-- None.
+- Knob ceiling ~85–88 before GPL-0301; a 87/88 bracket run could shave
+  a few more % if ever needed.
