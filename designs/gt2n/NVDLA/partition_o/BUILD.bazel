@@ -18,24 +18,16 @@ hightide_design(
         "CORE_UTILIZATION": "46",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
-        # GRT-0232 congestion fix attempt 1 (2026-11-15): the former
-        # RTLMP_MIN_CHANNEL_SIZE "16 16" was a silent no-op (not plumbed on
-        # this ORFS pin), so the failing run had NO channel/halo control.
-        # RTLMP_ARGS replaces the whole generated arg list: -target_util
-        # re-states gt2n's PLACE_DENSITY (0.40, no addon); halo 8x8 is the
-        # pre-migration MACRO_PLACE_HALO intent; 24um pin-aware channels.
-        # Keep CORE_UTILIZATION 46 — BSPDN density is the platform's point;
-        # treat congestion as a channel problem first (optimize-ppa skill).
-        # Attempt-1 revision: 8um halos + 24um channels together tripped
-        # MPL-0065 (movable cells don't fit) — this pin deprecates
-        # -halo_width/-halo_height (MPL-0074) and folds halo spacing into
-        # channels, so the halos double-reserved area. Channels alone carry
-        # the spacing intent.
-        "RTLMP_ARGS": "-target_util 0.40 -min_channel_size 24 -pin_aware_channels",
-        # GRT-0232 fix attempt 2 (2026-11-15): heatmap shows a saturated
-        # open-core logic blob (macro channels were clean) — strengthen
-        # GPL routability-driven inflation to spread it locally; keep
-        # util 46 (BSPDN density is the platform's point).
+        # GRT-0232 congestion (2026-11-15): channel-control attempts via
+        # RTLMP_ARGS failed MPL-0065 twice (8um halos + 24um channels,
+        # then 24um channels alone — movable cells don't fit at util 46;
+        # deprecated halos fold into channels on this pin, MPL-0074). The
+        # heatmap says channels were never the problem: the saturated
+        # region is an open-core logic blob and the macro channels were
+        # clean. So run RTLMP at its defaults (the original floorplan
+        # converged) and attack the blob with GPL routability inflation
+        # alone; keep util 46 (BSPDN density is the platform's point).
+        # Next lever if GRT still overflows: util 46 -> 42 concession.
         "GLOBAL_PLACEMENT_ARGS": "-routability_max_inflation_ratio 4 -routability_inflation_ratio_coef 5 -routability_max_density 0.6",
         "TNS_END_PERCENT": "100",
         "HOLD_SLACK_MARGIN": "40",
