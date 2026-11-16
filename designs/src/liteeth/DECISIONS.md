@@ -65,7 +65,25 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 ## asap7
 
 **Status**: finishing
-**Last updated**: `8ec5a224` (2026-05-11 PPA area sweep)
+**Last updated**: 2026-11-16 (2026-11 pin validation)
+
+- **2026-11-16: 2026-11 pin validation + one-off NRP DRT stall.** The first NRP
+  run of this pin sat **47 h inside `5_2_route` with a 0-byte stage log** and
+  openroad pegged at ~89 % CPU (42 CPU-hours, no output at all — not the logged
+  antenna-repair divergence). Killed; a local rebuild of the identical action
+  (same commit, same cached inputs, ~24 threads vs the pod's 4) **closed DRT in
+  4m40s / 3 iterations / 0 antenna violations** — the stall did not reproduce,
+  so no upstream issue filed (no stack captured; environment- or
+  thread-count-sensitive, possibly nondeterministic). Watch for recurrence on
+  future NRP runs; if it repeats, grab `gdb -p <pid> -batch -ex "thread apply
+  all bt"` twice 60 s apart inside the pod before killing. QoR (local, TC
+  corner): period_min 1022 ps (Fmax 0.98 vs 1.09 BC baseline, −10 % — inside
+  the accepted corner switch), setup WS −0.3 ps, power 33.4 mW. Reported hold
+  WS **−336 ps is spurious**: the worst min path is the `sys_reset` *input
+  port* → reset-synchronizer flop, i.e. a `set_input_delay` hold check on an
+  async-style reset input (IO-constraint artifact family, like the setup
+  feedthrough trap) — reg2reg hold is clean. Cache seeded from the local build
+  (backfill 31 blobs / 21.7 GB); NRP job resubmitted as a replay to publish.
 
 ### Configuration
 
