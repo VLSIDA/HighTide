@@ -1,0 +1,33 @@
+---
+# Keep the `stable` branch pointing at the latest release.
+#
+# `stable` is the recommended clone target for benchmark users (see
+# README / docs/quickstart.md): it only ever moves when a release tag is
+# pushed, so cloning it always yields a validated release instead of
+# whatever `main` is mid-campaign. Development stays on `main` (the
+# default branch), so scheduled workflows and PR bases are unaffected.
+#
+# Release flow: tag the release commit with the usual <YY>Q<N> tag
+# (e.g. `git tag 26Q3 && git push origin 26Q3`) and this workflow
+# advances `stable` to it automatically.
+name: Advance stable to release tag
+
+on:
+  push:
+    tags:
+      - '[0-9][0-9]Q[1-4]'
+
+permissions:
+  contents: write
+
+jobs:
+  advance-stable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Force-push: `stable` is a pointer to the latest release, not a
+      # development branch — no history on it is ever unique.
+      - name: Point stable at the pushed release tag
+        run: git push --force origin "${GITHUB_REF_NAME}:refs/heads/stable"

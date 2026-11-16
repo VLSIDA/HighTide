@@ -19,10 +19,15 @@ sudo chmod +x /usr/local/bin/bazel
 ## Clone and Build
 
 ```bash
-git clone git@github.com:VLSIDA/HighTide.git
+# `stable` always points at the latest validated release; the default
+# branch `main` is active development and may be mid-campaign.
+git clone --branch stable git@github.com:VLSIDA/HighTide.git
 cd HighTide
 bazel build //designs/asap7/lfsr:lfsr_final
 ```
+
+(Developing HighTide itself? Clone without `--branch stable` and work on
+`main`.)
 
 That's it. Bazel fetches ORFS, extracts OpenROAD tools from Docker, and runs the full RTL-to-GDSII flow. The first build takes longer (~5 min for lfsr) as it downloads dependencies; subsequent builds are cached.
 

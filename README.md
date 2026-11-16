@@ -1,6 +1,10 @@
 # HighTide
 
+[![Latest release](https://img.shields.io/github/v/release/VLSIDA/HighTide?label=latest%20release)](https://github.com/VLSIDA/HighTide/releases/latest)
+
 A VLSI design benchmark suite that runs open-source hardware designs through the [OpenROAD](https://github.com/The-OpenROAD-Project/OpenROAD) RTL-to-GDSII flow on academic and open-source technology nodes (ASAP7 7nm, NanGate 45nm, SkyWater 130nm).
+
+**Using the benchmarks?** Clone the **`stable`** branch (`git clone --branch stable ...`) — it always points at the latest validated release, while the default `main` branch is active development and may be mid-campaign.
 
 **New here?** See the **[Quick Start Guide](docs/quickstart.md)** to build your first design in 5 minutes. For the full, up-to-date list of designs and the platforms each one closes on, see the **[Design Catalog](docs/designs.md)**.
 
