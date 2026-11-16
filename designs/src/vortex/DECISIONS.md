@@ -9,6 +9,15 @@ Vortex is a SystemVerilog GPGPU synthesized through the **yosys-slang** frontend
 sub-CACTI arrays that fall through to a behavioral reg-array stub. Only **asap7**
 reaches `_final` today; nangate45 / sky130hd are not yet closing and are out of scope.
 
+## FF-fallback policy (signed off 2026-11-16, Matt)
+
+The sub-CACTI / unsizable arrays (depth-4 and depth-16 configs: `192x16`/`193x16`/
+`85x16`/`87x16`/`560x4`/`654x4`) staying as behavioral reg-array FF fallback is
+**accepted permanently** — those depths don't make sense as SRAM macros, so the
+resulting cell-count growth on nangate45/sky130hd (+25–28 % at the yosys-0.64
+upgrade) is the design's correct implementation, not a regression to recover.
+Compare cell counts against post-fallback baselines only.
+
 ## Active workarounds
 
 - **yosys-slang `#304`** (phantom `1'x` driver on interface-array modport bits) — fixed
