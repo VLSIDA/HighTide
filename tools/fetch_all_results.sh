@@ -6,7 +6,7 @@
 #   e.g. ./tools/fetch_all_results.sh /tmp/qor         # all platforms
 #        ./tools/fetch_all_results.sh /tmp/qor gt2n    # one platform
 #
-# Output tree: <out>/<platform>/<design>/{6_finish.rpt,6_report.json,*_gallery.png}
+# Output tree: <out>/<platform>/<design>/{6_report.json,*_final_report.{json,rpt},*_gallery.png}
 # plus <out>/summary.txt (pair, sha or MISSING). Pairs never built with the
 # publishing job template simply report MISSING — fall back to
 # fetch_cache.sh / a rebuild for those.
@@ -33,7 +33,7 @@ for plat in asap7 nangate45 sky130hd gt2n; do
       if [ -z "$sha" ]; then echo "$plat/$dp MISSING" >> "$SUM"; continue; fi
       d="$OUT/$plat/$key"; mkdir -p "$d"
       n=0
-      for f in 6_finish.rpt 6_report.json; do
+      for f in 6_report.json "${key}_final_report.json" "${key}_final_report.rpt" bp_processor_final_report.json "${key}_grt_report.json" bp_processor_grt_report.json; do
         curl -fsS --max-time 30 "$BASE/results/$plat/$dp/$sha/$f" -o "$d/$f" 2>/dev/null && n=$((n+1))
       done
       for g in ${key}_gallery.png bp_processor_gallery.png; do

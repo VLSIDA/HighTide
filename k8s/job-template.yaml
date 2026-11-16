@@ -136,6 +136,22 @@ spec:
           BUILD_RC=0
           bazel build $CACHE_FLAGS __BAZEL_TARGET__ || BUILD_RC=$?
 
+          # QoR: on this bazel-orfs pin stages run with SKIP_REPORT_METRICS=1
+          # (6_finish.rpt is an empty placeholder; 6_report.json carries only
+          # area/instance counts). Timing/power live in the separate
+          # <name>_final_report target — build it so the publish step below
+          # can index real QoR. gt2n has no OpenRCX rules (empty SPEF makes
+          # final_report fail STA-1670), so fall back to the GRT-parasitics
+          # report there. Never fails the job.
+          if [ "$BUILD_RC" = "0" ]; then
+            RPT_TARGET="$(echo "__BAZEL_TARGET__" | sed 's/_gallery$/_final_report/; s/_final$/_final_report/')"
+            if [ "$RPT_TARGET" != "__BAZEL_TARGET__" ]; then
+              bazel build $CACHE_FLAGS --remote_download_regex='.*_((final|grt)_report)\.(json|rpt)$' "$RPT_TARGET" \
+                || bazel build $CACHE_FLAGS --remote_download_regex='.*_((final|grt)_report)\.(json|rpt)$' "${RPT_TARGET%_final_report}_grt_report" \
+                || echo "WARNING: report target failed (QoR not indexed; build result unaffected)"
+            fi
+          fi
+
           # Backfill oversized blobs over the R2 S3 API (bazel's own uploads
           # through the Worker 413 above 100 MB and are skipped with a
           # warning).  Runs whenever the r2-s3-creds Secret is present; never
@@ -159,7 +175,7 @@ spec:
             DESIGN_PATH="${TARGET#//}"; DESIGN_PATH="${DESIGN_PATH%%:*}"
             GIT_SHA=$(git -C /repo rev-parse --short HEAD 2>/dev/null || echo unknown)
             PFX="s3://hightide-bazel-cache/results/${DESIGN_PATH#designs/}/$GIT_SHA"
-            for f in $(find bazel-bin/$DESIGN_PATH -name '6_finish.rpt' -o -name '6_report.json' -o -name '*_gallery.png' 2>/dev/null | head -20); do
+            for f in $(find bazel-bin/$DESIGN_PATH -name '6_report.json' -o -name '*_gallery.png' -o -name '*_final_report.json' -o -name '*_final_report.rpt' -o -name '*_grt_report.json' -o -name '*_grt_report.rpt' 2>/dev/null | head -20); do
               sz=$(stat -c%s "$f" 2>/dev/null || echo 0)
               [ "$sz" -gt 52428800 ] && continue
               aws s3 cp "$f" "$PFX/$(basename $f)" --endpoint-url "$R2_ENDPOINT" --no-progress >/dev/null 2>&1 || true
