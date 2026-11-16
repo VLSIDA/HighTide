@@ -67,16 +67,19 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 **Status**: finishing
 **Last updated**: 2026-11-16 (2026-11 pin validation)
 
-- **2026-11-16: 2026-11 pin validation + one-off NRP DRT stall.** The first NRP
-  run of this pin sat **47 h inside `5_2_route` with a 0-byte stage log** and
-  openroad pegged at ~89 % CPU (42 CPU-hours, no output at all — not the logged
-  antenna-repair divergence). Killed; a local rebuild of the identical action
-  (same commit, same cached inputs, ~24 threads vs the pod's 4) **closed DRT in
-  4m40s / 3 iterations / 0 antenna violations** — the stall did not reproduce,
-  so no upstream issue filed (no stack captured; environment- or
-  thread-count-sensitive, possibly nondeterministic). Watch for recurrence on
-  future NRP runs; if it repeats, grab `gdb -p <pid> -batch -ex "thread apply
-  all bt"` twice 60 s apart inside the pod before killing. QoR (local, TC
+- **2026-11-16: 2026-11 pin validation + one-off NRP DRT runtime anomaly.** The
+  first NRP run of this pin sat **47 h inside `5_2_route`** with openroad at
+  ~89 % CPU (42 CPU-hours). (The stage log read 0 bytes at the time, but that
+  is NOT evidence of a hang — verified the same day that the ORFS
+  `run_command.py` wrapper buffers the stage log until the stage completes, so
+  an empty log mid-stage is normal.) Killed on elapsed-time grounds alone: a
+  local rebuild of the identical action (same commit, same cached inputs,
+  ~24 threads vs the pod's 4) **closed DRT in 4m40s / 3 iterations / 0 antenna
+  violations**, so even at 4 CPUs the pod should have finished in well under an
+  hour. Not reproduced; no upstream issue filed (no stack captured;
+  environment- or thread-count-sensitive, possibly nondeterministic). If it
+  recurs, grab `gdb -p <pid> -batch -ex "thread apply all bt"` twice 60 s apart
+  inside the pod before killing. QoR (local, TC
   corner): period_min 1022 ps (Fmax 0.98 vs 1.09 BC baseline, −10 % — inside
   the accepted corner switch), setup WS −0.3 ps, power 33.4 mW. Reported hold
   WS **−336 ps is spurious**: the worst min path is the `sys_reset` *input
