@@ -47,6 +47,10 @@ Compare cell counts against post-fallback baselines only.
   RTL/SDC are off-limits for this upgrade, so the path is not recoverable without a
   pipeline/clock change. Accepted as-is: the design was already setup-negative pre-upgrade
   (−56 ps), area/power are within ~1.4 %, and it reaches `_final` exactly as before.
+  **Signed off 2026-11-16 (Matt): the SRAM-access-bound asap7 timing degradation is
+  accepted** — the macro read path is intrinsic, not flow-recoverable; don't re-flag it
+  in later validation passes (fixing it would be an RTL pipeline/clock change, out of
+  scope for upgrades).
 
 ### Known issues / open questions
 - Setup WNS negative (−134.82 ps); SRAM-bound critical path. Recovering it needs an RTL
