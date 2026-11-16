@@ -38,9 +38,15 @@ hightide_design(
         # local pin-access density, not capacity. Suite default padding is
         # 0; pad cells apart so pin shapes stop stacking (die is 80% empty,
         # the area cost is free here).
-        "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": "2",
+        # GRT-0116 fix attempt 4 (2026-11-16): attempt 3 (padding) cut
+        # overflow 25k -> 4.7k, all residual on met1 (pin access); met3/4
+        # sit at 4.6%/12.4% usage. The old 0.25 adjustment UNDER-reserved
+        # vs the ORFS default 0.5, packing demand onto the low layers —
+        # raise to 0.4 to push demand upward, and one more site of GP
+        # padding for the last of the pin crowding.
+        "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": "3",
         "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": "1",
-        "ROUTING_LAYER_ADJUSTMENT": "0.25",
+        "ROUTING_LAYER_ADJUSTMENT": "0.4",
         "TNS_END_PERCENT": "100",
     },
 )
