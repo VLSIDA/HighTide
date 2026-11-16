@@ -83,8 +83,8 @@ See the per-platform QoR captured after this port lands.
 
 ## sky130hd
 
-**Status**: blocked on the 2026-11 pin (new-GRT congestion); last finishing on the 2026-07 pin
-**Last updated**: 2026-11-08
+**Status**: finishing on the 2026-11 pin (closed 2026-11-16 after a 4-round GRT-0116 ladder)
+**Last updated**: 2026-11-16
 
 ### Configuration
 - `CORE_UTILIZATION = 20` — much lower than asap7/nangate45; sky130hd's coarse pitches plus this design's macro count create heavy local-density hot spots
@@ -108,7 +108,19 @@ See the per-platform QoR captured after this port lands.
   the 2026-07 configuration. Candidate next steps (not yet tried): lower util 20→15 (more
   die), macro channel/halo rework, raising GRT min routing layer off met1/met2, or an
   upstream issue with the reduced congestion report.
+- **2026-11-16 `688b4347`: CLOSED on the 2026-11 pin** via a 4-round GRT-0116 ladder (full
+  record in BUILD.bazel comments). What worked, in order of leverage:
+  (2) GPL routability inflation (`-routability_max_inflation_ratio 4 -routability_inflation_ratio_coef 5
+  -routability_max_density 0.6`) — spread the macro-pinched logic band but left 25k overflow
+  on met1/met2 (pin-access density, not capacity);
+  (3) cell padding `CELL_PAD_IN_SITES_GLOBAL_PLACEMENT 2` / `DETAIL 1` — overflow 25k → 4.7k (−81 %),
+  residual met1-resident;
+  (4) GP pad 2→3 + `ROUTING_LAYER_ADJUSTMENT` 0.25→**0.4** — the design had been overriding
+  *below* the ORFS default 0.5, concentrating demand on met1/met2 while met3/met4 sat at
+  4.6 %/12.4 % usage; raising it pushed demand up the stack. Clean `_final` + gallery on NRP
+  (~10.3 h), published at `688b434`. Lesson: scattered capacity:0/usage:1 GRT-0116 at low
+  overall usage = **pin-access crowding**; padding + layer-adjustment are the levers, not
+  utilization or inflation alone.
 
 ### Known issues / open questions
 - Reported WNS marginally negative (−269 ps, a reset-removal check ≈ −0.9 % of period) after the 2026-06 upgrade; design routes and reaches 6_final with area unchanged.
-- sky130hd does not reach `_final` on the 2026-11 pin — see the 2026-11 decision entry above.
