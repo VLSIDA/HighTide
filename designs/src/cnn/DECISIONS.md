@@ -64,6 +64,11 @@ nangate45 stays on CACTI; its aspects come out 1.2–1.6 for cnn's four sizes.
   Accepted without knob-chasing given cnn's documented RTLMP volatility and the big wins
   on the other two platforms; candidate recovery per the 2026-06 precedent below is
   giving RTLMP more room (die/halo/density re-sweep) in a later pass.
+  **Signed off 2026-11-16 (Matt): the RTLMP-driven Fmax swings are accepted for this
+  release — no further recovery work planned.** cnn's critical paths are macro-to-logic
+  across 65 SRAMs, so Fmax is expected to move with every RTLMP change; treat per-pin
+  swings (either direction) as the design's known behavior unless a platform stops
+  finishing.
 - **sky130hd**: WS +0.34 ns @ 10 ns (vs **−4.69 ns** baseline), period_min 9.66 ns → Fmax
   0.104 GHz (vs 0.07, **+48 %**), 155 759 cells (−4.9 %). Pass — large improvement.
 
