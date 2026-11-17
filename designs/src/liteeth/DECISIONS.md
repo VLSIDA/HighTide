@@ -146,7 +146,7 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 
 | Die | Density | Halo | Clock (ps) | Notes |
 |---|---:|---:|---:|---|
-| explicit 450×310 (core 2 2 448 308) | 0.60 | — | 1450 | Manual `place_macro` grid in `macros.tcl` (5 macros); `MAX_ROUTING_LAYER M11`, `MIN_CLK_ROUTING_LAYER M4`; `set_false_path -from sys_reset`; `-D USE_GT2N_CELLS` |
+| explicit 434×210 (core 2 2 432 208) | 0.60 | — | 1450 | Manual `place_macro` grid in `macros.tcl` (5 macros); `MAX_ROUTING_LAYER M11`, `MIN_CLK_ROUTING_LAYER M4`; `set_false_path -from sys_reset`; `-D USE_GT2N_CELLS` |
 
 ### Decisions
 - **2026-11-16 first gt2n port — RTLMP MPL-0045 forced a manual floorplan
@@ -172,10 +172,21 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
   (`udp0_udp_port[*]` → FF, same class as litepci/partition_p); worst
   *internal* hold path is MET at +1.4 ps. GRT congestion is a non-issue
   (zero overflow, M2/M3 ≤ 2.3 % usage).
+- **2026-11-17 die shrink 450×310 → 434×210 (`c352728a`, results under
+  `c352728`)**: the first-close die had 39 % macro coverage and only ~0.8 %
+  of the die in actual logic (zero congestion everywhere), so repacked to
+  10 µm margins / 15 µm channels with the three small SRAMs moved into the
+  top band beside the std cells. Die −34.7 % (139,500 → 91,140 µm², macro
+  coverage 60 % — near the packing bound for a design that is 98 % SRAM by
+  cell area). Strictly better QoR: setup WS +14.3 ps (period_min 1436 ps →
+  Fmax 697 MHz), power 17.4 → 15.7 mW (−10 %, shorter wires), and **hold
+  now clean too** (WS +0.69 ps, 0 violations) — the shorter clock tree
+  shrank the insertion delay enough that the input-port hold artifact from
+  the first close disappeared.
 - Reporting basis is `_grt_report` (global-route parasitics): gt2n has no
   OpenRCX rules yet, so `_final_report` fails STA-1670 on the empty SPEF —
   platform-level follow-up, not a design issue.
 
 ### Known issues / open questions
 - MPL-0045 manual floorplan is temporary — retry plain RTLMP on each pin bump (CLAUDE.md bug table tracks it).
-- The −23.6 ps IO hold artifact would clear under the suite-wide `set_input_delay -min` policy decision (pending).
+- ~~The −23.6 ps IO hold artifact~~ — cleared by the 2026-11-17 die shrink (shorter clock insertion delay); hold is now fully clean.
