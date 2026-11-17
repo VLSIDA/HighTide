@@ -24,6 +24,15 @@ _ARGS.update({
     # design reaches _final; detail route still does its own hold repair.
     "SKIP_CTS_REPAIR_TIMING": "1",
     "SKIP_INCREMENTAL_REPAIR": "1",
+    # 2026-11-17: analyze_power_grid SIGSEGVs at _final on this netlist —
+    # psm::IRSolver::solve -> Eigen SparseLU analyzePattern ->
+    # COLAMDOrdering<int> faults on the VDD conductance matrix (2.8M nets;
+    # int-indexed COLAMD workspace sizing). gdb-confirmed repro from
+    # 5_route.odb. Empty voltage dicts make final_outputs.tcl skip IR-drop
+    # entirely (both vars are final-stage-scoped, so earlier stages stay
+    # cached). Re-enable once upstream PSM handles grids this size.
+    "PWR_NETS_VOLTAGES": "",
+    "GND_NETS_VOLTAGES": "",
 })
 
 hightide_design(
