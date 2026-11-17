@@ -28,7 +28,9 @@ again and must reuse all mapped colors; safe whole-flow replay may do no work.
 
 result.cold.json, result.warmN.json, result.replay.json and incremental.json keep
 the evidence. lhd.run.json times only the cold invocation; incremental validation
-has separate timing. Guard logs retain each command, memory use and exit status.
+has separate timing. A Yosys frontend compile is recorded as lhd_compile_seconds;
+native_workflow_seconds includes all native steps and wrapper overhead, before
+common scoring. Guard logs retain each command, memory use and exit status.
 A failed synthesis, reuse check, placement legality check or common OpenSTA
 scoring step gives a nonzero exit. Both flows use the same SDC, Liberty set,
 placement RC and ideal clocks. Unknown timing does not count as meeting timing.

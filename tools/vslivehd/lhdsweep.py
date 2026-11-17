@@ -477,12 +477,14 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
                 started=time.strftime('%Y-%m-%dT%H:%M:%S'))
     t0 = time.monotonic()
     status = 'ok'
+    validation_start = None
     try:
         genv = {'GUARD_MEMORY_LIMIT_GIB': str(mem_gib), 'OMP_NUM_THREADS': str(threads)}
         if pre is not None:
             guard.run('lhd_compile', pre, cwd=rundir, timeout=timeout, extra_env=genv)
         guard.run('lhd', cmd, cwd=rundir, timeout=timeout, extra_env=genv)
         if warm_runs:
+            validation_start = time.monotonic()
             cold = rundir / 'result.cold.json'
             shutil.copy2(rundir / 'result.json', cold)
             before = {p.name: sha(p) for p in (rundir / 'def').glob('*.def')}
@@ -517,11 +519,15 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
             failure = json.loads(error_file.read_text()).get('error')
             if failure:
                 print(json.dumps(failure, indent=2), flush=True)
-    elapsed = time.monotonic() - t0
+    ended = time.monotonic()
+    meta['native_workflow_seconds'] = ended - t0
     cold_time = rundir / 'lhd.run.json'
-    meta['lhd_seconds'] = json.loads(cold_time.read_text())['wall_s'] if cold_time.exists() else elapsed
+    meta['lhd_seconds'] = json.loads(cold_time.read_text())['wall_s'] if cold_time.exists() else 0.0
+    compile_time = rundir / 'lhd_compile.run.json'
+    if pre is not None:
+        meta['lhd_compile_seconds'] = json.loads(compile_time.read_text())['wall_s'] if compile_time.exists() else 0.0
     if warm_runs:
-        meta['incremental_validation_seconds'] = elapsed - meta['lhd_seconds']
+        meta['incremental_validation_seconds'] = ended - validation_start if validation_start is not None else 0.0
     meta['status'] = status
     defs = sorted((rundir / 'def').glob('*.def')) if status == 'ok' else []
     result = dict(meta=meta, ref=ref)
