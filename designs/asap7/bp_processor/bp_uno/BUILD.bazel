@@ -4,10 +4,14 @@ load("//designs/src/bp_processor:defs.bzl", "BP_COMMON_ARGS")
 _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
-    "DIE_AREA": "0 0 900 900",
-    "CORE_AREA": "10 10 890 890",
+    # 2026-11-17: utilization-driven floorplan (was fixed 900x900, ~28%
+    # occupied — never pressure-tested). Matches the gt2n port's style
+    # and the bp_quad util-40 push. RTLMP_MIN_CHANNEL_SIZE dropped: the
+    # pinned ORFS plumbs no channel env vars (silent no-op; see CLAUDE.md
+    # RTLMP row), so this config was already running RTLMP defaults.
+    "CORE_UTILIZATION": "40",
+    "CORE_ASPECT_RATIO": "1",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
-    "RTLMP_MIN_CHANNEL_SIZE": "12 12",  # was MACRO_PLACE_HALO 6 6 (halo x,y ~ channel 2x,2y)
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # Post-GRT repair_timing hangs silently for 2h+ on k8s under the
     # new bsg_fakeram macros — same non-convergence pattern as
