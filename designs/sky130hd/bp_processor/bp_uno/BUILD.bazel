@@ -4,25 +4,26 @@ load("//designs/src/bp_processor:defs.bzl", "BP_COMMON_ARGS")
 _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
-    # sky130hd port (140 macros + ~710k insts). RTLMP's pin-edge-blind,
-    # mixed-orientation clustering wedged adjacent icache `data_mems[*]`
-    # macros into met2-pin escape collisions (capacity:0 overflow on a
-    # large die, then GRT-0229 saturation when the halo was bumped). Same
-    # failure shape as cnn-sky130hd / NVDLA partition_c. Fix: fixed-grid
-    # MACRO_PLACEMENT_TCL (all macros R0, channel under each row) so every
-    # macro's bottom pin edge faces clear routing space; macros set FIRM
-    # so the post-source rtl_macro_placer leaves them alone. The grid
-    # needs ~7600 µm of y to fit 10 rows + channels, so size the die at
-    # 8000 µm square (CORE_UTILIZATION=30's 5887 µm core couldn't host
-    # the grid). Regenerate the placement file:
+    # sky130hd port (~710k insts, 22 macros after the wide byte-mask
+    # macro rebind — was 140). RTLMP's pin-edge-blind clustering wedges
+    # macros into met2-pin escape collisions (capacity:0 overflow; same
+    # failure shape as cnn-sky130hd / NVDLA partition_c). Retried
+    # RTLMP-only at 22 macros with a 25 µm halo: still GRT-0116
+    # (capacity:0 tiles hugging the macro region), so the fixed-grid
+    # MACRO_PLACEMENT_TCL stays (all macros R0, channel under each row,
+    # FIRM so rtl_macro_placer leaves them alone). Channel sizing
+    # matters: the 22-macro grid at the old 450 µm channels (5 rows =
+    # 2250 µm total crossing vs the old 10-row grid's 4500 µm) also
+    # failed GRT-0116 on the wide-macro fill buses, so channels are
+    # 900 µm (5 rows, top 7606 µm, total crossing back to 4500 µm).
+    # Regenerate the placement file:
     #   python3 tools/gen_macro_grid.py \
     #     designs/src/bp_processor/dev/generated/bp_uno_sky130hd_macros.txt \
     #     designs/sky130hd/bp_processor/bp_uno/macro_placement.tcl \
-    #     --gap-x 250 --chan 450
+    #     --gap-x 250 --chan 900
     "DIE_AREA": "0 0 8000 8000",
     "CORE_AREA": "20 20 7980 7980",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
-    "MACRO_BLOCKAGE_HALO": "0.5",
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })
 
@@ -35,6 +36,7 @@ hightide_design(
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/sky130hd/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/sky130hd/bp_processor:sram_libs"],
         "MACRO_PLACEMENT_TCL": [":macro_placement.tcl"],

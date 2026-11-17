@@ -148,6 +148,8 @@ module GTPE2_COMMON_DUMMY (
   CLKBUF_X1 u_pll0_refclk_buf (.A(pll0_refclk_mux), .Z(pll0_refclk_selected));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__clkbuf_1 u_pll0_refclk_buf (.A(pll0_refclk_mux), .X(pll0_refclk_selected));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll0_refclk_buf (.A(pll0_refclk_mux), .Y(pll0_refclk_selected));
 `endif
 
   reg pll1_refclk_mux;
@@ -170,6 +172,8 @@ module GTPE2_COMMON_DUMMY (
   CLKBUF_X1 u_pll1_refclk_buf (.A(pll1_refclk_mux), .Z(pll1_refclk_selected));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__clkbuf_1 u_pll1_refclk_buf (.A(pll1_refclk_mux), .X(pll1_refclk_selected));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll1_refclk_buf (.A(pll1_refclk_mux), .Y(pll1_refclk_selected));
 `endif
 
 `ifdef USE_ASAP7_CELLS
@@ -178,6 +182,8 @@ module GTPE2_COMMON_DUMMY (
   BUF_X1 u_pll0_reset_buf (.A(PLL0RESET), .Z(pll0_reset_int));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__buf_1 u_pll0_reset_buf (.A(PLL0RESET), .X(pll0_reset_int));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll0_reset_buf (.A(PLL0RESET), .Y(pll0_reset_int));
 `endif
   wire pll0_pd_int;
 `ifdef USE_ASAP7_CELLS
@@ -186,6 +192,8 @@ module GTPE2_COMMON_DUMMY (
   BUF_X1 u_pll0_pd_buf (.A(PLL0PD), .Z(pll0_pd_int));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__buf_1 u_pll0_pd_buf (.A(PLL0PD), .X(pll0_pd_int));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll0_pd_buf (.A(PLL0PD), .Y(pll0_pd_int));
 `endif
   
   wire pll0_enable_int;
@@ -196,6 +204,8 @@ module GTPE2_COMMON_DUMMY (
   BUF_X1 u_pll0_enable_buf (.A(pll0_enable_int), .Z(pll0_enable));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__buf_1 u_pll0_enable_buf (.A(pll0_enable_int), .X(pll0_enable));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll0_enable_buf (.A(pll0_enable_int), .Y(pll0_enable));
 `endif
 
 `ifdef USE_ASAP7_CELLS
@@ -204,6 +214,8 @@ module GTPE2_COMMON_DUMMY (
   BUF_X1 u_pll1_reset_buf (.A(PLL1RESET), .Z(pll1_reset_int));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__buf_1 u_pll1_reset_buf (.A(PLL1RESET), .X(pll1_reset_int));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll1_reset_buf (.A(PLL1RESET), .Y(pll1_reset_int));
 `endif
   wire pll1_pd_int;
 `ifdef USE_ASAP7_CELLS
@@ -212,6 +224,8 @@ module GTPE2_COMMON_DUMMY (
   BUF_X1 u_pll1_pd_buf (.A(PLL1PD), .Z(pll1_pd_int));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__buf_1 u_pll1_pd_buf (.A(PLL1PD), .X(pll1_pd_int));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll1_pd_buf (.A(PLL1PD), .Y(pll1_pd_int));
 `endif
   
   wire pll1_enable_int;
@@ -222,6 +236,8 @@ module GTPE2_COMMON_DUMMY (
   BUF_X1 u_pll1_enable_buf (.A(pll1_enable_int), .Z(pll1_enable));
 `elsif USE_SKY130HD_CELLS
   sky130_fd_sc_hd__buf_1 u_pll1_enable_buf (.A(pll1_enable_int), .X(pll1_enable));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll1_enable_buf (.A(pll1_enable_int), .Y(pll1_enable));
 `endif
 
   reg [7:0] pll0_lock_counter;
@@ -412,6 +428,20 @@ module GTPE2_COMMON_DUMMY (
   sky130_fd_sc_hd__buf_1 u_pll1refclklost_buf (.A(pll1_refclklost_reg), .X(PLL1REFCLKLOST));
   
   sky130_fd_sc_hd__buf_1 u_drprdy_buf (.A(drprdy_reg), .X(DRPRDY));
+`elsif USE_GT2N_CELLS
+  gt2_6t_buf_x2_w31_svt u_pll0outclk_buf (.A(pll0_outclk_reg), .Y(PLL0OUTCLK));
+  gt2_6t_buf_x2_w31_svt u_pll0outrefclk_buf (.A(pll0_outrefclk_reg), .Y(PLL0OUTREFCLK));
+  gt2_6t_buf_x2_w31_svt u_pll1outclk_buf (.A(pll1_outclk_reg), .Y(PLL1OUTCLK));
+  gt2_6t_buf_x2_w31_svt u_pll1outrefclk_buf (.A(pll1_outrefclk_reg), .Y(PLL1OUTREFCLK));
+  gt2_6t_buf_x2_w31_svt u_refmon0_buf (.A(refclkoutmonitor0_reg), .Y(REFCLKOUTMONITOR0));
+  gt2_6t_buf_x2_w31_svt u_refmon1_buf (.A(refclkoutmonitor1_reg), .Y(REFCLKOUTMONITOR1));
+  gt2_6t_buf_x2_w31_svt u_pll0lock_buf (.A(pll0_locked_reg), .Y(PLL0LOCK));
+  gt2_6t_buf_x2_w31_svt u_pll1lock_buf (.A(pll1_locked_reg), .Y(PLL1LOCK));
+  gt2_6t_buf_x2_w31_svt u_pll0fbclklost_buf (.A(pll0_fbclklost_reg), .Y(PLL0FBCLKLOST));
+  gt2_6t_buf_x2_w31_svt u_pll1fbclklost_buf (.A(pll1_fbclklost_reg), .Y(PLL1FBCLKLOST));
+  gt2_6t_buf_x2_w31_svt u_pll0refclklost_buf (.A(pll0_refclklost_reg), .Y(PLL0REFCLKLOST));
+  gt2_6t_buf_x2_w31_svt u_pll1refclklost_buf (.A(pll1_refclklost_reg), .Y(PLL1REFCLKLOST));
+  gt2_6t_buf_x2_w31_svt u_drprdy_buf (.A(drprdy_reg), .Y(DRPRDY));
 `endif
   
   genvar i;
@@ -423,6 +453,8 @@ module GTPE2_COMMON_DUMMY (
       BUF_X1 u_drpdo_buf (.A(drpdo_reg[i]), .Z(DRPDO[i]));
 `elsif USE_SKY130HD_CELLS
       sky130_fd_sc_hd__buf_1 u_drpdo_buf (.A(drpdo_reg[i]), .X(DRPDO[i]));
+`elsif USE_GT2N_CELLS
+      gt2_6t_buf_x2_w31_svt u_drpdo_buf (.A(drpdo_reg[i]), .Y(DRPDO[i]));
 `endif
     end
     
@@ -433,6 +465,8 @@ module GTPE2_COMMON_DUMMY (
       BUF_X1 u_dmon_buf (.A(dmonitorout_reg[i]), .Z(DMONITOROUT[i]));
 `elsif USE_SKY130HD_CELLS
       sky130_fd_sc_hd__buf_1 u_dmon_buf (.A(dmonitorout_reg[i]), .X(DMONITOROUT[i]));
+`elsif USE_GT2N_CELLS
+      gt2_6t_buf_x2_w31_svt u_dmon_buf (.A(dmonitorout_reg[i]), .Y(DMONITOROUT[i]));
 `endif
     end
     
@@ -443,6 +477,8 @@ module GTPE2_COMMON_DUMMY (
       BUF_X1 u_pmarsvd_buf (.A(pmarsvdout_reg[i]), .Z(PMARSVDOUT[i]));
 `elsif USE_SKY130HD_CELLS
       sky130_fd_sc_hd__buf_1 u_pmarsvd_buf (.A(pmarsvdout_reg[i]), .X(PMARSVDOUT[i]));
+`elsif USE_GT2N_CELLS
+      gt2_6t_buf_x2_w31_svt u_pmarsvd_buf (.A(pmarsvdout_reg[i]), .Y(PMARSVDOUT[i]));
 `endif
     end
   endgenerate

@@ -9,12 +9,36 @@ Vortex is a SystemVerilog GPGPU synthesized through the **yosys-slang** frontend
 sub-CACTI arrays that fall through to a behavioral reg-array stub. Only **asap7**
 reaches `_final` today; nangate45 / sky130hd are not yet closing and are out of scope.
 
+## FF-fallback policy (signed off 2026-11-16, Matt)
+
+The sub-CACTI / unsizable arrays (depth-4 and depth-16 configs: `192x16`/`193x16`/
+`85x16`/`87x16`/`560x4`/`654x4`) staying as behavioral reg-array FF fallback is
+**accepted permanently** — those depths don't make sense as SRAM macros, so the
+resulting cell-count growth on nangate45/sky130hd (+25–28 % at the yosys-0.64
+upgrade) is the design's correct implementation, not a regression to recover.
+Compare cell counts against post-fallback baselines only.
+
 ## Active workarounds
 
 - **yosys-slang `#304`** (phantom `1'x` driver on interface-array modport bits) — fixed
   by pinning `yosys-slang` at `eabdfd1` in `yosys_slang.bzl`. Still required; the plugin
   builds and parses Vortex cleanly against **yosys 0.64** after the 2026-06-04 upgrade
   (`read_slang` runs without the multidriver/`1'x` error).
+
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+All three platforms re-validated 2026-11-16 on NRP (first jobs through the new
+`_final_report` QoR publish path):
+
+- **asap7**: finishes; period_min 1260 ps (Fmax 0.79 GHz vs 0.96 BC-corner
+  baseline, −17 % — covered by the accepted BC→TC corner switch), WS −160 ps on
+  the 1100 ps clock (−135 at 2026-06), hold +28 ps, power 168 mW. The worst path
+  is still the signed-off SRAM-access-bound dcache read.
+- **nangate45**: PASS — period_min 2232 ps (Fmax 0.448 vs 0.46, −2.6 %), WS
+  +228 ps, hold +21 ps, power −2.4 %.
+- **sky130hd**: PASS — period_min 10 ns (Fmax 0.100, exactly baseline), WS
+  −0.4 ps (effectively closed; the old −162 ps marginal-setup flag has
+  **resolved** on this pin), hold +59 ps, power +0.5 %.
 
 ## asap7
 
@@ -38,6 +62,10 @@ reaches `_final` today; nangate45 / sky130hd are not yet closing and are out of 
   RTL/SDC are off-limits for this upgrade, so the path is not recoverable without a
   pipeline/clock change. Accepted as-is: the design was already setup-negative pre-upgrade
   (−56 ps), area/power are within ~1.4 %, and it reaches `_final` exactly as before.
+  **Signed off 2026-11-16 (Matt): the SRAM-access-bound asap7 timing degradation is
+  accepted** — the macro read path is intrinsic, not flow-recoverable; don't re-flag it
+  in later validation passes (fixing it would be an RTL pipeline/clock change, out of
+  scope for upgrades).
 
 ### Known issues / open questions
 - Setup WNS negative (−134.82 ps); SRAM-bound critical path. Recovering it needs an RTL

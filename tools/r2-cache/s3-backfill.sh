@@ -91,12 +91,17 @@ done
 # falls back to executing the action).
 ac_up=0 ac_skip=0
 if [[ -d "$CACHE_DIR/ac" ]]; then
+  # One paginated listing of the ac/ prefix instead of a HEAD per entry
+  # (a fresh pod's disk cache holds ~18k ACs; per-file HEADs took ~30 min).
+  _AC_HAVE=$(mktemp)
+  aws s3api list-objects-v2 --bucket "$BUCKET" --prefix ac/ \
+    --endpoint-url "$R2_ENDPOINT" --query 'Contents[].Key' --output text 2>/dev/null \
+    | tr '\t' '\n' | sort > "$_AC_HAVE" || true
   while IFS= read -r f; do
     hash=$(basename "$f")
     [[ "$hash" =~ ^[0-9a-f]{64}$ ]] || continue
     key="ac/$hash"
-    if aws s3api head-object --bucket "$BUCKET" --key "$key" \
-         --endpoint-url "$R2_ENDPOINT" >/dev/null 2>&1; then
+    if grep -qxF "$key" "$_AC_HAVE"; then
       ac_skip=$((ac_skip + 1)); continue
     fi
     if [[ $DRY_RUN -eq 1 ]]; then
@@ -107,6 +112,7 @@ if [[ -d "$CACHE_DIR/ac" ]]; then
     fi
     ac_up=$((ac_up + 1))
   done < <(find "$CACHE_DIR/ac" -type f -mtime -"$AC_DAYS" 2>/dev/null)
+  rm -f "$_AC_HAVE"
 fi
 
 echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present, $failed failed; AC: $ac_up uploaded, $ac_skip present"

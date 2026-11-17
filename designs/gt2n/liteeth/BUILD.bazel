@@ -1,0 +1,52 @@
+load("//:defs.bzl", "hightide_design")
+
+package(default_visibility = ["//designs/gt2n/liteeth:__pkg__"])
+
+# SRAM macros instantiated by the liteeth UDP-USP-GTH-SGMII config.
+filegroup(
+    name = "sram_lefs",
+    srcs = [
+        "sram/lef/fakeram_1rw1r_64w64d_sram.lef",
+        "sram/lef/fakeram_1rw1r_64w1024d_sram.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = [
+        "sram/lib/fakeram_1rw1r_64w64d_sram.lib",
+        "sram/lib/fakeram_1rw1r_64w1024d_sram.lib",
+    ],
+)
+
+# LiteEth UDP endpoint over the Xilinx UltraScale+ GTH SGMII PHY.
+# gt2n port 2026-11-16: the Xilinx primitive stubs gained USE_GT2N_CELLS
+# branches (gt2_6t_buf_x2 / gt2_6t_and2_x2) alongside the other platforms.
+hightide_design(
+    name = "liteeth",
+    top = "liteeth_udp_usp_gth_sgmii",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/liteeth:liteeth_rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
+    },
+    arguments = {
+        "VERILOG_DEFINES": "-D USE_GT2N_CELLS",
+        # RTLMP MPL-0045s at any tree depth (attempts 1+2): the 5 macros are
+        # 54k um2 against ~2k um2 of 2nm std cells, so balanced clustering is
+        # infeasible. Manual grid in macros.tcl + explicit die instead.
+        # 434x210 die = 60% macro (near the packing bound for a design that
+        # is 98% SRAM by cell area; ~1.2k um2 of logic). Shrunk from the
+        # first-close 450x310 (39% macro) once timing closed with zero
+        # congestion — 10 um margins, 15 um channels.
+        "DIE_AREA": "0 0 434 210",
+        "CORE_AREA": "2 2 432 208",
+        "PLACE_DENSITY": "0.60",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+    },
+)

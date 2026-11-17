@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @litex_src (enjoy-digital/litex).  Imported as top-level
 # `litex`.  Non-.py package data (software/sim/build assets) is carried as
 # `data` since litex uses include_package_data.

@@ -61,6 +61,166 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 | o | 18x128, 8x256, 4x256, 7x256, 66x64, 15x80, 22x60, 32x128 | 9x80 |
 | p | 16x160, 65x160, 14x80, 66x80 | – |
 
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+- **Slang elaboration fixups in `gen_vmod` (all partitions)**: slang (new default
+  frontend) rejects nine uses of undeclared identifiers in the generated SDP RTL
+  (`NV_NVDLA_SDP_CORE_Y_lut.v`: `lut_in_{oflow,uflow,hybrid,le_hit,lo_hit}0`;
+  `NV_NVDLA_SDP_HLS_Y_{idx,inp}_top.v`: `chn_{lut,inp}_{in_prdy,out_pvld}0`) —
+  legacy implicit-net reliance, fine under yosys. All nine are only ever read
+  (undriven implicit 1-bit nets under old yosys), so `gen_vmod` now seds in plain
+  `wire` declarations, preserving baseline netlist semantics. Verified: standalone
+  slang elaboration of all five partitions passes with 0 errors.
+- **partition_a nangate45 — `repair_clock_inverters` SEGV workaround**: on the new
+  pin, cts.tcl's `repair_clock_inverters` crashes deterministically on this placed
+  netlist — gdb stack `rsz::Resizer::cloneClkInverter → odb::dbNet::destroy`
+  (repro: `read_liberty` + `read_db 3_place.odb` + `read_sdc` +
+  `repair_clock_inverters`; crashes with and without `-hier`; same netlist passed
+  this step on the 2026-07 pin; partition_a asap7/sky130hd pass it on the new
+  pin). Upstream issue candidate — not yet filed. Workaround: `PRE_CTS_TCL`
+  (`pre_cts.tcl`) shadows the command to a warning no-op; CTS buffers the inverted
+  clock itself. QoR cost ≈ none (see below).
+- **partition_a QoR vs results.html baselines**:
+  - **asap7**: WS +199 ps (TNS 0), period_min 948.93 ps → Fmax 1.054 GHz (−5.9 %
+    vs 1.12, advisory on the new TC corner), 67 691 logic cells (+8.5 % vs
+    62 394 — corner-driven upsizing, same pattern as coralnpu-asap7). Pass.
+  - **nangate45** (with the repair_clock_inverters no-op): WS +0.13 ns (TNS 0),
+    period_min 1.57 ns → Fmax 637 MHz (−2.0 % vs 0.65 GHz), 48 142 cells
+    (−10.3 %). Pass.
+  - **sky130hd**: WS +1.10 ns (TNS 0), period_min 6.48 ns → Fmax 154 MHz (+2.9 %
+    vs 0.15 GHz), 35 070 cells (−2.4 %). Pass.
+
+- **partition_p asap7 — `repair_clock_inverters` SEGV root cause + modnet-strip
+  workaround**: same crash family as partition_a nangate45 above, now
+  root-caused. `rsz::Resizer::cloneClkInverter` resolves the inverter's output
+  net via `network_->net(out_pin)`, which prefers the hierarchical `dbModNet`;
+  `dbNetwork::deleteNet` then does `staToDb(net)`, which returns **nullptr for a
+  dbModNet**, and `dbNet::destroy(nullptr)` faults on its first field read
+  (verified by disassembly). This netlist has three synthesized clock inverters
+  driving gated-clock nets with 1518–2423 register loads each, so the
+  partition_a-style no-op is **not** viable here: skipping the repair leaves one
+  INVx1 driving ~2.4k clock sinks → ~2.4k hold endpoints → RSZ-0060 max-buffer
+  abort in both CTS and GRT repair_timing (both tried, both die; so does
+  `SKIP_CTS_REPAIR_TIMING`, which just moves the storm to GRT). Working fix
+  without an OpenROAD rebuild (cache preserved): `PRE_CTS_TCL` (`pre_cts.tcl`)
+  strips the modnet association from the clock-inverter output iterms
+  (`disconnectDbModNet`) so `net(pin)` resolves to the flat dbNet, and the
+  **real** `repair_clock_inverters` then runs (repro-verified on
+  `3_place.odb` + `read_sdc`). The partition_a nangate45 no-op should be
+  migrated to this strip. A C++ fix (type-discriminating `deleteNet`) is the
+  upstream patch; not applied locally to avoid invalidating the suite cache.
+- **partition_a nangate45 — migrated to the modnet strip (2026-11-13)**:
+  `pre_cts.tcl` now strips the clock-inverter modnet association (FLW-9902
+  reports 1 stripped) and the **real** `repair_clock_inverters` runs; clean
+  `_final`, no SEGV, no RSZ-0060. QoR vs the earlier no-op validation run:
+  56 140 cells (+16.6 % — the real repair clones inverters and hold-buffers the
+  gated clocks), period_min 1.60 ns -> Fmax 626 MHz (−1.7 %), setup WS +86 ps,
+  hold WS −18 ps (clock-gating hold check; advisory). Vs results.html baseline:
+  cells +4.6 %, Fmax −3.7 %. Pass (advisory gates). Both strips drop once the
+  pin passes upstream PR #12251.
+- **partition_p QoR vs results.html baselines** (nangate45/sky130hd no knob
+  changes; asap7 adds the `PRE_CTS_TCL` strip above):
+  - **asap7**: WNS −40.6 ps @1500 ps (TNS −65 ps — advisory on the new TC
+    corner), period_min 1439.08 ps → Fmax 695 MHz (−33 % vs 1.04 GHz, the
+    BC→TC corner swap, same pattern as partition_m), 111 260 logic cells
+    (+12.4 % vs 99 019 — corner upsizing plus per-load clock-inverter cloning:
+    6753 clock inverters post-CTS), route 0 DRC. Pass (finish-ability bar).
+  - **nangate45**: WS +0.06 ns (TNS 0), period_min 1.97 ns → Fmax 507 MHz
+    (−4.3 % vs 0.53 GHz), 69 998 cells (+0.3 %). Pass.
+  - **sky130hd**: WS +0.60 ns (TNS 0), period_min 10.14 ns → Fmax 98.6 MHz
+    (−1.4 % vs 0.10 GHz), 64 576 cells (−1.6 %). Pass.
+
+- **partition_o sky130hd — post-DRT antenna repair skipped (2026-11-13)**: on
+  this pin the post-DRT antenna-repair loop **diverges in runtime** — the
+  repair *does* insert diodes each cycle (3936 / 1827 / 1157 / 686; an
+  earlier note blaming a missing sky130hd ANTENNACELL / GRT-0246 was wrong —
+  that warning came from the asap7 build sharing the same log), but the
+  incremental DRT cycles grew 1 435 s → 4 794 s → 26 656 s → 158 899 s
+  (44 h) while net violations shrank only 1946 → 1169 → 778 → 514 — and the
+  final incremental DRT (DRT-0627 marker-resume, just 175 s) reported 0 DRC
+  + ANT 0/0 while leaving 1000+ nets wholly unrouted, so `design_is_routed`
+  failed the stage after ~53 h
+  (verified via a temporary POST_DETAIL_ROUTE `design_is_routed -verbose`
+  hook, since removed). The 2026-07 pin converged the same repair 5391 → 23
+  in ~10 h, so this is a pin regression (marker-resume net dropping looks
+  like an upstream bug; not yet filed). Decision (MRG 2026-11-13): set
+  `SKIP_ANTENNA_REPAIR_POST_DRT=1` — first-pass DRT is clean, the design
+  finishes, and the remaining post-route antenna violations are **waived and
+  documented** rather than repaired. Retry full repair on the next pin bump;
+  `MAX_REPAIR_ANTENNAS_ITER_DRT` is the fallback middle ground if a bounded
+  partial repair is ever wanted.
+- **partition_o sky130hd — passes 2026-11 validation with the skip
+  (2026-11-13)**: clean `_final`, route 0 DRC; first-pass DRT is only ~21 min
+  wall (46 555 s CPU at 128 threads) — the prior 53 h was entirely the
+  antenna-repair loop. Waived antenna violations (final `check_antennas`):
+  **1946 nets / 2934 pins** (5317 GRT-phase antenna cells still inserted
+  pre-DRT). QoR vs results.html baseline (79da6274): setup WS +0.44 ns
+  (TNS 0), period_min core 18.54 ns / falcon 2.56 ns → Fmax 390 MHz (+2.7 %
+  vs 0.38 GHz), logic cells 182 178 (−1.8 % vs 185 458; seq 39 208 ≈
+  identical, bufinv 29 542 −10.3 %), util 23.5 %, power 185 mW (vs 310 mW —
+  STA-2402 power-activity propagation did not converge, treat as
+  non-comparable). Hold WS −0.246 ns / TNS −3.8 ns over 18 endpoints
+  (library-hold / clock-gating checks; advisory per the 2026-11 gate
+  policy). Pass.
+
+- **partition_m QoR vs results.html baselines** (no knob changes, all TNS 0):
+  - **asap7**: WS +100 ps, period_min 1399.82 ps → Fmax 714 MHz (−30.7 % vs
+    1.03 GHz — the BC→TC corner swap, advisory per corner policy), 19 868 logic
+    cells (+1.0 %). Pass.
+  - **nangate45**: WS +0.30 ns, period_min 1.91 ns → Fmax 522 MHz (+2.4 %),
+    12 953 cells (−0.9 %). Pass.
+  - **sky130hd**: WS +1.23 ns, period_min 8.95 ns → Fmax 112 MHz (+1.5 %),
+    11 098 cells (+0.6 %). Pass.
+
+- **partition_c asap7 — 2026-11 close (NRP 64 Gi) + reset-port hold artifact
+  root-caused (2026-11-16)**: finishes clean on k8s at 64 Gi (the earlier OOM
+  was at the smaller request). QoR vs results.html baseline: period_min
+  2340 ps → **Fmax 427 MHz** (−28 % vs 590 MHz — inside the accepted BC→TC
+  corner band; asap7 timing is advisory this upgrade), setup WS −840 ps at
+  the legacy 1500 ps NVDLA target (754 endpoints; the target predates the
+  corner swap and is not being chased this pass), 4.22 M instances, power
+  85 mW. Reported hold WS **−1350 ps was a constraint artifact, not
+  silicon**: the two worst min paths are `dla_reset_rstn`/`direct_reset_`
+  *input ports* → reset-synchronizer flops — the template
+  `set_input_delay` (300 ps) against a propagated capture clock with
+  ~1665 ps insertion delay manufactures the hold check; `set_ideal_network`
+  alone does not remove timing checks. Fixed in SDC (`f59c367f`): port-level
+  `set_false_path -from` on both reset ports, matching partition_m and the
+  sky130hd/gt2n partition_c SDCs (asap7/nangate45 had claimed this in a
+  comment but never actually set it). Worst *real* internal hold is
+  −40.2 ps (cbuf RAM write-enable path) — same advisory class as
+  partition_p's accepted −20.7 ps. Both asap7 and nangate45 partition_c
+  resubmitted at `f59c367f` 2026-11-16 to rebuild with the fix.
+
+- **`f59c367f` rebuilds verified (2026-11-17)**:
+  - **nangate45** (7h17m NRP): reset artifact gone. Hold WS −16.2 ps /
+    15 endpoints, worst path is the internal cbuf bank17 write-enable →
+    RAM pin — the known advisory class. Setup unaffected: WS +751 ps
+    (+802 ps at the 2026-06 baseline), TNS 0, Fmax 322 MHz, power 193 mW.
+  - **asap7** (7h26m NRP): the two reset ports are clean, and the worst
+    *internal* hold path (cbuf clk-gate reg2reg) is now **MET at
+    +84.1 ps** — no real hold problem. But reported hold WS is still
+    −1291.9 ps / 11,599 endpoints: the same `set_input_delay`-vs-insertion-
+    delay artifact on the *remaining* constrained input ports, worst
+    `test_mode` (−1292) and `global_clk_ovr_on` (−1119) — quasi-static
+    DFT/clock-override controls fanning out to synchronizers. nangate45's
+    shallow clock tree keeps those same ports positive; asap7's ~1.7 ns
+    insertion delay does not. Setup/Fmax unchanged (WS −872 ps at the
+    legacy 1500 ps target, Fmax 421.5 MHz, power 89 mW). Fixing the
+    headline number needs either false paths on the quasi-static control
+    ports or a suite-wide `set_input_delay -min` policy — the open
+    suite-wide decision; not changed unilaterally this pass.
+
+- **SDC cleanup + retarget (2026-11-17, user-directed)**: false-pathed the
+  four quasi-static DFT/clock-override ports (`test_mode`,
+  `tmc2slcg_disable_clock_gating`, `global_clk_ovr_on`, `nvdla_clk_ovr_on`)
+  on asap7/nangate45/sky130hd partition_c (`eb822da9`) — partition_m/a and
+  gt2n partition_c already had them; partition_c was the gap. And retargeted
+  the asap7 clock from the legacy 1500 ps (unachievable post-corner-swap:
+  WS −872 ps, 754 endpoints) to **2610 ps** = period_min 2372 × 1.10 from
+  the f59c367f close. All three platforms resubmitted on NRP (sky130hd's
+  2d12h in-flight run was killed for the rebuild — user call).
+
 ## asap7
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
@@ -97,6 +257,15 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 - WNS +0.03 ns, Fmax **66.80 MHz** (`period_min` 14.97 ns vs 15 ns), 0 DRC violations, `CORE_UTILIZATION` 25, `PLACE_DENSITY` 0.20, ~265 k logic cells, core 128.9 mm².
 
 ## gt2n
+
+### partition_a: repair_clock_inverters SEGV strip (2026-11 pin)
+
+First k8s run on the 2026-11 pin SEGV'd in CTS (Signal 11 right after
+sourcing pre_cts.tcl): the known OpenROAD #12250 repair_clock_inverters
+modnet crash, same as partition_p-asap7 / partition_a-nangate45. gt2n's
+pre_cts.tcl predated the strip (it only set clock wire RC), so the strip
+block was appended 2026-11-14; watch FLW-9902 for the stripped count.
+Remove with the other strips once the pin passes the upstream fix.
 
 **Status**: finishing. Per-partition details and known issues below.
 

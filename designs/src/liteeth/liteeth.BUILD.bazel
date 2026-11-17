@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @liteeth_src (enjoy-digital/liteeth).  Imported as
 # top-level `liteeth`; carries the standalone-core generator liteeth/gen.py.
 # Reuses the shared LiteX toolchain (@migen_src/@litex_src, pip_litex hub).

@@ -65,7 +65,28 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 ## asap7
 
 **Status**: finishing
-**Last updated**: `8ec5a224` (2026-05-11 PPA area sweep)
+**Last updated**: 2026-11-16 (2026-11 pin validation)
+
+- **2026-11-16: 2026-11 pin validation + one-off NRP DRT runtime anomaly.** The
+  first NRP run of this pin sat **47 h inside `5_2_route`** with openroad at
+  ~89 % CPU (42 CPU-hours). (The stage log read 0 bytes at the time, but that
+  is NOT evidence of a hang — verified the same day that the ORFS
+  `run_command.py` wrapper buffers the stage log until the stage completes, so
+  an empty log mid-stage is normal.) Killed on elapsed-time grounds alone: a
+  local rebuild of the identical action (same commit, same cached inputs,
+  ~24 threads vs the pod's 4) **closed DRT in 4m40s / 3 iterations / 0 antenna
+  violations**, so even at 4 CPUs the pod should have finished in well under an
+  hour. Not reproduced; no upstream issue filed (no stack captured;
+  environment- or thread-count-sensitive, possibly nondeterministic). If it
+  recurs, grab `gdb -p <pid> -batch -ex "thread apply all bt"` twice 60 s apart
+  inside the pod before killing. QoR (local, TC
+  corner): period_min 1022 ps (Fmax 0.98 vs 1.09 BC baseline, −10 % — inside
+  the accepted corner switch), setup WS −0.3 ps, power 33.4 mW. Reported hold
+  WS **−336 ps is spurious**: the worst min path is the `sys_reset` *input
+  port* → reset-synchronizer flop, i.e. a `set_input_delay` hold check on an
+  async-style reset input (IO-constraint artifact family, like the setup
+  feedthrough trap) — reg2reg hold is clean. Cache seeded from the local build
+  (backfill 31 blobs / 21.7 GB); NRP job resubmitted as a replay to publish.
 
 ### Configuration
 
@@ -77,6 +98,8 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 - **2026-04-30 `c8d96617`**: hit ODB-1200 in CTS repair_timing once the OpenROAD pin moved from `5f1bd87f` to `578be38a` (HighTide #103). Same bug class that previously affected `liteeth_udp_stream_sgmii` (PR #76). Added `SKIP_CTS_REPAIR_TIMING=1`.
 - **2026-05-11 PPA area sweep**: UTIL 35→50 / DENSITY 0.30→0.55. Die area 41,896 → 29,439 µm² (**−30 %**). UTIL=55 fails MPL-0003 (macros + default halo cannot tile in the smaller core).
 - **2026-06-04 toolchain upgrade (bazel-orfs 553c1c3 / OpenROAD 299f3015 / yosys 0.64)**: the new synth/place produces a ~128 ps slower critical path on the 920 ps clock, so at the prior util 43 the design closed at WNS −29.9 ps (timing miss). Relaxed `CORE_UTILIZATION` 43→38 (a flow knob, no SDC/RTL change): recovers WNS to **+111.7 ps** (≥ the pre-upgrade +98 ps), Fmax 1.22→1.24 GHz, cells +0.4 %, instance area +2.1 %, power −3 %. Cost is die area +13 % (util-driven whitespace only). Kept `SKIP_CTS_REPAIR_TIMING` + `SKIP_INCREMENTAL_REPAIR` (see Active workarounds — repair over-buffers here).
+
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68, asap7 BC→TC corner)**: slang is now the default HDL frontend — three source fixes needed (dead same-name wrapper modules in macros.v deleted, GTPE2 dummy param name, net-initializer strip in the genrule sed; commit be634774). Closes at the pushed 1022 ps clock with WS −0.31 ps (period_min 1022.31 ps — i.e. dead-on the old BC-corner push target while now timing on the *slower* TC libs; asap7 timing advisory this upgrade, constraints to be re-derived). 18 032 logic cells, zero DRC/slew/cap violations.
 
 ## nangate45
 
@@ -94,6 +117,8 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 - **2026-05-11 PPA area sweep**: UTIL 45→60 / DENSITY 0.40→0.65. Die area 746,271 → 560,103 µm² (**−25 %**). This was the headline single-variant win on nangate45.
 - **2026-06-04 toolchain upgrade**: removed `SKIP_INCREMENTAL_REPAIR` (RSZ-0074 fixed in OpenROAD 299f3015). QoR essentially unchanged — WNS +5950 ps (relaxed 10 ns clock, unchanged), 17950 logic cells (−2 %), die −0.1 %.
 
+- **2026-11 toolchain upgrade (TC n/a — single corner)**: passes unchanged — WS +0.12 ns at the pushed 1.66 ns clock (period_min 1.54 ns), 18 110 logic cells (+0.9 %), zero violations.
+
 ## sky130hd
 
 **Status**: finishing
@@ -110,3 +135,58 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 - ODB-1200 doesn't trigger on sky130hd, same as nangate45.
 - **2026-05-11 PPA area sweep**: UTIL 50→52 / DENSITY 0.40→0.57. Die area 3,864,920 → 3,716,410 µm² (−4 %). The baseline at UTIL=50 already had 50 max-slew + 4 max-cap DRV violations; UTIL=52 improves both (46/0). UTIL=55 fails global-route congestion.
 - **2026-06-04 toolchain upgrade**: removed `SKIP_INCREMENTAL_REPAIR` (RSZ-0074 fixed in OpenROAD 299f3015). Closes with large margin (WNS +731 ps), instance area +1.4 %, die +0.02 % — within tolerance.
+- **2026-11 toolchain upgrade**: the new GRT tips util 52 into GRT-0116 congestion (same pattern as sha3/coralnpu on sky130hd); relaxed `CORE_UTILIZATION` 52→45 (committed with the fakeram strap regen, 9fde5e9d). Passes with WS +1.00 ns at the 10 ns clock (period_min 9.00 ns), 14 726 logic cells, zero violations.
+
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-11-16 (first gt2n close, 2026-11 pin — bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+### Configuration
+
+| Die | Density | Halo | Clock (ps) | Notes |
+|---|---:|---:|---:|---|
+| explicit 434×210 (core 2 2 432 208) | 0.60 | — | 1450 | Manual `place_macro` grid in `macros.tcl` (5 macros); `MAX_ROUTING_LAYER M11`, `MIN_CLK_ROUTING_LAYER M4`; `set_false_path -from sys_reset`; `-D USE_GT2N_CELLS` |
+
+### Decisions
+- **2026-11-16 first gt2n port — RTLMP MPL-0045 forced a manual floorplan
+  (`2cc59c5b`)**: the five SRAM macros (two 64w1024d at 24.9k µm² each + three
+  64w64d) total 54,445 µm² against only ~933 µm² of 2nm std cells, and the
+  LiteX netlist is flat, so RTLMP's `breakLargeFlatCluster` TritonPart
+  partition fails at every balance relaxation (1→91) regardless of die size or
+  `RTLMP_MAX_LEVEL` — see the CLAUDE.md bug-table row and
+  [OpenROAD#11820](https://github.com/The-OpenROAD-Project/OpenROAD/issues/11820)
+  (our self-contained liteeth-gt2n repro posted 2026-11-16; tarball on the
+  `repro-mpl0045-2026-11-16` prerelease). Workaround: explicit 450×310 die
+  (39 % macro) with the two big SRAMs in the bottom corners, the three small
+  ones in a middle row, std cells keeping the top band; macros arrive FIXED so
+  RTLMP is skipped entirely. Remove `macros.tcl` + explicit die once the pin
+  carries the upstream fix (by-instance-count fallback proposed on the issue).
+- **2026-11-16 clock retarget 900 → 1450 ps (`217eadd1`, results under
+  `217eadd`)**: first close at the 900 ps guess gave period_min 1310 ps
+  (SRAM-access-bound, like asap7); retargeted to period_min × 1.10. Closes
+  with setup WS +0.8 ps at 1450 ps (period_min 1449 ps, **Fmax 690 MHz** vs
+  0.98 GHz asap7 — the SRAM macro access arc dominates on both), TNS 0, zero
+  setup/slew/cap/fanout violations. Reported hold WS −23.6 ps (19 endpoints)
+  is entirely the input-port `set_input_delay` hold-check artifact
+  (`udp0_udp_port[*]` → FF, same class as litepci/partition_p); worst
+  *internal* hold path is MET at +1.4 ps. GRT congestion is a non-issue
+  (zero overflow, M2/M3 ≤ 2.3 % usage).
+- **2026-11-17 die shrink 450×310 → 434×210 (`c352728a`, results under
+  `c352728`)**: the first-close die had 39 % macro coverage and only ~0.8 %
+  of the die in actual logic (zero congestion everywhere), so repacked to
+  10 µm margins / 15 µm channels with the three small SRAMs moved into the
+  top band beside the std cells. Die −34.7 % (139,500 → 91,140 µm², macro
+  coverage 60 % — near the packing bound for a design that is 98 % SRAM by
+  cell area). Strictly better QoR: setup WS +14.3 ps (period_min 1436 ps →
+  Fmax 697 MHz), power 17.4 → 15.7 mW (−10 %, shorter wires), and **hold
+  now clean too** (WS +0.69 ps, 0 violations) — the shorter clock tree
+  shrank the insertion delay enough that the input-port hold artifact from
+  the first close disappeared.
+- Reporting basis is `_grt_report` (global-route parasitics): gt2n has no
+  OpenRCX rules yet, so `_final_report` fails STA-1670 on the empty SPEF —
+  platform-level follow-up, not a design issue.
+
+### Known issues / open questions
+- MPL-0045 manual floorplan is temporary — retry plain RTLMP on each pin bump (CLAUDE.md bug table tracks it).
+- ~~The −23.6 ps IO hold artifact~~ — cleared by the 2026-11-17 die shrink (shorter clock insertion delay); hold is now fully clean.

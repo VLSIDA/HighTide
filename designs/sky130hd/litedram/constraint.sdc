@@ -1,4 +1,4 @@
-current_design litedram_core
+current_design litedram_asic
 
 # sky130hd lib units are ns. The 130 nm process gives ~3x the stdcell
 # delay of nangate45, so scale the starter target accordingly.

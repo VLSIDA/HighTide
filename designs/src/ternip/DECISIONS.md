@@ -54,3 +54,23 @@ None — ternip closes with RTLMP placement.
 | Util | Density | Halo | Clock (ps) | Notes |
 |---:|---:|---:|---:|---|
 | 45 | 0.55 | 4 4 | (per `constraint.sdc`) | RTLMP places the 10 banked SRAMs; `macro_placement.tcl` removed when the regenerated 34×43 µm macros made the old hand-placement coords (sized for 90×45 µm macros) obsolete. |
+
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68, asap7 now TC corner)**: all three platforms close clean at the frequency-pushed clocks, no knob changes — asap7 WS +14 ps at the 953 ps clock (period_min 939 ps, 19 359 logic cells, +2.8 % vs 18 833 — within the 5 % gate; note the corner moved BC→TC, so closing at the same pushed clock on *slower* libs is a strict improvement), nangate45 WS +0.37 ns at 1.86 ns (period_min 1.49 ns), sky130hd WS +0.46 ns at 8.43 ns (period_min 7.97 ns). TNS 0 and zero DRC/slew/cap violations everywhere. **Known issue (pre-existing, also on main):** synthesis instantiates ZERO fakeram macros — `vector_registers` (128,4096) matches no generate branch in `ternip_pipelined_mem_fakeram.v`, so the committed sram/ LEF/LIBs are dead weight and the array synthesizes as flops. Needs a generate-branch fix or cfg/LEF cleanup as a separate change (not an upgrade regression).
+
+## gt2n
+
+**Status**: finishing
+**Last updated**: 2026-11-16 (first gt2n close, 2026-11 pin — bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+### Configuration
+
+| Util | Density | Halo | Clock (ps) | Notes |
+|---:|---:|---:|---:|---|
+| 80 | 0.85 | — | 850 | `MAX_ROUTING_LAYER M11`, `MIN_CLK_ROUTING_LAYER M4`, `SYNTH_MEMORY_MAX_BITS 16384`; `set_false_path -from rst_ni` |
+
+### Decisions
+- **2026-11-16 first gt2n port (NRP k8s, results under `2cc59c5`)**: ported from asap7 per the port-design skill. BSPDN frees the frontside routing tracks, so high utilization is the intended design point — started at util 80 / density 0.85 (asap7 runs 45) and it closed first try. QoR (grt_report — gt2n has no OpenRCX rules, so `_final_report` fails STA-1670 and global-route parasitics are the reporting basis): setup WS +269 ps at the 850 ps clock, **Fmax 1.72 GHz** (vs 1.06 GHz asap7 — a 2nm-vs-7nm datapoint, not a tuning delta), hold WS +17.7 ps, TNS 0, zero setup/hold/slew/cap/fanout violations. 1080 µm² core, ~41.4k instances. Clock scaled 953→850 ps as the initial guess and was already conservative; a frequency push (period_min ≈ 581 ps) is deferred to the post-release PPA pass.
+- **0-macro caveat replicated faithfully**: like all platforms (see the 2026-11 asap7 note above), `vector_registers` (128,4096) matches no generate branch in `ternip_pipelined_mem_fakeram.v`, so synthesis instantiates ZERO fakeram macros and the committed `sram/` LEF/LIBs are dead weight. The gt2n port keeps this behavior deliberately so cross-platform QoR stays apples-to-apples; fix is a separate suite-wide change.
+
+### Known issues / open questions
+- Frequency push to ~640 ps (period_min 581 × 1.10) queued for the PPA pass.

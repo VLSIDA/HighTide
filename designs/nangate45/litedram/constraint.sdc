@@ -1,4 +1,4 @@
-current_design litedram_core
+current_design litedram_asic
 
 # nangate45 lib units are ns. Match asap7's 6 ns target scaled up by
 # the ~6x nangate45/asap7 stdcell delay ratio observed on similar

@@ -35,6 +35,8 @@ A small RISC-V core (~10–20k stdcells, no macros).  Used as a real-RTL smoke t
 
 ### Known issues / open questions
 - WNS marginally negative (−1.5 ps) post-upgrade; within Fmax tolerance, design routes and reaches 6_final.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: finishes at TC; 17628 logic cells (+4.9% vs 16799 -- borderline, the resizer works harder at the slow corner). period_min 1034 ps (Fmax 967 MHz), WNS -134 ps vs the BC-era 900 ps SDC -- advisory; constraint re-derivation at TC pending.
+
 
 ## nangate45
 
@@ -53,6 +55,8 @@ A small RISC-V core (~10–20k stdcells, no macros).  Used as a real-RTL smoke t
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: finishes, timing flat (WNS +0.01 ns, period_min 1.59 ns) but **15487 logic cells, +12.3% vs 13795 -- FLAGGED**. Growth is synthesis-side (15372 cells already at 1_synth), i.e. yosys/abc 0.68 mapping, same class as the yosys-0.64 vortex growth; post-synth stages add <1%. Not knob-chased on this small design; watch whether it is systematic across nangate45 as the validation ladder climbs.
+
 
 ## sky130hd
 
@@ -71,6 +75,8 @@ A small RISC-V core (~10–20k stdcells, no macros).  Used as a real-RTL smoke t
 
 ### Known issues / open questions
 - None.
+- **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68.bcr.2; Bazel 9.1.1; asap7 corner BC->TC)**: clean, 6915 logic cells (+2.3%), WNS -0.01 ns (the known marginal single endpoint), period_min 8.01 ns (Fmax 125 MHz).
+
 
 ## gt2n
 

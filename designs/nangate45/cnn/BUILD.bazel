@@ -24,8 +24,7 @@ hightide_design(
         "DIE_AREA": "0 0 7000 7000",
         "CORE_AREA": "2 2 6998 6998",
         "PLACE_DENSITY": "0.45",
-        "MACRO_PLACE_HALO": "50 50",
-        "MACRO_BLOCKAGE_HALO": "0.5",
+        "RTLMP_MIN_CHANNEL_SIZE": "100 100",  # was MACRO_PLACE_HALO 50 50 (halo x,y ~ channel 2x,2y)
         # Force all 367 IO pins onto the bottom edge (12 um spacing)
         # to avoid clustering and shorten routes to the stdcell band
         # below the four large fakeram macros at the top of the die.

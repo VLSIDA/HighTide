@@ -19,7 +19,7 @@ _INCLUDE_DIRS = VORTEX_INCLUDE_DIRS_RELEASE_STR + " " + VORTEX_INCLUDE_DIRS_DEV_
 
 # Mirrors designs/asap7/vortex/BUILD.bazel; per-platform tuning:
 #   - clock period scales 1100 ps → 3.0 ns (~2.7x, calibrated against
-#     NyuziProcessor 1600 ps → 4.5 ns)
+#     nyuzi 1600 ps → 4.5 ns)
 #   - utilization eased from 50 → 35 to give nangate45 placer headroom
 #   - macro halo grown to 40 40 for the 45 nm feature pitch
 hightide_design(
@@ -39,7 +39,7 @@ hightide_design(
         "VERILOG_INCLUDE_DIRS": _INCLUDE_DIRS,
         "CORE_UTILIZATION": "35",
         "PLACE_DENSITY_LB_ADDON": "0.20",
-        "MACRO_PLACE_HALO": "40 40",
+        "RTLMP_MIN_CHANNEL_SIZE": "80 80",  # was MACRO_PLACE_HALO 40 40 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
     },
     stage_data = {"synth": ["//designs/src/vortex:rtl_data"]},

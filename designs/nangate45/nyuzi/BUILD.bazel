@@ -1,0 +1,40 @@
+load("//:defs.bzl", "hightide_design")
+
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["sram/lef/*.lef"]),
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["sram/lib/*.lib"]),
+)
+
+hightide_design(
+    name = "nyuzi",
+    top = "NyuziProcessor",
+    platform = "nangate45",
+    verilog_files = ["//designs/src/nyuzi:rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+        "FASTROUTE_TCL": [":fastroute.tcl"],
+        # PRE_CTS_TCL (pre_cts.tcl) was the CTS-0105 dbSourceType reset
+        # (OpenROAD #10177, closed 2026-05-21); removed on the bazel-orfs
+        # 553c1c3 / OpenROAD 299f3015 upgrade.
+    },
+    arguments = {
+        "SYNTH_HIERARCHICAL": "1",
+        # yosys 0.68 keeps the wrapper's 8-deep interface FIFOs (8x613 =
+        # 4904 bits, 8x545) as inferred memories where 0.64 FF-mapped them;
+        # raise the gate so they FF-map again (depth 8 is sub-CACTI, so the
+        # suite's FF-fallback convention applies, not a fakeram macro).
+        "SYNTH_MEMORY_MAX_BITS": "8192",
+        "ABC_AREA": "1",
+        "CORE_UTILIZATION": "57",
+        "PLACE_DENSITY_LB_ADDON": "0.1",
+        "RTLMP_MIN_CHANNEL_SIZE": "80 80",  # was MACRO_PLACE_HALO 40 40 (halo x,y ~ channel 2x,2y)
+        "TNS_END_PERCENT": "100",
+    },
+)

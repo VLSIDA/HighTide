@@ -140,6 +140,8 @@ module PLLE2_DUMMY #(
     BUF_X1 u_clkinsel_buf (.A(CLKINSEL), .Z(clkinsel_buf));
   `elsif USE_SKY130HD_CELLS
     sky130_fd_sc_hd__buf_1 u_clkinsel_buf (.A(CLKINSEL), .X(clkinsel_buf));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_clkinsel_buf (.A(CLKINSEL), .Y(clkinsel_buf));
   `endif
   
   assign clkin_int = (clkinsel_buf ^ IS_CLKINSEL_INVERTED) ? CLKIN1 : CLKIN2;
@@ -151,6 +153,8 @@ module PLLE2_DUMMY #(
     BUF_X1 u_rst_buf (.A(RST), .Z(rst_buf));
   `elsif USE_SKY130HD_CELLS
     sky130_fd_sc_hd__buf_1 u_rst_buf (.A(RST), .X(rst_buf));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_rst_buf (.A(RST), .Y(rst_buf));
   `endif
   assign rst_int = rst_buf ^ IS_RST_INVERTED;
   
@@ -161,6 +165,8 @@ module PLLE2_DUMMY #(
     BUF_X1 u_pwrdwn_buf (.A(PWRDWN), .Z(pwrdwn_buf));
   `elsif USE_SKY130HD_CELLS
     sky130_fd_sc_hd__buf_1 u_pwrdwn_buf (.A(PWRDWN), .X(pwrdwn_buf));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_pwrdwn_buf (.A(PWRDWN), .Y(pwrdwn_buf));
   `endif
   assign pwrdwn_int = pwrdwn_buf ^ IS_PWRDWN_INVERTED;
   
@@ -173,6 +179,8 @@ module PLLE2_DUMMY #(
     CLKBUF_X1 u_clkfb_buf (.A(CLKFBIN), .Z(clkfb_int));
   `elsif USE_SKY130HD_CELLS
     sky130_fd_sc_hd__buf_1 u_clkfb_buf (.A(CLKFBIN), .X(clkfb_int));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_clkfb_buf (.A(CLKFBIN), .Y(clkfb_int));
   `endif
   
   `ifdef USE_ASAP7_CELLS
@@ -181,6 +189,8 @@ module PLLE2_DUMMY #(
     CLKBUF_X1 u_vco_buf (.A(clkin_int), .Z(vco_clk));
   `elsif USE_SKY130HD_CELLS
     sky130_fd_sc_hd__clkbuf_1 u_vco_buf (.A(clkin_int), .X(vco_clk));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_vco_buf (.A(clkin_int), .Y(vco_clk));
   `endif
   
   reg [7:0] lock_counter;
@@ -366,6 +376,16 @@ module PLLE2_DUMMY #(
     sky130_fd_sc_hd__buf_1 u_clkout5_buf (.A(clkout5_reg), .X(CLKOUT5));
     sky130_fd_sc_hd__buf_1 u_locked_buf (.A(pll_locked_reg), .X(LOCKED));
     sky130_fd_sc_hd__buf_1 u_drdy_buf (.A(drdy_reg), .X(DRDY));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_clkfbout_buf (.A(clkfbout_reg), .Y(CLKFBOUT));
+    gt2_6t_buf_x2_w31_svt u_clkout0_buf (.A(clkout0_reg), .Y(CLKOUT0));
+    gt2_6t_buf_x2_w31_svt u_clkout1_buf (.A(clkout1_reg), .Y(CLKOUT1));
+    gt2_6t_buf_x2_w31_svt u_clkout2_buf (.A(clkout2_reg), .Y(CLKOUT2));
+    gt2_6t_buf_x2_w31_svt u_clkout3_buf (.A(clkout3_reg), .Y(CLKOUT3));
+    gt2_6t_buf_x2_w31_svt u_clkout4_buf (.A(clkout4_reg), .Y(CLKOUT4));
+    gt2_6t_buf_x2_w31_svt u_clkout5_buf (.A(clkout5_reg), .Y(CLKOUT5));
+    gt2_6t_buf_x2_w31_svt u_locked_buf (.A(pll_locked_reg), .Y(LOCKED));
+    gt2_6t_buf_x2_w31_svt u_drdy_buf (.A(drdy_reg), .Y(DRDY));
   `endif
   
   genvar i;
@@ -377,6 +397,8 @@ module PLLE2_DUMMY #(
         BUF_X1 u_do_buf (.A(do_reg[i]), .Z(DO[i]));
       `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__buf_1 u_do_buf (.A(do_reg[i]), .X(DO[i]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt u_do_buf (.A(do_reg[i]), .Y(DO[i]));
       `endif
     end
   endgenerate

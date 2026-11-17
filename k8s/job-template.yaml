@@ -121,6 +121,16 @@ spec:
           # lands here, so the post-build S3 backfill below can publish the
           # blobs too big for the Worker's 100 MB PUT cap.
           CACHE_FLAGS="$CACHE_FLAGS --disk_cache=/disk-cache"
+          # Cache replays are latency-bound: a remote-cache hit occupies a job
+          # slot, and --jobs defaults to the pod CPU limit (4 on the default
+          # tier), serializing thousands of ~1.5s Worker round-trips. 16 slots
+          # cuts replay wall-clock ~4x; real CPU use stays capped by the
+          # cgroup (cpu_lim == cpu_req), so NRP utilization bands are safe.
+          CACHE_FLAGS="$CACHE_FLAGS --jobs=16"
+          # Materialize the small report files even on full-cache-hit builds
+          # (default download mode skips intermediate outputs, leaving the
+          # results-index publish step with nothing to copy).
+          CACHE_FLAGS="$CACHE_FLAGS --remote_download_regex=.*(6_finish\.rpt|6_report\.json)$"
 
           # When uploading artifacts, force download of all intermediate
           # outputs (logs, reports, results) so we capture them on cache hits.
@@ -131,6 +141,22 @@ spec:
           # Capture build exit code so we can save artifacts even on failure
           BUILD_RC=0
           bazel build $CACHE_FLAGS __BAZEL_TARGET__ || BUILD_RC=$?
+
+          # QoR: on this bazel-orfs pin stages run with SKIP_REPORT_METRICS=1
+          # (6_finish.rpt is an empty placeholder; 6_report.json carries only
+          # area/instance counts). Timing/power live in the separate
+          # <name>_final_report target — build it so the publish step below
+          # can index real QoR. gt2n has no OpenRCX rules (empty SPEF makes
+          # final_report fail STA-1670), so fall back to the GRT-parasitics
+          # report there. Never fails the job.
+          if [ "$BUILD_RC" = "0" ]; then
+            RPT_TARGET="$(echo "__BAZEL_TARGET__" | sed 's/_gallery$/_final_report/; s/_final$/_final_report/')"
+            if [ "$RPT_TARGET" != "__BAZEL_TARGET__" ]; then
+              bazel build $CACHE_FLAGS --remote_download_regex='.*_((final|grt)_report)\.(json|rpt)$' "$RPT_TARGET" \
+                || bazel build $CACHE_FLAGS --remote_download_regex='.*_((final|grt)_report)\.(json|rpt)$' "${RPT_TARGET%_final_report}_grt_report" \
+                || echo "WARNING: report target failed (QoR not indexed; build result unaffected)"
+            fi
+          fi
 
           # Backfill oversized blobs over the R2 S3 API (bazel's own uploads
           # through the Worker 413 above 100 MB and are skipped with a
@@ -143,6 +169,25 @@ spec:
               || echo "WARNING: S3 backfill failed (build result unaffected)"
           else
             echo "No r2-s3-creds Secret; skipping oversized-blob backfill"
+          fi
+
+          # Publish the small report/log files to a browsable S3 prefix so
+          # consumers (QoR harvests, update-results, fetch_results.sh) can
+          # read them with plain HTTP/S3 — no bazel needed. Content-addressed
+          # cache entries stay the source of truth for builds; this is a
+          # convenience index keyed by design + git sha.
+          if [ -n "${R2_ENDPOINT:-}" ]; then
+            TARGET="__BAZEL_TARGET__"
+            DESIGN_PATH="${TARGET#//}"; DESIGN_PATH="${DESIGN_PATH%%:*}"
+            GIT_SHA=$(git -C /repo rev-parse --short HEAD 2>/dev/null || echo unknown)
+            PFX="s3://hightide-bazel-cache/results/${DESIGN_PATH#designs/}/$GIT_SHA"
+            for f in $(find bazel-bin/$DESIGN_PATH -name '6_report.json' -o -name '*_gallery.png' -o -name '*_final_report.json' -o -name '*_final_report.rpt' -o -name '*_grt_report.json' -o -name '*_grt_report.rpt' 2>/dev/null | head -20); do
+              sz=$(stat -c%s "$f" 2>/dev/null || echo 0)
+              [ "$sz" -gt 52428800 ] && continue
+              aws s3 cp "$f" "$PFX/$(basename $f)" --endpoint-url "$R2_ENDPOINT" --no-progress >/dev/null 2>&1 || true
+            done
+            echo "$GIT_SHA" | aws s3 cp - "s3://hightide-bazel-cache/results/${DESIGN_PATH#designs/}/latest" --endpoint-url "$R2_ENDPOINT" >/dev/null 2>&1 || true
+            echo "Published reports to $PFX"
           fi
 
           # Copy build artifacts to persistent storage (when enabled)

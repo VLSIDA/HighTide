@@ -1,9 +1,0 @@
---- litedram_core.v.orig
-+++ litedram_core.v
-@@ -29,7 +29,7 @@
-     output wire          sdram_cs_n,
-     output wire    [1:0] sdram_dm,
--    input  wire   [15:0] sdram_dq,
-+    inout  wire   [15:0] sdram_dq,
-     output wire          sdram_ras_n,
-     output wire          sdram_we_n,

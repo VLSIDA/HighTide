@@ -23,12 +23,30 @@ hightide_design(
     arguments = {
         # coralnpu is now Chisel-7 SystemVerilog (via firtool) → yosys-slang.
         "SYNTH_HDL_FRONTEND": "slang",
-        "SYNTH_SLANG_ARGS": "--disable-instance-caching=false -DUSE_GENERIC -Iexternal/+_repo_rules+common_cells/include",
+        "SYNTH_SLANG_ARGS": "--disable-instance-caching=false -DUSE_GENERIC -Iexternal/+http_archive+common_cells/include",
         "SYNTH_HIERARCHICAL": "1",
         "CORE_UTILIZATION": "20",
         "PLACE_DENSITY": "0.15",
-        "MACRO_PLACE_HALO": "30 30",
-        "ROUTING_LAYER_ADJUSTMENT": "0.25",
+        # GRT-0116 fix attempt 2 (2026-11-15): heatmap shows the logic
+        # clumped into a saturated band by the two macros while half the
+        # die is empty — strengthen GPL routability-driven inflation to
+        # force local spread (utilization is already 20; area is not the
+        # problem). See shared/knobs/place.md.
+        "GLOBAL_PLACEMENT_ARGS": "-routability_max_inflation_ratio 4 -routability_inflation_ratio_coef 5 -routability_max_density 0.6",
+        # GRT-0116 fix attempt 3 (2026-11-15): attempt 2 (inflation) left
+        # 25k overflow concentrated on met1/met2 at 20.7% total usage —
+        # local pin-access density, not capacity. Suite default padding is
+        # 0; pad cells apart so pin shapes stop stacking (die is 80% empty,
+        # the area cost is free here).
+        # GRT-0116 fix attempt 4 (2026-11-16): attempt 3 (padding) cut
+        # overflow 25k -> 4.7k, all residual on met1 (pin access); met3/4
+        # sit at 4.6%/12.4% usage. The old 0.25 adjustment UNDER-reserved
+        # vs the ORFS default 0.5, packing demand onto the low layers —
+        # raise to 0.4 to push demand upward, and one more site of GP
+        # padding for the last of the pin crowding.
+        "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": "3",
+        "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": "1",
+        "ROUTING_LAYER_ADJUSTMENT": "0.4",
         "TNS_END_PERCENT": "100",
     },
 )

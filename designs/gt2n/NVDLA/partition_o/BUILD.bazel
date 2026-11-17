@@ -18,7 +18,17 @@ hightide_design(
         "CORE_UTILIZATION": "46",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
-        "MACRO_PLACE_HALO": "8 8",
+        # GRT-0232 congestion (2026-11-15): channel-control attempts via
+        # RTLMP_ARGS failed MPL-0065 twice (8um halos + 24um channels,
+        # then 24um channels alone — movable cells don't fit at util 46;
+        # deprecated halos fold into channels on this pin, MPL-0074). The
+        # heatmap says channels were never the problem: the saturated
+        # region is an open-core logic blob and the macro channels were
+        # clean. So run RTLMP at its defaults (the original floorplan
+        # converged) and attack the blob with GPL routability inflation
+        # alone; keep util 46 (BSPDN density is the platform's point).
+        # Next lever if GRT still overflows: util 46 -> 42 concession.
+        "GLOBAL_PLACEMENT_ARGS": "-routability_max_inflation_ratio 4 -routability_inflation_ratio_coef 5 -routability_max_density 0.6",
         "TNS_END_PERCENT": "100",
         "HOLD_SLACK_MARGIN": "40",
     },

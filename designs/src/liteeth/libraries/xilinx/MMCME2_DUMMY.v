@@ -315,6 +315,19 @@ module MMCME2_DUMMY #(
     sky130_fd_sc_hd__buf_1 u_psclk_buf (.A(PSCLK), .X(psclk_buf));
     sky130_fd_sc_hd__buf_1 u_psen_buf (.A(PSEN), .X(psen_buf));
     sky130_fd_sc_hd__buf_1 u_psincdec_buf (.A(PSINCDEC), .X(psincdec_buf));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_clkin1_buf (.A(CLKIN1), .Y(clkin1_buf));
+    gt2_6t_buf_x2_w31_svt u_clkin2_buf (.A(CLKIN2), .Y(clkin2_buf));
+    gt2_6t_buf_x2_w31_svt u_clkfbin_buf (.A(CLKFBIN), .Y(clkfbin_buf));
+    gt2_6t_buf_x2_w31_svt u_rst_buf (.A(RST), .Y(rst_buf));
+    gt2_6t_buf_x2_w31_svt u_pwrdwn_buf (.A(PWRDWN), .Y(pwrdwn_buf));
+    gt2_6t_buf_x2_w31_svt u_clkinsel_buf (.A(CLKINSEL), .Y(clkinsel_buf));
+    gt2_6t_buf_x2_w31_svt u_dclk_buf (.A(DCLK), .Y(dclk_buf));
+    gt2_6t_buf_x2_w31_svt u_den_buf (.A(DEN), .Y(den_buf));
+    gt2_6t_buf_x2_w31_svt u_dwe_buf (.A(DWE), .Y(dwe_buf));
+    gt2_6t_buf_x2_w31_svt u_psclk_buf (.A(PSCLK), .Y(psclk_buf));
+    gt2_6t_buf_x2_w31_svt u_psen_buf (.A(PSEN), .Y(psen_buf));
+    gt2_6t_buf_x2_w31_svt u_psincdec_buf (.A(PSINCDEC), .Y(psincdec_buf));
   `endif
   
   genvar j;
@@ -326,6 +339,8 @@ module MMCME2_DUMMY #(
         BUF_X1 u_daddr_buf (.A(DADDR[j]), .Z(daddr_buf[j]));
       `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__buf_1 u_daddr_buf (.A(DADDR[j]), .X(daddr_buf[j]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt u_daddr_buf (.A(DADDR[j]), .Y(daddr_buf[j]));
       `endif
     end
     for (j = 0; j < 16; j = j + 1) begin : gen_di_buf
@@ -335,6 +350,8 @@ module MMCME2_DUMMY #(
         BUF_X1 u_di_buf (.A(DI[j]), .Z(di_buf[j]));
       `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__buf_1 u_di_buf (.A(DI[j]), .X(di_buf[j]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt u_di_buf (.A(DI[j]), .Y(di_buf[j]));
       `endif
     end
   endgenerate
@@ -352,6 +369,8 @@ module MMCME2_DUMMY #(
     CLKBUF_X1 u_vco_buf (.A(clkin_int), .Z(vco_clk));
   `elsif USE_SKY130HD_CELLS
     sky130_fd_sc_hd__clkbuf_1 u_vco_buf (.A(clkin_int), .X(vco_clk));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_vco_buf (.A(clkin_int), .Y(vco_clk));
   `endif  
 
   always @(*) begin
@@ -606,6 +625,25 @@ module MMCME2_DUMMY #(
     sky130_fd_sc_hd__buf_1 u_psdone_buf (.A(ps_done_reg), .X(PSDONE));
     
     sky130_fd_sc_hd__buf_1 u_drdy_buf (.A(drp_ready_reg), .X(DRDY));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt u_clkfbout_buf (.A(clkfbout_int), .Y(CLKFBOUT));
+    gt2_6t_buf_x2_w31_svt u_clkfboutb_buf (.A(~clkfbout_int), .Y(CLKFBOUTB));
+    gt2_6t_buf_x2_w31_svt u_clkout0_buf (.A(clkout0_int), .Y(CLKOUT0));
+    gt2_6t_buf_x2_w31_svt u_clkout0b_buf (.A(~clkout0_int), .Y(CLKOUT0B));
+    gt2_6t_buf_x2_w31_svt u_clkout1_buf (.A(clkout1_int), .Y(CLKOUT1));
+    gt2_6t_buf_x2_w31_svt u_clkout1b_buf (.A(~clkout1_int), .Y(CLKOUT1B));
+    gt2_6t_buf_x2_w31_svt u_clkout2_buf (.A(clkout2_int), .Y(CLKOUT2));
+    gt2_6t_buf_x2_w31_svt u_clkout2b_buf (.A(~clkout2_int), .Y(CLKOUT2B));
+    gt2_6t_buf_x2_w31_svt u_clkout3_buf (.A(clkout3_int), .Y(CLKOUT3));
+    gt2_6t_buf_x2_w31_svt u_clkout3b_buf (.A(~clkout3_int), .Y(CLKOUT3B));
+    gt2_6t_buf_x2_w31_svt u_clkout4_buf (.A(clkout4_int), .Y(CLKOUT4));
+    gt2_6t_buf_x2_w31_svt u_clkout5_buf (.A(clkout5_int), .Y(CLKOUT5));
+    gt2_6t_buf_x2_w31_svt u_clkout6_buf (.A(clkout6_int), .Y(CLKOUT6));
+    gt2_6t_buf_x2_w31_svt u_locked_buf (.A(pll_locked_int), .Y(LOCKED));
+    gt2_6t_buf_x2_w31_svt u_clkinstopped_buf (.A(clkinstopped_int), .Y(CLKINSTOPPED));
+    gt2_6t_buf_x2_w31_svt u_clkfbstopped_buf (.A(clkfbstopped_int), .Y(CLKFBSTOPPED));
+    gt2_6t_buf_x2_w31_svt u_psdone_buf (.A(ps_done_reg), .Y(PSDONE));
+    gt2_6t_buf_x2_w31_svt u_drdy_buf (.A(drp_ready_reg), .Y(DRDY));
   `endif
     
   genvar i;
@@ -617,6 +655,8 @@ module MMCME2_DUMMY #(
         BUF_X1 u_do_buf (.A(drp_do_reg[i]), .Z(DO[i]));
       `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__buf_1 u_do_buf (.A(drp_do_reg[i]), .X(DO[i]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt u_do_buf (.A(drp_do_reg[i]), .Y(DO[i]));
       `endif
     end
   endgenerate

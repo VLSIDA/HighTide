@@ -3,6 +3,12 @@
 # submodule not being checked out doesn't break bazel invocations.
 try-import %workspace%/bazel-orfs/.bazelrc
 
+# bazel-orfs/.bazelrc (imported above) sets workspace_status_command to a
+# script that only exists in bazel-orfs's own checkout; reset it (later
+# lines win over the import).  Its downloader_config suffers the same but
+# is already retargeted to tools/downloader.cfg further down.
+build --workspace_status_command=
+
 # Build OpenROAD from source with the GUI enabled (needed by the _gallery
 # image render, which runs `openroad -gui` under xvfb).  bazel-orfs carried
 # this in its own .bazelrc until 553c1c3 dropped it; declare it here so the
@@ -23,6 +29,10 @@ build --remote_upload_local_results=false
 
 # Local disk cache as fallback
 build --disk_cache=~/.cache/bazel-disk-cache
+# Override bazel-orfs's 2G disk-cache GC cap (later lines win over the
+# try-import): 2G evicts single big-design ODBs mid-campaign (it raced and
+# ate backfill candidates and AC entries on 2026-11-15). donut has TBs.
+build --experimental_disk_cache_gc_max_size=500G
 
 # Mirror flaky GNU hosts (download.savannah.gnu.org, ftp.gnu.org) to a byte-
 # identical netcologne mirror. Applies to all commands so module resolution

@@ -7,6 +7,9 @@ hightide_design(
     verilog_files = ["//designs/src/NVDLA:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        # repair_clock_inverters SEGV (OpenROAD #12250) — same modnet strip
+        # as partition_a (Signal 11 in CTS, first 2026-11-pin run).
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/nangate45/NVDLA:sram_lefs_c"],
         "ADDITIONAL_LIBS": ["//designs/nangate45/NVDLA:sram_libs_c"],
     },
@@ -16,7 +19,7 @@ hightide_design(
         "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
         "CORE_UTILIZATION": "30",
         "PLACE_DENSITY_LB_ADDON": "0.30",
-        "MACRO_PLACE_HALO": "35 35",
+        "RTLMP_MIN_CHANNEL_SIZE": "70 70",  # was MACRO_PLACE_HALO 35 35 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
     },
 )

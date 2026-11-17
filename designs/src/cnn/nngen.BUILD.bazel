@@ -1,3 +1,5 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
 # Injected BUILD for @nngen_src (NNgen/nngen).  Exposes the nngen package and
 # its bundled `examples/` (the CNN model builder lives at examples/cnn/cnn.py)
 # as a py_library run under the :cnn_gen py_binary.  veriloggen/onnx/numpy come

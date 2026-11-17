@@ -6,8 +6,14 @@ hightide_design(
     verilog_files = ["//designs/src/sha3:rtl"],
     sources = {"SDC_FILE": [":constraint.sdc"]},
     arguments = {
-        "CORE_UTILIZATION": "75",
-        "PLACE_DENSITY": "0.85",
+        # 2026-11-16 utilization probe (sha3 sweep, gt2n BSPDN headroom):
+        # util 85 = 96.2% actual GPL utilization after ~13% post-floorplan
+        # growth, and still closes clean on stock knobs (0 DRT violations,
+        # 0 antenna, +0.86 ns clock slack). util 90 is infeasible
+        # (GPL-0301, >100% actual). No padding/ROUTING_LAYER_ADJUSTMENT
+        # needed -- BSPDN routing capacity is not the limiter.
+        "CORE_UTILIZATION": "85",
+        "PLACE_DENSITY": "0.90",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
         "HOLD_SLACK_MARGIN": "3",

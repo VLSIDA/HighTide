@@ -56,6 +56,16 @@ export default {
       return new Response("HighTide bazel R2 cache: OK\n", { status: 200 });
     }
 
+    // Browsable results index (reports/galleries published by the k8s
+    // jobs): anonymous read-only, any key under results/.
+    if (url.pathname.startsWith("/results/") && (request.method === "GET" || request.method === "HEAD")) {
+      const key = url.pathname.slice(1);
+      const obj = request.method === "GET" ? await env.BUCKET.get(key) : await env.BUCKET.head(key);
+      if (!obj) return new Response("not found\n", { status: 404 });
+      if (request.method === "HEAD") return new Response(null, { status: 200, headers: { "Content-Length": String(obj.size) } });
+      return new Response(obj.body, { status: 200, headers: { "Content-Length": String(obj.size), "Content-Type": "application/octet-stream" } });
+    }
+
     const m = PATH_RE.exec(url.pathname);
     if (!m) return new Response("not found\n", { status: 404 });
     const kind = m[1]; // "ac" | "cas"

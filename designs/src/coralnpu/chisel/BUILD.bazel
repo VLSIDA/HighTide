@@ -5,9 +5,8 @@
 #
 # Chisel 7 runs on Scala 2.13.17 (the cross-build version); the rest of the
 # suite's Chisel designs (sha3/gemmini) stay on 2.13.12.
-load("@bazel-orfs-verilog//:generate.bzl", "fir_library")
-load("@bazel-orfs-verilog//:verilog.bzl", "verilog_directory")
 load("@rules_chisel//chisel:defs.bzl", "chisel_binary")
+load("@rules_chisel//verilog:defs.bzl", "fir_library", "verilog_directory")
 
 # Step 1: compile the Chisel generator binary.
 chisel_binary(

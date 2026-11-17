@@ -52,6 +52,8 @@ module BUFG
         // sky130_fd_sc_hd__clkbuf_4  clk_buf (.A(I), .X(O));
         // sky130_fd_sc_hd__clkbuf_8  clk_buf (.A(I), .X(O));
         // sky130_fd_sc_hd__clkbuf_16 clk_buf (.A(I), .X(O));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt  clk_buf (.A(I), .Y(O));
     `endif
 
 endmodule

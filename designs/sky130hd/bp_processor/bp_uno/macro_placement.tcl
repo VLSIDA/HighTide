@@ -4,279 +4,43 @@
 # clear space. Macros FIRM so the post-source rtl_macro_placer
 # leaves them alone. See the script header for the rationale.
 
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[0\].data_mem.synth/fakeram_512x64.mem} -location {70.000 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[1\].data_mem.synth/fakeram_512x64.mem} -location {1035.760 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[2\].data_mem.synth/fakeram_512x64.mem} -location {2001.520 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[3\].data_mem.synth/fakeram_512x64.mem} -location {2967.280 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[4\].data_mem.synth/fakeram_512x64.mem} -location {3933.040 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[5\].data_mem.synth/fakeram_512x64.mem} -location {4898.800 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[6\].data_mem.synth/fakeram_512x64.mem} -location {5864.560 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[7\].data_mem.synth/fakeram_512x64.mem} -location {6830.320 470.000} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/tag_mem.synth/fakeram_64x184.mem} -location {70.000 1502.080} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/tag_mem.synth/fakeram_64x184.mem} -location {834.740 1502.080} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {70.000 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {498.940 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {927.880 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1356.820 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1785.760 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2214.700 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2643.640 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3072.580 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3501.520 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3930.460 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {4359.400 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {4788.340 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {5217.280 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {5646.220 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6075.160 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6504.100 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6933.040 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {7361.980 2243.120} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {70.000 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {498.940 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {927.880 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1356.820 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1785.760 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2214.700 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2643.640 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3072.580 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3501.520 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3930.460 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {4359.400 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {4788.340 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {5217.280 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {5646.220 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6075.160 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6504.100 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6933.040 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {7361.980 2984.160} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {70.000 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {498.940 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {927.880 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1356.820 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1785.760 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2214.700 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2643.640 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3072.580 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3501.520 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3930.460 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {4359.400 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {4788.340 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {5217.280 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {5646.220 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6075.160 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6504.100 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {6933.040 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {7361.980 3725.200} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {70.000 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {498.940 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {927.880 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1356.820 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {1785.760 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2214.700 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {2643.640 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3072.580 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3501.520 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem} -location {3930.460 4466.240} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/tag_mem.synth/fakeram_32x48.mem} -location {70.000 5207.280} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/tag_mem.synth/fakeram_32x48.mem} -location {454.320 5207.280} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {70.000 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[10\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {409.700 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[11\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {749.400 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[12\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1089.100 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[13\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1428.800 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[14\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1768.500 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[15\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2108.200 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[16\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2447.900 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[17\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2787.600 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[18\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3127.300 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[19\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3467.000 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3806.700 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[20\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4146.400 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[21\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4486.100 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[22\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4825.800 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[23\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5165.500 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[24\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5505.200 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[25\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5844.900 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[26\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {6184.600 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[27\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {6524.300 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[28\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {6864.000 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[29\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {7203.700 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {7543.400 5804.160} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[30\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {70.000 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[31\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {409.700 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {749.400 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1089.100 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1428.800 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1768.500 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2108.200 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[8\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2447.900 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[9\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2787.600 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3127.300 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[10\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3467.000 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[11\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3806.700 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[12\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4146.400 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[13\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4486.100 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[14\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4825.800 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[15\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5165.500 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[16\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5505.200 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[17\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5844.900 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[18\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {6184.600 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[19\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {6524.300 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {6864.000 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[20\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {7203.700 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[21\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {7543.400 6401.040} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[22\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {70.000 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[23\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {409.700 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[24\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {749.400 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[25\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1089.100 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[26\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1428.800 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[27\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {1768.500 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[28\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2108.200 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[29\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2447.900 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {2787.600 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[30\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3127.300 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[31\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3467.000 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {3806.700 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4146.400 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4486.100 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {4825.800 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5165.500 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[8\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5505.200 6997.920} -orientation R0
-place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[9\].mem_1rw_sync.synth/fakeram_128x8.mem} -location {5844.900 6997.920} -orientation R0
+place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth/fakeram_128x256.mem} -location {70.240 921.760} -orientation R0
+place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth/fakeram_128x256.mem} -location {1036.000 921.760} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth/fakeram_512x64.mem} -location {70.240 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth/fakeram_512x64.mem} -location {1036.000 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth/fakeram_512x64.mem} -location {2001.760 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth/fakeram_512x64.mem} -location {2967.520 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth/fakeram_512x64.mem} -location {3933.280 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth/fakeram_512x64.mem} -location {4899.040 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth/fakeram_512x64.mem} -location {5864.800 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth/fakeram_512x64.mem} -location {6830.560 2403.840} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[0\].data_mem.synth/fakeram_512x64.mem} -location {70.240 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[1\].data_mem.synth/fakeram_512x64.mem} -location {1036.000 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[2\].data_mem.synth/fakeram_512x64.mem} -location {2001.760 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[3\].data_mem.synth/fakeram_512x64.mem} -location {2967.520 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[4\].data_mem.synth/fakeram_512x64.mem} -location {3933.280 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[5\].data_mem.synth/fakeram_512x64.mem} -location {4899.040 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[6\].data_mem.synth/fakeram_512x64.mem} -location {5864.800 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[7\].data_mem.synth/fakeram_512x64.mem} -location {6830.560 3885.920} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/tag_mem.synth/fakeram_64x184.mem} -location {70.240 5368.000} -orientation R0
+place_macro -macro_name {u.unicore/unicore_lite.core_minimal.fe.icache/tag_mem.synth/fakeram_64x184.mem} -location {834.980 5368.000} -orientation R0
+place_macro -macro_name {u.unicore/slices\[0\].l2s.bank\[0\].cache/tag_mem.synth/fakeram_32x48.mem} -location {70.240 6559.040} -orientation R0
+place_macro -macro_name {u.unicore/slices\[1\].l2s.bank\[0\].cache/tag_mem.synth/fakeram_32x48.mem} -location {454.560 6559.040} -orientation R0
 
 set _blk [ord::get_db_block]
 foreach _m {
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[10\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[11\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[12\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[13\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[14\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[15\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[16\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[17\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[18\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[19\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[20\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[21\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[22\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[23\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[24\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[25\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[26\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[27\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[28\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[29\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[30\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[31\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[8\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[9\].mem_1rw_sync.synth/fakeram_128x8.mem}
+  {u.unicore/slices\[0\].l2s.bank\[0\].cache/data_mem.synth/fakeram_128x256.mem}
   {u.unicore/slices\[0\].l2s.bank\[0\].cache/tag_mem.synth/fakeram_32x48.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[10\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[11\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[12\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[13\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[14\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[15\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[16\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[17\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[18\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[19\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[20\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[21\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[22\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[23\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[24\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[25\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[26\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[27\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[28\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[29\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[30\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[31\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[8\].mem_1rw_sync.synth/fakeram_128x8.mem}
-  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth.nz.bk\[9\].mem_1rw_sync.synth/fakeram_128x8.mem}
+  {u.unicore/slices\[1\].l2s.bank\[0\].cache/data_mem.synth/fakeram_128x256.mem}
   {u.unicore/slices\[1\].l2s.bank\[0\].cache/tag_mem.synth/fakeram_32x48.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[0\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[1\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[2\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[3\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[4\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[5\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[6\].mem_1rw_sync.synth/fakeram_512x8.mem}
-  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth.nz.bk\[7\].mem_1rw_sync.synth/fakeram_512x8.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[0\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[1\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[2\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[3\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[4\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[5\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[6\].data_mem.synth/fakeram_512x64.mem}
+  {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/d\[7\].data_mem.synth/fakeram_512x64.mem}
   {u.unicore/unicore_lite.core_minimal.be.calculator/pipe_mem/dcache/tag_mem.synth/fakeram_64x184.mem}
   {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[0\].data_mem.synth/fakeram_512x64.mem}
   {u.unicore/unicore_lite.core_minimal.fe.icache/data_mems\[1\].data_mem.synth/fakeram_512x64.mem}

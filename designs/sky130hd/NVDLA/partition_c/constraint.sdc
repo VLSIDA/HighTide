@@ -40,6 +40,13 @@ set_ideal_network [get_nets {nvdla_core_rstn}]
 set_false_path -from [get_ports {direct_reset_}]
 set_false_path -from [get_ports {dla_reset_rstn}]
 
+# Quasi-static DFT / clock-override controls — false-pathed in NVDLA's
+# upstream constraints and in partition_m/a and the gt2n partition_c SDC.
+set_false_path -from [get_ports {test_mode}]
+set_false_path -from [get_ports {tmc2slcg_disable_clock_gating}]
+set_false_path -from [get_ports {global_clk_ovr_on}]
+set_false_path -from [get_ports {nvdla_clk_ovr_on}]
+
 # Removed: set_false_path -to [get_pin */RESETN] and */SETN — those are asap7
 # pin names; on sky130hd the equivalent pins are RESET_B/SET_B so they matched
 # nothing and were silent no-ops.

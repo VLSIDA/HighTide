@@ -15,8 +15,7 @@ _ARGS.update({
     "DIE_AREA": "0 0 3500 3500",
     "CORE_AREA": "10 10 3490 3490",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
-    "MACRO_PLACE_HALO": "25 25",
-    "MACRO_BLOCKAGE_HALO": "0.5",
+    "RTLMP_MIN_CHANNEL_SIZE": "50 50",  # was MACRO_PLACE_HALO 25 25 (halo x,y ~ channel 2x,2y)
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })
 
@@ -29,6 +28,10 @@ hightide_design(
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        # repair_clock_inverters SEGV (OpenROAD #12250) on this netlist too —
+        # first bp_uno-nangate45 CTS on the 2026-11 pin; same modnet strip as
+        # the NVDLA partitions (see CLAUDE.md workaround table).
+        "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/nangate45/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/nangate45/bp_processor:sram_libs"],
     },

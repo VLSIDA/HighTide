@@ -138,3 +138,26 @@ existing config.
 ### Known issues / open questions
 - Not fully clean: 1 setup violation (-16.84 ps), 17 hold violations (worst -9.06 ps). Root cause
   not isolated — further closure may need investigation beyond SDC/margin knobs.
+
+## 2026-11 toolchain upgrade (OpenROAD 687848dd) — bp_uno
+
+### nangate45: repair_clock_inverters SEGV strip (2026-11-14)
+
+First bp_uno-nangate45 CTS on the 2026-11 pin SEGV'd (Signal 11 right
+after setRC, i.e. in repair_clock_inverters) — the known OpenROAD #12250
+modnet crash. Added the standard PRE_CTS_TCL modnet strip (pre_cts.tcl,
+same block as the NVDLA partitions; watch FLW-9902 for the stripped
+count). Per-design on nangate45 only; asap7/sky130hd/gt2n bp_uno get the
+strip if and when they show the same crash. Remove the strips once the
+pin passes the upstream fix (PR #12251).
+
+### Family-wide strip hoist (2026-11-14, same day)
+
+asap7 bp_uno then crashed at the identical site (Signal 11 after setRC =
+repair_clock_inverters), 2-for-2 across platforms, so the strip was
+hoisted to a shared designs/src/bp_processor/pre_cts.tcl referenced by
+all bp_uno and bp_quad BUILDs (the nangate45 per-design copy from
+earlier today was replaced by the shared reference). Rationale: the bp
+netlist family shares its clock-inverter structure, each un-stripped
+CTS costs a multi-hour run, and a strip on an unaffected netlist is a
+no-op (FLW-9902 = 0).

@@ -20,6 +20,9 @@ load("//designs/src/bp_processor:srcs.bzl", "BP_SRCS")
 _EXCLUDED_SUFFIXES = [
     "bsg_mem_1rw_sync_synth.sv",
     "bsg_mem_1rw_sync_mask_write_bit_synth.sv",
+    # Byte-masked RAMs bind to one wide per-bit-wmask macro instead of
+    # BSG's W/8 separate 8-bit slices (bp_quad: 560 -> 88 macros).
+    "bsg_mem_1rw_sync_mask_write_byte_synth.sv",
 ]
 
 filegroup(
@@ -41,3 +44,10 @@ filegroup(
     ],
     visibility = ["//visibility:public"],
 )
+
+# repair_clock_inverters SEGV workaround (OpenROAD #12250, 2026-11 pin):
+# shared modnet-strip PRE_CTS_TCL for the whole bp family — bp_uno crashed
+# identically on nangate45 and asap7 (first CTS on this pin), and bp_quad
+# shares the netlist structure. A netlist without affected inverters makes
+# the strip a no-op (FLW-9902 reports 0). See CLAUDE.md workaround table.
+exports_files(["pre_cts.tcl"])

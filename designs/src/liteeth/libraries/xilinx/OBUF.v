@@ -56,6 +56,8 @@ module OBUF
         // sky130_fd_sc_hd__buf_8  output_buf (.A(I), .X(O));
         // sky130_fd_sc_hd__buf_12 output_buf (.A(I), .X(O));
         // sky130_fd_sc_hd__buf_16 output_buf (.A(I), .X(O));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt  output_buf (.A(I), .Y(O));
     `endif
 
 endmodule

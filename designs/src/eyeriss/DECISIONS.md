@@ -25,6 +25,35 @@ Macro-heavy (GLB iact/Psum SRAM spads). Uses RTLMP for macro placement.
   each cluster's macro sub-region so annealing converges (flow knob; costs die area). See the
   asap7 section for the result.
 
+## 2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68)
+
+- **Slang elaboration fixups in the RTL generator (all 3 platforms)**: the new bazel-orfs
+  defaults `SYNTH_HDL_FRONTEND` to slang, which rejects two legacy (pre-2001-style)
+  constructs in `SCNN_shape_info_compiler`: a trailing comma after the last port, and
+  uses of undeclared identifiers (`layer0..4_flag`, `psum_acc_times`) that older
+  standards/tools treat as implicit 1-bit nets. These are legal-under-older-practice
+  Verilog, not RTL defects — slang has no flag to allow the undeclared-identifier form
+  (even with `--compat=vcs`), so the `gen_eyeriss` genrule seds the assembled
+  `eyeriss.v`: drops the trailing comma and declares the six nets as plain wires, scoped
+  to that one file section. The nets feed only the unused `psum_acc_done` wire there
+  (implicit 1-bit and undriven under old yosys too), so the optimized netlist is
+  identical to the baseline semantics; eyeriss stays on the default slang frontend.
+  (An earlier interim fix had kept the yosys frontend via `yosys_frontend_reason` —
+  reverted in favor of this generator-level fix.)
+- QoR below is the final slang-frontend validation (the interim yosys-frontend build
+  closed slightly worse on every platform — asap7 WS −246 ps / pm 2746, nangate45
+  WS +0.32 ns / pm 4.18, sky130hd WS −1.68 ns / pm 26.68 flagged marginal — all
+  superseded by the generator-level slang fix).
+- **asap7**: finishes clean on the new TC corner (BC→TC policy). WS −127 ps @ 2500 ps
+  (advisory per corner policy), TNS −3.5 ns, period_min 2627 ps → re-derive clock
+  ≈ 2.9 ns in the later asap7 constraints pass. 308 897 logic cells (+1.1 % vs
+  305 514), 193 macros. Pass (timing advisory).
+- **nangate45**: WS +0.22 ns @ 4.5 ns, period_min 4.28 ns (baseline floor 4.18 ns,
+  +2.4 %). 300 951 logic cells (−2.1 %). Pass.
+- **sky130hd**: WS +1.13 ns @ 25 ns, TNS 0, period_min 23.87 ns — **better than the
+  25.0 ns baseline floor** (Fmax +4.7 %). 219 481 logic cells (−2.0 %). Pass; the
+  yosys-frontend marginal flag is gone.
+
 ## 2026-08 FakeRAM regeneration (HighTide#234)
 
 eyeriss was the **only** design whose FakeRAM cfgs lived at

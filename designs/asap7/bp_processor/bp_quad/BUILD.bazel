@@ -5,15 +5,15 @@ _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
     "VERILOG_TOP_PARAMS": "bp_params_p 11",
-    # bp_quad has 560 macros (4 cores worth of bsg_fakeram). The first
-    # attempt at 2800x2800 still hit MPL-0040 (util adjusted to 58.5%
-    # before annealing failed). Need a much bigger die — bump to
-    # 4000x4000 (16 mm^2) to give RTLMP more headroom.
-    "DIE_AREA": "0 0 4000 4000",
-    "CORE_AREA": "10 10 3990 3990",
+    # 2026-11-15: byte-mask macro rebind (560 -> 88 macros, 0.49 Mum2 of
+    # macro). The 4000x4000 die was sized for RTLMP headroom at 560
+    # macros (2800x2800 hit MPL-0040 then); with 88 macros bp_uno passes
+    # at 900x900, so resize to 3000x3000 (~28% occupancy). asap7
+    # bsg-fakeram designs plateau on M4 Lef58EolKeepOut DRCs when packed,
+    # so stay roomy; tighten in a later PPA round.
+    "DIE_AREA": "0 0 3000 3000",
+    "CORE_AREA": "10 10 2990 2990",
     "PLACE_PINS_ARGS": "-min_distance 30 -min_distance_in_tracks",
-    "MACRO_PLACE_HALO": "6 6",
-    "MACRO_BLOCKAGE_HALO": "0.5",
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # New-resizer (2026-07 tools, OpenROAD b65c274c) repair_timing does not
     # converge on bp_quad's worst reg2reg path — a structural memory path with
@@ -24,6 +24,15 @@ _ARGS.update({
     # design reaches _final; detail route still does its own hold repair.
     "SKIP_CTS_REPAIR_TIMING": "1",
     "SKIP_INCREMENTAL_REPAIR": "1",
+    # 2026-11-17: analyze_power_grid SIGSEGVs at _final on this netlist —
+    # psm::IRSolver::solve -> Eigen SparseLU analyzePattern ->
+    # COLAMDOrdering<int> faults on the VDD conductance matrix (2.8M nets;
+    # int-indexed COLAMD workspace sizing). gdb-confirmed repro from
+    # 5_route.odb. Empty voltage dicts make final_outputs.tcl skip IR-drop
+    # entirely (both vars are final-stage-scoped, so earlier stages stay
+    # cached). Re-enable once upstream PSM handles grids this size.
+    "PWR_NETS_VOLTAGES": "",
+    "GND_NETS_VOLTAGES": "",
 })
 
 hightide_design(
@@ -35,6 +44,7 @@ hightide_design(
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "IO_CONSTRAINTS": [":io.tcl"],
         "ADDITIONAL_LEFS": ["//designs/asap7/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/asap7/bp_processor:sram_libs"],

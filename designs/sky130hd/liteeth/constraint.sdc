@@ -13,3 +13,8 @@ set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs 
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
+
+# sys_reset feeds a reset synchronizer; the template set_input_delay makes its
+# hold check the worst min path at finish (-336 ps on asap7, a constraint
+# artifact, not silicon). Exclude it like any asynchronous reset input.
+set_false_path -from [get_ports sys_reset]
