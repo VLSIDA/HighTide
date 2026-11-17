@@ -5,18 +5,15 @@ _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
     "VERILOG_TOP_PARAMS": "bp_params_p 11",
-    # 2026-11-17: utilization-driven floorplan. The explicit-die era
-    # (4000x4000 -> 3000x3000) existed for the 560-macro RTLMP/MPL-0040
-    # workarounds; the byte-mask rebind (88 macros) removed that need,
-    # and the 3000x3000 first close was only 10% occupied (865k um2
-    # placed, 39 m of wire). Util 40 ~= 1475x1475 die. Watch the M4
-    # Lef58EolKeepOut plateau asap7 bsg-fakeram designs hit when packed.
-    "CORE_UTILIZATION": "40",
-    "CORE_ASPECT_RATIO": "1",
-    # Same 12 um channels as bp_uno-asap7: at 40% util RTLMP's default
-    # 0.0 channel floor could butt macros together; the roomy first
-    # close never needed one. Plumbed on the 2026-11 pin.
-    "RTLMP_MIN_CHANNEL_SIZE": "12 12",
+    # 2026-11-15: byte-mask macro rebind (560 -> 88 macros, 0.49 Mum2 of
+    # macro). The 4000x4000 die was sized for RTLMP headroom at 560
+    # macros (2800x2800 hit MPL-0040 then); with 88 macros bp_uno passes
+    # at 900x900, so resize to 3000x3000 (~28% occupancy). asap7
+    # bsg-fakeram designs plateau on M4 Lef58EolKeepOut DRCs when packed,
+    # so stay roomy; tighten in a later PPA round.
+    "DIE_AREA": "0 0 3000 3000",
+    "CORE_AREA": "10 10 2990 2990",
+    "PLACE_PINS_ARGS": "-min_distance 30 -min_distance_in_tracks",
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # New-resizer (2026-07 tools, OpenROAD b65c274c) repair_timing does not
     # converge on bp_quad's worst reg2reg path — a structural memory path with

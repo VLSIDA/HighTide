@@ -5,21 +5,25 @@ _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
     # sky130hd port (~710k insts, 22 macros after the wide byte-mask
-    # macro rebind — was 140). 2026-11-17 experiment: native RTLMP with
-    # the 2026-11 pin's pin-aware channels instead of the fixed macro
-    # grid. History: RTLMP's pin-edge-blind clustering wedged macros into
-    # met2-pin escape collisions (GRT-0116 capacity:0, same shape as
-    # cnn-sky130hd / NVDLA partition_c); a 25 µm-halo RTLMP retry also
-    # failed, and the uniform grid needed 900 µm channels (every channel
-    # double-sided). -pin_aware_channels trims channels where no macro
-    # pins face, so 300 µm uniform channels + trimming is the first
-    # probe; fall back to the grid (gen_macro_grid.py --gap-x 250
-    # --chan 900 at DIE 8000x8000) if GRT-0116 recurs.
-    "CORE_UTILIZATION": "25",
-    "CORE_ASPECT_RATIO": "1",
-    "RTLMP_MIN_CHANNEL_SIZE": "300 300",
-    "RTLMP_PIN_AWARE_CHANNELS": "1",
-    "PLACE_PINS_ARGS": "-min_distance 10 -min_distance_in_tracks",  # preempting the PPL-0024 that nangate45 hit at 20 tracks on its util-sized die; sky pitches are coarser still
+    # macro rebind — was 140). RTLMP's pin-edge-blind clustering wedges
+    # macros into met2-pin escape collisions (capacity:0 overflow; same
+    # failure shape as cnn-sky130hd / NVDLA partition_c). Retried
+    # RTLMP-only at 22 macros with a 25 µm halo: still GRT-0116
+    # (capacity:0 tiles hugging the macro region), so the fixed-grid
+    # MACRO_PLACEMENT_TCL stays (all macros R0, channel under each row,
+    # FIRM so rtl_macro_placer leaves them alone). Channel sizing
+    # matters: the 22-macro grid at the old 450 µm channels (5 rows =
+    # 2250 µm total crossing vs the old 10-row grid's 4500 µm) also
+    # failed GRT-0116 on the wide-macro fill buses, so channels are
+    # 900 µm (5 rows, top 7606 µm, total crossing back to 4500 µm).
+    # Regenerate the placement file:
+    #   python3 tools/gen_macro_grid.py \
+    #     designs/src/bp_processor/dev/generated/bp_uno_sky130hd_macros.txt \
+    #     designs/sky130hd/bp_processor/bp_uno/macro_placement.tcl \
+    #     --gap-x 250 --chan 900
+    "DIE_AREA": "0 0 8000 8000",
+    "CORE_AREA": "20 20 7980 7980",
+    "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })
 
@@ -35,6 +39,7 @@ hightide_design(
         "PRE_CTS_TCL": ["//designs/src/bp_processor:pre_cts.tcl"],
         "ADDITIONAL_LEFS": ["//designs/sky130hd/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/sky130hd/bp_processor:sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macro_placement.tcl"],
     },
     arguments = _ARGS,
     stage_data = {"synth": ["//designs/src/bp_processor:rtl_data"]},

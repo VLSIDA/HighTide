@@ -4,17 +4,18 @@ load("//designs/src/bp_processor:defs.bzl", "BP_COMMON_ARGS")
 _ARGS = dict(BP_COMMON_ARGS)
 
 _ARGS.update({
-    # 2026-11-17: utilization-driven floorplan. The fixed 3500x3500 die
-    # and its tuning history (MPL-0040 at util 35/25, MPL-0065 at DIE
-    # 2500, PDN-0179 at halo 6) all predate the byte-mask macro rebind
-    # (560 -> ~22 macros) and no longer bind. min_channel 50 50 is the
-    # halo-25 replacement (upstream deprecated halo args; channel = 2x
-    # halo), kept for PDN stripe room — and IS plumbed on the 2026-11
-    # pin. Util 35 (not 40) for nangate45's coarser routing pitch.
-    "CORE_UTILIZATION": "35",
-    "CORE_ASPECT_RATIO": "1",
-    "RTLMP_MIN_CHANNEL_SIZE": "50 50",
-    "PLACE_PINS_ARGS": "-min_distance 10 -min_distance_in_tracks",  # 20 tracks overflowed the perimeter on the util-sized die (PPL-0024: 1389 pins need 7778 um vs 7053 um at 20)
+    # Floorplan tuning history for bp_uno-nangate45 (560 macros instances,
+    # 414k cells):
+    #   - util=35/halo=40: MPL-0040 (RTLMP can't anneal in tight die)
+    #   - util=25/halo=60: MPL-0040 (halo too wide)
+    #   - DIE 2500/halo=60: MPL-0065 (movable cells don't fit)
+    #   - DIE 3500/halo=6:  PDN-0179 (no channel room for power stripes)
+    # Middle ground: keep 3500x3500 die but bump halo to 25 so PDN has
+    # channel room between macros without over-constraining RTLMP.
+    "DIE_AREA": "0 0 3500 3500",
+    "CORE_AREA": "10 10 3490 3490",
+    "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
+    "RTLMP_MIN_CHANNEL_SIZE": "50 50",  # was MACRO_PLACE_HALO 25 25 (halo x,y ~ channel 2x,2y)
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })
 
