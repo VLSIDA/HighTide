@@ -38,6 +38,14 @@ set_ideal_network [get_ports {pwrbus_ram_pd*}]
 set_false_path -from [get_ports {direct_reset_}]
 set_false_path -from [get_ports {dla_reset_rstn}]
 
+# Quasi-static DFT / clock-override controls — false-pathed in NVDLA's
+# upstream constraints and in partition_m/a and the gt2n partition_c SDC
+# (consistency; on nangate45 these ports were not violating).
+set_false_path -from [get_ports {test_mode}]
+set_false_path -from [get_ports {tmc2slcg_disable_clock_gating}]
+set_false_path -from [get_ports {global_clk_ovr_on}]
+set_false_path -from [get_ports {nvdla_clk_ovr_on}]
+
 # async set/reset `-to [get_pin */SETN|/RESETN]` false-paths removed on the
 # bazel-orfs 553c1c3 / OpenROAD 299f3015 upgrade — the new OpenSTA write_sdc
 # corrupts the wildcard-expanded instance names (invalid UTF-8) and Tcl 9
