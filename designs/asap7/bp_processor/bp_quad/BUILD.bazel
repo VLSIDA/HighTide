@@ -13,7 +13,10 @@ _ARGS.update({
     # Lef58EolKeepOut plateau asap7 bsg-fakeram designs hit when packed.
     "CORE_UTILIZATION": "40",
     "CORE_ASPECT_RATIO": "1",
-    "PLACE_PINS_ARGS": "-min_distance 30 -min_distance_in_tracks",
+    # Same 12 um channels as bp_uno-asap7: at 40% util RTLMP's default
+    # 0.0 channel floor could butt macros together; the roomy first
+    # close never needed one. Plumbed on the 2026-11 pin.
+    "RTLMP_MIN_CHANNEL_SIZE": "12 12",
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # New-resizer (2026-07 tools, OpenROAD b65c274c) repair_timing does not
     # converge on bp_quad's worst reg2reg path — a structural memory path with

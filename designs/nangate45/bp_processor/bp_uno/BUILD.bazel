@@ -7,12 +7,13 @@ _ARGS.update({
     # 2026-11-17: utilization-driven floorplan. The fixed 3500x3500 die
     # and its tuning history (MPL-0040 at util 35/25, MPL-0065 at DIE
     # 2500, PDN-0179 at halo 6) all predate the byte-mask macro rebind
-    # (560 -> ~22 macros) and no longer bind. RTLMP_MIN_CHANNEL_SIZE
-    # dropped: the pinned ORFS plumbs no channel env vars (silent no-op;
-    # see CLAUDE.md RTLMP row), so defaults were already in effect.
-    # Util 35 (not 40) for nangate45's coarser routing pitch.
+    # (560 -> ~22 macros) and no longer bind. min_channel 50 50 is the
+    # halo-25 replacement (upstream deprecated halo args; channel = 2x
+    # halo), kept for PDN stripe room — and IS plumbed on the 2026-11
+    # pin. Util 35 (not 40) for nangate45's coarser routing pitch.
     "CORE_UTILIZATION": "35",
     "CORE_ASPECT_RATIO": "1",
+    "RTLMP_MIN_CHANNEL_SIZE": "50 50",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })

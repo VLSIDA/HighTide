@@ -6,11 +6,12 @@ _ARGS = dict(BP_COMMON_ARGS)
 _ARGS.update({
     # 2026-11-17: utilization-driven floorplan (was fixed 900x900, ~28%
     # occupied — never pressure-tested). Matches the gt2n port's style
-    # and the bp_quad util-40 push. RTLMP_MIN_CHANNEL_SIZE dropped: the
-    # pinned ORFS plumbs no channel env vars (silent no-op; see CLAUDE.md
-    # RTLMP row), so this config was already running RTLMP defaults.
+    # and the bp_quad util-40 push. min_channel 12 12 is the halo-6
+    # replacement (upstream deprecated halo args; channel = 2x halo) and
+    # IS plumbed on the 2026-11 pin; pin-aware trimming engages with it.
     "CORE_UTILIZATION": "40",
     "CORE_ASPECT_RATIO": "1",
+    "RTLMP_MIN_CHANNEL_SIZE": "12 12",
     "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
     "PLACE_DENSITY_LB_ADDON": "0.10",
     # Post-GRT repair_timing hangs silently for 2h+ on k8s under the
