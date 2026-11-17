@@ -26,14 +26,25 @@ import argparse, gzip, hashlib, json, os, re, shlex, shutil, subprocess, sys, ti
 from pathlib import Path
 
 HT = Path(__file__).resolve().parents[2]
-# bazel-bin -> OUTPUT_BASE/execroot/_main/bazel-out/CONFIG/bin.
-OB = (HT / 'bazel-bin').resolve().parents[4]
-EXEC = OB / 'execroot/_main'
+
+
+def output_base_for_bin(bin_dir):
+    """Recognize OUTPUT_BASE/execroot/WORKSPACE/bazel-out/CONFIG/bin."""
+    path = Path(bin_dir).resolve()
+    if (path.name == 'bin' and len(path.parents) >= 5
+            and path.parents[1].name == 'bazel-out' and path.parents[3].name == 'execroot'):
+        return path.parents[4]
+    return None
+
+
+# Importing the acceptance gates or asking for help needs no previous build.
+OB = output_base_for_bin(HT / 'bazel-bin')
+EXEC = OB / 'execroot/_main' if OB else None
 SWEEP = HT / 'artifacts/lhdsweep'
 TOOLS = Path(__file__).resolve().parent  # this checkout's scorer and configs (a worktree runs its own)
 OPENROAD = SWEEP / 'bin/openroad'
 LHD = Path(os.environ.get('LHD', str(SWEEP / 'bin/lhd_e/lhd')))
-PLATFORM = OB / 'external/orfs+/flow/platforms/asap7'
+PLATFORM = OB / 'external/orfs+/flow/platforms/asap7' if OB else None
 DESIGNS = HT / 'bazel-bin/designs/asap7'
 DONT_USE = ['*x1p*_ASAP7*', '*xp*_ASAP7*', 'SDF*', 'ICG*']
 sys.path.insert(0, str(TOOLS))
@@ -45,7 +56,9 @@ def configure(*, output_base=None, bin_dir=None, out=None, lhd=None, openroad=No
     if output_base:
         OB = Path(output_base).resolve()
     elif bin_dir:
-        OB = Path(bin_dir).resolve().parents[4]
+        OB = output_base_for_bin(bin_dir)
+    if OB is None:
+        raise ValueError('no Bazel output base found; build the pre-CTS targets or provide --bin-dir and --output-base')
     EXEC = OB / 'execroot/_main'
     PLATFORM = OB / 'external/orfs+/flow/platforms/asap7'
     if bin_dir:
@@ -91,7 +104,7 @@ def resolve(path):
         return p
     # The execroot links only the externals of its last build; the output base keeps them all.
     for root in (EXEC, HT, OB):
-        if (root / p).exists():
+        if root is not None and (root / p).exists():
             return (root / p).resolve()
     raise FileNotFoundError(path)
 
@@ -610,7 +623,10 @@ def main():
     p.add_argument('--timeout', type=int, default=7200); p.add_argument('--mem-gib', type=float, default=64)
     p = sub.add_parser('report'); p.add_argument('keys', nargs='*')
     a = ap.parse_args()
-    configure(output_base=a.output_base, bin_dir=a.bin_dir, out=a.out, lhd=a.lhd, openroad=a.openroad)
+    try:
+        configure(output_base=a.output_base, bin_dir=a.bin_dir, out=a.out, lhd=a.lhd, openroad=a.openroad)
+    except ValueError as error:
+        ap.error(str(error))
     if a.cmd == 'list':
         for d in discover():
             print(d.key, d.name, 'macros' if d.macro_lefs() else '', 'util=%s dens=%s' % (d.utilization(), d.density()))
