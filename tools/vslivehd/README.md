@@ -33,3 +33,6 @@ scoring step gives a nonzero exit. Both flows use the same SDC, Liberty set,
 placement RC and ideal clocks. Unknown timing does not count as meeting timing.
 
 Run `python3 tools/vslivehd/test_incremental.py` to check the reuse acceptance gates.
+
+`python3 tools/vslivehd/test_guard.py` checks that cancellation stops the sweep
+and cleans up its owned child processes.

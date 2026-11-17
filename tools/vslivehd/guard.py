@@ -14,7 +14,7 @@ def reserve_bytes():
     values={k:int(v) for k,v in re.findall(r'^(Pages [\w ]+):\s+(\d+)',text,re.M)}
     return page*sum(values.get(k,0) for k in ('Pages free','Pages inactive','Pages speculative'))
 def run(name,command,*,cwd=execroot,extra_env=None,timeout=300):
-    log=root/(name+'.log'); start=time.monotonic();peak=0;status='running';failure=None
+    log=root/(name+'.log'); start=time.monotonic();peak=0;status='running';failure=None;interrupted=None
     reserve=4*1024**3; minimum=reserve_bytes(); memory_limit_gib=float((extra_env or {}).get('GUARD_MEMORY_LIMIT_GIB','12'))
     (root/(name+'.command.json')).write_text(json.dumps({'argv':list(map(str,command)),'cwd':str(cwd),'timeout_s':timeout,'tree_memory_limit_gib':memory_limit_gib,'os_reclaimable_reserve_gib':4,'environment_overrides':extra_env or {}},indent=2)+'\n')
     if minimum<reserve:raise RuntimeError('Insufficient OS reserve before launch')
@@ -42,7 +42,7 @@ def run(name,command,*,cwd=execroot,extra_env=None,timeout=300):
                 time.sleep(.15)
             status='pass' if p.returncode==0 else 'failed'
         except BaseException as exc:
-            status='guard-stopped';failure=str(exc)
+            status='guard-stopped';failure=str(exc) or type(exc).__name__;interrupted=exc
             try:os.killpg(p.pid,signal.SIGTERM)
             except ProcessLookupError:pass
             try:p.wait(timeout=5)
@@ -52,6 +52,7 @@ def run(name,command,*,cwd=execroot,extra_env=None,timeout=300):
             meta=dict(status=status,exit_code=p.returncode,wall_s=time.monotonic()-start,tree_peak_mib=peak/1024**2,minimum_os_reclaimable_gib=minimum/1024**3,failure=failure)
             (root/(name+'.run.json')).write_text(json.dumps(meta,indent=2)+'\n')
             print(name,meta,flush=True)
+    if interrupted is not None and not isinstance(interrupted,Exception):raise interrupted
     if failure:raise RuntimeError(failure)
     if p.returncode:raise RuntimeError(str(log))
 
