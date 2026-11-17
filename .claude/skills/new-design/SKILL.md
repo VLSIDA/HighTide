@@ -92,7 +92,7 @@ For each memory found, create FakeRAM LEF and LIB files:
 **Naming convention:** `fakeram_<width>x<depth>_<ports>.{lef,lib}`
 - Ports: `1r1w` (1 read, 1 write), `2r1w` (2 read, 1 write), `1rw` (1 read/write), etc.
 
-**LEF file structure** (see `designs/asap7/NyuziProcessor/sram/lef/` for examples):
+**LEF file structure** (see `designs/asap7/nyuzi/sram/lef/` for examples):
 - Define a MACRO with CLASS BLOCK
 - SIZE should be estimated proportionally to the memory size (use existing FakeRAMs as reference for scaling)
 - Include pins for: data input bus, data output bus, address bus(es), write enable, chip enable, clock
@@ -100,7 +100,7 @@ For each memory found, create FakeRAM LEF and LIB files:
 - Include OBS (obstruction) layers for M1-M4
 - Pin placement: distribute signal pins across the macro edges on M3/M4 layers
 
-**LIB file structure** (see `designs/asap7/NyuziProcessor/sram/lib/` for examples):
+**LIB file structure** (see `designs/asap7/nyuzi/sram/lib/` for examples):
 - Liberty format with timing/power tables
 - Define pin groups matching the LEF: data, address, control, clock
 - Include setup/hold constraints and clk-to-q delays

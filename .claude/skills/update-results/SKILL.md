@@ -62,6 +62,26 @@ sha=$(git log -1 --format=%h -- \
 
 7 chars (default `%h`), matching GitHub's commit-link convention.  If the design has no `designs/src/<leaf>/` (no per-design RTL submodule, e.g. lfsr's RTL is in `designs/src/lfsr/` but for designs whose RTL lives elsewhere, just drop the second arg).
 
+## Step 5a (PREFERRED since 2026-11): fetch from the R2 results index — no bazel
+
+Jobs publish their reports and gallery image to a browsable prefix
+(`results/<platform>/<design-path>/<git-sha>/` + a `latest` pointer; see
+k8s/job-template.yaml and tools/fetch_results.sh). For each stale pair, try
+the index FIRST:
+
+```bash
+./tools/fetch_results.sh <platform> <design-path> /tmp/res/<platform>-<design>
+# -> 6_finish.rpt, 6_report.json, <leaf>_gallery.png + prints the git sha
+```
+
+- The printed sha IS the `data-commit` value for the row; if it matches the
+  design's latest commit, the fetch is current — no bazel at all.
+- Only fall back to Step 5's batched `_gallery` build for pairs with no
+  published entry (anything last built before 2026-11-15, locally-built
+  designs like bp_quad, or when `latest` lags the design's commit).
+- Anonymous HTTP via https://cache.hightide-benchmarks.dev/results/... —
+  works from any host, no credentials, no 100 MB concerns.
+
 ## Step 5: Refresh stale designs (batched `_gallery` build)
 
 Parse `webpage/results.html` for existing rows.  Each row is keyed by `data-design` + `data-platform`; its current commit is `data-commit`.  A row is **stale** if `data-commit` ≠ the SHA from Step 4, or the row is missing entirely.
@@ -74,7 +94,7 @@ Parse `webpage/results.html` for existing rows.  Each row is keyed by `data-desi
 
 ### 5a. Point Bazel at the cache, bypassing Cloudflare on the cache host
 
-The remote cache is self-hosted `bazel-remote`; the public `https://cache.hightide-benchmarks.dev` URL is just a Cloudflare tunnel (slow, 100 MB cap).  **On the host that runs `bazel-remote`**, hit it directly — ~100× lower latency, no cap.  This is already wired via the gitignored, host-local `.bazelrc.user` (`build --remote_cache=http://USER:TOKEN@127.0.0.1:8080`); if absent, pass `--remote_cache=http://127.0.0.1:8080` explicitly.  Other users / k8s keep the committed Cloudflare URL.
+STALE SINCE 2026-11-14: the public URL now serves the R2 Worker (uncapped reads, edge-served) and the localhost `bazel-remote` holds only OLD-pin content — do NOT use `http://127.0.0.1:8080` for current results. Use the committed `https://cache.hightide-benchmarks.dev` (or donut's `.bazelrc.user` writer URL) for any bazel fallback, and prefer Step 5a's index fetch, which needs no bazel at all.
 
 ### 5b. Warm the server once, then per-design timeout-bounded gallery build
 
