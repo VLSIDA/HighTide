@@ -61,7 +61,7 @@ specific stage, run OpenROAD directly with a heatmap Tcl script.
    cat > /tmp/ht_heatmap.tcl << 'TCLEOF'
    read_db $::env(ODB_FILE)
    gui::save_display_controls
-   gui::set_display_controls "Heat Maps/Routing" visible true
+   gui::set_display_controls "Heat Maps/Routing Congestion" visible true ;# 2026-11 pin renamed the control ("Heat Maps/Routing" errors GUI-0013 and hangs the GUI session)
    gui::set_heatmap Routing rebuild 1
    gui::set_heatmap Routing ShowLegend 1
    save_image -width 2048 $::env(OUTPUT_IMAGE)
@@ -86,7 +86,7 @@ Replace the body of `/tmp/ht_heatmap.tcl` with one of the following.
 ```tcl
 read_db $::env(ODB_FILE)
 gui::save_display_controls
-gui::set_display_controls "Heat Maps/Routing" visible true
+gui::set_display_controls "Heat Maps/Routing Congestion" visible true ;# 2026-11 pin renamed the control ("Heat Maps/Routing" errors GUI-0013 and hangs the GUI session)
 gui::set_heatmap Routing rebuild 1
 gui::set_heatmap Routing ShowLegend 1
 save_image -width 2048 $::env(OUTPUT_IMAGE)
