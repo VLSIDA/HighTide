@@ -1,6 +1,7 @@
 """Cache acceptance gates: a warm run must account for every mapped color."""
 import copy
 import unittest
+import tempfile
 
 from pathlib import Path
 
@@ -40,12 +41,15 @@ class IncrementalTest(unittest.TestCase):
 
 class OutputPathTest(unittest.TestCase):
     def test_configuration_is_derived_from_the_selected_build(self):
-        root = Path('/tmp/hightide-test-output-base')
-        self.assertEqual(output_base_for_bin(root / 'execroot/_main/bazel-out/k8-fastbuild/bin'), root)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            self.assertEqual(output_base_for_bin(root / 'execroot/_main/bazel-out/k8-fastbuild/bin'), root)
 
     def test_unbuilt_checkout_does_not_invent_an_output_base(self):
-        self.assertIsNone(output_base_for_bin('/tmp/HighTide/bazel-bin'))
-        self.assertIsNone(output_base_for_bin('/tmp/bin'))
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            self.assertIsNone(output_base_for_bin(root / 'HighTide/bazel-bin'))
+            self.assertIsNone(output_base_for_bin(root / 'bin'))
 
 
 if __name__ == '__main__':
