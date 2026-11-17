@@ -19,7 +19,7 @@ _ARGS.update({
     "CORE_ASPECT_RATIO": "1",
     "RTLMP_MIN_CHANNEL_SIZE": "300 300",
     "RTLMP_PIN_AWARE_CHANNELS": "1",
-    "PLACE_PINS_ARGS": "-min_distance 20 -min_distance_in_tracks",
+    "PLACE_PINS_ARGS": "-min_distance 10 -min_distance_in_tracks",  # preempting the PPL-0024 that nangate45 hit at 20 tracks on its util-sized die; sky pitches are coarser still
     "PLACE_DENSITY_LB_ADDON": "0.10",
 })
 
