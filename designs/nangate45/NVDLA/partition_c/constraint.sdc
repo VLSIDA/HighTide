@@ -31,6 +31,13 @@ set_ideal_network [get_ports {nvdla_clk_ovr_on}]
 set_ideal_network [get_ports {tmc2slcg_disable_clock_gating}]
 set_ideal_network [get_ports {pwrbus_ram_pd*}]
 
+# False-path from reset input ports (port-level -from, like partition_m and
+# the sky130hd/gt2n partition_c SDCs). Without it the template set_input_delay
+# makes dla_reset_rstn -> reset-synchronizer a spurious worst min path (seen
+# at -1350 ps on the asap7 2026-11 close).
+set_false_path -from [get_ports {direct_reset_}]
+set_false_path -from [get_ports {dla_reset_rstn}]
+
 # async set/reset `-to [get_pin */SETN|/RESETN]` false-paths removed on the
 # bazel-orfs 553c1c3 / OpenROAD 299f3015 upgrade — the new OpenSTA write_sdc
 # corrupts the wildcard-expanded instance names (invalid UTF-8) and Tcl 9
