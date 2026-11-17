@@ -211,6 +211,16 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
     ports or a suite-wide `set_input_delay -min` policy — the open
     suite-wide decision; not changed unilaterally this pass.
 
+- **SDC cleanup + retarget (2026-11-17, user-directed)**: false-pathed the
+  four quasi-static DFT/clock-override ports (`test_mode`,
+  `tmc2slcg_disable_clock_gating`, `global_clk_ovr_on`, `nvdla_clk_ovr_on`)
+  on asap7/nangate45/sky130hd partition_c (`eb822da9`) — partition_m/a and
+  gt2n partition_c already had them; partition_c was the gap. And retargeted
+  the asap7 clock from the legacy 1500 ps (unachievable post-corner-swap:
+  WS −872 ps, 754 endpoints) to **2610 ps** = period_min 2372 × 1.10 from
+  the f59c367f close. All three platforms resubmitted on NRP (sky130hd's
+  2d12h in-flight run was killed for the rebuild — user call).
+
 ## asap7
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
