@@ -172,6 +172,26 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   - **sky130hd**: WS +1.23 ns, period_min 8.95 ns → Fmax 112 MHz (+1.5 %),
     11 098 cells (+0.6 %). Pass.
 
+- **partition_c asap7 — 2026-11 close (NRP 64 Gi) + reset-port hold artifact
+  root-caused (2026-11-16)**: finishes clean on k8s at 64 Gi (the earlier OOM
+  was at the smaller request). QoR vs results.html baseline: period_min
+  2340 ps → **Fmax 427 MHz** (−28 % vs 590 MHz — inside the accepted BC→TC
+  corner band; asap7 timing is advisory this upgrade), setup WS −840 ps at
+  the legacy 1500 ps NVDLA target (754 endpoints; the target predates the
+  corner swap and is not being chased this pass), 4.22 M instances, power
+  85 mW. Reported hold WS **−1350 ps was a constraint artifact, not
+  silicon**: the two worst min paths are `dla_reset_rstn`/`direct_reset_`
+  *input ports* → reset-synchronizer flops — the template
+  `set_input_delay` (300 ps) against a propagated capture clock with
+  ~1665 ps insertion delay manufactures the hold check; `set_ideal_network`
+  alone does not remove timing checks. Fixed in SDC (`f59c367f`): port-level
+  `set_false_path -from` on both reset ports, matching partition_m and the
+  sky130hd/gt2n partition_c SDCs (asap7/nangate45 had claimed this in a
+  comment but never actually set it). Worst *real* internal hold is
+  −40.2 ps (cbuf RAM write-enable path) — same advisory class as
+  partition_p's accepted −20.7 ps. Both asap7 and nangate45 partition_c
+  resubmitted at `f59c367f` 2026-11-16 to rebuild with the fix.
+
 ## asap7
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
