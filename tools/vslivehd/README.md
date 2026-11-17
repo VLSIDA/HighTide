@@ -18,7 +18,8 @@ python3 tools/vslivehd/lhdsweep.py \
 ```
 
 Use the same global arguments with `run lfsr baseline --threads 8 --warm-runs 2`.
-Each run tag must be new. Without --warm-runs the original single-run behavior
+Each run tag must be new. Negative repeat counts are rejected before HDL work.
+Without --warm-runs the original single-run behavior
 is preserved. With it, the runner checks two further invocations in the same
 workdir: every mapped color must be a cache hit, with zero misses/store failures,
 and exported placements must remain byte-identical. It also checks bare

@@ -393,6 +393,8 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
     cell counts and HPWL but withholds its setup WNS/TNS and penalty: the netlist has cells the
     Liberty does not time (the provisional domino profile). check_placement='report' scores a DEF
     that fails OpenROAD's check_placement and records the verdict (score.placement_check)."""
+    if not isinstance(warm_runs, int) or warm_runs < 0:
+        raise ValueError('warm_runs must be a nonnegative integer')
     import guard
     ref = json.loads((d.ref_dir / 'score/score.json').read_text())
     info = json.loads((d.ref_dir / 'info.json').read_text())
@@ -607,6 +609,13 @@ def report(keys):
             print('%-22s %s %s %7d | (no run)' % (d.key, fmt(ref['setup_wns_ps']), fmt(ref['setup_tns_ps'], 9, 0), ref['logical_cells']))
 
 
+def nonnegative_count(value):
+    count = int(value)
+    if count < 0:
+        raise argparse.ArgumentTypeError('expected a nonnegative count')
+    return count
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--output-base', type=Path, help='Bazel output base for the selected HighTide build')
@@ -619,7 +628,7 @@ def main():
     p = sub.add_parser('snapshot'); p.add_argument('keys', nargs='*')
     p = sub.add_parser('run'); p.add_argument('key'); p.add_argument('tag')
     p.add_argument('--set', action='append', default=[]); p.add_argument('--threads', type=int, default=1)
-    p.add_argument('--warm-runs', type=int, default=0, help='repeat the exact command in the same workdir and require every mapped color to be reused')
+    p.add_argument('--warm-runs', type=nonnegative_count, default=0, help='repeat the exact command in the same workdir and require every mapped color to be reused')
     p.add_argument('--timeout', type=int, default=7200); p.add_argument('--mem-gib', type=float, default=64)
     p = sub.add_parser('report'); p.add_argument('keys', nargs='*')
     a = ap.parse_args()

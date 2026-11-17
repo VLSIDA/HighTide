@@ -2,10 +2,12 @@
 import copy
 import unittest
 import tempfile
+import subprocess
+import sys
 
 from pathlib import Path
 
-from lhdsweep import check_warm, output_base_for_bin
+from lhdsweep import check_warm, output_base_for_bin, run_variant
 
 
 class IncrementalTest(unittest.TestCase):
@@ -37,6 +39,20 @@ class IncrementalTest(unittest.TestCase):
         self.result['status'] = 'fail'
         with self.assertRaises(RuntimeError):
             check_warm(self.result)
+
+
+class RepeatCountTest(unittest.TestCase):
+    def test_invalid_counts_are_rejected_before_reading_a_design(self):
+        for count in (-1, 1.5):
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                run_variant(None, 'invalid', {}, warm_runs=count)
+
+    def test_cli_rejects_negative_repeat_count_before_build_discovery(self):
+        command = [sys.executable, str(Path(__file__).with_name('lhdsweep.py')),
+                   'run', 'missing-design', 'unused-tag', '--warm-runs=-1']
+        result = subprocess.run(command, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('expected a nonnegative count', result.stderr)
 
 
 class OutputPathTest(unittest.TestCase):
