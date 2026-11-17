@@ -192,6 +192,25 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   partition_p's accepted −20.7 ps. Both asap7 and nangate45 partition_c
   resubmitted at `f59c367f` 2026-11-16 to rebuild with the fix.
 
+- **`f59c367f` rebuilds verified (2026-11-17)**:
+  - **nangate45** (7h17m NRP): reset artifact gone. Hold WS −16.2 ps /
+    15 endpoints, worst path is the internal cbuf bank17 write-enable →
+    RAM pin — the known advisory class. Setup unaffected: WS +751 ps
+    (+802 ps at the 2026-06 baseline), TNS 0, Fmax 322 MHz, power 193 mW.
+  - **asap7** (7h26m NRP): the two reset ports are clean, and the worst
+    *internal* hold path (cbuf clk-gate reg2reg) is now **MET at
+    +84.1 ps** — no real hold problem. But reported hold WS is still
+    −1291.9 ps / 11,599 endpoints: the same `set_input_delay`-vs-insertion-
+    delay artifact on the *remaining* constrained input ports, worst
+    `test_mode` (−1292) and `global_clk_ovr_on` (−1119) — quasi-static
+    DFT/clock-override controls fanning out to synchronizers. nangate45's
+    shallow clock tree keeps those same ports positive; asap7's ~1.7 ns
+    insertion delay does not. Setup/Fmax unchanged (WS −872 ps at the
+    legacy 1500 ps target, Fmax 421.5 MHz, power 89 mW). Fixing the
+    headline number needs either false paths on the quasi-static control
+    ports or a suite-wide `set_input_delay -min` policy — the open
+    suite-wide decision; not changed unilaterally this pass.
+
 ## asap7
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
