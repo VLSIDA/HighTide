@@ -624,6 +624,19 @@ module GTPE2_CHANNEL_DUMMY #(
     sky130_fd_sc_hd__buf_1 buf_pll1clk (.A(PLL1CLK), .X(pll1clk_int));
     sky130_fd_sc_hd__buf_1 buf_txrst (.A(GTTXRESET), .X(tx_rst_sync));
     sky130_fd_sc_hd__buf_1 buf_rxrst (.A(GTRXRESET), .X(rx_rst_sync));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt clkinsel_buf (.A(IS_CLKRSVD0_INVERTED ^ CLKRSVD0), .Y(clkinsel_int));
+    gt2_6t_buf_x2_w31_svt buf_gtprxn (.A(GTPRXN), .Y(gtprxn_int));
+    gt2_6t_buf_x2_w31_svt buf_gtprxp (.A(GTPRXP), .Y(gtprxp_int));
+    gt2_6t_buf_x2_w31_svt buf_rxusrclk (.A(IS_RXUSRCLK_INVERTED ^ RXUSRCLK), .Y(rxusrclk_int));
+    gt2_6t_buf_x2_w31_svt buf_rxusrclk2 (.A(IS_RXUSRCLK2_INVERTED ^ RXUSRCLK2), .Y(rxusrclk2_int));
+    gt2_6t_buf_x2_w31_svt buf_txusrclk (.A(IS_TXUSRCLK_INVERTED ^ TXUSRCLK), .Y(txusrclk_int));
+    gt2_6t_buf_x2_w31_svt buf_txusrclk2 (.A(IS_TXUSRCLK2_INVERTED ^ TXUSRCLK2), .Y(txusrclk2_int));
+    gt2_6t_buf_x2_w31_svt buf_drpclk (.A(IS_DRPCLK_INVERTED ^ DRPCLK), .Y(drpclk_int));
+    gt2_6t_buf_x2_w31_svt buf_pll0clk (.A(PLL0CLK), .Y(pll0clk_int));
+    gt2_6t_buf_x2_w31_svt buf_pll1clk (.A(PLL1CLK), .Y(pll1clk_int));
+    gt2_6t_buf_x2_w31_svt buf_txrst (.A(GTTXRESET), .Y(tx_rst_sync));
+    gt2_6t_buf_x2_w31_svt buf_rxrst (.A(GTRXRESET), .Y(rx_rst_sync));
 `endif
 
   reg [4:0] reset_cnt_rx;
@@ -841,6 +854,13 @@ module GTPE2_CHANNEL_DUMMY #(
     sky130_fd_sc_hd__buf_1 buf_txoutclk (.A(txoutclk_int), .X(TXOUTCLK));
     sky130_fd_sc_hd__buf_1 buf_txoutclkfabric (.A(txoutclk_int), .X(TXOUTCLKFABRIC));
     sky130_fd_sc_hd__buf_1 buf_txoutclkpcs (.A(txoutclk_int), .X(TXOUTCLKPCS));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt buf_rxoutclk (.A(rxoutclk_int), .Y(RXOUTCLK));
+    gt2_6t_buf_x2_w31_svt buf_rxoutclkfabric (.A(rxoutclk_int), .Y(RXOUTCLKFABRIC));
+    gt2_6t_buf_x2_w31_svt buf_rxoutclkpcs (.A(rxoutclk_int), .Y(RXOUTCLKPCS));
+    gt2_6t_buf_x2_w31_svt buf_txoutclk (.A(txoutclk_int), .Y(TXOUTCLK));
+    gt2_6t_buf_x2_w31_svt buf_txoutclkfabric (.A(txoutclk_int), .Y(TXOUTCLKFABRIC));
+    gt2_6t_buf_x2_w31_svt buf_txoutclkpcs (.A(txoutclk_int), .Y(TXOUTCLKPCS));
 `endif
 
   assign GTPTXN = TXPOLARITY ? gtprxp_int : ~gtprxp_int;

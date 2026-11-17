@@ -1220,6 +1220,19 @@ module GTHE4_CHANNEL_DUMMY #(
     sky130_fd_sc_hd__buf_1 buf_qpll1clk (.A(QPLL1CLK), .X(qpll1clk_int));
     sky130_fd_sc_hd__buf_1 buf_txrst (.A(GTTXRESET), .X(tx_rst_sync));
     sky130_fd_sc_hd__buf_1 buf_rxrst (.A(GTRXRESET), .X(rx_rst_sync));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt clkinsel_buf (.A(CLKRSVD0), .Y(clkinsel_int));
+    gt2_6t_buf_x2_w31_svt buf_gthrxn (.A(GTHRXN), .Y(gthrxn_int));
+    gt2_6t_buf_x2_w31_svt buf_gthrxp (.A(GTHRXP), .Y(gthrxp_int));
+    gt2_6t_buf_x2_w31_svt buf_rxusrclk (.A(RXUSRCLK), .Y(rxusrclk_int));
+    gt2_6t_buf_x2_w31_svt buf_rxusrclk2 (.A(RXUSRCLK2), .Y(rxusrclk2_int));
+    gt2_6t_buf_x2_w31_svt buf_txusrclk (.A(TXUSRCLK), .Y(txusrclk_int));
+    gt2_6t_buf_x2_w31_svt buf_txusrclk2 (.A(TXUSRCLK2), .Y(txusrclk2_int));
+    gt2_6t_buf_x2_w31_svt buf_drpclk (.A(DRPCLK), .Y(drpclk_int));
+    gt2_6t_buf_x2_w31_svt buf_qpll0clk (.A(QPLL0CLK), .Y(qpll0clk_int));
+    gt2_6t_buf_x2_w31_svt buf_qpll1clk (.A(QPLL1CLK), .Y(qpll1clk_int));
+    gt2_6t_buf_x2_w31_svt buf_txrst (.A(GTTXRESET), .Y(tx_rst_sync));
+    gt2_6t_buf_x2_w31_svt buf_rxrst (.A(GTRXRESET), .Y(rx_rst_sync));
 `endif
 
 
@@ -1368,6 +1381,14 @@ module GTHE4_CHANNEL_DUMMY #(
     sky130_fd_sc_hd__buf_1 buf_txoutclkfabric (.A(txoutclk_int), .X(TXOUTCLKFABRIC));
     sky130_fd_sc_hd__buf_1 buf_txoutclkpcs (.A(txoutclk_int), .X(TXOUTCLKPCS));
     sky130_fd_sc_hd__buf_1 buf_rxrecclkout (.A(rxrecclkout_int), .X(RXRECCLKOUT));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt buf_rxoutclk (.A(rxoutclk_int), .Y(RXOUTCLK));
+    gt2_6t_buf_x2_w31_svt buf_rxoutclkfabric (.A(rxoutclk_int), .Y(RXOUTCLKFABRIC));
+    gt2_6t_buf_x2_w31_svt buf_rxoutclkpcs (.A(rxoutclk_int), .Y(RXOUTCLKPCS));
+    gt2_6t_buf_x2_w31_svt buf_txoutclk (.A(txoutclk_int), .Y(TXOUTCLK));
+    gt2_6t_buf_x2_w31_svt buf_txoutclkfabric (.A(txoutclk_int), .Y(TXOUTCLKFABRIC));
+    gt2_6t_buf_x2_w31_svt buf_txoutclkpcs (.A(txoutclk_int), .Y(TXOUTCLKPCS));
+    gt2_6t_buf_x2_w31_svt buf_rxrecclkout (.A(rxrecclkout_int), .Y(RXRECCLKOUT));
 `endif
 
   assign GTHTXN = TXPOLARITY ? gthrxp_int : ~gthrxp_int;

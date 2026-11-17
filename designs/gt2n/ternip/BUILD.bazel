@@ -1,0 +1,42 @@
+load("//:defs.bzl", "hightide_design")
+
+filegroup(
+    name = "sram_lefs",
+    srcs = glob(["sram/lef/*.lef"]),
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = glob(["sram/lib/*.lib"]),
+)
+
+hightide_design(
+    name = "ternip",
+    platform = "gt2n",
+    top = "ternip_core",
+    verilog_files = [
+        "//designs/src/ternip:rtl",
+        "//designs/src/ternip:ternip_pipelined_mem_fakeram.v",
+    ],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+    },
+    arguments = {
+        "SYNTH_HDL_FRONTEND": "slang",
+        "SYNTH_HIERARCHICAL": "0",
+        "VERILOG_INCLUDE_DIRS": "designs/src/ternip external/+http_archive+ternip_src/rtl external/+http_archive+basejump_stl_src/bsg_misc external/+http_archive+basejump_stl_src/bsg_dataflow external/+http_archive+basejump_stl_src/bsg_mem",
+        "VERILOG_DEFINES": "-DCONFIG_FILENAME=\\\"config/hightide.svh\\\" -DSYNTHESIS",
+        # gt2n port 2026-11-16: BSPDN frees frontside tracks, so high util is
+        # the intended design point (sha3 closes at 85 = 96% actual). Start at
+        # 80 (asap7 runs 70); probe higher after first close.
+        "CORE_UTILIZATION": "80",
+        "PLACE_DENSITY": "0.85",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+        "SYNTH_MEMORY_MAX_BITS": "16384",
+    },
+    stage_data = {"synth": ["//designs/src/ternip:rtl_data"]},
+)

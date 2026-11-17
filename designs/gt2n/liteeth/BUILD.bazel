@@ -1,0 +1,46 @@
+load("//:defs.bzl", "hightide_design")
+
+package(default_visibility = ["//designs/gt2n/liteeth:__pkg__"])
+
+# SRAM macros instantiated by the liteeth UDP-USP-GTH-SGMII config.
+filegroup(
+    name = "sram_lefs",
+    srcs = [
+        "sram/lef/fakeram_1rw1r_64w64d_sram.lef",
+        "sram/lef/fakeram_1rw1r_64w1024d_sram.lef",
+    ],
+)
+
+filegroup(
+    name = "sram_libs",
+    srcs = [
+        "sram/lib/fakeram_1rw1r_64w64d_sram.lib",
+        "sram/lib/fakeram_1rw1r_64w1024d_sram.lib",
+    ],
+)
+
+# LiteEth UDP endpoint over the Xilinx UltraScale+ GTH SGMII PHY.
+# gt2n port 2026-11-16: the Xilinx primitive stubs gained USE_GT2N_CELLS
+# branches (gt2_6t_buf_x2 / gt2_6t_and2_x2) alongside the other platforms.
+hightide_design(
+    name = "liteeth",
+    top = "liteeth_udp_usp_gth_sgmii",
+    platform = "gt2n",
+    verilog_files = ["//designs/src/liteeth:liteeth_rtl"],
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+    },
+    arguments = {
+        "VERILOG_DEFINES": "-D USE_GT2N_CELLS",
+        # asap7 runs 38 for routability; BSPDN should carry more. Start 55,
+        # probe higher after the first clean close. No asap7 repair-skip
+        # knobs carried over — add only if the same pathologies appear here.
+        "CORE_UTILIZATION": "55",
+        "PLACE_DENSITY": "0.60",
+        "MAX_ROUTING_LAYER": "M11",
+        "MIN_CLK_ROUTING_LAYER": "M4",
+        "TNS_END_PERCENT": "100",
+    },
+)

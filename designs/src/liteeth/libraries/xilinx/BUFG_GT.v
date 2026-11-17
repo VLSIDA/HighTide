@@ -90,6 +90,12 @@ module BUFG_GT
         .B(1'b1),
         .X(clk_gated)
     );
+`elsif USE_GT2N_CELLS
+    gt2_6t_and2_x2_w31_svt clk_and_gate (
+        .A(clk_divided),
+        .B(1'b1),
+        .Y(clk_gated)
+    );
 `endif
     
     wire clk_final;
@@ -109,6 +115,8 @@ module BUFG_GT
     // sky130_fd_sc_hd__clkbuf_4  clk_buf (.A(clk_final), .X(O));
     // sky130_fd_sc_hd__clkbuf_8  clk_buf (.A(clk_final), .X(O));
     // sky130_fd_sc_hd__clkbuf_16 clk_buf (.A(clk_final), .X(O));
+`elsif USE_GT2N_CELLS
+    gt2_6t_buf_x2_w31_svt  clk_buf (.A(clk_final), .Y(O));
 `endif
 
 endmodule

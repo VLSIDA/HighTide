@@ -113,6 +113,21 @@ module IDELAYE2 (
         sky130_fd_sc_hd__buf_1 input_cnt2_buf (.A(CNTVALUEIN[2]), .X(cntvaluein_buf[2]));
         sky130_fd_sc_hd__buf_1 input_cnt3_buf (.A(CNTVALUEIN[3]), .X(cntvaluein_buf[3]));
         sky130_fd_sc_hd__buf_1 input_cnt4_buf (.A(CNTVALUEIN[4]), .X(cntvaluein_buf[4]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt input_clk_buf (.A(C), .Y(c_buf));
+        gt2_6t_buf_x2_w31_svt input_ce_buf (.A(CE), .Y(ce_buf)); 
+        gt2_6t_buf_x2_w31_svt input_cinv_buf (.A(CINVCTRL), .Y(cinvctrl_buf));
+        gt2_6t_buf_x2_w31_svt input_inc_buf (.A(INC), .Y(inc_buf));
+        gt2_6t_buf_x2_w31_svt input_ld_buf (.A(LD), .Y(ld_buf));
+        gt2_6t_buf_x2_w31_svt input_ldpipe_buf (.A(LDPIPEEN), .Y(ldpipeen_buf));
+        gt2_6t_buf_x2_w31_svt input_regrst_buf (.A(REGRST), .Y(regrst_buf));
+        gt2_6t_buf_x2_w31_svt input_datain_buf (.A(DATAIN), .Y(datain_buf));
+        gt2_6t_buf_x2_w31_svt input_idatain_buf (.A(IDATAIN), .Y(idatain_buf));
+        gt2_6t_buf_x2_w31_svt input_cnt0_buf (.A(CNTVALUEIN[0]), .Y(cntvaluein_buf[0]));
+        gt2_6t_buf_x2_w31_svt input_cnt1_buf (.A(CNTVALUEIN[1]), .Y(cntvaluein_buf[1]));
+        gt2_6t_buf_x2_w31_svt input_cnt2_buf (.A(CNTVALUEIN[2]), .Y(cntvaluein_buf[2]));
+        gt2_6t_buf_x2_w31_svt input_cnt3_buf (.A(CNTVALUEIN[3]), .Y(cntvaluein_buf[3]));
+        gt2_6t_buf_x2_w31_svt input_cnt4_buf (.A(CNTVALUEIN[4]), .Y(cntvaluein_buf[4]));
     `endif
 
 
@@ -153,6 +168,8 @@ module IDELAYE2 (
         CLKBUF_X1 clk_tree_buf (.A(c_in), .Z(c_in_gated));
     `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__clkbuf_1 clk_tree_buf (.A(c_in), .X(c_in_gated));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt clk_tree_buf (.A(c_in), .Y(c_in_gated));
     `endif
     reg data_mux;
     always @(*) begin
@@ -171,6 +188,8 @@ module IDELAYE2 (
         BUF_X1 del_buf_0 (.A(data_mux), .Z(delay_chain[0]));
     `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__buf_1 del_buf_0 (.A(data_mux), .X(delay_chain[0]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt del_buf_0 (.A(data_mux), .Y(delay_chain[0]));
     `endif
 
     genvar i;
@@ -182,6 +201,8 @@ module IDELAYE2 (
             BUF_X1 del_buf (.A(delay_chain[i]), .Z(delay_chain[i+1]));
         `elsif USE_SKY130HD_CELLS
             sky130_fd_sc_hd__buf_1 del_buf (.A(delay_chain[i]), .X(delay_chain[i+1]));
+`elsif USE_GT2N_CELLS
+            gt2_6t_buf_x2_w31_svt del_buf (.A(delay_chain[i]), .Y(delay_chain[i+1]));
         `endif
         end
     endgenerate
@@ -283,6 +304,8 @@ module IDELAYE2 (
         BUF_X1 output_data_buf (.A(tap_out_pre), .Z(dataout_internal));
     `elsif USE_SKY130HD_CELLS
         sky130_fd_sc_hd__buf_2 output_data_buf (.A(tap_out_pre), .X(dataout_internal));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt output_data_buf (.A(tap_out_pre), .Y(dataout_internal));
     `endif
 
     assign DATAOUT = dataout_internal;
@@ -313,6 +336,12 @@ module IDELAYE2 (
         sky130_fd_sc_hd__buf_1 cnt_out_2 (.A(cntvalueout_pre[2]), .X(cntvalueout_buf[2]));
         sky130_fd_sc_hd__buf_1 cnt_out_3 (.A(cntvalueout_pre[3]), .X(cntvalueout_buf[3]));
         sky130_fd_sc_hd__buf_1 cnt_out_4 (.A(cntvalueout_pre[4]), .X(cntvalueout_buf[4]));
+`elsif USE_GT2N_CELLS
+        gt2_6t_buf_x2_w31_svt cnt_out_0 (.A(cntvalueout_pre[0]), .Y(cntvalueout_buf[0]));
+        gt2_6t_buf_x2_w31_svt cnt_out_1 (.A(cntvalueout_pre[1]), .Y(cntvalueout_buf[1]));
+        gt2_6t_buf_x2_w31_svt cnt_out_2 (.A(cntvalueout_pre[2]), .Y(cntvalueout_buf[2]));
+        gt2_6t_buf_x2_w31_svt cnt_out_3 (.A(cntvalueout_pre[3]), .Y(cntvalueout_buf[3]));
+        gt2_6t_buf_x2_w31_svt cnt_out_4 (.A(cntvalueout_pre[4]), .Y(cntvalueout_buf[4]));
     `endif
     assign CNTVALUEOUT = cntvalueout_buf;
 
