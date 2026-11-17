@@ -39,6 +39,10 @@ hightide_design(
         # knobs carried over — add only if the same pathologies appear here.
         "CORE_UTILIZATION": "55",
         "PLACE_DENSITY": "0.60",
+        # MPL-0045 on the first gt2n attempt: 2 macros dwarf ~2k um2 of 2nm
+        # std cells (RTLMP floorplan util 0.02), and the level-2 tree cannot
+        # form balanced clusters from that little logic. One level suffices.
+        "RTLMP_MAX_LEVEL": "1",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
         "TNS_END_PERCENT": "100",
