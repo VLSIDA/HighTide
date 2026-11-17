@@ -1,0 +1,12 @@
+--- a/include/boost/stacktrace/detail/collect_unwind.ipp
++++ b/include/boost/stacktrace/detail/collect_unwind.ipp
+@@ -29,7 +29,8 @@
+ #endif
+ #include <cstdio>
+ 
+-#if !defined(_GNU_SOURCE) && !defined(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED) && !defined(BOOST_WINDOWS)
++// Darwin declares _Unwind_Backtrace in unwind.h without _GNU_SOURCE.
++#if !defined(_GNU_SOURCE) && !defined(BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED) && !defined(BOOST_WINDOWS) && !defined(__APPLE__)
+ #error "Boost.Stacktrace requires `_Unwind_Backtrace` function. Define `_GNU_SOURCE` macro or `BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED` if _Unwind_Backtrace is available without `_GNU_SOURCE`."
+ #endif
+ 

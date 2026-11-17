@@ -28,7 +28,12 @@ set_clock_transition  -fall -min 0.1 [get_clocks {nvdla_falcon_clk}]
 set_clock_transition  -fall -max 0.1 [get_clocks {nvdla_falcon_clk}]
 
 
-set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] "^($clk_port|$clk_falcon_port)$"]
+# Compare each clock port exactly. An exact search for a regexp pattern
+# includes both clocks and makes OpenSTA reject the self-referenced delay.
+set non_clock_inputs [all_inputs]
+foreach clock_port [concat $clk_port $clk_falcon_port] {
+    set non_clock_inputs [lsearch -inline -all -not -exact $non_clock_inputs $clock_port]
+}
 
 set_input_delay [expr 2000 * $clk_io_pct] -clock $clk_name $non_clock_inputs
 set_output_delay [expr 2000 * $clk_io_pct] -clock $clk_name [all_outputs]

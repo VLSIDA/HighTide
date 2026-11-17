@@ -1,5 +1,11 @@
 # vortex Design Decisions
 
+- **2026-10 baseline audit**: removed the earlier percentage-based ASAP7
+  input/output delay assignments, which were overwritten by the later fixed
+  10 ps assignments. The effective 10 ps interface contract is unchanged;
+  the SDC now expresses it once so a clock-period edit cannot be mistaken
+  for a change to I/O delay.
+
 Per-platform notes for the `vortex` design (Vortex GPGPU, Verilog top `Vortex`).
 See `CLAUDE.md` (root) for the canonical upstream-bug index.
 

@@ -1,0 +1,34 @@
+--- a/FPGA_design/src/TOP/SCNN_shape_info_compiler.v
++++ b/FPGA_design/src/TOP/SCNN_shape_info_compiler.v
+@@ -7,6 +7,9 @@
+ // ====================================================================================================== //
+ 
+ 
++// Unfinished reference helper, not instantiated by the ASIC TOP.
++// Keep it out of synthesis parsing; its layer flags/counter are undefined.
++`ifndef SYNTHESIS
+ module SCNN_shape_info_compiler (
+ 	input				clock,
+ 	input				reset,
+@@ -55,7 +58,7 @@
+ 	
+ 	output		[2:0]	GLB_weight_load_channel_bound,
+ 	
+-	output		[2:0]	psum_read_out_channel_bound,
++	output		[2:0]	psum_read_out_channel_bound
+ 	
+ 	
+ 	
+@@ -120,10 +123,11 @@
+ 	if(reset) begin
+ 		
+ 	end
+-	else if() begin
++	else if (1'b0) begin
+ 		
+ 	end
+ end
+ 
+ 
+ endmodule
++`endif

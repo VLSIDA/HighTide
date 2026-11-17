@@ -1,4 +1,34 @@
+## 2026-10-18 ASAP7 BP Uno hold audit (validated)
+
+At the unchanged 3333 ps target, the original final result has setup +197.369 ps,
+hold −37.0825 ps (99 violations), DRC 0 and 50820 slew violations. Global route
+skipped hold repair together with the old setup-repair workaround.
+
+The routed hold-only hook, with a 20 ps guard scoped to global route and the
+original CTS settings preserved, completes with setup +193.115 ps and
+hold +5.88712 ps, zero setup/hold violations and DRC 0. All native `check_setup`
+checks pass. 50678 slew violations remain; cap and fanout violations are zero.
+The repair adds 483 timing buffers and 47.4 um² standard-cell area, with the
+other logic classes unchanged. Power is 268.569 mW under default activity.
+
+The synthesis SDC is byte-identical. Raw synthesized-netlist hashes differ
+because 1521 standalone `src` attributes use different absolute/relative
+output-base paths. A full line-by-line comparison proves every other byte,
+including all functional attributes and HDL, matches. The comparison and raw
+hashes are retained in `synthesis-comparison.json` in
+`artifacts/asap7-bp-uno-hold-20261018`; that run also archives the final physical
+results and native coverage proof. Compact stats are in
+`baselines/asap7/2026-10-17/bp-uno-repaired.*`.
+
 # bp_processor Design Decisions
+
+- **2026-10 ASAP7 bp_uno baseline audit (validation pending)**: final setup
+  +197.369 ps, hold -37.0825 ps (99 violations), DRC 0, and 50820 slew
+  violations. CTS hold was +0.049738 ps; global route was already -34.7044 ps
+  because `SKIP_INCREMENTAL_REPAIR=1` skipped hold as well as the problematic
+  setup optimizer. A routed hold-only hook now uses a 20 ps margin. CTS
+  settings, RTL, clock target (3333 ps), and all I/O constraints stay unchanged.
+  Final setup/hold/DRC validation is required before accepting the repair.
 
 Per-platform notes for Black-Parrot, an open-source RISC-V multicore from the BSG group at UW.
 

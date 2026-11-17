@@ -22,6 +22,8 @@ module(
     version = "0.0.1",
 )
 
+bazel_dep(name = "platforms", version = "1.1.0")
+
 # --- bazel-orfs pinned via submodule ---
 bazel_dep(name = "bazel-orfs")
 local_path_override(
@@ -66,6 +68,12 @@ archive_override(
 bazel_dep(name = "openroad")
 archive_override(
     module_name = "openroad",
+    patch_strip = 1,
+    patches = [
+        "//patches:openroad-dpl-offrow-macro-padding.patch",
+        "//patches:openroad-rsz-port-buffer-cost.patch",
+        "//patches:openroad-est-stream-invalidation.patch",
+    ],
     integrity = "sha256-011veekekQGPjuDtDyxBsYmW7JkC6T2PqNhlCK7hCDk=",
     # GitHub /archive/<sha>.tar.gz tarballs don't carry submodules,
     # so vendor src/sta (OpenSTA) and third-party/abc from their own
@@ -74,17 +82,54 @@ archive_override(
         "curl -sSfL --retry 5 --retry-all-errors --retry-delay 5 -o .openroad-submodule-src-sta-8572175ac45c42ce8d3d772f73bbb059786b9c66.tar.gz https://github.com/The-OpenROAD-Project/OpenSTA/archive/8572175ac45c42ce8d3d772f73bbb059786b9c66.tar.gz && echo '805fbf8fef8ff35bc03e1d7fc3eb15760f886a4735e9c96adec303904b5d7d3e  .openroad-submodule-src-sta-8572175ac45c42ce8d3d772f73bbb059786b9c66.tar.gz' | sha256sum -c - && tar xzf .openroad-submodule-src-sta-8572175ac45c42ce8d3d772f73bbb059786b9c66.tar.gz --strip-components=1 -C src/sta && rm .openroad-submodule-src-sta-8572175ac45c42ce8d3d772f73bbb059786b9c66.tar.gz",
         "curl -sSfL --retry 5 --retry-all-errors --retry-delay 5 -o .openroad-submodule-third-party-abc-d527cfab4ad731b767ea0a2be2021d920d3afece.tar.gz https://github.com/The-OpenROAD-Project/abc/archive/d527cfab4ad731b767ea0a2be2021d920d3afece.tar.gz && echo '0cbf538e60d0303d0e00360d8973aaad7dae198954bed6e34cc31c9a13b3f802  .openroad-submodule-third-party-abc-d527cfab4ad731b767ea0a2be2021d920d3afece.tar.gz' | sha256sum -c - && tar xzf .openroad-submodule-third-party-abc-d527cfab4ad731b767ea0a2be2021d920d3afece.tar.gz --strip-components=1 -C third-party/abc && rm .openroad-submodule-third-party-abc-d527cfab4ad731b767ea0a2be2021d920d3afece.tar.gz",
         "curl -sSfL --retry 5 --retry-all-errors --retry-delay 5 -o .openroad-submodule-third-party-slang-elab-82effc8d9541be69e1ed3ec44759a4449f5d9247.tar.gz https://github.com/povik/yosys-slang/archive/82effc8d9541be69e1ed3ec44759a4449f5d9247.tar.gz && echo 'ea31b4a205ebb1fe5ec3789bcd66f21f4975e73c0901622af667f843b833ff10  .openroad-submodule-third-party-slang-elab-82effc8d9541be69e1ed3ec44759a4449f5d9247.tar.gz' | sha256sum -c - && tar xzf .openroad-submodule-third-party-slang-elab-82effc8d9541be69e1ed3ec44759a4449f5d9247.tar.gz --strip-components=1 -C third-party/slang-elab && rm .openroad-submodule-third-party-slang-elab-82effc8d9541be69e1ed3ec44759a4449f5d9247.tar.gz",
-        "sed -i 's|\"@slang\"|\"@sv-lang//:libsvlang\"|' third-party/slang-elab/src/BUILD",
+        "sed -i.bak 's|\"@slang\"|\"@sv-lang//:libsvlang\"|' third-party/slang-elab/src/BUILD && rm third-party/slang-elab/src/BUILD.bak",
+        # OpenSTA's standalone binary must use the system allocator on macOS,
+        # matching OpenROAD's platform selection (TCMalloc is Linux-only).
+        "sed -i.bak 's|malloc = \"@tcmalloc//tcmalloc\",|malloc = select({\"@platforms//os:linux\": \"@tcmalloc//tcmalloc\", \"@platforms//os:macos\": \"@bazel_tools//tools/cpp:malloc\"}),|' src/sta/BUILD && rm src/sta/BUILD.bak",
     ],
     strip_prefix = "OpenROAD-b65c274cadefe2151aa7eee32e1be9026e8ff14a",
     urls = ["https://github.com/The-OpenROAD-Project/OpenROAD/archive/b65c274cadefe2151aa7eee32e1be9026e8ff14a.tar.gz"],
 )
 
-# OpenROAD pins sv-lang 10.0.bcr.2, which is not yet published in BCR.
-# Force the latest published version (fork registry, via .bazelrc).
-single_version_override(
+# OpenROAD pins sv-lang 10.0.bcr.2, which is not yet published in BCR. Use
+# 10.0.1-20260316-f04e8156 as BCR and the fork registry publish it (same
+# commit, same overlay files), fetched here directly because the registries'
+# archive hash (sha256-7SEVSm6u...) no longer matches what GitHub serves: the
+# tarball embeds .git_archival.txt, whose `describe-name` GitHub rewrites when
+# it regenerates the archive (now v10.0-150-gf04e815657). Every other file of
+# the archive is identical to a checkout of the commit (checked 2026-11-11).
+# The hash can drift again the same way; return to the plain
+# single_version_override once a registry entry with a stable source exists.
+archive_override(
     module_name = "sv-lang",
-    version = "10.0.1-20260316-f04e8156",
+    integrity = "sha256-Pj8AVITB12EZCg7lD3wYZpuHgcexydYPQsOUh77CWqg=",
+    remote_file_integrity = {
+        "BUILD.bazel": "sha256-aTxrPJ+ycNG86YervJHcs0/jW9qXzQAIOdBeS/oZOOU=",
+        "MODULE.bazel": "sha256-Sf7p8HXHyD+Dp5fOXMY7jB4PqXDKgYS9XxfEa8VTRjI=",
+        "private/slang/export_headers/BUILD.bazel": "sha256-R6Dv/CqeG3BKpy2/F7RraVg/6QpVp9R2+itU1P0jUDE=",
+        "private/slang/version_info/BUILD.bazel": "sha256-DgIsIglnPC4vIqxSFt2orPq/I7SvAo3oiRrLFcHaS+Q=",
+        "private/slang/version_info/VersionInfo.cpp.in": "sha256-lEtZRUGNz46yF8M8sBgjL1N4Zr+KXioy8sv/0DmCSfE=",
+        "private/tests/BUILD.bazel": "sha256-szGEhrNgI8xYYT3Dh65sYTxtLgzliigBBI327gTzFnE=",
+        "private/tests/pyslang/BUILD.bazel": "sha256-kOhB1jkTVq4BZCuXinob8Em29LMXNLPZWEYUtVZzGfo=",
+        "private/tests/pyslang/test.py": "sha256-wFIT9/C8ioU35gXxN7DL0JxC66krax4jtQUYz95KkAc=",
+        "private/tests/pyslang/test_module.sv": "sha256-cuFYQHHY3Prq0YX7nIiFIahIEygfrQgiiahgP3EJfFU=",
+        "pyslang/BUILD.bazel": "sha256-FmDm5VfrGn5NWvHuYlkslgTp2yuEGazBZbSBhthccGQ=",
+        "pyslang/__init__.py": "sha256-Pv8R9uPWuV98CNTxi8PNVfyJY9K35Vx4xbNcyWgZlfY=",
+    },
+    remote_file_urls = {
+        "BUILD.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/BUILD.bazel"],
+        "MODULE.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/MODULE.bazel"],
+        "private/slang/export_headers/BUILD.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/slang/export_headers/BUILD.bazel"],
+        "private/slang/version_info/BUILD.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/slang/version_info/BUILD.bazel"],
+        "private/slang/version_info/VersionInfo.cpp.in": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/slang/version_info/VersionInfo.cpp.in"],
+        "private/tests/BUILD.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/tests/BUILD.bazel"],
+        "private/tests/pyslang/BUILD.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/tests/pyslang/BUILD.bazel"],
+        "private/tests/pyslang/test.py": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/tests/pyslang/test.py"],
+        "private/tests/pyslang/test_module.sv": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/private/tests/pyslang/test_module.sv"],
+        "pyslang/BUILD.bazel": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/pyslang/BUILD.bazel"],
+        "pyslang/__init__.py": ["https://bcr.bazel.build/modules/sv-lang/10.0.1-20260316-f04e8156/overlay/pyslang/__init__.py"],
+    },
+    urls = ["https://github.com/MikePopoloski/slang/archive/f04e81565793c768b747a8fd058f3e7aeceee1b5.tar.gz"],
 )
 
 # The fork sv-lang pulls boost.unordered@1.87.0 (old compat_level 108700)
@@ -96,10 +141,21 @@ single_version_override(
     version = "1.89.0.bcr.2",
 )
 
-# scip 9.2.3 vendors a tinycthread that collides with glibc 2.41+'s
-# <threads.h>.  9.2.3.bcr.1 carries the upstream rename fix (fork registry).
+# Darwin provides _Unwind_Backtrace without the glibc feature macro.
+single_version_override(
+    module_name = "boost.stacktrace",
+    patch_strip = 1,
+    patches = ["//patches:boost-stacktrace-darwin-unwind.patch"],
+    version = "1.89.0.bcr.2",
+)
+
+# SCIP's vendored tinycthread once_flag/call_once macros collide with
+# glibc 2.43's <stdlib.h>. Apply upstream cc917e07 explicitly: the BCR
+# 9.2.3.bcr.1 release does not carry the fork registry's compatibility fix.
 single_version_override(
     module_name = "scip",
+    patch_strip = 1,
+    patches = ["//patches:scip-tinycthread-glibc.patch"],
     version = "9.2.3.bcr.1",
 )
 
@@ -108,7 +164,7 @@ single_version_override(
 single_version_override(
     module_name = "sed",
     patch_cmds = [
-        "sed -i 's|^#ifdef _LIBC$|#if 1|' lib/memchr.c",
+        "sed -i.bak 's|^#ifdef _LIBC$|#if 1|' lib/memchr.c && rm lib/memchr.c.bak",
     ],
     version = "4.9.bcr.5",
 )
@@ -124,6 +180,17 @@ bazel_dep(name = "qt-bazel")
 git_override(
     module_name = "qt-bazel",
     commit = "886104974c2fd72439f2c33b5deebf0fe4649df7",
+    # Root-only overrides must mirror bazel-orfs: build xcb-util-cursor
+    # from source so OpenROAD doesn't require host libxcb-cursor0.
+    # Try both release mirrors and verify the source archive.
+    patch_cmds = [
+        "(curl -sSfL --connect-timeout 15 --max-time 60 --retry 2 --retry-all-errors --retry-delay 5 -o xcb-util-cursor-0.1.5.tar.xz https://www.x.org/releases/individual/lib/xcb-util-cursor-0.1.5.tar.xz || curl -sSfL --connect-timeout 15 --max-time 60 --retry 2 --retry-all-errors --retry-delay 5 -o xcb-util-cursor-0.1.5.tar.xz https://www.mirrorservice.org/sites/ftp.x.org/pub/individual/lib/xcb-util-cursor-0.1.5.tar.xz) && echo '0caf99b0d60970f81ce41c7ba694e5eaaf833227bb2cbcdb2f6dc9666a663c57  xcb-util-cursor-0.1.5.tar.xz' | sha256sum -c - && tar xJf xcb-util-cursor-0.1.5.tar.xz --strip-components=1 -C interface_libs/xcb xcb-util-cursor-0.1.5/cursor && rm xcb-util-cursor-0.1.5.tar.xz",
+    ],
+    patch_strip = 1,
+    patches = [
+        "//patches:qt-macos-offscreen.patch",
+        "//patches:qt-bazel-xcb-cursor-from-source.patch",
+    ],
     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
@@ -143,12 +210,46 @@ single_version_override(
 # --- LLVM toolchain (OpenROAD needs C++20 / libc++) ---
 bazel_dep(name = "toolchains_llvm", version = "1.5.0")
 
+# Mirror bazel-orfs's libxml2 stub so LLVM's linker runs without the host's
+# legacy libxml2.so.2 ABI. Bootstrap with the system BFD linker, then rebuild
+# with the pinned LLD for reproducible final bytes: LLD cannot bootstrap its
+# own missing runtime dependency. See bazel-orfs/tools/xml-hack/README.md.
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "llvm_toolchain_llvm",
+    build_file = "@bazel-orfs//tools/xml-hack:BUILD.llvm_repo",
+    patch_cmds = [
+        """printf '%s\\n' 'extern void abort(void);' 'void *xmlFree=0;' 'void *xmlAddChild(void*p,void*c){abort();}' 'void *xmlCopyNamespace(void*n){abort();}' 'void xmlDocDumpFormatMemoryEnc(void*d,void*b,void*s,const char*e,int f){abort();}' 'void *xmlDocGetRootElement(void*d){abort();}' 'void *xmlDocSetRootElement(void*d,void*r){abort();}' 'void xmlFreeDoc(void*d){abort();}' 'void xmlFreeNode(void*n){abort();}' 'void xmlFreeNs(void*n){abort();}' 'void *xmlNewDoc(const void*v){abort();}' 'void *xmlNewNs(void*n,const void*h,const void*p){abort();}' 'void *xmlNewProp(void*n,const void*a,const void*v){abort();}' 'void *xmlReadMemory(const char*b,int sz,const char*u,const char*e,int o){abort();}' 'void xmlSetGenericErrorFunc(void*c,void*h){abort();}' 'void *xmlStrdup(const void*s){abort();}' 'void xmlUnlinkNode(void*n){abort();}' > _stub.c && printf '%s\\n' 'LIBXML2_2.4.30 { global: xmlAddChild; xmlCopyNamespace; xmlDocDumpFormatMemoryEnc; xmlDocGetRootElement; xmlDocSetRootElement; xmlFree; xmlFreeDoc; xmlFreeNode; xmlFreeNs; xmlNewDoc; xmlNewNs; xmlNewProp; xmlSetGenericErrorFunc; xmlStrdup; xmlUnlinkNode; local: *; };' 'LIBXML2_2.6.0 { global: xmlReadMemory; } LIBXML2_2.4.30;' > _stub.ver && ./bin/clang -nostdlib -nostdinc -fuse-ld=bfd -shared -o lib/libxml2.so.2 -Wl,--version-script=_stub.ver -Wl,-soname,libxml2.so.2 _stub.c && ./bin/clang -nostdlib -nostdinc -fuse-ld=lld -shared -o lib/libxml2.so.2.tmp -Wl,--version-script=_stub.ver -Wl,-soname,libxml2.so.2 _stub.c && mv lib/libxml2.so.2.tmp lib/libxml2.so.2 && rm _stub.c _stub.ver""",
+    ],
+    sha256 = "1ead36b3dfcb774b57be530df42bec70ab2d239fbce9889447c7a29a4ddc1ae6",
+    strip_prefix = "LLVM-20.1.8-Linux-X64",
+    url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.8/LLVM-20.1.8-Linux-X64.tar.xz",
+)
+
+# The Linux libxml2 bootstrap above cannot run on an ARM Mac. Use the
+# platform-selected LLVM distribution there; keep Linux's pinned bootstrap.
+native_llvm_archive = use_repo_rule("@toolchains_llvm//toolchain:rules.bzl", "llvm")
+native_llvm_archive(
+    name = "llvm_toolchain_native",
+    llvm_versions = {"": "20.1.8"},
+)
+
 llvm = use_extension(
     "@toolchains_llvm//toolchain/extensions:llvm.bzl",
     "llvm",
 )
 llvm.toolchain(
     llvm_version = "20.1.8",
+)
+llvm.toolchain_root(
+    name = "llvm_toolchain",
+    label = "@llvm_toolchain_llvm//:BUILD.bazel",
+)
+llvm.toolchain_root(
+    name = "llvm_toolchain",
+    targets = ["darwin-aarch64"],
+    label = "@llvm_toolchain_native//:BUILD.bazel",
 )
 use_repo(llvm, "llvm_toolchain")
 
@@ -185,7 +286,6 @@ orfs.default(
 # Caveat: GitHub /archive/<sha>.tar.gz gzip is not guaranteed byte-stable;
 # if a fetch ever fails on integrity, re-pin the sha256 (same failure mode
 # and fix as the OpenROAD submodule tarballs pinned above).
-http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # lfsr — alexforencich/verilog-lfsr (plain Verilog, no generator/patch)
 http_archive(
@@ -640,8 +740,8 @@ http_archive(
     patch_cmds = [
         "find . -name BUILD -empty -delete",
         "find . -name BUILD.bazel -empty -delete",
-        """sed -i 's|addResource("ClockGate.sv")|addResource("hdl/verilog/ClockGate.sv")|' hdl/chisel/src/coralnpu/ClockGate.scala""",
-        """sed -i 's|addResource("RstSync.sv")|addResource("hdl/verilog/RstSync.sv")|' hdl/chisel/src/coralnpu/RstSync.scala""",
+        """sed -i.bak 's|addResource("ClockGate.sv")|addResource("hdl/verilog/ClockGate.sv")|' hdl/chisel/src/coralnpu/ClockGate.scala && rm hdl/chisel/src/coralnpu/ClockGate.scala.bak""",
+        """sed -i.bak 's|addResource("RstSync.sv")|addResource("hdl/verilog/RstSync.sv")|' hdl/chisel/src/coralnpu/RstSync.scala && rm hdl/chisel/src/coralnpu/RstSync.scala.bak""",
     ],
     patches = [
         "//designs/src/coralnpu/chisel:patches/chisel7-compat.patch",
@@ -730,6 +830,11 @@ http_archive(
 http_archive(
     name = "eyeriss_src",
     build_file = "//designs/src/eyeriss:external.BUILD.bazel",
+    patch_args = ["-p1"],
+    patches = [
+        "//patches:eyeriss-shape-compiler-synthesis.patch",
+        "//patches:eyeriss-psum-router-width.patch",
+    ],
     sha256 = "0a32ef13dbc82d7cc33ca070b6b085bfce3e6e65d6c11c288ab39552ea136174",
     strip_prefix = "CNN-Accelerator-Based-on-Eyeriss-v2-dc1df8bffa3c7a8b091f23fe66155a032496315e",
     urls = ["https://github.com/BoooC/CNN-Accelerator-Based-on-Eyeriss-v2/archive/dc1df8bffa3c7a8b091f23fe66155a032496315e.tar.gz"],

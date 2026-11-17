@@ -1,3 +1,100 @@
+## 2026-10-18 forwarded-clock timing model
+
+The connected `m_aclk` output forwards `clk` to the external AXI interface.
+Its SDC also needs a 1:1 generated clock. Treating it as data sends timing
+repair through the clock distribution network. A controlled comparison on
+the corrected-mask CTS database changes worst setup from −6508.45 ps on
+that clock output to −184.36 ps on real data; worst hold remains −1446.66 ps.
+The original archived database, with its missing clock connection restored
+only in memory, independently preserves setup +214.13 ps and hold −54.81 ps.
+
+Both comparisons preserve every other serialized constraint, four raw-TDI
+paths and eight later synchronizer paths. The CPU period remains 2841 ps and
+the functional I/O budget remains 568.2 ps. No new path exception is added.
+Evidence is in `artifacts/asap7-nyuzi-forwarded-clock-audit-20261018/proof.json`.
+The incomplete clock-model trial is retained; the combined current run is
+`artifacts/asap7-nyuzi-clock-model-20261018`. Final acceptance also checks the
+actual serialized generated clock and absence of a data check on `m_aclk`.
+
+## 2026-10-18 scoped asynchronous JTAG boundary
+
+The pinned TAP RTL explicitly samples `{tck,tms,tdi,trst_n}` through a
+three-stage synchronizer. The old ASAP7 SDC assigned these first-stage D
+checks the CPU's I/O phase. Add exactly four source/destination exceptions
+from each external JTAG port to its corresponding `sync0` D pin. Strict
+selectors fail if the intended first-stage pin cannot be found.
+
+Raw TDI also drives four debug data-register endpoints directly. Those paths
+remain timed, together with all eight paths through the second and third
+synchronizer stages. Native fanout inspection, actual source-SDC selectors,
+and write/read SDC round-trip checks verify this scope. No JTAG frequency,
+protocol multicycle constraint, CPU period or functional I/O budget is added
+or relaxed. The original 2841 ps / 568.2 ps CPU/data contract stays intact.
+
+The incomplete JTAG-boundary trial was retired. The subsequent
+`artifacts/asap7-nyuzi-clock-masks-jtag-20261018` trial was superseded by the
+forwarded-clock model above. The current run's final model proof must
+validate actual compiled exceptions, four direct TDI paths and eight later
+synchronizer paths, all 2533 high SRAM mask pins, both forwarded signals, and
+the tested frozen SDC/RTL hashes. Remaining real timing failures stay visible.
+
+## 2026-10-18 ASAP7 memory and forwarded-clock audit (validation pending)
+
+Native final coverage checking found 2535 unconstrained endpoints: 2533 SRAM
+write-mask pins and the `m_aclk` / `m_aresetn` outputs. The current ASAP7
+FakeRAM models expose active-high per-bit `w0_wmask_in`, but all ten whole-word
+wrappers omitted that port. Final netlists place these inputs on undriven
+`_NC` nets. A readback test using the pinned FakeRAM Verilog generator fails
+with the original wrappers.
+
+The wrappers now tie every mask bit high under `USE_ASAP7_CELLS`, enabled
+explicitly in the ASAP7 BUILD. Nangate45's ten macro interfaces are unmasked,
+so the guard preserves that interface. The macro files and geometry remain
+unchanged. Tests pass for all ten repaired masked wrapper types and for the
+legacy unmasked interface: every bit, both read ports, and disabled writes.
+See `tools/check_nyuzi_ram_masks.py` and the `asap7-nyuzi-mask-before`,
+`asap7-nyuzi-mask-scoped-after`, and `asap7-nyuzi-mask-unmasked-compat`
+20261018 artifact directories. A native negative control also rejects all
+2533 floating mask inputs in the archived original database.
+
+The original forwarded AXI clock is also physically disconnected. Synthesis
+has a buffer from `clk` to `m_aclk`; the final `output7872` buffer has no A
+connection. Physical reachability from `clk` visits 3250 nets without reaching
+`m_aclk`, and native fan-in stops at `output7872/A`. The targeted PRE_CTS hook
+restores that input only if CTS disconnects it. Injecting the hook into the
+original database in memory restores reachability (3251 nets) without changing
+the saved original. The other output finding, `m_aresetn`, traces only to the
+already false-pathed `reset` input. No clock or data I/O constraint is changed.
+
+The hold-only trial and intermediate mask-plus-hold trial were intentionally
+canceled (exit 8) once these additional defects were proven; their records
+remain. The intermediate trial was
+`artifacts/asap7-nyuzi-clock-masks-hold-20261018`, combining the mask correction,
+conditional forwarded-clock repair and 80 ps routed hold guard described
+below; it was superseded by the JTAG and clock-model corrections above.
+The original Nyuzi figures are diagnostic, not a functional reference.
+The synthesized netlist intentionally changes; the clock period and I/O
+contract stay fixed. Acceptance requires extracted timing/DRC checks, actual
+constant-high mask pins and physical forwarded-clock reachability.
+
+## 2026-10-18 ASAP7 baseline hold audit (validation pending)
+
+The original final target completes at the unchanged 2841 ps period with
+setup +214.134 ps, but hold −54.8109 ps and 294 hold violations. Worst hold is
+a writeback-register-to-vector-register-file SRAM path, not an untimed memory
+interface. Global-route worst hold was only −1.46827 ps (four violations),
+so final extraction exposes additional violations.
+
+Add `PRE_GLOBAL_ROUTE_TCL=pre_grt.tcl`, setting `HOLD_SLACK_MARGIN=80` only
+at global route. Preserve the existing CTS settings and the full normal
+setup/hold repair sequence. RTL, clock period, I/O delays, and reset exceptions
+are unchanged; no SRAM timing path is waived. The selected margin covers the
+observed roughly 53 ps worst-slack degradation with additional repair guard.
+It is a candidate until final extraction confirms setup/hold and routing DRC.
+The initial isolated hold-only run was superseded by the memory and clock
+corrections above. Do not require synthesized-netlist identity across the
+intentional write-mask correction; retain all original and repaired hashes.
+
 # NyuziProcessor Design Decisions
 
 Per-platform notes for `NyuziProcessor` (Jeff Bush) — an open-source GPGPU written in SystemVerilog, with a 4-thread × 16-lane vector ISA. The HighTide port uses 8 vector lanes (halved from upstream 16 to reach a tractable cache-line width) and 2 L2 cache ways (halved from upstream 4) to fit asap7/nangate45/sky130hd floorplans.

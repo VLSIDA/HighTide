@@ -1,0 +1,79 @@
+{
+ "vortex": {
+  "sets": {
+   "reader": "yosys"
+  }
+ },
+ "coralnpu": {
+  "sets": {}
+ },
+ "litedram": {
+  "sets": {
+   "compile.slang.inout_as_driven": "true"
+  }
+ },
+ "liteeth": {
+  "sets": {
+   "compile.slang.liberty_macro_precedence": "true",
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.liberty_cells": "true",
+   "compile.slang.unconnected_input": "one",
+   "compile.specialize_modules": "true"
+  }
+ },
+ "litepci": {
+  "sets": {
+   "compile.slang.liberty_macro_precedence": "true",
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.liberty_cells": "true",
+   "compile.slang.unconnected_input": "one",
+   "compile.slang.blackbox_attribute": "true",
+   "compile.specialize_modules": "true",
+   "synth.place.timing_driven": "false"
+  }
+ },
+ "cnn": {
+  "sets": {
+   "compile.slang.liberty_macro_precedence": "true"
+  }
+ },
+ "NyuziProcessor": {
+  "sets": {
+   "compile.slang.liberty_allow_truncation": "true",
+   "compile.slang.flatten_state_arrays": "true",
+   "synth.place.timing_driven": "false"
+  }
+ },
+ "NVDLA/partition_m": {
+  "sets": {
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.translate_off": "true"
+  }
+ },
+ "NVDLA/partition_a": {
+  "sets": {
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.translate_off": "true"
+  }
+ },
+ "NVDLA/partition_p": {
+  "sets": {
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.translate_off": "true"
+  }
+ },
+ "NVDLA/partition_o": {
+  "sets": {
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.translate_off": "true",
+   "synth.place.timing_rounds": "1"
+  }
+ },
+ "NVDLA/partition_c": {
+  "sets": {
+   "compile.slang.ignore_uninstantiated_modules": "true",
+   "compile.slang.translate_off": "true",
+   "synth.place.timing_driven": "false"
+  }
+ }
+}

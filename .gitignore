@@ -26,3 +26,4 @@ tmp/
 # designs/<platform>/<design>/sram/{lef,lib}/ and tracked there.
 designs/src/*/dev/generated/sram/
 scratch/
+__pycache__/

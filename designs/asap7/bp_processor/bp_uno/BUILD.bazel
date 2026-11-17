@@ -10,11 +10,10 @@ _ARGS.update({
     "MACRO_PLACE_HALO": "6 6",
     "MACRO_BLOCKAGE_HALO": "0.5",
     "PLACE_DENSITY_LB_ADDON": "0.10",
-    # Post-GRT repair_timing hangs silently for 2h+ on k8s under the
-    # new bsg_fakeram macros — same non-convergence pattern as
-    # liteeth/asap7 (88b7ef46) and cnn/asap7 (9d9c5309). Skip it;
-    # route's own hold-repair still runs.
-    "SKIP_INCREMENTAL_REPAIR": "1",
+    # Full post-GRT setup repair previously did not converge. Keep that
+    # workaround, but repair hold on routed parasitics (see pre_grt.tcl).
+    # Skipping the entire block left -37.08 ps final hold slack.
+    "SKIP_INCREMENTAL_REPAIR": "0",
 })
 
 hightide_design(
@@ -26,6 +25,7 @@ hightide_design(
     ],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_grt.tcl"],
         "ADDITIONAL_LEFS": ["//designs/asap7/bp_processor:sram_lefs"],
         "ADDITIONAL_LIBS": ["//designs/asap7/bp_processor:sram_libs"],
     },

@@ -1,0 +1,53 @@
+Optional placement-only PG suspension
+
+This helper is explicit opt-in and does not change any default flow:
+
+  source tools/vslivehd/placement_pg.tcl
+  vslivehd::placement_pg::suspend /absolute/path/to/audit_directory
+  # Run placement with the original signal/clock netlist and constraints.
+  vslivehd::placement_pg::restore
+
+Call suspend before the first parasitic estimate or timing optimization. Keep
+placement_pg_geometry.py next to placement_pg.tcl. Python 3 is required.
+
+The helper disconnects only declared POWER/GROUND ITerm associations. It retains
+PG net identities, PG ports, PDN special wires, via definitions, rows, tracks,
+cells and all signal/clock connections. The streamed DEF audit preserves all
+SPECIALNETS routing properties and VIAS definitions, omitting only connection
+tuples; compressed geometry evidence and SHA256 metadata are retained.
+The property delimiter is recognized outside connection tuples and escaped
+identifiers; a plus sign inside an instance or terminal name is not geometry.
+Run the optional isolated parser regression with:
+
+  python3 tools/vslivehd/placement_pg_geometry_check.py
+
+This needs only Python 3 and checks escaped identifiers, multiline connection
+tuples, inline properties, route/via sensitivity and incomplete-input rejection.
+
+Restore requires every original instance, master and PG terminal to remain
+present. This suits strict same-netlist placement and virtual sizing that is
+fully rolled back. It rejects retained resizing/remapping/removal of original
+instances. Original PG associations are restored by instance/master/terminal
+names, so resizer rollback may recreate database objects safely. global_connect
+then associates new or previously unconnected ordinary cells. Missing or
+wrong-type PG terminals reject the result. Callers must separately verify their
+functional netlist, fixed macros, IOs, physical frame and timing constraints.
+A failure requires discarding the edited database.
+
+This is a flow experiment, not a timing-mask option: complete PG association
+must be restored before CTS, routing, extraction or physical-validity claims.
+PG association coverage alone is not a PDN electrical-continuity proof.
+
+Validation (Eyeriss, frozen release OpenROAD65ec, 2026-10-21):
+  - 1,424,508 original PG associations restored, zero missing/wrong type.
+  - All instances, masters, positions/orientations/status, non-PG endpoints,
+    ports and frame unchanged by the roundtrip.
+  - Exact SPECIALNETS/VIAS geometry hashes unchanged.
+  - Roundtrip including full external snapshots: 110.084 s, peak5.707 GB.
+  - Same five-driver rebuffer A/B preserves exact initial/final WNS/TNS/hold
+    and physical/signal snapshots. A repeated small walltime test is neutral;
+    no general placement performance gain is claimed.
+
+Evidence: livehd/tmp/route_cts_eval_20261021/eyeriss_correct_rc_matched/
+pg_callback_probe/{v3/comparison.json,roundtrip_v2/comparison.json}.
+The current full placement/routing evaluation keeps its existing PG settings.

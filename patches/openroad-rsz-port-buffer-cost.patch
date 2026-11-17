@@ -1,0 +1,21 @@
+--- a/src/rsz/src/Rebuffer.cc
++++ b/src/rsz/src/Rebuffer.cc
+@@ -1613,9 +1613,15 @@
+   if (network->libertyCell(inst) && network->libertyCell(inst)->isBuffer()) {
+     odb::dbInst* db_inst = network->staToDb(inst);
+     for (odb::dbITerm* iterm : db_inst->getITerms()) {
+-      if (iterm->getNet() && iterm->getNet()->getITerms().size() == 1
+-          && !iterm->getNet()->getBTerms().empty()) {
+-        return true;
++      const auto* net = iterm->getNet();
++      if (net && !net->getBTerms().empty()) {
++        // dbSet::size() walks the whole linked list. Only distinguish one
++        // terminal from zero or more than one, including on high-fanout nets.
++        const auto terms = net->getITerms();
++        auto term = terms.begin();
++        if (term != terms.end() && ++term == terms.end()) {
++          return true;
++        }
+       }
+     }
+   }

@@ -35,11 +35,20 @@ set_ideal_network  [get_ports {nvdla_clk_ovr_on}]
 set_ideal_network  [get_ports {tmc2slcg_disable_clock_gating}]
 set_ideal_network  [get_ports {pwrbus_ram_pd*}]
 
-# async set/reset `-to [get_pin */SETN|/RESETN]` false-paths removed on the
-# bazel-orfs 553c1c3 / OpenROAD 299f3015 upgrade — the new OpenSTA write_sdc
-# corrupts the wildcard-expanded instance names (invalid UTF-8) and Tcl 9
-# then hard-fails floorplan. Redundant: reset sources already -from false-pathed
-# and reset nets are set_ideal_network. Verified timing unchanged.
+# Restore the source exceptions in the pinned upstream partition_c SDC.
+# They were missing despite the previous comment claiming they were present.
+# sync_reset asynchronously asserts and synchronously releases the core reset;
+# mode/power/clock-override controls use the upstream functional-mode contract.
+# Paths launched by synchronized registers and real clock-gating checks remain
+# timed. Keep port-scoped exceptions; wildcard async-pin exceptions previously
+# triggered OpenSTA write_sdc instance-name corruption.
+set_false_path -from [get_ports direct_reset_]
+set_false_path -from [get_ports dla_reset_rstn]
+set_false_path -from [get_ports test_mode]
+set_false_path -from [get_ports pwrbus_ram_pd*]
+set_false_path -from [get_ports tmc2slcg_disable_clock_gating]
+set_false_path -from [get_ports global_clk_ovr_on]
+set_false_path -from [get_ports nvdla_clk_ovr_on]
 
 set_max_fanout 128 [current_design]
 

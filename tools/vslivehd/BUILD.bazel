@@ -1,0 +1,15 @@
+# Tools in a genrule use Bazel's optimized execution configuration, even when
+# the parent design flow uses fastbuild. Freeze these paths before measuring.
+genrule(
+    name = "measurement_tools",
+    outs = ["measurement_tools.paths"],
+    cmd = "printf '%s\\n' " +
+          "'$(execpath @openroad//:openroad)' " +
+          "'$(execpath @yosys//:yosys)' " +
+          "'$(execpath @yosys-slang//:slang.so)' > $@",
+    tools = [
+        "@openroad//:openroad",
+        "@yosys//:yosys",
+        "@yosys-slang//:slang.so",
+    ],
+)

@@ -1,0 +1,47 @@
+diff --git a/build_defs.bzl b/build_defs.bzl
+--- a/build_defs.bzl
++++ b/build_defs.bzl
+@@ -255,6 +255,7 @@
+         ],
+         "@platforms//os:osx": [
+             "@qt-bazel//qt_source:cocoa_integration_plugin",
++            "@qt-bazel//qt_source:offscreen_plugin",
+         ],
+         "//conditions:default": [],
+     })
+diff --git a/qt_source/BUILD.bazel b/qt_source/BUILD.bazel
+--- a/qt_source/BUILD.bazel
++++ b/qt_source/BUILD.bazel
+@@ -1910,7 +1910,7 @@
+ genrule(
+     name = "gui_mocs_compilation_macos",
+     outs = ["gui_macos_mocs_compilation.cpp"],
+-    cmd = """echo '#include "moc_qplatformscreen.cpp"\n#include "moc_qplatformwindow_p.cpp"' > $@""",
++    cmd = """echo '#include "moc_qplatformscreen.cpp"\n#include "moc_qplatformwindow_p.cpp"\n#include "moc_qunixeventdispatcher_qpa_p.cpp"' > $@""",
+ )
+ 
+ qt_internal_library(
+@@ -2183,8 +2183,10 @@
+             QT_BASE + "/src/gui/platform/unix/qxkbcommon_3rdparty.cpp",
+         ],
+         "@platforms//os:osx": [
+-            # macOS mocs compilation (excludes unix event dispatcher moc)
++            # Offscreen rendering also needs the Unix event dispatcher.
+             "gui_macos_mocs_compilation.cpp",
++            QT_BASE + "/src/gui/platform/unix/qgenericunixeventdispatcher.cpp",
++            QT_BASE + "/src/gui/platform/unix/qunixeventdispatcher.cpp",
+             # CoreText font rendering
+             ":qcoretextfontdatabase_cpp",
+             ":qfontengine_coretext_cpp",
+diff --git a/qt_source/qtbase-6.9.1/src/gui/platform/unix/qgenericunixeventdispatcher.cpp b/qt_source/qtbase-6.9.1/src/gui/platform/unix/qgenericunixeventdispatcher.cpp
+--- a/qt_source/qtbase-6.9.1/src/gui/platform/unix/qgenericunixeventdispatcher.cpp
++++ b/qt_source/qtbase-6.9.1/src/gui/platform/unix/qgenericunixeventdispatcher.cpp
+@@ -10,7 +10,7 @@
+ 
+ class QAbstractEventDispatcher *QtGenericUnixDispatcher::createUnixEventDispatcher()
+ {
+-#if !defined(QT_NO_GLIB) && !defined(Q_OS_WIN)
++#if QT_CONFIG(glib) && !defined(Q_OS_WIN)
+     if (qEnvironmentVariableIsEmpty("QT_NO_GLIB") && QEventDispatcherGlib::versionSupported())
+         return new QPAEventDispatcherGlib();
+     else

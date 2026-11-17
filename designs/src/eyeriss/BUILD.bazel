@@ -1,34 +1,40 @@
-# eyeriss RTL is assembled hermetically by Bazel: the ASIC-relevant Verilog
-# from upstream (@eyeriss_src, minus FPGA-only tops/HMI + the duplicate CSC
-# FIFO) is concatenated in stable order, the upstream empty `else if()` stub is
-# fixed to `else if (1'b0)`, and the FakeRAM IP shims (dev/macros_template.v)
-# are appended.  No dev/repo submodule, no setup.sh.
-genrule(
-    name = "gen_eyeriss",
-    srcs = [
-        "@eyeriss_src//:src_v",
-        "dev/macros_template.v",
-    ],
-    outs = ["eyeriss.v"],
-    cmd = """
-set -e
-OUT=$@
-: > "$$OUT"
-# Concatenate the source .v files in stable (repo-relative) sorted order,
-# with a normalized header path (strip the bazel external-repo prefix).
-for f in $$(echo '$(locations @eyeriss_src//:src_v)' | tr ' ' '\\n' | sort); do
-    rel=$$(echo "$$f" | sed -E 's#.*/(FPGA_design/src/.*)#\\1#')
-    echo "// ===== $$rel =====" >> "$$OUT"
-    cat "$$f" >> "$$OUT"
-    echo "" >> "$$OUT"
-done
-sed -i "s/else if()/else if (1'b0)/g" "$$OUT"
-cat $(location dev/macros_template.v) >> "$$OUT"
-""",
+# Assemble the upstream RTL with physical-bank wrappers for each technology.
+load("@rules_python//python:defs.bzl", "py_binary")
+
+py_binary(
+    name = "generate_rtl",
+    srcs = ["dev/generate_rtl.py"],
+    main = "dev/generate_rtl.py",
 )
 
+[
+    genrule(
+        name = "gen_eyeriss" if platform == "asap7" else "gen_eyeriss_" + platform,
+        srcs = [
+            "@eyeriss_src//:src_v",
+            "dev/macros_template.v",
+            "dev/generated/fakeram_" + platform + ".cfg",
+        ],
+        outs = ["eyeriss.v" if platform == "asap7" else "eyeriss_" + platform + ".v"],
+        tools = [":generate_rtl"],
+        cmd = "$(location :generate_rtl) --cfg $(location dev/generated/fakeram_" + platform + ".cfg) " +
+              "--template $(location dev/macros_template.v) --out $@ $(locations @eyeriss_src//:src_v)",
+    )
+    for platform in ["asap7", "nangate45", "sky130hd"]
+]
+
+[
+    alias(
+        name = "rtl_" + platform,
+        actual = ":gen_eyeriss" if platform == "asap7" else ":gen_eyeriss_" + platform,
+        visibility = ["//visibility:public"],
+    )
+    for platform in ["asap7", "nangate45", "sky130hd"]
+]
+
+# Preserve the original ASAP7 assembly target for existing callers.
 alias(
     name = "rtl",
-    actual = ":gen_eyeriss",
+    actual = ":rtl_asap7",
     visibility = ["//visibility:public"],
 )

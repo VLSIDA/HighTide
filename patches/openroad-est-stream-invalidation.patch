@@ -1,0 +1,55 @@
+--- a/src/est/src/EstimateParasitics.cpp
++++ b/src/est/src/EstimateParasitics.cpp
+@@ -31,6 +31,7 @@
+ #include "odb/dbTypes.h"
+ #include "odb/geom.h"
+ #include "sta/ArcDelayCalc.hh"
++#include "sta/Graph.hh"
+ #include "sta/Liberty.hh"
+ #include "sta/MinMax.hh"
+ #include "sta/Network.hh"
+@@ -61,6 +62,34 @@
+ using odb::dbInst;
+ using odb::dbMasterType;
+ using odb::dbModInst;
++
++namespace {
++// Invalidation is idempotent: it needs the connected endpoints, not the
++// sorted/deduplicated PinSet built by connectedPinIterator on large nets.
++class InvalidateConnectedDelays final : public sta::PinVisitor
++{
++ public:
++  explicit InvalidateConnectedDelays(sta::dbSta* sta) : sta_(sta) {}
++  void operator()(const sta::Pin* pin) override
++  {
++    if (auto* graph = sta_->graph();
++        graph && !sta_->network()->isHierarchical(pin)) {
++      sta::Vertex* vertex;
++      sta::Vertex* bidirect_vertex;
++      graph->pinVertices(pin, vertex, bidirect_vertex);
++      if (vertex) {
++        sta_->delaysInvalidFrom(vertex);
++      }
++      if (bidirect_vertex) {
++        sta_->delaysInvalidFrom(bidirect_vertex);
++      }
++    }
++  }
++
++ private:
++  sta::dbSta* sta_;
++};
++}  // namespace
+ 
+ EstimateParasitics::EstimateParasitics(utl::Logger* logger,
+                                        utl::ServiceRegistry* service_registry,
+@@ -497,7 +526,8 @@
+                  1,
+                  "net {} delays from fanin invalidated",
+                  sdc_network_->pathName(net));
+-      sta_->delaysInvalidFromFanin(net);
++      InvalidateConnectedDelays invalidator(sta_);
++      network_->visitConnectedPins(net, invalidator);
+     }
+   }
+   parasitics_invalid_.clear();

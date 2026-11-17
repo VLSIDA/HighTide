@@ -1,0 +1,11 @@
+--- a/FPGA_design/src/Router_Cluster/Psum_Router.v
++++ b/FPGA_design/src/Router_Cluster/Psum_Router.v
+@@ -70,7 +70,7 @@
+ // internal wire
+ wire internal_ready = (data_out_sel == TO_PE) 	? PE_out_ready 	: south_out_ready;
+ wire internal_valid = (data_in_sel == FROM_GLB) ? GLB_in_valid 	: north_in_valid;
+-wire internal_data 	= (data_in_sel == FROM_GLB) ? GLB_in 		: north_in;
++wire signed [20:0] internal_data = (data_in_sel == FROM_GLB) ? GLB_in : north_in;
+ 
+ 
+ // ====================================================================	//

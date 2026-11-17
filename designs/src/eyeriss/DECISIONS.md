@@ -5,6 +5,86 @@ See `CLAUDE.md` (root) for the canonical upstream-bug index.
 
 Macro-heavy (GLB iact/Psum SRAM spads). Uses RTLMP for macro placement.
 
+## 2026-10-18 partial-sum router width correction
+
+The upstream `Psum_Router` routes signed 21-bit ports through a scalar
+`internal_data` wire, truncating every selected value to bit zero. The declared
+archive patch `patches/eyeriss-psum-router-width.patch` makes that wire signed
+21-bit. Both router input selections, both destinations, walking bits, negative
+values and all handshake inputs pass 5888 simulation cases. The same test fails
+on the pinned original source. Run `tools/check_eyeriss_psum_router.py --help`.
+Original baseline physical results predate this fix and are diagnostic only;
+the reviewed baseline must resynthesize and route the corrected datapath.
+
+The synthesis coverage audit also reports 3195 structural combinational cycles.
+Native constant propagation finds constant-valued pins in 3192; the remaining
+three traverse AO21 A2-to-Y arcs with A1 tied low by the existing controller.
+These are inactive routing paths, not additional timing exceptions. Preserve
+the raw warnings and repeat this inspection on the final physical database.
+
+The default static STA loop breaker nevertheless cuts 18 edges that are not
+constant-disabled. The ASAP7 flow now enables `sta_dynamic_loop_breaking` in
+the source SDC and its design-local physical-stage PRE hooks, retaining the platform's
+existing Liberty suppressions. This preserves active path segments across
+stages without adding timing exceptions or changing the 2500 ps clock / 500 ps
+I/O budgets. On the same original synthesis database, both modes report setup
+638.98 ps and hold 5.21 ps; matching worst slack alone does not certify every
+path. The early width-only static trial was retired before floorplan completed.
+The selected combined trial is `asap7-eyeriss-width-hooks-20261018`; validation
+requires the setting in every physical-stage log and uses the frozen policy
+for native final-database checks.
+
+## 2026-10 SRAM depth-banking correction
+
+The committed macro names retain aggregate depth, but their LEF/LIB interfaces
+represent one physical bank. The old common wrappers instantiated one cell and
+connected the full logical address. Yosys silently resized these ports, dropping
+bank-select bits and aliasing logical addresses. Old PPA results below predate this
+correction and must be regenerated before comparisons of the intended capacity.
+
+`dev/generate_rtl.py` now expands `dev/macros_template.v` using each platform's
+existing FakeRAM cfg. Each write/read enable selects its physical bank. The read
+bank is registered on the read clock to align with synchronous macro outputs;
+1rw writes hold the selected read bank. No extra read cycle, forwarding, reset
+implementation or same-address read/write policy is introduced. Reset pins remain
+unused as before; macro collision semantics require a functional contract or
+avoidance by the caller.
+
+The unused upstream `SCNN_shape_info_compiler` is an unfinished reference helper:
+`layer0_flag` through `layer4_flag` and `psum_acc_times` are undeclared. A declared
+archive patch fixes its trailing port-list comma and empty `else if()` stub, then
+wraps that module in `` `ifndef SYNTHESIS `` so it is removed before
+synthesis parsing. No declarations, drivers, or functional behavior are invented.
+The LiveHD baseline defines `SYNTHESIS=1` and uses
+`--ignore-uninstantiated-modules` explicitly for HighTide.
+
+The three platform BUILD files select `:rtl_asap7`, `:rtl_nangate45` or
+`:rtl_sky130hd`; the original `:rtl` / `:gen_eyeriss` names retain ASAP7 compatibility.
+RTL assembly is now portable to macOS as well as Linux (no GNU-only `sed -i`).
+The unchanged 193 logical memories expand to 1040 physical banks on ASAP7,
+308 on Nangate45 and 532 on Sky130HD. No flow knobs were retuned.
+
+Validation: all three RTL assembly targets build. The reproducible check below
+passes all 21 wrapper/platform cases: LEF/Liberty address widths and physical macro
+counts, no Yosys port resizing, and simulation over every logical address with
+independent write/read clocks, cross-bank access, read latency and held read output.
+The synchronous CE-controlled behavioral models exclude simultaneous same-address
+read/write and do not establish an unspecified physical macro collision policy.
+
+A full LiveHD Slang/ABC synthesis-only check also preserves all 1040 ASAP7
+physical SRAM cells. Independent Yosys elaboration of that emitted netlist finds
+no native arrays or unmapped cells after assignment/constant-wiring cleanup.
+This does not establish full-design equivalence, timing or placement; mixed
+SRAM/standard-cell timing units still need validation before that comparison.
+
+```
+python3 designs/src/eyeriss/dev/check_wrappers.py \
+  --iverilog /path/to/iverilog --vvp /path/to/vvp --yosys /path/to/yosys
+bazel build //designs/src/eyeriss:gen_eyeriss \
+  //designs/src/eyeriss:gen_eyeriss_nangate45 \
+  //designs/src/eyeriss:gen_eyeriss_sky130hd
+```
+
 ## Active workarounds (all platforms)
 
 - **`SKIP_INCREMENTAL_REPAIR` + `SKIP_LAST_GASP`** — post-GRT `repair_timing` makes only
@@ -101,3 +181,8 @@ asap7 macros are 2–4× larger.
 **Status**: finishing — WNS +147.2 ps, hold −374.2 ps (52 violations), util 32.3 %,
 224 313 logic cells, Fmax 0.04 GHz, die 37 526 200 µm², 0 DRC. Setup headroom is now thin
 (`period_min` 24.85 ns against a 25 ns clock); see the 2026-08 section above.
+
+The attempted `PLATFORM_TCL` override was ineffective because the ASAP7 platform
+Makefile assigns it after design defaults. That early trial was retired; stage
+PRE hooks apply after the normal platform setup. Actual stage-log assertions
+prevent accepting a configuration that merely declares the desired setting.

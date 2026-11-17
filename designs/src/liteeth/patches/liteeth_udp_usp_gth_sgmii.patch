@@ -27,6 +27,26 @@
  	// Parameters.
  	.ACJTAG_DEBUG_MODE            (1'd0),
  	.ACJTAG_MODE                  (1'd0),
+@@ -11050,0 +11051,4 @@
++	.CE (1'b1),
++	.CEMASK (1'b0),
++	.CLR (1'b0),
++	.CLRMASK (1'b0),
+@@ -11062,0 +11067,4 @@
++	.CE (1'b1),
++	.CEMASK (1'b0),
++	.CLR (1'b0),
++	.CLRMASK (1'b0),
+@@ -11074,0 +11083,4 @@
++	.CE (1'b1),
++	.CEMASK (1'b0),
++	.CLR (1'b0),
++	.CLRMASK (1'b0),
+@@ -11086,0 +11099,4 @@
++	.CE (1'b1),
++	.CEMASK (1'b0),
++	.CLR (1'b0),
++	.CLRMASK (1'b0),
 @@ -11092,44 +11092,51 @@
  	.O   (eth_rx_half_clk)
  );

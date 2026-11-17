@@ -29,6 +29,7 @@ hightide_design(
     verilog_files = ["//designs/src/liteeth:liteeth_rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_grt.tcl"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
     },
@@ -43,10 +44,13 @@ hightide_design(
         "PLACE_DENSITY": "0.30",
         # ODB-1200 / RSZ-0074 (HighTide #75/#103) fixed in OpenROAD 299f3015,
         # but full repair_timing over-buffers this design on the new tools
-        # (+37% cells). Keep skipping repair and instead relax util 43→38 to
-        # shorten the critical path — recovers WNS toward the 920 ps clock
-        # with cell area unchanged (only die padding grows). See DECISIONS.md.
+        # (+37% cells). Keep skipping setup repair and relax util 43→38 to
+        # shorten the critical path. Keep CTS repair skipped; placement-based
+        # hold repair over-buffered paths and regressed final setup timing.
+        # At global route, repair hold using routed parasitics without running
+        # the problematic setup optimization (see pre_grt.tcl).
         "SKIP_CTS_REPAIR_TIMING": "1",
-        "SKIP_INCREMENTAL_REPAIR": "1",
+        "HOLD_SLACK_MARGIN": "20",
+        "SKIP_INCREMENTAL_REPAIR": "0",
     },
 )

@@ -10,38 +10,45 @@ filegroup(
     srcs = glob(["sram/lib/*.lib"]),
 )
 
-# Eyeriss v2 sparse-CNN accelerator. The ASIC top is `TOP` — the FPGA-only
-# wrappers (TOP_integration*, UART, display, IO_processing) are dropped at
-# RTL-generation time. With a 2x2 cluster-group array, each cluster group
-# instantiates 39 SRAM macros (9 iact-addr + 9 iact-data + 3 psum-data in GLB
-# plus 9 iact-spad + 9 weight-spad + 9 psum-spad per PE cluster), so the full
-# top brings in ~157 SRAM blocks plus one 4096x8 psum-rearrange BRAM.
+# Eyeriss v2 sparse-CNN accelerator, ASIC top TOP. The 193 logical memories
+# expand to 1040 physical depth banks with the current ASAP7 SRAM interfaces.
+# See designs/src/eyeriss/DECISIONS.md for the banking correction.
 hightide_design(
     name = "eyeriss",
     top = "TOP",
     platform = "asap7",
-    verilog_files = ["//designs/src/eyeriss:rtl"],
+    verilog_files = ["//designs/src/eyeriss:rtl_asap7"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
+    } | {
+        hook: [":timing.tcl"]
+        for hook in [
+            "PRE_FLOORPLAN_TCL",
+            "PRE_MACRO_PLACE_TCL",
+            "PRE_TAPCELL_TCL",
+            "PRE_PDN_TCL",
+            "PRE_GLOBAL_PLACE_SKIP_IO_TCL",
+            "PRE_IO_PLACEMENT_TCL",
+            "PRE_GLOBAL_PLACE_TCL",
+            "PRE_RESIZE_TCL",
+            "PRE_DETAIL_PLACE_TCL",
+            "PRE_CTS_TCL",
+            "PRE_GLOBAL_ROUTE_TCL",
+            "PRE_DETAIL_ROUTE_TCL",
+            "PRE_FILLCELL_TCL",
+            "PRE_DENSITY_FILL_TCL",
+            "PRE_FINAL_REPORT_TCL",
+        ]
     },
     arguments = {
         "SYNTH_HIERARCHICAL": "1",
-        # PPA-tuned: the prior 5-ns / util-40 build hit Fmax 418 MHz with
-        # +2607 ps of setup headroom.  Halve the clock to 2.5 ns (target
-        # ~400 MHz) but keep util/halo at the original 40 / 5 — earlier
-        # sweeps at util=55/halo=4 and util=45/halo=5 both hit MPL-0040
-        # on ClusterGroup_0_0 because the hierarchical macro placer hands
-        # each cluster a sub-region that gets over-packed.  RTLMP's
-        # MPL-0055 auto-relaxation went up to 0.675 effective utilization
-        # without finding a solution — bumping the global util just
-        # tightens the per-cluster fence, it doesn't help here.  The
-        # PPA win is the clock; util tightening would need hand-placement.
-        # bazel-orfs 553c1c3 / OpenROAD 299f3015: the new RTLMP fails
-        # MPL-0040 annealing on ClusterGroup_0_1 at util 40 (where the old
-        # RTLMP succeeded). Lowered util 40→30 to enlarge each cluster's
-        # macro sub-region so annealing converges (flow knob; +die area).
+        # The 1040-bank implementation cannot fit RTLMP's nested cluster
+        # regions at max level 2 (MPL-0040 in ClusterGroup_0_0). A single
+        # clustering level legalizes at the same 30% core utilization and
+        # 5-um macro halo; it does not relax spacing or enlarge the die.
+        "RTLMP_MAX_LEVEL": "1",
         "CORE_UTILIZATION": "30",
         "PLACE_DENSITY_LB_ADDON": "0.20",
         "MACRO_PLACE_HALO": "5 5",

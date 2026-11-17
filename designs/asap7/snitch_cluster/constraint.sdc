@@ -9,15 +9,11 @@ set clk_port [get_ports $clk_port_name]
 create_clock -name $clk_name -period $clk_period $clk_port
 
 set non_clock_inputs [all_inputs -no_clocks]
-# Setup uses -max (data arrives at FF.D no later than): 10 ps after launch edge.
-# Hold uses -min (data arrives no earlier than): 1500 ps after launch edge --
-# this models the external source's clock-tree latency. Without it, a single
-# value of 10 ps tells STA the input data races the on-die clock tree
-# (~1.2 ns at the deepest FF) and lands ~1.1 ns before clock capture --
-# guaranteed hold violation on every input -> deep-FF path. 1500 ps gives
-# >300 ps positive hold margin to the worst capture-side latency in the
-# design while leaving setup unchanged.
-set_input_delay -max 10   -clock $clk_name $non_clock_inputs
+# Model the assumed external source clock-tree latency consistently for
+# setup and hold. The latest arrival must not precede the earliest arrival.
+# This is a zero-width 1500 ps interface arrival window; it is an explicit
+# boundary assumption, not a measured external timing specification.
+set_input_delay -max 1500 -clock $clk_name $non_clock_inputs
 set_input_delay -min 1500 -clock $clk_name $non_clock_inputs
 set_output_delay 10 -clock $clk_name [all_outputs]
 

@@ -1,0 +1,124 @@
+# From the HighTide root (GNU make, Python 3, Bazel, LiveHD and OpenROAD):
+#   make -f Makefile.sample route RUN=runs/reference-01
+#   make -f Makefile.sample timing RUN=runs/reference-01
+# Or explore your own placement:
+#   make -f Makefile.sample explore
+# In the GUI export "Design metadata + exact macro coordinates" to design.json.
+#   make -f Makefile.sample route METADATA=design.json RUN=runs/replay-01
+# Uses an empty replay directory; choose a new RUN for the next trial.
+# LIVEHD, ORFS_FLOW, LHD and OPENROAD may point to your own installations.
+.DEFAULT_GOAL := help
+.DELETE_ON_ERROR:
+LIVEHD ?= ../livehd
+ORFS_FLOW ?= ../OpenROAD-flow-scripts/flow
+LHD ?= $(LIVEHD)/bazel-bin/lhd/lhd
+OPENROAD ?= openroad
+BAZEL ?= bazel
+PYTHON ?= python3
+THREADS ?= 4
+TOP := liteeth_udp_usp_gth_sgmii
+PLATFORM := $(ORFS_FLOW)/platforms/asap7
+TRACKS := $(PLATFORM)/openRoad/make_tracks.tcl
+DESIGN := designs/asap7/liteeth
+SRC := designs/src/liteeth
+RUN ?= runs/liteeth-replay
+GUI_RUN ?= runs/liteeth-explore
+METADATA ?= $(DESIGN)/livehd-placement.json
+INPUTS ?= runs/liteeth-inputs
+# The routed LiteEth reference uses ASAP7 RVT fast/fast cells and these SRAM views.
+# LiveHD maps with a merged library; OpenROAD reads the original files and their native units.
+LIB := $(INPUTS)/asap7-rvt-ff.lib
+NLDM := $(PLATFORM)/lib/NLDM/asap7sc7p5t
+STD_LIBS := $(NLDM)_AO_RVT_FF_nldm_211120.lib.gz $(NLDM)_INVBUF_RVT_FF_nldm_220122.lib.gz \
+            $(NLDM)_OA_RVT_FF_nldm_211120.lib.gz $(NLDM)_SIMPLE_RVT_FF_nldm_250407.lib.gz \
+            $(NLDM)_SEQ_RVT_FF_nldm_220123.lib
+SRAM := $(DESIGN)/sram
+SRAMS := fakeram_1rw1r_64w1024d_sram fakeram_1rw1r_64w64d_sram
+SRAM_LIBS := $(addprefix $(SRAM)/lib/,$(addsuffix .lib,$(SRAMS)))
+LEFS := $(PLATFORM)/lef/asap7_tech_1x_201209.lef $(PLATFORM)/lef/asap7sc7p5t_28_R_1x_220121a.lef \
+        $(addprefix $(SRAM)/lef/,$(addsuffix .lef,$(SRAMS)))
+GEN_RTL := //designs/src/liteeth:gen_liteeth_core
+RTL := bazel-bin/$(SRC)/$(TOP).v $(sort $(wildcard $(SRC)/libraries/xilinx/*.v)) $(SRC)/macros.v
+comma := ,
+space := $(empty) $(empty)
+FLAGS := --top $(TOP) --set lhd.jobs=$(THREADS) --set synth.place=true --set synth.liberty=$(LIB) \
+         --set synth.lef=$(subst $(space),$(comma),$(strip $(LEFS))) \
+         --set synth.sdc=$(DESIGN)/constraint.sdc --set synth.place.tech_rc=$(PLATFORM)/setRC.tcl \
+         --set synth.place.tracks=$(TRACKS) \
+         --set synth.timing.engine=fast \
+         --set synth.place.fp=true --set synth.place.macro=none --set synth.place.utilization=0.2 \
+         --set synth.place.threads=1 --set synth.place.timing_driven=false --set synth.place.resize=false \
+         --set synth.place.io_resynth=0 --set synth.memory=flops --set pass.abc.drop_init=true \
+         --set compile.slang.liberty_cells=true --set compile.slang.liberty_macro_precedence=true \
+         --set compile.slang.ignore_uninstantiated_modules=true --set compile.slang.unconnected_input=one \
+         --set compile.specialize_modules=true
+READER := -- -D SYNTHESIS --ignore-assertions --compat=vcs --timescale=1ns/1ps -D USE_ASAP7_CELLS
+
+.PHONY: help inputs explore replay detail cts grt route timing check-input
+help:
+	@echo 'explore: edit the floorplan in LiveHD and export a design JSON'
+	@echo 'replay -> detail -> cts -> grt -> route -> timing (each target builds its predecessors)'
+	@echo 'detail checks the exact macro poses and row legality; grt also checks pin access.'
+	@echo 'route requires all signal nets routed and zero detailed-route DRCs. timing writes SPEF and a setup/hold report.'
+	@echo 'Resume with the same RUN and METADATA. Choose a new RUN when changing the design, tools or floorplan.'
+
+inputs: $(LIB)
+	$(BAZEL) build $(GEN_RTL)
+
+# Keep the SRAM library groups in their native units; only merge the standard-cell libraries.
+$(LIB): $(STD_LIBS) $(SRAM_LIBS) tools/vslivehd/merge_liberty.py
+	@mkdir -p "$(@D)"
+	@set -eu; tmp=$$(mktemp "$@.XXXXXX"); trap 'rm -f "$$tmp"' EXIT; \
+	    "$(PYTHON)" tools/vslivehd/merge_liberty.py --dont-use '*x1p*_ASAP7*' --dont-use '*xp*_ASAP7*' \
+	        --dont-use 'SDF*' --dont-use 'ICG*' "$$tmp" $(STD_LIBS); \
+	    for lib in $(SRAM_LIBS); do printf '\n' >> "$$tmp"; cat "$$lib" >> "$$tmp"; done; \
+	    mv "$$tmp" "$@"
+
+explore: inputs
+	"$(LHD)" synth $(RTL) $(FLAGS) --set synth.place.policy.fast=true --workdir "$(GUI_RUN)" --gui --set synth.place.gui.pause=true $(READER)
+
+# Save the whole input bundle. Every later OpenDB check compares against this exact input.
+# Keep LiveHD's normal full-design placement budget for replay, even after a short GUI trial.
+check-input:
+	@if test -f "$(RUN)/design.json" && ! cmp -s "$(METADATA)" "$(RUN)/design.json"; then \
+	    echo 'Different metadata is already recorded in RUN; use a fresh RUN for this placement.' >&2; exit 1; fi
+replay: $(RUN)/replayed
+$(RUN)/replayed: $(METADATA) $(LIB) $(LEFS) $(DESIGN)/constraint.sdc $(PLATFORM)/setRC.tcl $(TRACKS) $(SRC)/macros.v $(wildcard $(SRC)/libraries/xilinx/*.v) \
+                 $(SRC)/BUILD.bazel $(SRC)/$(TOP).yml $(SRC)/liteeth_gen_main.py $(SRC)/patches/$(TOP).patch MODULE.bazel Makefile.sample | check-input
+	$(BAZEL) build $(GEN_RTL)
+	@mkdir -p "$(dir $(RUN))"
+	@mkdir "$(RUN)" || { echo 'Choose a new RUN to replay from scratch.' >&2; exit 1; }
+	cp "$(METADATA)" "$(RUN)/design.json"
+	"$(LHD)" synth $(RTL) "$(RUN)/design.json" $(FLAGS) --workdir "$(RUN)/livehd" --emit-dir "def:$(RUN)/handoff" $(READER)
+	@touch "$@"
+
+# Each OpenROAD invocation reopens the previous checked ODB in RUN. Stop at grt to
+# screen a candidate before paying for detailed routing; rerunning timing reuses routed.odb.
+FLOW := tools/vslivehd/sample_openroad.tcl
+OPENROAD_BIN := $(if $(findstring /,$(OPENROAD)),$(abspath $(OPENROAD)),$(OPENROAD))
+export SAMPLE_PYTHON := $(if $(findstring /,$(PYTHON)),$(abspath $(PYTHON)),$(PYTHON))
+export SAMPLE_PLATFORM := $(abspath $(PLATFORM))
+export SAMPLE_SDC := $(abspath $(DESIGN)/constraint.sdc)
+export SAMPLE_LIBS := $(abspath $(STD_LIBS) $(SRAM_LIBS))
+route_inputs := $(FLOW) $(STD_LIBS) $(SRAM_LIBS) $(DESIGN)/constraint.sdc $(PLATFORM)/setRC.tcl
+openroad = cd "$(RUN)" && SAMPLE_STAGE="$(1)" "$(OPENROAD_BIN)" -no_init -exit -threads "$(THREADS)" -log "$(1).log" "$(abspath $(FLOW))"
+
+detail: $(RUN)/detail.odb
+$(RUN)/detail.odb: $(RUN)/replayed $(FLOW)
+	$(call openroad,detail)
+
+cts: $(RUN)/cts.odb
+$(RUN)/cts.odb: $(RUN)/detail.odb $(route_inputs) $(TRACKS)
+	$(call openroad,cts)
+
+grt: $(RUN)/grt.odb
+$(RUN)/grt.odb: $(RUN)/cts.odb $(route_inputs)
+	$(call openroad,grt)
+
+route: $(RUN)/routed.odb
+$(RUN)/routed.odb: $(RUN)/grt.odb $(route_inputs)
+	$(call openroad,route)
+
+timing: $(RUN)/timing.rpt
+$(RUN)/timing.rpt: $(RUN)/routed.odb $(route_inputs) $(PLATFORM)/rcx_patterns.rules
+	$(call openroad,timing)

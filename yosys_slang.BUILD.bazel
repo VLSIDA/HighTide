@@ -197,7 +197,11 @@ cc_binary(
         'YOSYS_SLANG_REVISION=\\"unknown\\"',
         'SLANG_REVISION=\\"unknown\\"',
     ],
-    linkopts = ["-shared"],
+    # Yosys supplies the plugin's unresolved symbols when it loads slang.so.
+    linkopts = select({
+        "@platforms//os:macos": ["-Wl,-undefined,dynamic_lookup"],
+        "//conditions:default": ["-shared"],
+    }),
     linkshared = True,
     deps = [
         ":slang",

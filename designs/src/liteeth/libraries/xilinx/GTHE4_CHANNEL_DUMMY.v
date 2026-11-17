@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 //     Copyright (c) 1995/2017 Xilinx, Inc.
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -777,7 +777,7 @@ module GTHE4_CHANNEL_DUMMY #(
   input CPLLLOCKDETCLK,
   input CPLLLOCKEN,
   input CPLLPD,
-  input CPLLREFCLKSEL,
+  input [2:0] CPLLREFCLKSEL,
   input CPLLRESET,
   input DMONFIFORESET,
   input DMONITORCLK,
@@ -1176,10 +1176,10 @@ module GTHE4_CHANNEL_DUMMY #(
   wire rx_rst_sync;
   wire qpll0clk_int;
   wire qpll1clk_int;
-  
+
   wire loopback_en;
   assign loopback_en = (LOOPBACK != 3'b000);
-  
+
   wire clkinsel_int;
 `ifdef USE_ASAP7_CELLS
     BUFx2_ASAP7_75t_R clkinsel_buf (.A(CLKRSVD0), .Y(clkinsel_int));
@@ -1332,16 +1332,28 @@ module GTHE4_CHANNEL_DUMMY #(
     end
   end
 
-  reg rxclk_sel;
-  reg txclk_sel;
-  
+  // ASIC benchmark abstraction: forward the selected PLL reference clock.
+  // This does not implement analog PLL multiplication or serial recovery.
+  // UG576 table 2-7: SYSCLKSEL=00 selects CPLL; 10/11 select QPLL0/1.
+  reg cpllrefclk_int;
   always @(*) begin
-    rxclk_sel = RXPLLCLKSEL[0];
-    txclk_sel = TXPLLCLKSEL[0];
+    case (CPLLREFCLKSEL)
+      3'b001: cpllrefclk_int = GTREFCLK0;
+      3'b010: cpllrefclk_int = GTREFCLK1;
+      3'b011: cpllrefclk_int = GTNORTHREFCLK0;
+      3'b100: cpllrefclk_int = GTNORTHREFCLK1;
+      3'b101: cpllrefclk_int = GTSOUTHREFCLK0;
+      3'b110: cpllrefclk_int = GTSOUTHREFCLK1;
+      3'b111: cpllrefclk_int = GTGREFCLK;
+      default: cpllrefclk_int = 1'b0;
+    endcase
   end
-
-  assign rxoutclk_int = rxclk_sel ? qpll1clk_int : qpll0clk_int;
-  assign txoutclk_int = txclk_sel ? qpll1clk_int : qpll0clk_int;
+  assign rxoutclk_int = (RXSYSCLKSEL == 2'b00) ? cpllrefclk_int :
+                       (RXSYSCLKSEL == 2'b10) ? qpll0clk_int :
+                       (RXSYSCLKSEL == 2'b11) ? qpll1clk_int : 1'b0;
+  assign txoutclk_int = (TXSYSCLKSEL == 2'b00) ? cpllrefclk_int :
+                       (TXSYSCLKSEL == 2'b10) ? qpll0clk_int :
+                       (TXSYSCLKSEL == 2'b11) ? qpll1clk_int : 1'b0;
   assign rxrecclkout_int = rxoutclk_int;
 
 `ifdef USE_ASAP7_CELLS

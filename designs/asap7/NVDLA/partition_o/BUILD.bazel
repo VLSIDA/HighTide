@@ -24,5 +24,8 @@ hightide_design(
         "PLACE_DENSITY_LB_ADDON": "0.15",
         "MACRO_PLACE_HALO": "7 7",
         "TNS_END_PERCENT": "100",
+        # Zero-margin hold repair left -9.90 ps on a real register path
+        # after final extraction. Reserve margin for parasitic differences.
+        "HOLD_SLACK_MARGIN": "20",
     },
 )

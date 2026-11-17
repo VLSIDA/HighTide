@@ -1,12 +1,20 @@
 # Quick Start Guide
 
-Get a HighTide design built in under 5 minutes.
+Build a HighTide design with the pinned toolchain. The first build compiles the
+tools; large designs can take hours to place and route.
 
 ## Prerequisites
 
-- Linux (Ubuntu 24.04 recommended)
-- Docker
-- ~10 GB disk for the ORFS Docker image (pulled automatically)
+- Linux with Git, curl, Perl, and standard development tools
+- Bazelisk (the repository pins Bazel 8.5.0)
+- Network access and disk space for the pinned toolchains and build artifacts
+
+On a minimal Debian/Ubuntu amd64 host, the GUI-enabled OpenROAD binary also
+needs the X11/XCB runtime libraries. If it fails to launch with a missing shared
+library, `bash tools/setup_linux_runtime.sh` downloads those packages into
+`scratch/qt-runtime/` and adds a local runtime search path in `.bazelrc.user`.
+It does not install system packages. Retain the saved package versions,
+checksums, and local link settings with any baseline produced this way.
 
 ## Install Bazel
 
@@ -23,13 +31,17 @@ sudo chmod +x /usr/local/bin/bazel
 # branch `main` is active development and may be mid-campaign.
 git clone --branch stable git@github.com:VLSIDA/HighTide.git
 cd HighTide
+git submodule update --init --recursive
 bazel build //designs/asap7/lfsr:lfsr_final
 ```
 
 (Developing HighTide itself? Clone without `--branch stable` and work on
 `main`.)
 
-That's it. Bazel fetches ORFS, extracts OpenROAD tools from Docker, and runs the full RTL-to-GDSII flow. The first build takes longer (~5 min for lfsr) as it downloads dependencies; subsequent builds are cached.
+That's it. Bazel fetches the pinned ORFS sources and builds OpenROAD, Qt, Yosys,
+and their dependencies from source. The first build includes toolchain downloads
+and compilation; subsequent builds reuse available cached outputs.
+
 
 ## What Just Happened
 
@@ -54,7 +66,50 @@ bazel-bin/designs/asap7/lfsr/
 ./tools/summary.sh
 ```
 
-This prints a table of all completed builds with key metrics (die area, utilization, timing slack, Fmax, power, DRC count).
+This prints locally available results with area, utilization, setup slack,
+fastest-clock Fmax, and power. It can include outputs from earlier invocations;
+use an invocation snapshot for comparison baselines.
+
+For a comparison baseline, retain the results from a specific invocation:
+
+```bash
+mkdir -p artifacts/asap7-baseline
+bazel query 'filter("_final$", //designs/asap7/...) except attr(tags, "manual", //designs/asap7/...)' \
+  > artifacts/asap7-baseline/final-targets.txt
+: > artifacts/asap7-baseline/input-events.json
+python3 tools/snapshot_qor.py \
+  --events artifacts/asap7-baseline/input-events.json \
+  --output artifacts/asap7-baseline/input-snapshot
+bazel build //designs/asap7/... --keep_going \
+  --output_groups=+logs,+jsons,+reports,+drcs \
+  --build_event_json_file=artifacts/asap7-baseline/build-events.json \
+  --profile=artifacts/asap7-baseline/build-profile.gz
+python3 tools/snapshot_qor.py \
+  --events artifacts/asap7-baseline/build-events.json \
+  --output artifacts/asap7-baseline/qor
+```
+
+Run the snapshot command even if the build fails. It records each expected final
+target as built, failed, or incomplete, and only uses reports for targets that
+succeeded in that invocation. Use a new output directory for each snapshot.
+The `input-snapshot` freezes provenance before the build and is reused by the
+final snapshot, so later edits cannot be attributed to an earlier result.
+The CSV/JSON preserves negative slack and missing checks, with raw stage metrics,
+timing reports, effective SDCs, configuration files, input hashes, revision,
+submodule pins, generated netlist/SDC/SPEF hashes, and the local patch for
+reproducibility. Keep the complete run
+directory; `artifacts/` is gitignored.
+
+Review setup and hold timing, electrical-limit violation counts, and route DRCs
+before accepting a baseline. The snapshot records these checks separately;
+successful compilation does not imply timing or electrical closure.
+For multiple clocks, compare `clock_fmax_ghz` / `clock_min_period_ps` per clock:
+the flow's aggregate Fmax is the **fastest** clock, so it can hide a slower clock.
+The pinned per-clock calculation also excludes opposite-edge and multicycle
+paths; its inverse period does not guarantee all-path closure. Keep setup and
+hold results at the recorded clock targets in the comparison.
+These are predictive PDK/FakeRAM results under the recorded interface assumptions;
+matching constraints and tool pins are necessary for a meaningful comparison.
 
 ## Build Other Designs
 

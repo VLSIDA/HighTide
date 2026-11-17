@@ -42,6 +42,8 @@ hightide_design(
     verilog_files = ["//designs/src/litepci:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_grt.tcl"],
         "ADDITIONAL_LEFS": [":sram_lefs", ":phy_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs", ":phy_libs"],
     },
@@ -65,15 +67,11 @@ hightide_design(
         "MACRO_PLACE_HALO": "5 5",
         # Allow no GDS for fakeram macros and the pcie_us blackbox.
         "GDS_ALLOW_EMPTY": "fakeram.*|pcie_us",
-        # Skip the post-GRT repair_timing block.  Two reasons:
-        #  (1) ODB-1200 — InsertBufferBeforeLoads iterates a stale load list and
-        #      aborts when SplitLoadMove fires; the hold pass calls split_load too.
-        #  (2) new resizer (2026-06 tools) — repair_timing does not converge on the
-        #      forwarded-clock reg2reg path (WNS ~-898 ps is a structural LiteX
-        #      user_clk feedthrough, not silicon; TNS decays asymptotically and the
-        #      pass never terminates, ~1450 iters/hr with no closure).
-        # NOTE: this arg was previously described in a comment but never actually
-        # set, so the flow ran the (non-converging) repair anyway.  Now set.
-        "SKIP_INCREMENTAL_REPAIR": "1",
+        # Full post-GRT setup repair previously did not converge on the
+        # forwarded-clock path. Retry hold-only repair at the current pin to
+        # address the measured register-to-FakeRAM hold violation; keep setup
+        # optimization disabled through pre_grt.tcl. Final validation pending.
+        "SKIP_INCREMENTAL_REPAIR": "0",
+        "HOLD_SLACK_MARGIN": "20",
     },
 )

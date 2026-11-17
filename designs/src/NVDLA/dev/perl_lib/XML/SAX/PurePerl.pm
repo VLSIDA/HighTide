@@ -308,10 +308,10 @@ sub CDSect {
     
     $self->start_cdata({});
     
-    $data = $reader->data;
+    $data = $reader->data(3);
     while (1) {
         $self->parser_error("EOF looking for CDATA section end", $reader)
-            unless length($data);
+            unless length($data) >= 3;
         
         if ($data =~ /^(.*?)\]\]>/s) {
             my $chars = $1;
@@ -320,9 +320,12 @@ sub CDSect {
             last;
         }
         else {
-            $self->characters({Data => $data});
-            $reader->move_along(length($data));
-            $data = $reader->data;
+            # Keep two characters so a closing ']]>' split across stream
+            # reads is recognized on the next iteration.
+            my $length = length($data) - 2;
+            $self->characters({Data => substr($data, 0, $length)});
+            $reader->move_along($length);
+            $data = $reader->data(3);
         }
     }
     $self->end_cdata({});

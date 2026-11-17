@@ -16,6 +16,8 @@ hightide_design(
     verilog_files = ["//designs/src/NyuziProcessor:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_CTS_TCL": [":pre_cts.tcl"],
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_grt.tcl"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
         "PDN_TCL": [":pdn.tcl"],
@@ -24,6 +26,8 @@ hightide_design(
         # on the bazel-orfs 553c1c3 / OpenROAD 299f3015 upgrade.
     },
     arguments = {
+        # The ASAP7 macro interface includes active-high write-mask ports.
+        "VERILOG_DEFINES": "-D USE_ASAP7_CELLS",
         "SYNTH_HIERARCHICAL": "1",
         "CORE_UTILIZATION": "65",
         "PLACE_DENSITY_LB_ADDON": "0.22",

@@ -12,6 +12,32 @@ Per-platform notes for NVDLA `nv_small` (NVIDIA Deep Learning Accelerator), spli
 
 FakeRAM macros live at `designs/<platform>/NVDLA/sram/{lef,lib}/`; the per-partition filegroups in each platform's `BUILD.bazel` carry the macros each partition needs.
 
+## 2026-10-18 partition_c upstream control contract
+
+The ASAP7 partition_c SDC omitted all seven source exceptions in the pinned
+upstream `syn/cons/NV_NVDLA_partition_c.sdc`, although its comment claimed
+the reset exceptions were already present. Restore that exact upstream block
+for `direct_reset_`, `dla_reset_rstn`, `test_mode`, `pwrbus_ram_pd*`,
+`tmc2slcg_disable_clock_gating`, `global_clk_ovr_on` and `nvdla_clk_ovr_on`.
+The RTL reset uses asynchronous assertion and a clocked synchronizer for
+release. Clock-override inputs also enter synchronizers. The upstream block
+defines the functional-mode treatment of these reset/static controls.
+
+Keep the 1500 ps clock, 300 ps functional I/O budget and existing network
+settings. No internal register or clock-gating path is excluded. On the same
+original extracted database, setup WNS/TNS remain exactly −399.439362 ps /
+−4568.410156 ps. Hold WNS changes from −730.542175 to −651.738770 ps and hold
+TNS from −676262.062500 to −390193.437500 ps; substantial genuine failures remain.
+All three newly unconstrained first-stage D pins trace only to the listed
+upstream sources; timing between reset-synchronizer registers remains present.
+
+The incomplete-contract hold-only trial was retired. Its replacement is
+`artifacts/asap7-partition-c-control-contract-20261018`, with the same scoped
+20 ps routed hold guard. Final validation checks the exact upstream exception
+block, unchanged remaining constraints, actual endpoint fanin, and macro count.
+The earlier claim that removing async-pin exceptions from C was redundant was
+incorrect until this missing source block was restored.
+
 ## Hermetic RTL sourcing (2026-07)
 
 NVDLA's RTL (`vmod/`, 546 files) is the *output* of NVDLA's spec build: `tmake -build vmod` over the parameterized `nvdla/hw` `nv_small` source, with a pre-baked `NV_NVDLA_cfgrom.v` substituted. The retired `dev/setup.sh` did this by downloading and running Perl 5.10.1 + Python 2.7.18 + JDK11 + SystemC 2.3.0 — the deferred hard case.
@@ -62,6 +88,55 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 | p | 16x160, 65x160, 14x80, 66x80 | – |
 
 ## asap7
+
+- **2026-10 partition_c baseline audit (validation pending)**: at the
+  unchanged 1500 ps target, final setup WNS -399.439 ps (32 violations),
+  hold -730.542 ps (5730 violations), route DRC 0, 3543 slew and 4 cap
+  violations. The old workarounds disabled both CTS and global-route timing
+  repair. A routed hold-only hook now uses a 20 ps margin; setup repair
+  remains skipped, with RTL, clock and I/O constraints unchanged. This
+  already setup-negative design must retain its actual setup result;
+  hold/DRC and finite timing are required to validate the candidate.
+
+- **2026-10 partition_o baseline audit (validated)**: original setup WNS
+  +63.1841 ps and route DRC 0, but final hold WNS -9.89914 ps with 95
+  violations. The worst path is internal to `u_NV_NVDLA_mcif` (FIFO output
+  register to FIFO data register), not an inter-clock or boundary exception.
+  CTS hold slack was +0.00316 ps and global-route slack -0.18868 ps. Added
+  20 ps hold margin; both clock contracts and all interface constraints stay
+  unchanged. Final extraction gives setup +67.979 ps, hold +4.06997 ps,
+  zero setup/hold violations and route DRC 0. There are 259 slew violations;
+  cap and fanout checks are zero. The two reported clock Fmax values are
+  0.565545 GHz (core) and 3.11938 GHz (falcon); the aggregate fastest-clock
+  number must not be used as whole-design frequency.
+
+- **2026-10 partition_o clock-port filter audit (reviewed-build validation pending)**:
+  the SDC used `lsearch -exact` with the pattern `^($clk_port|$clk_falcon_port)$`.
+  That matches neither clock port, so both remained in the data input collection;
+  OpenSTA reported STA-0441 for the core clock's self-referenced input delay.
+  Exclude each actual clock port with an exact search instead. The 2000/2500 ps
+  clock periods and 400 ps data input/output delays are unchanged. The earlier
+  validated hold-margin snapshot predates this additional SDC correction and
+  retains its frozen inputs; the unified reviewed run will validate both fixes.
+  A native check with the same original final database, extracted SPEF and
+  libraries confirms 760 → 758 input ports, no clock ports in the corrected
+  data collection, and no STA-0441. Worst setup/hold remain +63.18/−9.90 ps
+  at 0.01 ps report precision. The check is retained in the original run's
+  `partition-o-constraint-audit.json`.
+
+- **2026-10 partition_p baseline audit (validated)**: original setup WNS
+  +69.0595 ps, but one final removal/hold violation at -5.59047 ps on the
+  internal synchronized reset tree. The same check was just positive at
+  CTS (+0.00838 ps) and global route (+0.28805 ps). Added a 20 ps hold-repair
+  margin to account for the measured route/extraction shift. Clock and
+  interface constraints remain unchanged. Final extraction with the margin
+  gives setup +66.098 ps, hold +8.30364 ps, zero setup/hold violations and
+  route DRC 0. There are 628 slew violations, recorded as an electrical
+  limitation. The partition_p target completed and its reports were archived
+  before the combined invocation's obsolete LitePCI trial was canceled.
+  Synthesized netlist and synthesis SDC are byte-identical to the original;
+  the repair adds 1682 timing buffers with sequential/combinational counts
+  unchanged (stdcell area 13249.8 → 13372.4 um²).
 
 **Status**: partitions `a`, `m`, `o` cached on remote build cache; partition `c` finishing locally (local sweep `6_final`, 2026-05-16); partition `p` not yet finishing.
 

@@ -8,6 +8,8 @@ A VLSI design benchmark suite that runs open-source hardware designs through the
 
 **New here?** See the **[Quick Start Guide](docs/quickstart.md)** to build your first design in 5 minutes. For the full, up-to-date list of designs and the platforms each one closes on, see the **[Design Catalog](docs/designs.md)**.
 
+To replay and signal-route the [five-SRAM ASAP7 LiteEth placement](designs/asap7/liteeth/livehd-placement.json), run `make -f Makefile.sample route RUN=runs/reference-01`. The [sample recipe](Makefile.sample) checks the saved macro masters, coordinates and orientations through detailed placement, CTS and routing. Stop at `grt` for pin access and congestion feedback before detailed routing. A successful `route` writes `routed.odb` and `routed.def` with zero signal-routing DRCs. Run `make -f Makefile.sample timing RUN=runs/reference-01` to extract SPEF and report setup and hold slack at the fast corner; a clean route can still miss timing. For another placement, use `explore`, export the complete design JSON, then pass `METADATA=design.json` and a fresh `RUN`.
+
 ## How It Works
 
 Each design's upstream source is pinned in the root `MODULE.bazel` as a hermetic `http_archive` (`@<design>_src`) at a fixed upstream commit — there is no git submodule and no vendored copy of the RTL in the repo. At build time Bazel fetches that archive and compiles the native HDL (SystemVerilog, Chisel, LiteX/migen, etc.) down to plain Verilog using pinned conversion tools (e.g. [sv2v](https://github.com/zachjs/sv2v), Chisel under `rules_scala`, NNgen), applying any design-specific patches declaratively. The per-design build logic lives in `designs/src/<design>/external.BUILD.bazel`, and the rationale behind each design's tuning is recorded in `designs/src/<design>/DECISIONS.md`. Embedded SRAM memories are replaced with black-box macros so the design can be synthesized without an SRAM compiler.
@@ -188,6 +190,8 @@ This cannot modify flow Tcl scripts (`FLOW_HOME` is pinned) — use the
 `config.mk` path above for flow-script or flow-step changes.
 
 ## Documentation
+
+- **[LiveHD comparison guide](vslivehd.md)** — matched inputs, resynthesis-off controls, pre-CTS metrics, and CTS/route handoff
 
 - **[Quick Start Guide](docs/quickstart.md)** — install, build, and view results
 - **[Design Catalog](docs/designs.md)** — all designs, platforms, variants, and complexity

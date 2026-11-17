@@ -17,3 +17,5 @@ set_driving_cell -lib_cell DFFHQNx2_ASAP7_75t_R -pin QN $non_clock_inputs
 set dff_d_cap 0.683716
 set_load [expr 4.0 * $dff_d_cap] [all_outputs]
 
+# Reset is an asynchronous control input, not a functional timing path.
+set_false_path -from [get_ports RESETN]

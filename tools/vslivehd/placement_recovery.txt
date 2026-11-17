@@ -1,0 +1,62 @@
+Optional unchanged-netlist placement: checkpoints and command syntax
+
+These steps apply only to an explicitly invoked comparison or repair workflow.
+They do not change HighTide flow defaults. Keep the selected binary, libraries,
+constraints, placement options, and resource limits frozen for a comparison.
+
+OpenROAD accepts a two-axis displacement as one Tcl list argument:
+
+  set displacement {5 1}
+  improve_placement -max_displacement $displacement
+
+The equivalent environment form is:
+
+  improve_placement -max_displacement $::env(DPO_MAX_DISPLACEMENT)
+
+Expanding the list with {*} passes an extra positional argument and fails with
+STA-0564 in the tested tool. Validate optional commands on a small frozen input
+before running a long placement job.
+
+Save checkpoints immediately after the existing global_placement command returns
+and again after detailed legalization, before optional improvement:
+
+  write_db $::env(RESULTS_DIR)/3_global.odb
+  write_sdc $::env(RESULTS_DIR)/3_global.sdc
+  set_placement_padding -global -left 0 -right 0
+  detailed_placement
+  write_db $::env(RESULTS_DIR)/3_legalized.odb
+  write_sdc $::env(RESULTS_DIR)/3_legalized.sdc
+  improve_placement -max_displacement $::env(DPO_MAX_DISPLACEMENT)
+  optimize_mirroring
+  check_placement -verbose
+  write_db $::env(RESULTS_DIR)/3_replacement.odb
+  write_sdc $::env(RESULTS_DIR)/3_replacement.sdc
+
+Use the experiment's existing padding and placement options. The zero padding
+above documents the matched CNN/Eyeriss experiment; it is not a platform default.
+An ODB checkpoint preserves rows, tracks, ports, fixed instances and connectivity;
+the paired SDC preserves constraints. Reload using the same libraries and flow
+setup before applying the remaining steps. Audit all masters, signal and clock
+endpoint sets, port geometry, die/core, and every fixed instance before CTS.
+Keep optional electrical repair separate from the unchanged-netlist checkpoint.
+
+Run each attempt from immutable scripts. Preserve failed logs, process status,
+runtime and profiles. Correct a failed adapter in a new frozen copy, and resume
+from a verified checkpoint when one exists. An exited process without a written
+checkpoint does not provide a supported way to recover its placement coordinates.
+
+Validation and recovery evidence, 2026-10-21:
+
+  livehd/tmp/route_cts_eval_20261021/cnn/replacement_syntax_probe/
+  livehd/tmp/route_cts_eval_20261021/cnn/replacement_adapter_recovery.json
+
+The ten-cell probe used the exact frozen CNN OpenROAD executable, SHA256
+65ec9f1e8ccddce3ef5e9ec0d67b49353eed4ef9377bf5362dde7b84a45656d4.
+It completed improve_placement, optimize_mirroring, check_placement and write_db
+with exit zero and no overlap, row or site errors. This is a syntax/workflow smoke
+check, not a routed quality result. The full corrected comparison is recorded
+separately under the replace_cells_listfix stage with perf record/stat and a
+55 GiB process-tree RSS guard.
+
+The faulty call originated in experiment replace_cells.tcl scripts. The existing
+durable control.tcl does not invoke improve_placement and required no code change.

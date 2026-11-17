@@ -7,13 +7,16 @@ hightide_design(
     verilog_files = ["//designs/src/NVDLA:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_grt.tcl"],
         "ADDITIONAL_LEFS": ["//designs/asap7/NVDLA:sram_lefs_c"],
         "ADDITIONAL_LIBS": ["//designs/asap7/NVDLA:sram_libs_c"],
     },
     stage_data = {"synth": ["//designs/src/NVDLA:include"]},
     arguments = {
         "SYNTH_HIERARCHICAL": "1",
-        "VERILOG_INCLUDE_DIRS": "bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/include bazel-out/k8-fastbuild/bin/designs/src/NVDLA/vmod/vlibs",
+        # Derive generated include paths from the declared headers so this
+        # works for every Bazel platform/configuration, including macOS opt.
+        "VERILOG_INCLUDE_DIRS": "$(sort $(dir $(locations //designs/src/NVDLA:include)))",
         "CORE_UTILIZATION": "30",
         "PLACE_DENSITY_LB_ADDON": "0.30",
         "MACRO_PLACE_HALO": "5 5",
@@ -27,7 +30,8 @@ hightide_design(
         # Post-GRT repair_timing also hangs silently for >85 min on k8s
         # under the new bsg_fakeram macros — same non-convergence
         # pattern as liteeth/asap7 (88b7ef46) and cnn/asap7 (9d9c5309).
-        # Skip it; route's own hold-repair still runs.
-        "SKIP_INCREMENTAL_REPAIR": "1",
+        # Keep setup repair disabled, but repair hold on routed parasitics.
+        # Skipping both left -730.54 ps final hold slack (5730 violations).
+        "SKIP_INCREMENTAL_REPAIR": "0",
     },
 )

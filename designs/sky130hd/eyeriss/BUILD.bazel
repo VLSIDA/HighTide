@@ -14,12 +14,13 @@ filegroup(
 # but FakeRAMs regenerated for the 130nm metal stack via
 # designs/src/eyeriss/dev/generated/fakeram_sky130hd.cfg. The sky130hd
 # memories are still ~30x the asap7 area, so floorplan utilization is
-# intentionally loose to give the placer room around ~157 macros.
+# intentionally loose. Corrected wrappers expand 193 logical memories into 532
+# physical banks; prior placement results need to be regenerated.
 hightide_design(
     name = "eyeriss",
     top = "TOP",
     platform = "sky130hd",
-    verilog_files = ["//designs/src/eyeriss:rtl"],
+    verilog_files = ["//designs/src/eyeriss:rtl_sky130hd"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],

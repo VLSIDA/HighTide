@@ -17,7 +17,7 @@ hightide_design(
     name = "eyeriss",
     top = "TOP",
     platform = "nangate45",
-    verilog_files = ["//designs/src/eyeriss:rtl"],
+    verilog_files = ["//designs/src/eyeriss:rtl_nangate45"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],

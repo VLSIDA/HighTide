@@ -1,0 +1,32 @@
+--- a/src/dpl/src/PlacementDRC.cpp
++++ b/src/dpl/src/PlacementDRC.cpp
+@@ -333,7 +333,11 @@
+ 
+ bool PlacementDRC::checkPadding(const Node* cell) const
+ {
+-  return checkPadding(cell, grid_->gridX(cell), grid_->gridRoundY(cell));
++  // Blocks may have off-row origins. Rounding up translates their footprint
++  // and can falsely reject a legal standard cell just above the true top edge.
++  const GridY y = cell->isBlock() ? grid_->gridSnapDownY(cell)
++                                : grid_->gridRoundY(cell);
++  return checkPadding(cell, grid_->gridX(cell), y);
+ }
+ 
+ // CLASSes are grouped as follows
+@@ -357,9 +361,14 @@
+                                 const GridX x,
+                                 const GridY y) const
+ {
+-  const GridX cell_x_end = x + grid_->gridWidth(cell);
++  // Keep the fractional origin when computing a block's covered pixels.
++  // Standard-cell candidates are row/site aligned and keep the usual bounds.
++  const GridX cell_x_end
++      = cell->isBlock() ? x + grid_->gridEndX(cell) - grid_->gridX(cell)
++                        : x + grid_->gridWidth(cell);
+   const GridY cell_y_end
+-      = grid_->gridEndY(grid_->gridYToDbu(y) + cell->getHeight());
++      = cell->isBlock() ? y + grid_->gridEndY(cell) - grid_->gridSnapDownY(cell)
++                        : grid_->gridEndY(grid_->gridYToDbu(y) + cell->getHeight());
+ 
+   // Get the cell's padding requirements
+   const GridX left_pad = padding_->padLeft(cell);

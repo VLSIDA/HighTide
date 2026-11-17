@@ -1,3 +1,7 @@
+# Preserve active paths through constant-controlled routing cycles. The
+# physical stage hooks repeat this after normalized SDC serialization.
+set ::sta_dynamic_loop_breaking 1
+
 current_design TOP
 
 set clk_name  clock

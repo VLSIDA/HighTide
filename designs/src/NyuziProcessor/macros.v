@@ -1,3 +1,6 @@
+// These wrappers implement whole-word writes. ASAP7 FakeRAM macros expose
+// active-high per-bit masks; assert every bit instead of floating the pins.
+// Legacy unmasked platform interfaces and macro geometry stay unchanged.
 module fakeram_1r1w_3x64 (
 	clk,
 	read_en,
@@ -26,6 +29,9 @@ module fakeram_1r1w_3x64 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read_en),
    		.w0_ce_in	   (1'b1)
 	);
@@ -58,6 +64,9 @@ module fakeram_1r1w_7x256 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read_en),
    		.w0_ce_in	   (1'b1)
 	);
@@ -90,6 +99,9 @@ module fakeram_1r1w_1x256 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read_en),
    		.w0_ce_in	   (1'b1)
 	);
@@ -122,6 +134,9 @@ module fakeram_1r1w_18x256 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read_en),
    		.w0_ce_in	   (1'b1)
 	);
@@ -154,6 +169,9 @@ module fakeram_1r1w_16x52 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read_en),
    		.w0_ce_in	   (1'b1)
 	);
@@ -186,6 +204,9 @@ module fakeram_1r1w_20x64 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read_en),
    		.w0_ce_in	   (1'b1)
 	);
@@ -218,6 +239,9 @@ module fakeram_1r1w_512x256 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in     (write_en),
 		.w0_wd_in     (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	  (read_en),
    		.w0_ce_in	  (1'b1)
 	);
@@ -250,6 +274,9 @@ module fakeram_1r1w_512x2048 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in     (write_en),
 		.w0_wd_in     (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	  (read_en),
    		.w0_ce_in	  (1'b1)
 	);
@@ -291,6 +318,9 @@ module fakeram_2r1w_20x64 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read1_en),
 		.r1_ce_in      (read2_en),
    		.w0_ce_in	   (1'b1)
@@ -333,6 +363,9 @@ module fakeram_2r1w_32x128 (
 		.w0_addr_in   (write_addr),
 		.w0_we_in  (write_en),
 		.w0_wd_in  (write_data),
+`ifdef USE_ASAP7_CELLS
+		.w0_wmask_in ({DATA_WIDTH{1'b1}}),
+`endif
    		.r0_ce_in 	   (read1_en),
 		.r1_ce_in      (read2_en),
    		.w0_ce_in	   (1'b1)

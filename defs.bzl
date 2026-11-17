@@ -13,7 +13,7 @@ PDKS = {
 def _gallery_image(name, src):
     """Render a final-stage screenshot from a routed ODB.
 
-    Produces <name>.png via xvfb-run + OpenROAD GUI.
+    Produces <name>.png via the OpenROAD GUI's offscreen Qt platform.
     """
     orfs_run(
         name = name,
@@ -23,7 +23,7 @@ def _gallery_image(name, src):
             "GALLERY_IMAGE": "$(location :" + name + ".png)",
             "OR_ARGS": "-gui",
         },
-        extra_args = "OPENROAD_CMD='xvfb-run -a $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)'",
+        extra_args = "OPENROAD_CMD='QT_QPA_PLATFORM=offscreen $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)'",
         script = "//tools/gallery:final_image.tcl",
     )
 
@@ -83,6 +83,21 @@ def hightide_design(name, platform, verilog_files, top = None, arguments = {}, s
     if top:
         flow_kwargs["top"] = top
     flow_kwargs.update(kwargs)
+
+    # genMetrics.py reads 5_1_grt.log in addition to the stage JSON/reports.
+    # bazel-orfs deliberately excludes earlier logs from normal stage inputs
+    # to avoid read-only log/write collisions. Add this log only to metadata,
+    # which reads it without overwriting it; preserve per-design stage data.
+    metadata_grt_logs = name + "_metadata_grt_logs"
+    native.filegroup(
+        name = metadata_grt_logs,
+        srcs = [":" + name + "_grt"],
+        output_group = "logs",
+        tags = ["manual"],
+    )
+    stage_data = dict(flow_kwargs.get("stage_data", {}))
+    stage_data["generate_metadata"] = stage_data.get("generate_metadata", []) + [":" + metadata_grt_logs]
+    flow_kwargs["stage_data"] = stage_data
 
     orfs_flow(**flow_kwargs)
 

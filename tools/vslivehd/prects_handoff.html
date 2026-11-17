@@ -1,0 +1,66 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Explicit pre-CTS physical handoff</title>
+<style>body{font:16px system-ui;max-width:1000px;margin:3em auto;line-height:1.5}table{border-collapse:collapse}th,td{padding:.5em;border:1px solid #bbb;text-align:left}pre{overflow:auto;background:#f5f5f5;padding:1em}code{font-size:.9em}</style>
+<h1>Explicit pre-CTS physical handoff</h1>
+<p><a href="prects_handoff.tcl">prects_handoff.tcl</a> provides optional Tcl procedures for a loaded OpenROAD design. Sourcing the file performs no edits and changes no flow defaults. The caller supplies common Liberty/LEF, authoritative SDC, routing tracks, audit destinations and displacement bounds.</p>
+<table>
+<tr><th>Procedure</th><th>Arguments</th><th>Behavior</th></tr>
+<tr><td><code>vslivehd::snap_macro_pins</code></td><td><code>audit.tsv max_shift_um</code></td><td>Uses OpenROAD's macro track snap; preserves orientation and placement status. Rejects excessive movement, macro overlap or a final box outside the core. Restores all original macro locations/statuses on failure.</td></tr>
+<tr><td><code>vslivehd::snap_io_pins</code></td><td><code>audit.tsv horizontal_layer vertical_layer max_shift_um</code></td><td>Retains valid existing geometry. For invalid single-box signal ports, selects the layer matching the nearest original die edge, uses technology minimum width/area, snaps the preferred coordinate to actual routing tracks and clamps the complete box inside the die. Retains the original normal coordinate when it already fits, including legal interior BTerms. Validates all proposed rectangles before edits and rejects overlap or edge/corner contact between distinct port nets on the same layer, including stationary signal and rectangular PG pins. Same-net overlap is permitted. BTerm identities, nets, directions and placement statuses remain unchanged. Audits every old/new layer, box and displacement; restores original IO geometry on failure. This prevents direct metal contact; it is not a complete technology spacing-DRC check.</td></tr>
+<tr><td><code>vslivehd::cleanup_clock_buffers</code></td><td><code>audit_directory</code></td><td>Selects only Liberty-certified identity buffers reached from declared clock sources or clock-tagged non-BUF/INV output boundaries. Preserves inverters, gates, all declared source instances and all surviving instance geometry. Materializes generated-clock relationships without a full timing solve before collecting membership. Audits per-clock membership/source/period/waveform and per-boundary sink reachability/polarity after explicitly invalidating STA delay and arrival state.</td></tr>
+<tr><td><code>vslivehd::protect_clock_roots</code></td><td><code>audit.tsv</code></td><td>Marks instances containing explicitly constrained clock source pins as dont-touch. Ports are preserved without protecting unrelated instances. Records each source's master, net, direct driver count and direct sink count. Invoke before <code>repair_clock_inverters</code> and CTS.</td></tr>
+<tr><td><code>vslivehd::associate_clock_root_pg</code></td><td><code>audit_directory power_net ground_net</code></td><td>Explicit single-power-domain PG association after global connections/infrastructure. Validates existing canonical POWER/GROUND nets, temporarily clears only declared non-port source-instance dont-touch flags to connect missing known PG pins, marks those PG ITerms special for canonical DEF power-net serialization, then restores every flag. Preserves all signal endpoints, ports, masters, geometry and clocks. Audits every instance PG ITerm; rejects non-root missing or noncanonical PG connections. Rolls back new associations if a postcondition fails.</td></tr>
+<tr><td><code>vslivehd::clock_membership</code></td><td>No arguments → snapshot</td><td>Read-only snapshot of every declared clock period, generated flag, exact source pins and register clock-pin membership. Materializes lazy generated-clock relationships first. Compare before and after CTS or repair; record <code>report_clock_properties</code> separately for waveforms.</td></tr>
+<tr><td><code>vslivehd::freeze_clock_roots</code> / <code>verify_clock_roots</code></td><td><code>audit.tsv</code> → snapshot; <code>snapshot audit.tsv</code></td><td>Explicit matched CTS policy. After source protection, freeze marks every declared non-port source instance FIRM and returns its original master, origin, orientation, status and protection snapshot. Verify rejects source-instance, master, location, orientation, FIRM-status or protection changes after CTS/repair. No default flow invokes this policy.</td></tr>
+</table>
+<p>All distances passed to these APIs are microns; TSV box coordinates and displacements use the design's DBU. Snap audits expose the actual movement. A bound is an assertion, not permission to conceal a larger displacement.</p>
+<h2>Call order</h2>
+<pre><code># Load common Liberty, LEF/DEF or ODB, intended SDC and platform RC first.
+# Create the platform's actual routing tracks before snapping.
+source tools/vslivehd/prects_handoff.tcl
+file mkdir audits
+write_db raw_input.odb
+write_sdc -no_timestamp raw_input.sdc
+
+# Explicit study choices, not new defaults; ASAP7 IO policy uses M4/M5.
+vslivehd::snap_macro_pins audits/macros.tsv 0.1
+vslivehd::snap_io_pins audits/io.tsv M4 M5 1.0
+vslivehd::cleanup_clock_buffers audits/clocks
+vslivehd::protect_clock_roots audits/roots.tsv
+write_db prepared.odb
+write_sdc -no_timestamp prepared.sdc
+
+# In a fresh OpenROAD process: load prepared.odb + prepared.sdc.
+# Add matching taps/endcaps, row cuts, PDN and global PG connections if absent.
+# Do not duplicate routing tracks or infrastructure already present in the ODB.
+# Reapply source protection and repair clock inverters. For an explicitly
+# matched fixed-root experiment, before real CTS on BOTH branches:
+vslivehd::protect_clock_roots audits/protected_roots.tsv
+set root_snapshot [vslivehd::freeze_clock_roots audits/fixed_roots_before.tsv]
+set clock_snapshot [vslivehd::clock_membership]
+report_clock_properties [all_clocks] &gt; audits/clocks_before_cts.rpt
+clock_tree_synthesis -sink_clustering_enable -repair_clock_nets
+vslivehd::verify_clock_roots $root_snapshot audits/fixed_roots_after.tsv
+if {[vslivehd::clock_membership] ne $clock_snapshot} {error "CTS changed declared clocks"}
+report_clock_properties [all_clocks] &gt; audits/clocks_after_cts.rpt
+# Compare the saved waveform reports before accepting the result.
+# global_connect skips dont-touch source instances; associate their PG explicitly
+# once canonical nets and the full platform PG infrastructure exist:
+global_connect
+vslivehd::associate_clock_root_pg audits/root_pg VDD VSS
+# Repeat the same PG audit after CTS/repair creates new cells.
+# Continue common GRT -> detailed routing -> extracted RCX with all clocks.</code></pre>
+<p>Checkpoint before each edit and retain failure logs. Macro and IO snapping restore their original geometry on error; buffer cleanup still requires discarding the edited in-memory database after a failed audit. IO normalization requires rectangular PG BPin geometry for its stationary-pin collision audit and a positive technology manufacturing grid when creating a shape. Buffer cleanup changes the clock network and its buffer cell count; report those changes separately from placement and electrical repair. Keep pre/post CTS clock counts, sink memberships and nonzero buffering evidence.</p>
+<h2>Optional isolated IO regression</h2>
+<pre><code>python3 tools/vslivehd/prects_handoff_check.py --openroad /path/to/openroad
+# Add --workdir /path/to/audit-directory to retain fixtures and logs.</code></pre>
+<p>This explicit check embeds a minimal technology LEF and two-port DEF fixtures. It needs no benchmark inputs or Liberty files and invokes no placement or routing. It tests colliding proposals, collisions with stationary signal/PG pins, edge and corner contact, valid adjacency and idempotence, same-net overlap, movement-guard rejection, and original-geometry restoration after injected creation or mid-commit deletion failures. Sourcing the helper is also checked to make no IO edits. It is not added to default flows or LiveHD tests.</p>
+<p>The eleven cases passed on the frozen 65ec and c640 OpenROAD tools. Fresh-load checks of the saved normalized CNN, Eyeriss and LiteEth IO checkpoints passed the contact test with zero shape, net, direction or status changes (367, 59 and 246 total BTerms respectively, including PG ports). Evidence is under <code>livehd/tmp/route_cts_eval_20261021/cnn/review_smokes/</code>: <code>durable_io_contact_checks/results.json</code>, <code>durable_io_contact_checks_c640/results.json</code> and <code>saved_io_contact/summary.json</code>. No running frozen benchmark helper was changed.</p>
+<h2>Validation and comparison limits</h2>
+<p>Protected-root PG validation found four missing native root VDD/VSS ITerms because OpenDB global connections skip dont-touch instances. The opt-in association corrected exactly those four among 79,678 PG ITerms, with zero missing afterward. Repeating it made zero edits. Wrong canonical net types were rejected before edits; an intentionally injected postcondition failure rolled back all four associations and restored exact protection and signal geometry. Older uncorrected route checkpoints are diagnostic until a PG-corrected checkpoint is validated.</p>
+<p>A focused fresh-load validation on the frozen release OpenROAD verified generated TX/RX periods change from lazy zero values to the intended 12800 ps through <code>sta::update_generated_clks</code>, without a timing solve or any instance master, coordinate, orientation or status edit. Repeated snapshots are identical.</p>
+<p>The October 21 LiteEth tests exercised macro and IO snapping, certified clock-buffer cleanup and source protection. An intentional zero-displacement macro guard failure restored every original macro location, orientation and placement status. Current native LiteEth normalized 244 signal ports with a maximum displacement of 33 nm per axis and 54 nm Manhattan distance, removed exactly 441 certified clock buffers and retained all four source/generated clock memberships and polarities. A fresh database reload preserved the clock census. The current-RTL OpenROAD reference required zero IO changes and zero buffer removals; its five macros required zero track-snap movement.</p>
+<p>CTS can relocate a dont-touch generated-clock source. The optional FIRM-root policy was validated against the saved LiteEth CTS experiment: both declared source masters, origins and orientations remained exact through CTS and full routing, with all four clock memberships preserved. An injected root movement was rejected by the verification API. Apply the same explicit root-placement policy to both comparison branches.</p>
+<p>These checks establish the handoff invariants. Routing feasibility and timing closure require the downstream run. Report detailed-route DRC count, unrouted nets, extracted SPEF/corner, setup and hold separately. A positive setup slack does not establish hold closure. Compare placements on the same logical netlist and fixed macro/IO frame when attributing a difference to placement; whole-flow comparisons must also disclose RTL, cell-count, clock-domain and core differences.</p>
+<p>The benchmark records are under <code>livehd/tmp/route_cts_eval_20261021/liteeth/</code>, with per-run frozen helper/runner hashes, full stage checkpoints, perf record/stat, clock inventories and structural audits. Historical October 20 inputs are labeled separately from current regenerated RTL.</p>

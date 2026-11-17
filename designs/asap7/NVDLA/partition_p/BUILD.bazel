@@ -18,5 +18,8 @@ hightide_design(
         "PLACE_DENSITY_LB_ADDON": "0.25",
         "MACRO_PLACE_HALO": "5 5",
         "TNS_END_PERCENT": "100",
+        # Zero-margin hold repair left one -5.59 ps removal violation after
+        # final extraction. Keep margin for routing/extraction differences.
+        "HOLD_SLACK_MARGIN": "20",
     },
 )

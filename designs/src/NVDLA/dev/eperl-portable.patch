@@ -1,0 +1,12 @@
+--- a/tools/bin/eperl
++++ b/tools/bin/eperl
+@@ -215,7 +215,8 @@
+   use strict;
+   my ($InFile, $TmpFile, $OutFile) = @_;
+   my ($SysCmd, $CmpDiffs);
+-  &System ("chmod --reference=$InFile $TmpFile");
++  chmod((stat($InFile))[2] & 07777, $TmpFile) == 1
++    or &Error ("chmod $TmpFile: $!");
+   if ($opt_m) {
+     $CmpDiffs = &System ("cmp -s $TmpFile $InFile", 1);
+     if ($CmpDiffs) {

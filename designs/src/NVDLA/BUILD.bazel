@@ -28,8 +28,10 @@ genrule(
         "@nvdla_hw_src//:all",
         "@nvdla_hw_src//:tools/bin/tmake",
         "dev/tree.make",
+        "dev/cpp.sh",
+        "dev/eperl-portable.patch",
         "dev/NV_NVDLA_cfgrom_REPLACE.v",
-    ] + glob(["dev/perl_lib/**/*.pm"]),
+    ] + glob(["dev/perl_lib/**/*.pm", "dev/perl_lib/**/*.ini"]),
     outs = ["vmod/" + f for f in VMOD_FILES],
     toolchains = [
         "@rules_python//python:current_py_toolchain",
@@ -43,12 +45,17 @@ JAVABIN=$$(readlink -f $(JAVA))
 SRCROOT=$$(dirname $$(dirname $$(dirname $$(readlink -f $(execpath @nvdla_hw_src//:tools/bin/tmake)))))
 TREEMAKE=$$(readlink -f $(execpath dev/tree.make))
 CFGROM=$$(readlink -f $(execpath dev/NV_NVDLA_cfgrom_REPLACE.v))
+CPPWRAPPER=$$(readlink -f $(execpath dev/cpp.sh))
 PERLLIBROOT=$$(dirname $$(readlink -f $(execpath dev/perl_lib/YAML.pm)))
 WORK=$$(pwd)/_nvdla_vmod_work
 rm -rf "$$WORK"; mkdir -p "$$WORK"
 cp -rL "$$SRCROOT"/. "$$WORK"/
 chmod -R u+w "$$WORK"
+patch -d "$$WORK" -p1 < $(execpath dev/eperl-portable.patch)
 cp "$$TREEMAKE" "$$WORK/tree.make"
+cp "$$CPPWRAPPER" "$$WORK/tools/bin/hightide_cpp"
+chmod +x "$$WORK/tools/bin/hightide_cpp"
+export NVDLA_CPP="$$WORK/tools/bin/hightide_cpp"
 export PERL5LIB="$$PERLLIBROOT" XML_SIMPLE_PREFERRED_PARSER=XML::SAX::PurePerl
 export PYTHON="$$PY3" JAVA="$$JAVABIN"
 ( cd "$$WORK" && PATH="$$(dirname $$PY3):$$(dirname $$JAVABIN):$$PATH" perl ./tools/bin/tmake -build vmod ) >&2

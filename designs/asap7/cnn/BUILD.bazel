@@ -32,6 +32,10 @@ hightide_design(
         # spends unbounded time (per-iteration incremental STA explodes past an
         # hour) without ever closing the structurally-unfixable path.  Skip the
         # post-GRT repair so the design finishes; detail-route still hold-repairs.
+        # Resistance-aware GRT repeatedly rebuilds the full routed RC network
+        # (41.8G footprint in the ASAP7 CNN run) inside congestion iterations.
+        # Use congestion-driven routing; final extracted OpenSTA timing remains.
+        "ENABLE_RESISTANCE_AWARE": "0",
         "SKIP_INCREMENTAL_REPAIR": "1",
     },
 )

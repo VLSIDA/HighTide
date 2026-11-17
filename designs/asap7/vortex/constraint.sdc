@@ -3,16 +3,10 @@ current_design Vortex
 set clk_name clk
 set clk_port_name clk
 set clk_period 1100
-set clk_io_pct 0.1
 
-set clk_port [get_ports $clk_name]
+set clk_port [get_ports $clk_port_name]
 
 create_clock -name $clk_name -period $clk_period $clk_port
-
-set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
-
-set_input_delay [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
-set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 
 set_false_path -from [get_ports reset]
 set_false_path -from [get_ports dcr_wr_valid]
@@ -26,6 +20,7 @@ set_false_path -from [get_ports dcr_wr_data]
 # high-fanout decoded signals in the commit arbiter, cache banks, etc.
 set_max_fanout 32 [current_design]
 
+# Fixed 10 ps interface delays, matching the effective baseline constraints.
 set non_clock_inputs [all_inputs -no_clocks]
 set_input_delay 10 -clock $clk_name $non_clock_inputs
 set_output_delay 10 -clock $clk_name [all_outputs]
