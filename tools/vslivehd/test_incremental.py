@@ -4,6 +4,9 @@ import unittest
 import tempfile
 import subprocess
 import sys
+import os
+from unittest.mock import patch
+import lhdsweep
 
 from pathlib import Path
 
@@ -39,6 +42,40 @@ class IncrementalTest(unittest.TestCase):
         self.result['status'] = 'fail'
         with self.assertRaises(RuntimeError):
             check_warm(self.result)
+
+
+class CampaignToolTest(unittest.TestCase):
+    def test_new_output_root_selects_its_own_frozen_tools(self):
+        names = ('OB', 'EXEC', 'PLATFORM', 'DESIGNS', 'SWEEP', 'LHD', 'OPENROAD')
+        saved = {name: getattr(lhdsweep, name) for name in names}
+        with tempfile.TemporaryDirectory() as temp, patch.multiple(lhdsweep, **saved), patch.dict(os.environ, {'LHD': ''}):
+            root = Path(temp).resolve()
+            for relative in ('bin/lhd/lhd', 'bin/openroad/openroad'):
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.touch()
+            lhdsweep.configure(out=root, output_base=root / 'bazel-output')
+            self.assertEqual(lhdsweep.LHD, root / 'bin/lhd/lhd')
+            self.assertEqual(lhdsweep.OPENROAD, root / 'bin/openroad/openroad')
+            selected = root / 'selected-lhd'
+            with patch.dict(os.environ, {'LHD': str(selected)}):
+                lhdsweep.configure(out=root)
+                self.assertEqual(lhdsweep.LHD, selected)
+                lhdsweep.configure(out=root, lhd=root / 'explicit-lhd')
+                self.assertEqual(lhdsweep.LHD, root / 'explicit-lhd')
+
+    def test_legacy_freezes_are_resolved_inside_the_selected_root(self):
+        names = ('OB', 'EXEC', 'PLATFORM', 'DESIGNS', 'SWEEP', 'LHD', 'OPENROAD')
+        saved = {name: getattr(lhdsweep, name) for name in names}
+        with tempfile.TemporaryDirectory() as temp, patch.multiple(lhdsweep, **saved), patch.dict(os.environ, {'LHD': ''}):
+            root = Path(temp).resolve()
+            for relative in ('bin/lhd_e/lhd', 'bin/openroad'):
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.touch()
+            lhdsweep.configure(out=root, output_base=root / 'bazel-output')
+            self.assertEqual(lhdsweep.LHD, root / 'bin/lhd_e/lhd')
+            self.assertEqual(lhdsweep.OPENROAD, root / 'bin/openroad')
 
 
 class RepeatCountTest(unittest.TestCase):

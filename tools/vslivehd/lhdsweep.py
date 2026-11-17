@@ -65,12 +65,20 @@ def configure(*, output_base=None, bin_dir=None, out=None, lhd=None, openroad=No
         DESIGNS = Path(bin_dir).resolve() / 'designs/asap7'
     if out:
         SWEEP = Path(out).resolve()
+        if not lhd:
+            if os.environ.get('LHD'):
+                LHD = Path(os.environ['LHD']).resolve()
+            else:
+                canonical = SWEEP / 'bin/lhd/lhd'
+                legacy = SWEEP / 'bin/lhd_e/lhd'
+                LHD = legacy if legacy.is_file() and not canonical.is_file() else canonical
+        if not openroad:
+            legacy = SWEEP / 'bin/openroad'
+            OPENROAD = legacy if legacy.is_file() else legacy / 'openroad'
     if lhd:
         LHD = Path(lhd).resolve()
     if openroad:
         OPENROAD = Path(openroad).resolve()
-    elif out:
-        OPENROAD = SWEEP / 'bin/openroad'
 
 
 def check_warm(result):

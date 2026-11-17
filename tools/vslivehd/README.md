@@ -17,6 +17,10 @@ python3 tools/vslivehd/lhdsweep.py \
   snapshot lfsr
 ```
 
+With --out alone, tool defaults follow that campaign’s bin/lhd/lhd and
+bin/openroad/openroad. Legacy freezes are recognized; explicit paths and the
+LHD environment variable retain precedence.
+
 Use the same global arguments with `run lfsr baseline --threads 8 --warm-runs 2`.
 Each run tag must be new. Negative repeat counts are rejected before HDL work.
 Without --warm-runs the original single-run behavior
