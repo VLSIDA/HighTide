@@ -53,10 +53,14 @@ sys.path.insert(0, str(TOOLS))
 def configure(*, output_base=None, bin_dir=None, out=None, lhd=None, openroad=None):
     """Select explicit campaign paths instead of borrowing an earlier checkout's artifacts."""
     global OB, EXEC, SWEEP, LHD, OPENROAD, PLATFORM, DESIGNS
+    selected_base = output_base_for_bin(bin_dir) if bin_dir else None
     if output_base:
-        OB = Path(output_base).resolve()
+        requested_base = Path(output_base).resolve()
+        if selected_base is not None and selected_base != requested_base:
+            raise ValueError('--bin-dir and --output-base refer to different Bazel builds')
+        OB = requested_base
     elif bin_dir:
-        OB = output_base_for_bin(bin_dir)
+        OB = selected_base
     if OB is None:
         raise ValueError('no Bazel output base found; build the pre-CTS targets or provide --bin-dir and --output-base')
     EXEC = OB / 'execroot/_main'

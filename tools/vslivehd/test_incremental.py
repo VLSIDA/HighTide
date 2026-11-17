@@ -98,6 +98,19 @@ class OutputPathTest(unittest.TestCase):
             root = Path(temp).resolve()
             self.assertEqual(output_base_for_bin(root / 'execroot/_main/bazel-out/k8-fastbuild/bin'), root)
 
+    def test_mismatched_explicit_build_paths_are_rejected(self):
+        names = ('OB', 'EXEC', 'PLATFORM', 'DESIGNS', 'SWEEP', 'LHD', 'OPENROAD')
+        saved = {name: getattr(lhdsweep, name) for name in names}
+        with tempfile.TemporaryDirectory() as temp, patch.multiple(lhdsweep, **saved):
+            root = Path(temp).resolve()
+            bin_dir = root / 'first/execroot/_main/bazel-out/k8-fastbuild/bin'
+            with self.assertRaisesRegex(ValueError, 'different Bazel builds'):
+                lhdsweep.configure(bin_dir=bin_dir, output_base=root / 'second')
+            self.assertEqual(lhdsweep.OB, saved['OB'])
+            lhdsweep.configure(bin_dir=bin_dir, output_base=root / 'first')
+            self.assertEqual(lhdsweep.OB, root / 'first')
+            self.assertEqual(lhdsweep.DESIGNS, bin_dir / 'designs/asap7')
+
     def test_unbuilt_checkout_does_not_invent_an_output_base(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp).resolve()
