@@ -25,16 +25,62 @@ cells exclude fill, tap and endcap cells and include macros only in `macros`.
 import argparse, gzip, hashlib, json, os, re, shlex, shutil, subprocess, sys, time
 from pathlib import Path
 
-HT = Path('/lscratch/renau/HighTide')
-OB = Path('/var/tmp/renau/_bazel_renau/230f8e777f6bcb1c09c653c8b9466575')
+HT = Path(__file__).resolve().parents[2]
+# bazel-bin -> OUTPUT_BASE/execroot/_main/bazel-out/CONFIG/bin.
+OB = (HT / 'bazel-bin').resolve().parents[4]
 EXEC = OB / 'execroot/_main'
 SWEEP = HT / 'artifacts/lhdsweep'
 TOOLS = Path(__file__).resolve().parent  # this checkout's scorer and configs (a worktree runs its own)
 OPENROAD = SWEEP / 'bin/openroad'
 LHD = Path(os.environ.get('LHD', str(SWEEP / 'bin/lhd_e/lhd')))
 PLATFORM = OB / 'external/orfs+/flow/platforms/asap7'
+DESIGNS = HT / 'bazel-bin/designs/asap7'
 DONT_USE = ['*x1p*_ASAP7*', '*xp*_ASAP7*', 'SDF*', 'ICG*']
 sys.path.insert(0, str(TOOLS))
+
+
+def configure(*, output_base=None, bin_dir=None, out=None, lhd=None, openroad=None):
+    """Select explicit campaign paths instead of borrowing an earlier checkout's artifacts."""
+    global OB, EXEC, SWEEP, LHD, OPENROAD, PLATFORM, DESIGNS
+    if output_base:
+        OB = Path(output_base).resolve()
+    elif bin_dir:
+        OB = Path(bin_dir).resolve().parents[4]
+    EXEC = OB / 'execroot/_main'
+    PLATFORM = OB / 'external/orfs+/flow/platforms/asap7'
+    if bin_dir:
+        DESIGNS = Path(bin_dir).resolve() / 'designs/asap7'
+    if out:
+        SWEEP = Path(out).resolve()
+    if lhd:
+        LHD = Path(lhd).resolve()
+    if openroad:
+        OPENROAD = Path(openroad).resolve()
+    elif out:
+        OPENROAD = SWEEP / 'bin/openroad'
+
+
+def check_warm(result):
+    """Require actual mapper reuse, not simply a successful second invocation."""
+    if result.get('status') != 'pass':
+        raise RuntimeError('warm synthesis did not pass')
+    inc = result.get('incremental', {})
+    compile_cache = inc.get('compile', {})
+    if compile_cache.get('misses', 0):
+        raise RuntimeError('warm synthesis recompiled source units')
+    qor = result.get('qor', {})
+    abc = inc.get('abc') or qor.get('abc', {}).get('incremental')
+    usyn = qor.get('usyn', {}).get('cache')
+    if abc and abc.get('enabled'):
+        if (abc.get('misses') != 0 or abc.get('store_failed') != 0
+                or abc.get('hits', 0) < 1 or abc.get('hits') != abc.get('regions')):
+            raise RuntimeError('warm synthesis did not reuse every mapped color: ' + str(abc))
+    elif usyn and usyn.get('enabled'):
+        if usyn.get('misses', 0) or usyn.get('invalid', 0) or usyn.get('reused', 0) < 1:
+            raise RuntimeError('warm synthesis did not reuse every mapped region: ' + str(usyn))
+    else:
+        raise RuntimeError('warm synthesis supplied no enabled mapper reuse evidence')
+    return dict(compile=compile_cache, abc=abc, usyn=usyn, recipe=result.get('recipe', []))
 
 
 # ------------------------------------------------------------------ discovery
@@ -141,10 +187,10 @@ class Design:
 
 def discover():
     designs = []
-    for odb in sorted((HT / 'bazel-bin/designs/asap7').glob('**/results/asap7/*/base/3_place.mk')):
+    for odb in sorted(DESIGNS.glob('**/results/asap7/*/base/3_place.mk')):
         if '.runfiles' in str(odb):
             continue
-        rel = odb.relative_to(HT / 'bazel-bin/designs/asap7')
+        rel = odb.relative_to(DESIGNS)
         key = str(rel).split('/results/')[0]
         designs.append(Design(key, odb.parent))
     return designs
@@ -327,7 +373,7 @@ def orfs_netlist(d):
 
 
 def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, rundir=None, log=None,
-                timing_unmeasured=None, check_placement='error'):
+                timing_unmeasured=None, check_placement='error', warm_runs=0):
     """One lhd synth+place run, then OpenSTA scoring. A `sets` value of None removes that key
     (e.g. the ORFS utilization for a fixed-core run). rundir/log default to the sweep's
     runs/<design>/<tag> and results.jsonl. timing_unmeasured (a reason string) keeps the score's
@@ -346,17 +392,18 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
     lib = merged_liberty(d)
     util = d.utilization()
     base_sets = {
+        'lhd.jobs': str(threads),
         'synth.liberty': str(lib),
         'synth.sdc': str(d.ref_dir / 'constraint.sdc'),
         'synth.lef': ','.join(map(str, d.lef_list())),
         'synth.place': 'true',
         'synth.place.density': '%g' % d.density(),
-        'synth.place.tech_rc': str(PLATFORM / 'setRC.tcl'),
+        'synth.wire_rc': str(PLATFORM / 'setRC.tcl'),
         'synth.place.threads': str(threads),
         # ORFS/Yosys lowers every inferred memory to flops; only explicit fakeram instances stay macros.
         'synth.memory': 'flops',
         # Yosys drops power-on `initial` values for an ASIC; LiveHD would otherwise keep a native flop.
-        'pass.abc.drop_init': 'true',
+        'synth.drop_init': 'true',
         # Registers on a gated/derived clock must map to cells (ASAP7 ICGs are dont_use), and Yosys's
         # `setundef -zero` ties x constants low; both keep designs placeable and are inert elsewhere.
         'synth.place.unknown_const': 'zero',
@@ -420,9 +467,46 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
         if pre is not None:
             guard.run('lhd_compile', pre, cwd=rundir, timeout=timeout, extra_env=genv)
         guard.run('lhd', cmd, cwd=rundir, timeout=timeout, extra_env=genv)
+        if warm_runs:
+            cold = rundir / 'result.cold.json'
+            shutil.copy2(rundir / 'result.json', cold)
+            before = {p.name: sha(p) for p in (rundir / 'def').glob('*.def')}
+            warm_checks = []
+            for number in range(1, warm_runs + 1):
+                guard.run('lhd_warm%d' % number, cmd, cwd=rundir, timeout=timeout, extra_env=genv)
+                warm = rundir / ('result.warm%d.json' % number)
+                shutil.copy2(rundir / 'result.json', warm)
+                proof = check_warm(json.loads(warm.read_text()))
+                after = {p.name: sha(p) for p in (rundir / 'def').glob('*.def')}
+                if after != before:
+                    raise RuntimeError('warm synthesis changed the exported placement')
+                proof['placement_sha256'] = after
+                warm_checks.append(proof)
+                (rundir / 'incremental.json').write_text(json.dumps(warm_checks, indent=2) + '\n')
+            replay = rundir / 'result.replay.json'
+            guard.run('lhd_replay', [LHD, 'synth', '--result-json', replay],
+                      cwd=rundir / 'w/synth', timeout=timeout, extra_env=genv)
+            recipe = json.loads(replay.read_text()).get('recipe', [])
+            replay_result = json.loads(replay.read_text())
+            if not recipe or not recipe[0].startswith('synth: up to date'):
+                # Filelists and external emits require dependency inspection;
+                # replay must still reuse every mapped color.
+                check_warm(replay_result)
+            after = {p.name: sha(p) for p in (rundir / 'def').glob('*.def')}
+            if after != before:
+                raise RuntimeError('saved synthesis replay changed the exported placement')
     except Exception as exc:  # guard stop, nonzero exit or timeout: keep as an incomplete run
         status = 'failed: %s' % exc
-    meta['lhd_seconds'] = time.monotonic() - t0
+        error_file = rundir / 'result.json'
+        if error_file.exists():
+            failure = json.loads(error_file.read_text()).get('error')
+            if failure:
+                print(json.dumps(failure, indent=2), flush=True)
+    elapsed = time.monotonic() - t0
+    cold_time = rundir / 'lhd.run.json'
+    meta['lhd_seconds'] = json.loads(cold_time.read_text())['wall_s'] if cold_time.exists() else elapsed
+    if warm_runs:
+        meta['incremental_validation_seconds'] = elapsed - meta['lhd_seconds']
     meta['status'] = status
     defs = sorted((rundir / 'def').glob('*.def')) if status == 'ok' else []
     result = dict(meta=meta, ref=ref)
@@ -512,14 +596,21 @@ def report(keys):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('--output-base', type=Path, help='Bazel output base for the selected HighTide build')
+    ap.add_argument('--bin-dir', type=Path, help='exact bazel-bin output directory for this invocation/configuration')
+    ap.add_argument('--out', type=Path, help='fresh campaign root for references, workdirs, logs and results')
+    ap.add_argument('--lhd', type=Path, help='frozen source-built LiveHD executable')
+    ap.add_argument('--openroad', type=Path, help='source-built OpenROAD used by the reference and scorer')
     sub = ap.add_subparsers(dest='cmd', required=True)
     sub.add_parser('list')
     p = sub.add_parser('snapshot'); p.add_argument('keys', nargs='*')
     p = sub.add_parser('run'); p.add_argument('key'); p.add_argument('tag')
     p.add_argument('--set', action='append', default=[]); p.add_argument('--threads', type=int, default=1)
+    p.add_argument('--warm-runs', type=int, default=0, help='repeat the exact command in the same workdir and require every mapped color to be reused')
     p.add_argument('--timeout', type=int, default=7200); p.add_argument('--mem-gib', type=float, default=64)
     p = sub.add_parser('report'); p.add_argument('keys', nargs='*')
     a = ap.parse_args()
+    configure(output_base=a.output_base, bin_dir=a.bin_dir, out=a.out, lhd=a.lhd, openroad=a.openroad)
     if a.cmd == 'list':
         for d in discover():
             print(d.key, d.name, 'macros' if d.macro_lefs() else '', 'util=%s dens=%s' % (d.utilization(), d.density()))
@@ -531,8 +622,10 @@ def main():
             print('%-22s wns=%9.2f tns=%11.1f logic_cells=%d macros=%d' % (d.key, s['setup_wns_ps'], s['setup_tns_ps'], s['logical_cells'], s['macros']), flush=True)
     elif a.cmd == 'run':
         sets = dict(x.split('=', 1) for x in a.set)
-        r = run_variant(get(a.key), a.tag, sets, a.threads, a.timeout, a.mem_gib)
+        r = run_variant(get(a.key), a.tag, sets, a.threads, a.timeout, a.mem_gib, warm_runs=a.warm_runs)
         print(json.dumps({k: r.get(k) for k in ('penalty', 'objective', 'score')}, indent=1)[:1500]); print(r['meta']['status'])
+        if r['meta']['status'] != 'ok':
+            raise SystemExit(1)
     elif a.cmd == 'report':
         report(a.keys)
 

@@ -8,7 +8,7 @@
 # parameterized nvdla/hw nv_small source).  The :gen_vmod genrule runs that
 # build hermetically under Bazel — replacing the retired dev/setup.sh + its
 # legacy downloads — with modern, reproducible tools: system perl + the
-# vendored pure-perl modules (dev/perl_lib: YAML + XML::Simple), rules_python's
+# vendored pure-perl modules (dev/perl_lib: YAML, XML::Simple, Capture::Tiny), rules_python's
 # python3, and rules_java's JDK (SystemC / JDK11 / perl-5.10 / python-2.7 are
 # NOT required — the output reproduces byte-for-byte).  cfgrom is swapped for
 # the pre-baked NV_NVDLA_cfgrom_REPLACE.v.
