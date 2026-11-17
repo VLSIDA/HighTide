@@ -204,7 +204,7 @@ These go into `arguments = { ... }` of `hightide_design()`.
 
 The remote cache is self-hosted `bazel-remote` fronted by a **Cloudflare Tunnel** whose free tier caps request bodies at **100 MB**. ORFS emits multi-100-MB stage ODBs (`2_floorplan.odb`, `3_place.odb`) for the largest designs; even with `--remote_cache_compression` (zstd) the very biggest still exceed the ceiling, so their `_final` results **fail to upload and never get cached remotely** — every k8s run rebuilds them from scratch and re-fails the upload. Build these locally instead so they at least populate the local `~/.cache/bazel-disk-cache`:
 
-- **`bp_quad`** (asap7, nangate45) — biggest design (560 macros, 64–160 Gi RAM, 14 h+); k8s-hostile.
+- **`bp_quad`** (nangate45) — biggest design (64–160 Gi RAM, 14 h+). **asap7 returned to k8s 2026-11-17**: the byte-mask rebind (560 → 88 macros) shrank the stage artifacts, and the runner's oversized-blob S3 backfill now carries what the Cloudflare tunnel cannot (observed uploading 1 GB blobs on sky130hd partition_c) — retry nangate45 the same way next rebuild.
 - **`bp_uno`** (sky130hd) — 140 macros + 7.6 M cells; `6_final.odb` 2.9 GB. asap7/nangate45 `bp_uno` upload OK; sky130hd's coarser pitches inflate the routed netlist past the ceiling.
 - **`NVDLA/partition_c`** (asap7, nangate45, sky130hd) — the named offender in `.bazelrc`. The other NVDLA partitions (a/m/o/p) stay under the ceiling with zstd and run fine on k8s.
 - **`cnn`** (nangate45, sky130hd) — 65 macros each.
