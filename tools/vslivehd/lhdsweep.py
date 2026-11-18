@@ -426,7 +426,6 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
         'synth.place': 'true',
         'synth.place.density': '%g' % d.density(),
         'synth.wire_rc': str(PLATFORM / 'setRC.tcl'),
-        'synth.place.threads': str(threads),
         # ORFS/Yosys lowers every inferred memory to flops; only explicit fakeram instances stay macros.
         'synth.memory': 'flops',
         # Yosys drops power-on `initial` values for an ASIC; LiveHD would otherwise keep a native flop.

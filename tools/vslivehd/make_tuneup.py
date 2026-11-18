@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lhdsweep as L
 
 BASE_KEYS = {'synth.liberty', 'synth.sdc', 'synth.lef', 'synth.place', 'synth.place.density', 'synth.place.tech_rc',
-             'synth.place.threads', 'synth.memory', 'pass.abc.drop_init', 'pass.abc.derived_clock',
+             'lhd.jobs', 'synth.memory', 'pass.abc.drop_init', 'pass.abc.derived_clock',
              'synth.place.unknown_const', 'synth.place.utilization'}
 
 GLOSSARY = {
