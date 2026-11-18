@@ -29,6 +29,11 @@ hightide_design(
         #     --per-row 8 --center --numeric-sort --alternate \
         #     --aside fakeram_11x128_1r1w
         "MACRO_PLACEMENT_TCL": [":macro_placement.tcl"],
+        # 2026-11-18: GRT-0116 on the 2026-11 pin — 87 gcells each 1 track
+        # over in the cbuf/cdma escape regions; GRT-0704 says 11% layer
+        # adjustment fits where the platform's 20% does not. Grt-scoped
+        # override (see pre_global_route.tcl) so cached stages survive.
+        "PRE_GLOBAL_ROUTE_TCL": [":pre_global_route.tcl"],
     },
     stage_data = {"synth": ["//designs/src/NVDLA:include"]},
     arguments = {
