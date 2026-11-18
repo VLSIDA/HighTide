@@ -24,6 +24,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -46,6 +47,9 @@ def design_pkg(key):
     """designs/asap7/<key> package and ORFS DESIGN_NAME-independent target base name."""
     pkg = 'designs/asap7/' + key
     base = key.split('/')[-1]
+    m = re.search(r'hightide_design\(\s*name\s*=\s*"([^"]+)"', (HT / pkg / 'BUILD.bazel').read_text())
+    if m:  # the flow name, e.g. bp_uno's package declares name = "bp_processor"
+        base = m.group(1)
     return pkg, base
 
 
@@ -57,7 +61,11 @@ def deploy(ob, key, dst):
     """Build <base>_cts_deps and extract it as a runnable ORFS directory (bazel-orfs deps_wrapper layout)."""
     pkg, base = design_pkg(key)
     target = '//%s:%s_cts_deps' % (pkg, base)
-    r = bazel(ob, 'build', target, capture_output=True, text=True)
+    for attempt in range(60):  # concurrent deploys share one output base: wait out its lock
+        r = bazel(ob, 'build', target, capture_output=True, text=True)
+        if r.returncode == 0 or 'Another command' not in r.stderr:
+            break
+        time.sleep(60)
     if r.returncode:
         raise RuntimeError('bazel build %s failed:\n%s' % (target, r.stderr[-3000:]))
     tar = Path(ob) / 'execroot/_main/bazel-out/k8-fastbuild/bin' / pkg / ('%s_cts_deps.tar.gz' % base)
@@ -81,6 +89,14 @@ def deploy(ob, key, dst):
         'export RUNFILES_DIR="$(pwd)/.."\nexec ../%s "$@"\n' % os.path.basename(make_bin))
     os.chmod(dst / 'make', 0o755)
     subprocess.run(['chmod', '-R', 'u+w', str(dst)])
+    # Floorplan-stage inputs (design pdn.tcl, io.tcl, macro placement tcl, ...)
+    # are not part of a cts-stage deploy; LiveHD runs tapcell/PDN, so copy them.
+    src_dir = HT / pkg
+    dst_dir = dst / '_main' / pkg
+    dst_dir.mkdir(parents=True, exist_ok=True)
+    for p in src_dir.iterdir():
+        if p.is_file() and p.suffix in ('.tcl', '.cfg', '.txt') and not (dst_dir / p.name).exists():
+            shutil.copy(p, dst_dir / p.name)
     ext = dst / '_main/external'
     ext.mkdir(exist_ok=True)
     for p in dst.iterdir():
@@ -276,7 +292,7 @@ def run(args):
         # keep logs/reports/json; drop large stage odbs except the final one
         try:
             for p in results_dir(dst, key).glob('*.odb'):
-                if p.name not in ('6_final.odb',):
+                if p.name not in ('6_final.odb',) and 'error' not in p.name and 'failed' not in p.name:
                     p.unlink()
         except Exception:
             pass
