@@ -200,15 +200,17 @@ These go into `arguments = { ... }` of `hightide_design()`.
 - The remote cache (`--remote_cache` in `.bazelrc`) is shared and read-only by default. Never delete or corrupt it.
 - If you suspect a stale cache, verify by checking the process count in bazel output: `N processwrapper-sandbox` means N actions actually ran; `N internal` means cached.
 
-### Cloudflare 100 MB upload limit — build the biggest designs locally
+### Cloudflare 100 MB upload limit — oversized blobs go via the S3 backfill
 
-The remote cache is self-hosted `bazel-remote` fronted by a **Cloudflare Tunnel** whose free tier caps request bodies at **100 MB**. ORFS emits multi-100-MB stage ODBs (`2_floorplan.odb`, `3_place.odb`) for the largest designs; even with `--remote_cache_compression` (zstd) the very biggest still exceed the ceiling, so their `_final` results **fail to upload and never get cached remotely** — every k8s run rebuilds them from scratch and re-fails the upload. Build these locally instead so they at least populate the local `~/.cache/bazel-disk-cache`:
+The remote cache hostname `cache.hightide-benchmarks.dev` is served by a **Cloudflare R2 Worker** (since PR #252 — the old Cloudflare Tunnel is gone; cache compression stays OFF). Cloudflare's **edge request-body cap of 100 MB** (a zone-plan limit, applies to Workers too) still rejects (`413`) stage blobs above it: ORFS emits multi-100-MB stage ODBs (`2_floorplan.odb` … `5_1_grt.odb`, `6_final.{odb,spef}`) for the largest designs, so their biggest artifacts can't go through the HTTP cache path.
 
-- **`bp_quad`** (nangate45) — biggest design (64–160 Gi RAM, 14 h+). **asap7 returned to k8s 2026-11-17**: the byte-mask rebind (560 → 88 macros) shrank the stage artifacts, and the runner's oversized-blob S3 backfill now carries what the Cloudflare tunnel cannot (observed uploading 1 GB blobs on sky130hd partition_c) — retry nangate45 the same way next rebuild.
-- **`bp_uno`** (sky130hd) — 140 macros + 7.6 M cells; `6_final.odb` 2.9 GB. asap7/nangate45 `bp_uno` upload OK; sky130hd's coarser pitches inflate the routed netlist past the ceiling.
-- **`NVDLA/partition_c`** (asap7, nangate45, sky130hd) — the named offender in `.bazelrc`. The other NVDLA partitions (a/m/o/p) stay under the ceiling with zstd and run fine on k8s.
+The escape hatch is **`tools/r2-cache/s3-backfill.sh`**: multipart S3 API direct to the R2 bucket, bypassing the edge cap. It uploads CAS blobs > `--min-size-mb` (default 95) plus AC entries of all sizes with mtime < `--ac-days` (default 2 — **bump `--ac-days` for builds that ran longer than 2 days**, or their early-stage AC entries get skipped). Idempotent; the k8s runner runs it automatically at end of attempt, even on failure. This made the biggest designs k8s-viable again: bp_quad-asap7 completed on NRP 2026-11-18 (five blobs up to 13 GB backfilled), partition_c-sky backfilled 1 GB blobs earlier.
+
+Designs whose stage blobs exceed the 100 MB edge cap (they rely on the backfill; after a *local* build of one, run `s3-backfill.sh` manually with a generous `--ac-days`):
+
+- **`bp_quad`** (asap7, nangate45) — biggest design (64–160 Gi RAM, 14 h+); asap7 proven on k8s 2026-11-18 with the 88-macro byte-mask rebind; retry nangate45 on k8s next rebuild.
+- **`bp_uno`** (sky130hd) — `6_final.odb` 2.9 GB; asap7/nangate45 `bp_uno` stay under the cap.
+- **`NVDLA/partition_c`** (asap7, nangate45, sky130hd) — stage ODBs 190 MB–1.1 GB. The other NVDLA partitions (a/m/o/p) stay under the ceiling.
 - **`cnn`** (nangate45, sky130hd) — 65 macros each.
 
-Everything else — including NVDLA partitions a/m/o/p and the smaller recovery designs (ternip, bp_uno, liteeth, litepci, coralnpu, vortex, nyuzi, cnn-asap7) — stays on k8s via `./k8s/run.sh --branch fakeram <platform> <design>`.
-
-**Keep this list current:** *remove* a design once all its cache objects are confirmed < 100 MB (it can go back to k8s); *add* a design the moment it fails to upload on k8s (the bazel log shows a cache-upload error / `413` / size-limit on a stage ODB). The list is a live record of which designs currently bust the Cloudflare ceiling, not a fixed set.
+**Keep this list current:** *remove* a design once all its cache objects are confirmed < 100 MB; *add* a design the moment a k8s log shows `413` / size-limit on a blob upload. The list records which designs currently depend on the backfill, not a fixed set.
