@@ -31,5 +31,10 @@ hightide_design(
         "GLOBAL_PLACEMENT_ARGS": "-routability_max_inflation_ratio 4 -routability_inflation_ratio_coef 5 -routability_max_density 0.6",
         "TNS_END_PERCENT": "100",
         "HOLD_SLACK_MARGIN": "40",
+        # 2026-11 pin: post-DRT antenna-repair loop diverges (72 h in
+        # 5_route on NRP) — same pathology as partition_o on sky130hd
+        # and asap7. Residual antenna violations waived; retry on the
+        # next pin bump. See designs/src/NVDLA/DECISIONS.md.
+        "SKIP_ANTENNA_REPAIR_POST_DRT": "1",
     },
 )
