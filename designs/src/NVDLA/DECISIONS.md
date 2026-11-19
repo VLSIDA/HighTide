@@ -163,6 +163,19 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
   (library-hold / clock-gating checks; advisory per the 2026-11 gate
   policy). Pass.
 
+- **partition_o asap7 + gt2n — same antenna-repair divergence, same skip
+  (2026-11-18, `7f754e4a`)**: the sky130hd pathology above is not
+  platform-specific. On NRP both variants sat inside the single `5_route`
+  action far past any plausible convergence — asap7 **98 h**, gt2n **72 h**
+  (pods at ~4 full cores the whole time, so "running" but diverging; the
+  2026-07 pin's worst partition_o route was ~10 h total). kubectl exec was
+  too slow on those nodes to tail the stage logs, so the diagnosis rests on
+  the stage-time signature + the sky precedent. Decision (MRG 2026-11-18,
+  "Skip the antenna repair"): `SKIP_ANTENNA_REPAIR_POST_DRT = 1` on both
+  BUILDs, jobs killed and resubmitted (cached pre-route stages reused).
+  Residual antenna violations waived and documented like sky; retry full
+  repair on the next pin bump.
+
 - **partition_m QoR vs results.html baselines** (no knob changes, all TNS 0):
   - **asap7**: WS +100 ps, period_min 1399.82 ps → Fmax 714 MHz (−30.7 % vs
     1.03 GHz — the BC→TC corner swap, advisory per corner policy), 19 868 logic
