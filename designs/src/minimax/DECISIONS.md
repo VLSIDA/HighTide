@@ -20,6 +20,19 @@ A small RISC-V core (~10–20k stdcells, no macros).  Used as a real-RTL smoke t
 
 ## asap7
 
+
+- **bazeltuner sweep — null result, baseline kept (2026-11-19)**: a
+  12-trial CLK(650–1050)×UTIL(50–80)×DENSITY(0.60–0.82) campaign landed
+  every trial within 2.5 % of the same fmax; the best (750/50/0.66,
+  verified at final) and the committed baseline (900/65/0.70) are
+  *identical* at 0.9670 GHz (period_min ≈ 1034 ps), with the "winner"
+  +30 % area / +23 % power. minimax is RTL-bound (bit-serial critical
+  loop) — placement/clock knobs cannot move its fmax, so the baseline
+  config is already optimal. Flag: the committed 900 ps SDC is 134 ps
+  below the real floor (final WS −134 ps on the 2026-11 pin); a clean
+  close would need the clock retargeted to ~1140 ps (period_min × 1.10)
+  — left for the PPA pass since timing gates are advisory this upgrade.
+
 **Status**: finishing
 **Last updated**: 2026-05-01 (commit `49c7aee5`)
 

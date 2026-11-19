@@ -30,6 +30,20 @@ Mid-size combinational-heavy core (~20k stdcells, no macros).
 
 ## asap7
 
+
+- **bazeltuner sweep → 850 ps / util 65 / density 0.72 (2026-11-19)**: a
+  12-trial CLK×UTIL×DENSITY campaign (VLSIDA/bazeltuner, spec
+  `suites/hightide/specs/sha3_asap7.json`, seed 1) found the knob point
+  65/0.72; the raw best (750 ps target) reaches period_min 772.7 ps but
+  violates its own SDC (WS −23 ps), and the 800 ps iteration also misses
+  (WS −13 ps). The fastest clean-closing config is **850 ps / 65 / 0.72**:
+  final fmax 1.207 GHz (period_min 828.7 ps), WS +21 ps / TNS 0 — **+3.3 %
+  Fmax** over the prior 929 ps / 70 / 0.75 baseline (1.169 GHz, WS +73) at
+  +7.7 % core area (3534.8 vs 3282.6 µm²) and +10.6 % power (10.0 vs
+  9.1 mW). Committed. Target-chasing note: period_min follows the synth
+  target (772.7 @750 → 813.1 @800 → 828.7 @850), so the floor quoted is
+  per-target, not absolute.
+
 **Status**: finishing
 **Last updated**: 2026-03-19 (commit `187ef139`)
 

@@ -2,7 +2,7 @@ current_design sha3
 
 set clk_name  clk
 set clk_port_name clock
-set clk_period 929
+set clk_period 850
 
 set clk_port [get_ports $clk_port_name]
 
