@@ -13,7 +13,6 @@ _ARGS.update({
     "MAX_ROUTING_LAYER": "M11",
     "MIN_CLK_ROUTING_LAYER": "M4",
     "TNS_END_PERCENT": "100",
-    "NUM_CORES": "16",
 })
 
 hightide_design(
