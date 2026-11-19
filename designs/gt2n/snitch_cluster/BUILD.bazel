@@ -36,5 +36,10 @@ hightide_design(
         "TNS_END_PERCENT": "100",
         "MIN_CLK_ROUTING_LAYER" : "M4",
         "MAX_ROUTING_LAYER" : "M11",
+        # 2026-11 pin: post-GRT repair_timing spins without converging
+        # (87 h inside 5_1_grt on NRP; global route alone is minutes) —
+        # same repair_timing non-convergence family as snitch-asap7.
+        # Route's own hold-repair still runs.
+        "SKIP_INCREMENTAL_REPAIR": "1",
     },
 )
