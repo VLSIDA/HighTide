@@ -18,13 +18,20 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
     },
     arguments = {
         "SYNTH_HIERARCHICAL": "1",
-        "CORE_UTILIZATION": "45",
+        # Manual floorplan (2026-11-20, see macros.tcl): 4 large SRAMs across
+        # the top (set the die width, 40um halo below), mediums R90-stacked on
+        # the right edge, smalls spread in a 3-deep justified bottom band
+        # (w64 AXI buffer centered) + 2-deep left arm. Replaces RTLMP (whose
+        # placement bound the critical path, Fmax -49%) and the util-driven
+        # die: explicit 2070x1276 = 2.64M um2, -30% vs the RTLMP floorplan.
+        "DIE_AREA": "0 0 2070 1276",
+        "CORE_AREA": "2 2 2068 1274",
         "PLACE_DENSITY": "0.50",
         "PLACE_PINS_ARGS": "-min_distance 30 -min_distance_in_tracks",
-        "RTLMP_MIN_CHANNEL_SIZE": "24 24",  # was MACRO_PLACE_HALO 12 12 (halo x,y ~ channel 2x,2y)
         # New-resizer (2026-06 tools) post-GRT repair_timing does not converge on
         # this design's macro-placement-bound critical path (RTLMP places the
         # SRAMs such that Fmax regresses ~49%; see DECISIONS.md).  repair_timing
