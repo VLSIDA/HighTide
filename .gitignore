@@ -26,3 +26,11 @@ tmp/
 # designs/<platform>/<design>/sram/{lef,lib}/ and tracked there.
 designs/src/*/dev/generated/sram/
 scratch/
+__pycache__/
+
+# Local tuner mount (VLSIDA/bazeltuner suites/hightide/setup.sh):
+# HighTide carries no tuner artifacts; these appear only on wired-up
+# checkouts.
+/tools/bazeltuner
+/bazeltuner.json
+__pycache__/

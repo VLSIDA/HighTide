@@ -102,6 +102,14 @@ def hightide_design(name, platform, verilog_files, top = None, arguments = {}, s
 
     orfs_flow(**flow_kwargs)
 
+    # Variant flows (BazelTuner trials and other orfs_flow(variant=)
+    # experiments) produce <name>_<variant>_<stage> targets; the gallery
+    # and GUI launchers below hardcode :<name>_final / :<name>_<stage>
+    # and would dangle — and a second call with the same name would
+    # redeclare them. Variant flows get the stage targets only.
+    if kwargs.get("variant"):
+        return
+
     _gallery_image(
         name = name + "_gallery",
         src = ":" + name + "_final",
