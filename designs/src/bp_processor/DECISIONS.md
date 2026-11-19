@@ -161,3 +161,17 @@ earlier today was replaced by the shared reference). Rationale: the bp
 netlist family shares its clock-inverter structure, each un-stripped
 CTS costs a multi-hour run, and a strip on an unaffected netlist is a
 no-op (FLW-9902 = 0).
+
+- **bp_uno sky130hd — pin-aware RTLMP channels validated, grid retired
+  (2026-11-19, NRP, config `5defa597`)**: clean `_final` on the 2026-11 pin
+  with `RTLMP_MIN_CHANNEL_SIZE "300 300"` (enables the native
+  `-pin_aware_channels` plumbing) at CORE_UTILIZATION 25, replacing the
+  hand-generated fixed macro grid that this pin's GRT-0116 had disproven.
+  QoR: setup WS +5.80 ns / TNS 0, hold WS +0.205 ns / TNS 0, 0 setup/hold
+  violation endpoints, Fmax 37.4 MHz (period_min ≈ 26.8 ns vs the 2026-07
+  grid baseline's +3.49 ns WS — comparable class), 826 809 std cells,
+  22 macros (byte-mask rebind), util 27.2 %, power 146 mW. Advisories:
+  6 716 slew / 87 cap DRVs, 17 834 antenna cells inserted. The CLAUDE.md
+  RTLMP row now records pin-aware channels as the preferred fix on this
+  pin; cnn-sky and partition_c-sky still run their grids (retry pin-aware
+  there when next rebuilt).
