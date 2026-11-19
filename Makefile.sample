@@ -64,7 +64,7 @@ FLAGS := --top $(TOP) --set lhd.jobs=$(THREADS) --set synth.place=true --set syn
          --set synth.place.die=$(DIE) --set synth.place.core=$(CORE) \
          --set synth.drop_init=true \
          --set compile.slang.liberty_cells=true --set compile.slang.liberty_macro_precedence=true \
-         --set compile.slang.ignore_uninstantiated_modules=true --set compile.slang.unconnected_input=one
+         --set compile.slang.ignore_uninstantiated_modules=true
 READER := -- -D SYNTHESIS --ignore-assertions --compat=vcs --timescale=1ns/1ps -D USE_ASAP7_CELLS
 
 .PHONY: help inputs explore replay detail cts grt route timing check-input

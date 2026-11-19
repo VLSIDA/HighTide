@@ -14,8 +14,7 @@
   "sets": {
    "compile.slang.liberty_macro_precedence": "true",
    "compile.slang.ignore_uninstantiated_modules": "true",
-   "compile.slang.liberty_cells": "true",
-   "compile.slang.unconnected_input": "one"
+   "compile.slang.liberty_cells": "true"
   }
  },
  "litepci": {
@@ -23,7 +22,6 @@
    "compile.slang.liberty_macro_precedence": "true",
    "compile.slang.ignore_uninstantiated_modules": "true",
    "compile.slang.liberty_cells": "true",
-   "compile.slang.unconnected_input": "one",
    "compile.slang.blackbox_attribute": "true"
   }
  },
