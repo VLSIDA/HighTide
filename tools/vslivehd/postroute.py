@@ -269,9 +269,9 @@ def run(args):
             if extra.exists():
                 views = json.loads(extra.read_text())
                 base = deployed_vars(dst)
-                for var, key in (('ADDITIONAL_LEFS', 'lefs'), ('ADDITIONAL_LIBS', 'libs')):
-                    if views.get(key):
-                        os.environ[var] = ' '.join([base.get(var, '')] + views[key]).strip()
+                for var, vkey in (('ADDITIONAL_LEFS', 'lefs'), ('ADDITIONAL_LIBS', 'libs')):
+                    if views.get(vkey):  # not `key`: that names the design and selects its logs below
+                        os.environ[var] = ' '.join([base.get(var, '')] + views[vkey]).strip()
                 rec['generated_macro_views'] = views
             os.environ['LHD_DEF'] = str(ldef)
             os.environ['LHD_SDC'] = str(sdc)
@@ -343,6 +343,11 @@ def report(args):
     for line in open(out / 'results.jsonl'):
         r = json.loads(line)
         rows[(r['design'], r['variant'])] = r  # last record wins
+    for (d, v), r in rows.items():  # records written with empty metrics: re-read them while the work dir exists
+        dst = out / 'work' / ('%s__%s' % (d.replace('/', '__'), v))
+        if r.get('status') == 'ok' and not r.get('metrics') and dst.is_dir():
+            r['metrics'] = metrics(dst, d)
+            r['route_success'] = r['metrics'].get('drc_errors') == 0
     lines = ['| design | variant | routed | DRC | DRC by iter | GRT ovfl | GRT WL | DRT WL | vias | util | final WNS ps | '
              'final TNS ps | pre-CTS WNS | legroute plan (outcome/ovfl trk/rounds) | legalize mean/max um | route s |',
              '|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---:|']
