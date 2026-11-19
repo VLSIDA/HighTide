@@ -1,0 +1,24 @@
+# PyPI deps for the verification-testbench harness (tools/sim/cocotb_runner.py
+# and the design-agnostic cocotb_test rule). Consumed by
+# pip.parse(hub_name = "pip_cocotb") in the root MODULE.bazel.
+#
+# cocotb is the simulator-agnostic testbench driver: cocotb.runner selects the
+# backend (verilator / icarus / vcs / questa / riviera / ...) at run time, so
+# the harness doesn't care which simulator a host has. Pinned to the classic
+# stable 1.9.2 line where `from cocotb.runner import get_runner` is the stable
+# API (cocotb 2.x moved it to `cocotb_tools.runner`; if you bump to 2.x, see
+# cocotb_runner.py's import fallback).
+#
+# cocotb-test + pytest are needed to import upstream tester modules that use
+# the cocotb-test/pytest drive while still running under the cocotb runner
+# (e.g. lfsr's test_lfsr_prbs_gen.py imports pytest + cocotb_test at module
+# load). Full transitive closure (iniconfig/pluggy/pygments/find-libpython) is
+# required because the sim-time interpreter imports the test module.
+cocotb==1.9.2
+cocotb-test==0.3.0
+find-libpython==0.5.1
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+pygments==2.21.0
+pytest==9.1.1
