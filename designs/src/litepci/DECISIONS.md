@@ -321,3 +321,16 @@ hard-IP blackbox.
 - **nangate45 PASS**: WS +5.87 ns at the relaxed 10 ns probe clock (vs +4.27 ns), **61 140 logic cells (−11.3 % vs 68 910 — a real synth-side improvement from yosys/abc 0.68 + slang; opposite sign to the minimax-n45 +12.3 % growth, so the new synth is a mixed bag per-design)**, zero violations. The `period_min × 1.10` tightening follow-up from 2026-07 still stands.
 - sky130hd remains non-finishing (GRT congestion, pre-existing) — not retried this rung.
 
+
+## 2026-11 toolchain upgrade — sky130hd finishes for the first time (2026-11-19)
+
+- **sky130hd reaches `_final` on the 2026-11 pin** (OpenROAD 687848dd, NRP
+  k8s, config `10f3a0c`): the GRT congestion that blocked every close since
+  the 2026-06 upgrade no longer manifests — the design routes and finishes
+  with no congestion-retune knobs. QoR: 1 030 916 std cells, util 25.6 %,
+  Fmax 41.1 MHz (period_min ≈ 24.3 ns), power 209 mW. **Flagged**: setup
+  WS −4.33 ns / TNS −19.9 ns over 20 endpoints, hold WS −8.16 ns /
+  TNS −4 719 ns over 991 endpoints (advisory per the 2026-11 gate policy;
+  the forwarded-clock/hold-skew structural limit documented above is the
+  suspected driver — follow up in the PPA pass with the probe-clock and
+  `create_generated_clock` treatment that fixed nangate45).
