@@ -48,14 +48,20 @@ space := $(empty) $(empty)
 #     10 rows = 2.7 um, too tight for ORFS tapcell/CTS/hold buffers next to macros)
 #   - synth.drop_init: ORFS/Yosys drop power-on `initial` values for an ASIC
 #   - frontend flags needed to read the LiteX/Xilinx RTL
-#   - this sample's floorplan flow (synth.place.fp, utilization for the GUI-explored core)
+#   - die/core: the same area as the OpenROAD reference (from its floorplan, here liteeth's
+#     CORE_UTILIZATION 38), never a LiveHD utilization, so results compare 1:1 with ORFS
 # Do not pass synth.memory: one option cannot fit every memory; use --set synth.memory=... only to experiment.
+# For another design copy DIE/CORE from its ORFS floorplan (e.g. the die/core of
+# bazel-bin/designs/asap7/<design>/results/asap7/<top>/base/2_floorplan.odb) and MACRO_HALO from its
+# MACRO_PLACE_HALO (platform default 10 10).
 MACRO_HALO ?= 10,10
+DIE ?= 0,0,454.596,454.596
+CORE ?= 1.026,1.08,453.546,453.33
 FLAGS := --top $(TOP) --set lhd.jobs=$(THREADS) --set synth.place=true --set synth.liberty=$(LIB) \
          --set synth.lef=$(subst $(space),$(comma),$(strip $(LEFS))) \
          --set synth.sdc=$(DESIGN)/constraint.sdc --set synth.wire_rc=$(PLATFORM)/setRC.tcl \
          --set synth.place.tracks=$(TRACKS) --set synth.place.halo=$(MACRO_HALO) \
-         --set synth.place.fp=true --set synth.place.utilization=0.2 \
+         --set synth.place.die=$(DIE) --set synth.place.core=$(CORE) \
          --set synth.drop_init=true \
          --set compile.slang.liberty_cells=true --set compile.slang.liberty_macro_precedence=true \
          --set compile.slang.ignore_uninstantiated_modules=true --set compile.slang.unconnected_input=one
