@@ -305,6 +305,13 @@ def run(args):
     rec['wall_seconds'] = round(time.time() - t0, 1)
     try:
         rec['metrics'] = metrics(dst, key)
+        # Seen on NVDLA LiveHD variants: the stage logs were complete but the first read found no log
+        # directory (an empty record although `report` later reads the same dir fine). Retry briefly.
+        for _ in range(6):
+            if rec['metrics'] or rec.get('status') != 'ok':
+                break
+            time.sleep(10)
+            rec['metrics'] = metrics(dst, key)
     except Exception as e:  # noqa: BLE001
         rec['metrics_error'] = str(e)
     rec['route_success'] = rec.get('status') == 'ok' and rec.get('metrics', {}).get('drc_errors') == 0
