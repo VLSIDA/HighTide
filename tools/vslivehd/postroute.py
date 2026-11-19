@@ -120,6 +120,17 @@ def make(dst, targets, log, cores, extra=()):
     return None, time.time() - t0
 
 
+def deployed_vars(dst):
+    """ADDITIONAL_LEFS/LIBS as the deployed ORFS stage config sets them (paths relative to _main)."""
+    out = {}
+    for mk in sorted(glob.glob(str(dst / '*.short.mk'))):
+        for line in Path(mk).read_text().splitlines():
+            m = re.match(r'^export\s+(ADDITIONAL_LEFS|ADDITIONAL_LIBS)\s*\??=\s*(.*)$', line)
+            if m:
+                out[m.group(1)] = m.group(2).strip()
+    return out
+
+
 def results_dir(dst, key):
     d = glob.glob(str(dst / '_main/designs/asap7' / key / 'results/asap7/*/base'))
     return Path(d[0])
@@ -250,6 +261,18 @@ def run(args):
             disp = dst / 'lhd_displacement.json'
             steps = [(['run', 'RUN_SCRIPT=%s' % (TOOLS / 'postroute_import.tcl'), 'RUN_LOG_NAME_STEM=lhd_import'],
                       dict(LHD_DEF=str(ldef), LHD_SDC=str(sdc)))]
+            # LiveHD-generated macros (synth.memory=sram): every ORFS stage must read their LEF and Liberty.
+            # The deployed config sets ADDITIONAL_LEFS/LIBS with ?=, so the environment extends it.
+            extra = run_dir / 'def/extra_views.json'
+            for var in ('ADDITIONAL_LEFS', 'ADDITIONAL_LIBS'):
+                os.environ.pop(var, None)
+            if extra.exists():
+                views = json.loads(extra.read_text())
+                base = deployed_vars(dst)
+                for var, key in (('ADDITIONAL_LEFS', 'lefs'), ('ADDITIONAL_LIBS', 'libs')):
+                    if views.get(key):
+                        os.environ[var] = ' '.join([base.get(var, '')] + views[key]).strip()
+                rec['generated_macro_views'] = views
             os.environ['LHD_DEF'] = str(ldef)
             os.environ['LHD_SDC'] = str(sdc)
             os.environ['LHD_POS'] = str(pos)

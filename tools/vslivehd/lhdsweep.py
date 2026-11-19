@@ -243,9 +243,9 @@ def clock_period(sdc):
     return float(m[0]) if m else None
 
 
-def score_env(d, sdc, extra_lefs=()):
+def score_env(d, sdc, extra_lefs=(), extra_libs=()):
     env = dict(os.environ)
-    env.update(LIB_FILES=' '.join(map(str, d.lib_files())), TECH_LEF=str(PLATFORM / 'lef/asap7_tech_1x_201209.lef'),
+    env.update(LIB_FILES=' '.join(map(str, list(d.lib_files()) + list(extra_libs))), TECH_LEF=str(PLATFORM / 'lef/asap7_tech_1x_201209.lef'),
                SC_LEF=str(PLATFORM / 'lef/asap7sc7p5t_28_R_1x_220121a.lef'),
                ADDITIONAL_LEFS=' '.join(map(str, list(d.macro_lefs()) + list(extra_lefs))), SET_RC_TCL=str(PLATFORM / 'setRC.tcl'),
                SDC_FILE=str(sdc))
@@ -259,12 +259,32 @@ def def_extra_lefs(d, def_dir):
     if not listing.exists():
         return []
     known = {p.resolve() for p in d.lef_list()}
+    known_names = {p.name for p in d.lef_list()}
     out = []
     for name in json.loads(listing.read_text()):
         p = (Path(def_dir) / name).resolve()
-        if p not in known:
+        # LiveHD copies every LEF it read next to the DEF as <index>_<name>; skip copies of the design's own.
+        if p not in known and re.sub(r'^\d+_', '', p.name) not in known_names:
             out.append(p)
     return out
+
+
+def export_generated_macros(d, rundir):
+    """LiveHD-generated SRAM macros (synth.memory=sram): copy their Liberty views next to the DEF and record
+    every LEF/Liberty a downstream tool needs beyond the design's own in def/extra_views.json (absolute paths),
+    so the scorer and the post-route flow see the macros even after the workdir is pruned."""
+    def_dir = Path(rundir) / 'def'
+    libs = []
+    src = Path(rundir) / 'w/synth/sram'
+    if src.is_dir():
+        (def_dir / 'lib').mkdir(parents=True, exist_ok=True)
+        for p in sorted(src.glob('*.lib')):
+            dst = def_dir / 'lib' / p.name
+            shutil.copy2(p, dst)
+            libs.append(str(dst.resolve()))
+    lefs = [str(p) for p in def_extra_lefs(d, def_dir)]
+    (def_dir / 'extra_views.json').write_text(json.dumps(dict(lefs=lefs, libs=libs), indent=1) + '\n')
+    return lefs, libs
 
 
 def adapt_sdc(src, dst):
@@ -284,10 +304,10 @@ def adapt_sdc(src, dst):
     return dst
 
 
-def run_score(d, source, out, sdc, timeout=7200, extra_lefs=(), check_placement='error'):
+def run_score(d, source, out, sdc, timeout=7200, extra_lefs=(), check_placement='error', extra_libs=()):
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    env = score_env(d, sdc, extra_lefs)
+    env = score_env(d, sdc, extra_lefs, extra_libs)
     if check_placement == 'report':  # record OpenROAD's check_placement verdict instead of failing the score
         env['SCORE_CHECK_PLACEMENT'] = 'report'
     env.update(SCORE_INPUT=str(source), SCORE_OUT=str(out))
@@ -371,6 +391,15 @@ def merged_liberty(d):
     return out
 
 
+def macro_halo(d):
+    """ORFS MACRO_PLACE_HALO as (x, y) micron strings: the design's value, else the platform config.mk default."""
+    v = d.vars.get('MACRO_PLACE_HALO')
+    if not v and PLATFORM is not None and (PLATFORM / 'config.mk').exists():
+        v = parse_mk(PLATFORM / 'config.mk').get('MACRO_PLACE_HALO')
+    parts = (v or '10 10').split()
+    return (parts + parts)[:2]
+
+
 def macro_libs(d):
     return [p for p in d.lib_files() if 'asap7sc7p5t' not in p.name]
 
@@ -426,8 +455,9 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
         'synth.place': 'true',
         'synth.place.density': '%g' % d.density(),
         'synth.wire_rc': str(PLATFORM / 'setRC.tcl'),
-        # ORFS/Yosys lowers every inferred memory to flops; only explicit fakeram instances stay macros.
-        'synth.memory': 'flops',
+        # No synth.memory here: one option cannot fit every memory of a large design, so LiveHD's default
+        # (synth.memory=auto) decides per memory; explicit fakeram instances stay macros. Experiments may
+        # pass --set synth.memory=... under their own tag.
         # Yosys drops power-on `initial` values for an ASIC; LiveHD would otherwise keep a native flop.
         'synth.drop_init': 'true',
         # Registers on a gated/derived clock must map to cells (ASAP7 ICGs are dont_use), and Yosys's
@@ -438,6 +468,8 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
     # utilization derived), not a die LiveHD derives from its own utilization.
     base_sets['synth.place.die'] = ','.join('%g' % x for x in ref['die_um'])
     base_sets['synth.place.core'] = ','.join('%g' % x for x in ref['core_um'])
+    # Macro halo: the design's ORFS MACRO_PLACE_HALO (asap7 platform default 10 10 um), same clearance as the reference.
+    base_sets['synth.place.halo'] = ','.join(macro_halo(d))
     merged = dict(base_sets)
     cfg_file = TOOLS / 'design_config.json'
     if cfg_file.exists():  # per-design defaults found during bring-up (reader, frontend flags, ...)
@@ -546,8 +578,9 @@ def run_variant(d, tag, sets, threads=1, timeout=7200, mem_gib=64, files=None, r
         t1 = time.monotonic()
         try:
             sdc = adapt_sdc(d.ref_dir / '3_place.sdc', rundir / 'score_pins.sdc')
-            score = run_score(d, defs[0], rundir / 'score', sdc, extra_lefs=def_extra_lefs(d, rundir / 'def'),
-                              check_placement=check_placement)
+            extra_lefs, extra_libs = export_generated_macros(d, rundir)
+            score = run_score(d, defs[0], rundir / 'score', sdc, extra_lefs=extra_lefs,
+                              check_placement=check_placement, extra_libs=extra_libs)
             if timing_unmeasured:
                 score['opensta_setup_unmeasured'] = {k: score[k] for k in ('setup_wns_ps', 'setup_tns_ps', 'hold_wns_ps', 'hold_tns_ps')}
                 score.update(setup_wns_ps=None, setup_tns_ps=None, hold_wns_ps=None, hold_tns_ps=None)

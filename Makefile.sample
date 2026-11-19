@@ -41,17 +41,24 @@ GEN_RTL := //designs/src/liteeth:gen_liteeth_core
 RTL := bazel-bin/$(SRC)/$(TOP).v $(sort $(wildcard $(SRC)/libraries/xilinx/*.v)) $(SRC)/macros.v
 comma := ,
 space := $(empty) $(empty)
+# Keep LiveHD's defaults (timing-driven placement, resize, IO resynthesis, the legroute plan, virtual
+# buffer trees, per-memory decisions under synth.memory=auto). Pass only technology/flow inputs:
+#   - technology: Liberty, LEFs, SDC, wire RC, routing tracks
+#   - macro halo: ORFS MACRO_PLACE_HALO (asap7 platform default 10 um per side; LiveHD's own auto halo is
+#     10 rows = 2.7 um, too tight for ORFS tapcell/CTS/hold buffers next to macros)
+#   - synth.drop_init: ORFS/Yosys drop power-on `initial` values for an ASIC
+#   - frontend flags needed to read the LiteX/Xilinx RTL
+#   - this sample's floorplan flow (synth.place.fp, utilization for the GUI-explored core)
+# Do not pass synth.memory: one option cannot fit every memory; use --set synth.memory=... only to experiment.
+MACRO_HALO ?= 10,10
 FLAGS := --top $(TOP) --set lhd.jobs=$(THREADS) --set synth.place=true --set synth.liberty=$(LIB) \
          --set synth.lef=$(subst $(space),$(comma),$(strip $(LEFS))) \
-         --set synth.sdc=$(DESIGN)/constraint.sdc --set synth.place.tech_rc=$(PLATFORM)/setRC.tcl \
-         --set synth.place.tracks=$(TRACKS) \
-         --set synth.timing.engine=fast \
-         --set synth.place.fp=true --set synth.place.macro=none --set synth.place.utilization=0.2 \
-         --set synth.place.threads=1 --set synth.place.timing_driven=false --set synth.place.resize=false \
-         --set synth.place.io_resynth=0 --set synth.memory=flops --set pass.abc.drop_init=true \
+         --set synth.sdc=$(DESIGN)/constraint.sdc --set synth.wire_rc=$(PLATFORM)/setRC.tcl \
+         --set synth.place.tracks=$(TRACKS) --set synth.place.halo=$(MACRO_HALO) \
+         --set synth.place.fp=true --set synth.place.utilization=0.2 \
+         --set synth.drop_init=true \
          --set compile.slang.liberty_cells=true --set compile.slang.liberty_macro_precedence=true \
-         --set compile.slang.ignore_uninstantiated_modules=true --set compile.slang.unconnected_input=one \
-         --set compile.specialize_modules=true
+         --set compile.slang.ignore_uninstantiated_modules=true --set compile.slang.unconnected_input=one
 READER := -- -D SYNTHESIS --ignore-assertions --compat=vcs --timescale=1ns/1ps -D USE_ASAP7_CELLS
 
 .PHONY: help inputs explore replay detail cts grt route timing check-input

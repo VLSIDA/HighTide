@@ -1,8 +1,6 @@
 {
  "vortex": {
-  "sets": {
-   "reader": "yosys"
-  }
+  "sets": {}
  },
  "coralnpu": {
   "sets": {}
@@ -17,8 +15,7 @@
    "compile.slang.liberty_macro_precedence": "true",
    "compile.slang.ignore_uninstantiated_modules": "true",
    "compile.slang.liberty_cells": "true",
-   "compile.slang.unconnected_input": "one",
-   "compile.specialize_modules": "true"
+   "compile.slang.unconnected_input": "one"
   }
  },
  "litepci": {
@@ -27,9 +24,7 @@
    "compile.slang.ignore_uninstantiated_modules": "true",
    "compile.slang.liberty_cells": "true",
    "compile.slang.unconnected_input": "one",
-   "compile.slang.blackbox_attribute": "true",
-   "compile.specialize_modules": "true",
-   "synth.place.timing_driven": "false"
+   "compile.slang.blackbox_attribute": "true"
   }
  },
  "cnn": {
@@ -40,8 +35,7 @@
  "NyuziProcessor": {
   "sets": {
    "compile.slang.liberty_allow_truncation": "true",
-   "compile.slang.flatten_state_arrays": "true",
-   "synth.place.timing_driven": "false"
+   "compile.slang.flatten_state_arrays": "true"
   }
  },
  "NVDLA/partition_m": {
@@ -65,15 +59,13 @@
  "NVDLA/partition_o": {
   "sets": {
    "compile.slang.ignore_uninstantiated_modules": "true",
-   "compile.slang.translate_off": "true",
-   "synth.place.timing_rounds": "1"
+   "compile.slang.translate_off": "true"
   }
  },
  "NVDLA/partition_c": {
   "sets": {
    "compile.slang.ignore_uninstantiated_modules": "true",
-   "compile.slang.translate_off": "true",
-   "synth.place.timing_driven": "false"
+   "compile.slang.translate_off": "true"
   }
  }
 }
