@@ -47,7 +47,8 @@ space := $(empty) $(empty)
 #   - macro halo: ORFS MACRO_PLACE_HALO (asap7 platform default 10 um per side; LiveHD's own auto halo is
 #     10 rows = 2.7 um, too tight for ORFS tapcell/CTS/hold buffers next to macros)
 #   - synth.drop_init: ORFS/Yosys drop power-on `initial` values for an ASIC
-#   - frontend flags needed to read the LiteX/Xilinx RTL
+#   - no frontend flags: LiveHD's defaults bind Liberty cells instantiated in RTL, let a Liberty macro
+#     replace a same-named RTL stub (fakeram), and skip modules outside --top
 #   - die/core: the same area as the OpenROAD reference (from its floorplan, here liteeth's
 #     CORE_UTILIZATION 38), never a LiveHD utilization, so results compare 1:1 with ORFS
 # Do not pass synth.memory: one option cannot fit every memory; use --set synth.memory=... only to experiment.
@@ -62,9 +63,7 @@ FLAGS := --top $(TOP) --set lhd.jobs=$(THREADS) --set synth.place=true --set syn
          --set synth.sdc=$(DESIGN)/constraint.sdc --set synth.wire_rc=$(PLATFORM)/setRC.tcl \
          --set synth.place.tracks=$(TRACKS) --set synth.place.halo=$(MACRO_HALO) \
          --set synth.place.die=$(DIE) --set synth.place.core=$(CORE) \
-         --set synth.drop_init=true \
-         --set compile.slang.liberty_cells=true --set compile.slang.liberty_macro_precedence=true \
-         --set compile.slang.ignore_uninstantiated_modules=true
+         --set synth.drop_init=true
 READER := -- -D SYNTHESIS --ignore-assertions --compat=vcs --timescale=1ns/1ps -D USE_ASAP7_CELLS
 
 .PHONY: help inputs explore replay detail cts grt route timing check-input
