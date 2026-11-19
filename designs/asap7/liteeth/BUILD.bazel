@@ -34,18 +34,15 @@ hightide_design(
     },
     arguments = {
         "VERILOG_DEFINES": "-D USE_ASAP7_CELLS",
-        # asap7 macros grew ~5x after the bsg_fakeram migration (the prior
-        # OpenFakeRAM LEFs were unrealistically dense for 7nm). The 2026-05-11
-        # UTIL 35->50 / DENSITY 0.30->0.55 sweep was tuned against the old
-        # macros and now causes RSZ-0074 routing failures on udp0_sink_last
-        # at grt. Step back to the pre-sweep settings until a fresh sweep.
-        "CORE_UTILIZATION": "38",
-        "PLACE_DENSITY": "0.30",
-        # ODB-1200 / RSZ-0074 (HighTide #75/#103) fixed in OpenROAD 299f3015,
-        # but full repair_timing over-buffers this design on the new tools
-        # (+37% cells). Keep skipping repair and instead relax util 43→38 to
-        # shorten the critical path — recovers WNS toward the 920 ps clock
-        # with cell area unchanged (only die padding grows). See DECISIONS.md.
+        # bazeltuner TPE campaign 2026-11-19 (47 trials, fmax objective,
+        # liteeth_asap7.json): 900ps/45/0.55 with tight 4um RTLMP channels
+        # dominates the old 1022ps/38/0.30 fallback on every axis —
+        # +15.9% Fmax (1.134 GHz, WS +18ps clean), -15.6% core area,
+        # equal power. Density 0.55 (the value the 2026-05 sweep had to
+        # abandon to RSZ-0074) routes fine on this pin with 4um channels.
+        "CORE_UTILIZATION": "45",
+        "PLACE_DENSITY": "0.55",
+        "RTLMP_MIN_CHANNEL_SIZE": "4 4",
         "SKIP_CTS_REPAIR_TIMING": "1",
         "SKIP_INCREMENTAL_REPAIR": "1",
     },

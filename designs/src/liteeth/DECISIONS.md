@@ -64,6 +64,20 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
 
 ## asap7
 
+
+- **bazeltuner TPE campaign — 900 ps / util 45 / density 0.55 / 4 µm RTLMP
+  channels (2026-11-19)**: 47-trial TPE (4×12, fmax objective, spec
+  `suites/hightide/specs/liteeth_asap7.json`; baseline seed skipped — the
+  1022 ps clock is off the 850–1250/50 grid) replacing the post-migration
+  fallback 1022/38/0.30. Winner verified at final: fmax 1.134 GHz
+  (period_min 882 ps), WS +18 ps / TNS 0, core 172 777 µm², 33.4 mW —
+  **dominates the baseline on every axis** (0.978 GHz / WS −0.3 ps /
+  204 652 µm² / 33.4 mW): +15.9 % Fmax, −15.6 % area, equal power.
+  Tight 4 µm channels won decisively (12/20 µm consistently slower), and
+  density 0.55 — abandoned in 2026-05 to RSZ-0074 routing failures — is
+  routable again on the 2026-11 pin with them. Committed; both ODB-1200
+  family skips retained.
+
 **Status**: finishing
 **Last updated**: 2026-11-16 (2026-11 pin validation)
 
