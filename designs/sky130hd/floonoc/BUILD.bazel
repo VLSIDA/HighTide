@@ -1,5 +1,9 @@
 load("//:defs.bzl", "hightide_design")
 
+filegroup(name = "sram_lefs", srcs = glob(["sram/lef/*.lef"]))
+
+filegroup(name = "sram_libs", srcs = glob(["sram/lib/*.lib"]))
+
 hightide_design(
     name = "floonoc",
     top = "floonoc_mesh_top",
@@ -7,15 +11,20 @@ hightide_design(
     verilog_files = ["//designs/src/floonoc:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
-        "FOOTPRINT_TCL": [":io.tcl"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
     },
     stage_data = {"synth": ["//designs/src/floonoc:rtl_data"]},
     arguments = {
         "SYNTH_HDL_FRONTEND": "slang",
         "VERILOG_INCLUDE_DIRS": "external/+http_archive+pulp_common_cells_src/include external/+http_archive+pulp_apb_src/include external/+http_archive+pulp_axi_src/include external/+http_archive+pulp_axi_stream_src/include external/+http_archive+pulp_obi_src/include external/+http_archive+pulp_register_interface_src/include external/+http_archive+floonoc_src/hw/include",
         "VERILOG_DEFINES": "-D VERILATOR",
-        "DIE_AREA": "0 0 1800 1800",
-        "CORE_AREA": "5 5 1795 1795",
+        # Die re-sized for HighTide#254: the mesh is no longer hollowed
+        # (the cluster stub now carries real logic + a 1Mbit fakeram per
+        # endpoint), so the old hand dies are void. Utilization-driven
+        # floorplan as the retune starting point.
+        "CORE_UTILIZATION": "30",
+        "RTLMP_MIN_CHANNEL_SIZE": "300 300",
         "TNS_END_PERCENT": "100",
     },
 )

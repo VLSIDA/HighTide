@@ -37,6 +37,37 @@ The mesh is assembled hermetically by Bazel — no `dev/repo` submodule, no bend
 - None.
 
 - **2026-11 toolchain upgrade (bazel-orfs 805ffd68 / OpenROAD 687848dd / yosys 0.68, asap7 BC→TC corner)**: still closes the pushed 821 ps clock on the slower TT libs — WS +36 ps (period_min 785 ps), zero violations. 92 610 logic cells (+15.7 % vs 80 073): corner-driven sizing, not synth growth — the resizer works harder to make 821 ps on TT than on the old FF libs. Expect it to deflate if the constraints pass relaxes the asap7 clocks.
+
+## HighTide#254: the mesh was hollowed — stub rebuilt, all QoR invalid (2026-11-20)
+
+- **Bug** (reported by renau): `cluster_blackbox` was an empty module with
+  no `(* blackbox *)` attribute, so the slang frontend dissolved it, the 16
+  clusters' AXI outputs became undriven, and synthesis constant-folded most
+  of the mesh: asap7 netlist carried ~13.7K flops vs ~278K for the real
+  mesh. **Every prior floonoc pass on every platform measured ~5% of the
+  design**; all QoR rows invalid.
+- **Fix**: instead of a pin-level blackbox (which would need a custom LEF),
+  the stub is now a synthesizable macros.v-style wrapper (the bp/snitch
+  pattern): a standard bsg_fakeram `fakeram_w64_l16384` (1 Mbit ≈ one
+  snitch cluster's TCDM) per endpoint plus registered glue — every AXI
+  input folds into the SRAM write stream, every AXI output is a registered
+  function of the SRAM read data, so nothing is const-foldable and the
+  mesh sees live traffic on all channels. Macros generated per platform
+  via tools/regenerate_sram.sh (cfgs use the corrected camelCase snap
+  keys): asap7 553x346, nangate45 1461x637, sky130hd 2739x4455 um.
+- **Verified**: asap7 synth = 16 fakeram instances + ~278K flops (matches
+  the reporter's ~301K expectation at his config).
+- **Pitfalls hit**: slang's diagnostics are swallowed by the ORFS log —
+  reproduce with a standalone `read_slang` to see them; the wrapper's fold
+  vector must exceed the widest AXI struct (16384b used); fakeram clock
+  pin is `rw0_clk`, not `clk`.
+- **Open**: full PnR retune on all three platforms (old dies/io.tcl void;
+  utilization-driven starting points committed, FOOTPRINT_TCL unwired).
+  sky130hd's 1Mbit macro is 12.2M um^2 — 16 of them ≈ 195M um^2, so sky
+  may need a smaller proxy RAM (e.g. w64_l4096) or a huge die; decide at
+  retune. PSM-0069 edge_margin fix must be redone on the new sky
+  floorplan.
+
 ## nangate45
 
 **Status**: finishing
