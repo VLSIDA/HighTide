@@ -74,6 +74,26 @@ nangate45 stays on CACTI; its aspects come out 1.2–1.6 for cnn's four sizes.
 
 ## asap7
 
+
+- **Manual connectivity-driven floorplan — Fmax +31.5 %, die −28 %
+  (2026-11-20, `ca2e1465`+`e772ce00`)**: hand placement replacing RTLMP
+  (whose clustering bound the critical path since 2026-06): the four
+  w16_l32768 across the top set the die width (2070 µm, 19.8 µm channels,
+  40 µm halo below); the two w16_l8192 R0-stacked on the right edge; all
+  58 w16_l512 spread in a justified 3-deep bottom band (35–46 µm gaps)
+  plus a 2-deep left arm, bank pairs adjacent; the w64_l256 — netlist
+  tracing shows it is the AXI transfer buffer sharing a bus with every
+  small RAM — centered mid-band. Explicit die 2070×1320 = 2.73 M µm².
+  **Final QoR vs the RTLMP floorplan (same pin/corner): Fmax 389.6 →
+  512.4 MHz (period_min 2566 → 1952 ps), die 3.796 → 2.732 M µm², power
+  474.9 → 462.7 mW, setup WS −1566 → −952 ps, hold WS −128 → −78 ps**
+  (timing advisory per 2026-11 policy; the SDC target remains ambitious).
+  Pitfall logged: R90 on asap7 fakerams strands pins (DRT-0073 "No access
+  point" on rw0_wd_in[0]) despite LEF SYMMETRY R90 — asap7 pin shapes are
+  track-directional; keep macros R0 (first attempt `ca2e1465` failed at
+  GRT pin_access for exactly this). Follow-up: with the structural path
+  improved, retest dropping SKIP_INCREMENTAL_REPAIR.
+
 **Status**: reaches `_final` on bazel-orfs 553c1c3 via the k8s param sweep; **WNS still flagged-negative** (improved substantially on the 2026-11 pin — see above).
 
 `hightide_design()` with `CORE_UTILIZATION=60`, `PLACE_DENSITY=0.40`. Default RTLMP places the four `fakeram_w16_l32768` macros. **MPL-0040** workaround required — see CLAUDE.md bug table: `macros.tcl` pre-places the fakeram macros (FIRM) before RTLMP runs.
