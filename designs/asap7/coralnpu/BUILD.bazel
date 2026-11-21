@@ -29,5 +29,11 @@ hightide_design(
         "PLACE_DENSITY_LB_ADDON": "0.20",
         "RTLMP_MIN_CHANNEL_SIZE": "12 12",  # was MACRO_PLACE_HALO 6 6 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
+        # 2026-11 pin: post-DRT antenna-repair loop diverges here too
+        # (39h+ inside 5_route on NRP; first-pass DRT for this design is
+        # a fraction of that) — same pathology as NVDLA partition_o on
+        # sky130hd/asap7/gt2n. Residual antenna violations waived;
+        # retry on the next pin bump.
+        "SKIP_ANTENNA_REPAIR_POST_DRT": "1",
     },
 )
