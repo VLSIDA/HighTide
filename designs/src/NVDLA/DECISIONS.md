@@ -298,3 +298,14 @@ Remove with the other strips once the pin passes the upstream fix.
 
 ### Known issues / open questions
 - **partition_c**: 75 setup violations (WNS −184.68 ps) and 2497 hold violations (WNS −529.52 ps) at the 1300 ps target; incremental hold repair at global routing does not converge within ~18h (setup-only repair used instead) — may close further with more time.
+
+- **partition_o gt2n — closed locally; DRT needs ~150 GB (2026-11-21)**:
+  with the antenna skip (`7f754e4a`) the route no longer diverges, but
+  full-M11-stack DRT peaks 149.6 GB at ~44 threads — 24/48/96 Gi NRP
+  pods all OOMed (worker memory scales with thread count; the 4-thread
+  pods expressed the same appetite slowly). Local close on donut:
+  first-pass DRT **0 violations in 76 min wall** (45 CPU-h), GRT-fidelity
+  timing (STA-1670 keeps gt2n at `_grt_report`) setup WS +121.8 ps /
+  TNS 0, hold WS +11.5 ps, Fmax 1.171 GHz. Design moved to the
+  local-build list; `MAX_ROUTING_LAYER M9` (BSPDN frees the top layers)
+  is the untested lever if a k8s path is ever wanted.

@@ -214,5 +214,6 @@ Designs whose stage blobs exceed the 100 MB edge cap (they rely on the backfill;
 - **`bp_uno`** (sky130hd) — `6_final.odb` 2.9 GB; asap7/nangate45 `bp_uno` stay under the cap.
 - **`NVDLA/partition_c`** (asap7, nangate45, sky130hd) — stage ODBs 190 MB–1.1 GB. The other NVDLA partitions (a/m/o/p) stay under the ceiling.
 - **`cnn`** (nangate45, sky130hd) — 65 macros each.
+- **`NVDLA/partition_o`** (gt2n) — not a cache-size problem but a **memory** one: full-M11-stack DRT peaks ~150 GB at high thread counts (0 DRC in 76 min locally; 24/48/96Gi pods all OOM). Build locally and run the backfill; `MAX_ROUTING_LAYER M9` is the untested lever if it must return to k8s.
 
 **Keep this list current:** *remove* a design once all its cache objects are confirmed < 100 MB; *add* a design the moment a k8s log shows `413` / size-limit on a blob upload. The list records which designs currently depend on the backfill, not a fixed set.
