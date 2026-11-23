@@ -13,7 +13,7 @@ import re
 import tempfile
 from pathlib import Path
 
-SECTION = re.compile(r"^(COMPONENTS|NETS|VIAS)\s+(\d+)\s*;$")
+SECTION = re.compile(r"^(COMPONENTS|PINS|NETS|VIAS)\s+(\d+)\s*;$")
 UNITS = re.compile(r"^UNITS\s+DISTANCE\s+MICRONS\s+(\d+)\s*;")
 POSE = re.compile(r"\+\s+(?:FIXED|PLACED|COVER)\s+\(\s*(-?\d+)\s+(-?\d+)\s*\)\s+(\w+)")
 WIRE = re.compile(r"(?<!\S)\+\s+(?:ROUTED|FIXED|COVER|NOSHIELD|SHIELD)\s+")
@@ -120,6 +120,7 @@ def stitch(design, workers, output):
         elif section is None and body.lstrip().startswith("COMPONENTS "):
             break
     same_units = False
+    top_ports = {}
     with tempfile.NamedTemporaryFile(mode="w", dir=output.parent, delete=False) as dest:
         temp = Path(dest.name)
         try:
@@ -127,11 +128,20 @@ def stitch(design, workers, output):
                 if section == "COMPONENTS" and name in instances:
                     if instances.pop(name) != component(body):
                         raise ValueError(f"worker and design master or placement differ for {name}")
-                elif section == "NETS" and name in pending:
-                    endpoints, wiring = pending.pop(name)
-                    if WIRE.search(body) or pins(body) != endpoints:
-                        raise ValueError(f"existing wiring or endpoint mismatch on {name}")
-                    body = body.rstrip()[:-1].rstrip() + "\n      " + wiring + "\n"
+                elif section == "PINS":
+                    net = re.search(r"(?<!\S)\+\s+NET\s+(\S+)", body)
+                    if net:
+                        top_ports[name] = net[1]
+                elif section == "NETS":
+                    if "PIN " in body:
+                        for inst, port in pins(body):
+                            if inst == "PIN" and port in top_ports and top_ports[port] != name:
+                                raise ValueError(f"port {port} binds to {top_ports[port]} in PINS and {name} in NETS")
+                    if name in pending:
+                        endpoints, wiring = pending.pop(name)
+                        if WIRE.search(body) or pins(body) != endpoints:
+                            raise ValueError(f"existing wiring or endpoint mismatch on {name}")
+                        body = body.rstrip()[:-1].rstrip() + "\n      " + wiring + "\n"
                 elif section is None:
                     s = body.strip()
                     if (unit := UNITS.match(s)):

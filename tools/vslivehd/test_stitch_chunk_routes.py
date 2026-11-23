@@ -21,7 +21,10 @@ VIA = """VIAS 1 ;
 - custom + RECT M2 ( -1 -1 ) ( 1 1 ) ;
 END VIAS
 """
-FULL = HEADER + CELLS + """NETS 2 ;
+FULL = HEADER + CELLS + """PINS 1 ;
+- pad + NET top + DIRECTION INPUT ;
+END PINS
+NETS 2 ;
 - local ( a Y ) ( b A ) + USE SIGNAL ;
 - top ( PIN pad ) ( b Y ) + USE SIGNAL ;
 END NETS
@@ -59,6 +62,7 @@ class StitchRoutesTest(unittest.TestCase):
     def test_rejects_changed_or_duplicate_inputs_without_overwriting_output(self):
         for wrong, workers in [
             (FULL.replace("( b A )", "( b B )"), [self.worker]),
+            (FULL.replace("+ NET top ", "+ NET stale "), [self.worker]),
             (FULL.replace("30 40", "30 41"), [self.worker]),
             (FULL.replace("1000 ;", "2000 ;", 1), [self.worker]),
             (FULL.replace(CELLS, VIA.replace("M2", "M3") + CELLS), [self.worker]),
