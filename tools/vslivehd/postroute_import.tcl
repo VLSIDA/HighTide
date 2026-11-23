@@ -18,9 +18,24 @@ if {[env_var_exists_and_non_empty ADDITIONAL_LEFS]} {
 }
 read_def $::env(LHD_DEF)
 set block [ord::get_db_block]
+# Snap movable macros before PDN generation. Moving a macro after wires exist
+# would disconnect its pins, so preserve the geometry of routed imports.
+set snap_macros 1
+foreach net [$block getNets] {
+  if {[$net getWire] ne "NULL" || [llength [$net getSWires]]} {
+    set snap_macros 0
+    break
+  }
+}
+set dbu [$block getDbUnitsPerMicron]
 set macros 0;set cells 0;set unplaced 0
 foreach inst [$block getInsts] {
   if {[[$inst getMaster] isBlock]} {
+    if {$snap_macros && [$inst getPlacementStatus] eq "PLACED"} {
+      lassign [$inst getLocation] x y
+      place_macro -allow_overlap -macro_name [$inst getName] -orientation [$inst getOrient] \
+        -location [list [expr {double($x) / $dbu}] [expr {double($y) / $dbu}]]
+    }
     $inst setPlacementStatus FIRM
     incr macros
   } else {
