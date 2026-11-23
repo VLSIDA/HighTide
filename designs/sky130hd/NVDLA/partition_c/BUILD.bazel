@@ -44,5 +44,14 @@ hightide_design(
         "RTLMP_MIN_CHANNEL_SIZE": "300 300",  # was MACRO_PLACE_HALO 150 150 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         "GLOBAL_ROUTE_ARGS": "-congestion_iterations 60",
+        # 2026-11 pin: detailed route closes at 0 DRC, and the DRT antenna
+        # check leaves only 1 net / 1 pin. But post-DRT repair_antennas
+        # re-estimates on GRT guides (560 "violations"), inserts 3175 diodes,
+        # and its incremental GRT overflows (GRT-0232) in the cbuf/cdma
+        # macro-escape channels that only fit at the 0.10 adjustment. The
+        # adjustment does persist into the route stage (stored on
+        # dbTechLayer); the repair is just chasing phantoms. Skip it and
+        # waive the 1 real violation. Same fix as partition_o.
+        "SKIP_ANTENNA_REPAIR_POST_DRT": "1",
     },
 )
