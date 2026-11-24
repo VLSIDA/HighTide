@@ -1,12 +1,18 @@
 name: Lint FakeRAM LEFs
 
-# Guards the wd_in pin-direction invariant on every committed FakeRAM LEF.
-# Cheap grep-only check — no toolchain, no LLM, no bazel cache.
+# Guards FakeRAM invariants that a grep can check:
+#  - every committed LEF: no wd_in pin declared DIRECTION OUTPUT;
+#  - every bsg_fakeram cfg: camelCase snap keys (snake_case is silently
+#    ignored) and a macro set that matches its committed LEFs.
+# Cheap checks only — no toolchain, no LLM, no bazel cache. Whether the netlist
+# instantiates each macro is a post-synthesis check (tools/check_sram_usage.py).
 on:
   pull_request:
     paths:
       - "designs/**/sram/lef/*.lef"
+      - "designs/src/*/dev/generated/fakeram_*.cfg"
       - "tools/check_sram_lef.sh"
+      - "tools/check_sram_cfg.py"
       - ".github/workflows/lint-sram-lef.yml"
   push:
     branches: [main]
@@ -19,3 +25,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: ./tools/check_sram_lef.sh
+      - run: ./tools/check_sram_cfg.py

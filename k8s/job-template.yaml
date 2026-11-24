@@ -158,6 +158,18 @@ spec:
             fi
           fi
 
+          # Check that every FakeRAM macro the design declares is actually in
+          # the netlist (a memory with no storage passes synthesis silently and
+          # takes its logic with it: ternip 2026-05..11, floonoc #254). Fetches
+          # the cached synth_stat.txt if synthesis was a cache hit. Advisory
+          # only; never fails the job.
+          SYNTH_TARGET="$(echo "__BAZEL_TARGET__" | sed 's/_gallery$/_synth/; s/_final$/_synth/')"
+          if [ "$SYNTH_TARGET" != "__BAZEL_TARGET__" ]; then
+            bazel build $CACHE_FLAGS --remote_download_regex='.*/synth_stat\.txt$' "$SYNTH_TARGET" >/dev/null 2>&1 || true
+            DP="${SYNTH_TARGET#//designs/}"; DP="${DP%%:*}"
+            echo "=== SRAM usage check ==="
+            python3 tools/check_sram_usage.py "${DP%%/*}" "${DP#*/}" || echo "WARNING: SRAM usage check did not pass (see above)"
+          fi
           # Backfill oversized blobs over the R2 S3 API (bazel's own uploads
           # through the Worker 413 above 100 MB and are skipped with a
           # warning).  Runs whenever the r2-s3-creds Secret is present; never

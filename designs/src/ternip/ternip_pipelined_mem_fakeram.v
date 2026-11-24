@@ -98,40 +98,46 @@ always_ff @(posedge clk_i) begin
     end
 end
 
-// Banked FakeRAM SRAM macros — replace the behavioral reg array.
-// The FakeRAMs have a synchronous registered output, which replaces read_data_q2.
+// FakeRAM SRAM macros — replace the behavioral reg array. The FakeRAMs have
+// a synchronous registered output, which replaces read_data_q2. Shapes are the
+// ones config/hightide.svh produces (D=2560, VectorParallelism=8,
+// TmatmulParallelism=256, NumVectorRegisters=8):
 //
-//   (16, 4096) → 8 × fakeram_512x16  (depth-banked, 8 Kb per bank)
-//   (16, 1024) → 2 × fakeram_512x16  (depth-banked, 8 Kb per bank)
-//   (1024, 16) → flip-flop register file (16 entries is too small for a macro)
+//   (128, 4096) vector_registers   → 8 × fakeram_512x128 (depth-banked, one
+//                                     bank per vector register, 64 Kb each)
+//   (128,  320) tmatmul export     → 1 × fakeram_512x128 (addresses 0..319)
+//   (4096,  10) tmatmul import     → flip-flops: depth 10 is below fakeram's
+//                                     minimum and 4096-bit words exceed asap7
+//                                     pin routing (needs SYNTH_MEMORY_MAX_BITS
+//                                     >= 40960)
+//
+// Any other shape is an elaboration error. Before 2026-11 this block had no
+// default branch, and the D 1024→2560 bump (ae7666b1) silently left every
+// memory with no storage at all (HighTide ternip DECISIONS.md).
 //
 // Depth banking: addr[high] selects which bank's ce_in fires; the bank's
-// rd_out is muxed back into read_data_q2 using request_addr_q2 (the
-// SRAM's read latency is 1 cycle, so by the time the data arrives,
-// addr_q2 holds the address that was driven into the SRAM last cycle).
-//
-// Width banking: every bank gets the same address/ce/we, and the data
-// bus is sliced/concatenated into BANK_WIDTH-bit groups across banks.
+// rd_out is muxed back into read_data_q2 using request_addr_q2 (the SRAM's
+// read latency is 1 cycle, so by the time the data arrives, addr_q2 holds the
+// address that was driven into the SRAM last cycle).
 
 wire fakeram_ce = !stall2 && (write_valid_q1 || read_valid_q1);
 wire fakeram_we = write_valid_q1;
 
 generate
-    if (DATA_WIDTH == 16 && NUM_ENTRIES == 4096) begin : gen_sram
-        localparam int BANK_DEPTH      = 512;
-        localparam int NUM_BANKS       = 8;
-        localparam int BANK_ADDR_BITS  = 9;  // log2(512)
-        localparam int BANK_SEL_BITS   = 3;  // log2(8)
+    if (DATA_WIDTH == 128 && NUM_ENTRIES == 4096) begin : gen_sram
+        localparam int NUM_BANKS      = 8;
+        localparam int BANK_ADDR_BITS = 9;  // log2(512)
+        localparam int BANK_SEL_BITS  = 3;  // log2(8)
 
-        wire [BANK_SEL_BITS-1:0]  bank_sel  = request_addr_q1[ADDR_WIDTH-1 -: BANK_SEL_BITS];
-        wire [BANK_ADDR_BITS-1:0] bank_addr = request_addr_q1[BANK_ADDR_BITS-1:0];
+        wire [BANK_SEL_BITS-1:0]  bank_sel    = request_addr_q1[ADDR_WIDTH-1 -: BANK_SEL_BITS];
+        wire [BANK_ADDR_BITS-1:0] bank_addr   = request_addr_q1[BANK_ADDR_BITS-1:0];
         wire [BANK_SEL_BITS-1:0]  bank_sel_q2 = request_addr_q2[ADDR_WIDTH-1 -: BANK_SEL_BITS];
 
         logic [DATA_WIDTH-1:0] bank_rd_out [NUM_BANKS-1:0];
 
         for (genvar b = 0; b < NUM_BANKS; b++) begin : gen_bank
             wire bank_ce = fakeram_ce && (bank_sel == BANK_SEL_BITS'(b));
-            fakeram_512x16 sram (
+            fakeram_512x128 sram (
                 .rw0_clk(clk_i),
                 .rw0_ce_in(bank_ce),
                 .rw0_we_in(fakeram_we),
@@ -141,34 +147,19 @@ generate
             );
         end
         assign read_data_q2 = bank_rd_out[bank_sel_q2];
-    end else if (DATA_WIDTH == 16 && NUM_ENTRIES == 1024) begin : gen_sram
-        localparam int BANK_DEPTH      = 512;
-        localparam int NUM_BANKS       = 2;
-        localparam int BANK_ADDR_BITS  = 9;  // log2(512)
-        localparam int BANK_SEL_BITS   = 1;  // log2(2)
-
-        wire [BANK_SEL_BITS-1:0]  bank_sel  = request_addr_q1[ADDR_WIDTH-1 -: BANK_SEL_BITS];
-        wire [BANK_ADDR_BITS-1:0] bank_addr = request_addr_q1[BANK_ADDR_BITS-1:0];
-        wire [BANK_SEL_BITS-1:0]  bank_sel_q2 = request_addr_q2[ADDR_WIDTH-1 -: BANK_SEL_BITS];
-
-        logic [DATA_WIDTH-1:0] bank_rd_out [NUM_BANKS-1:0];
-
-        for (genvar b = 0; b < NUM_BANKS; b++) begin : gen_bank
-            wire bank_ce = fakeram_ce && (bank_sel == BANK_SEL_BITS'(b));
-            fakeram_512x16 sram (
-                .rw0_clk(clk_i),
-                .rw0_ce_in(bank_ce),
-                .rw0_we_in(fakeram_we),
-                .rw0_addr_in(bank_addr),
-                .rw0_wd_in(request_w_data_q1),
-                .rw0_rd_out(bank_rd_out[b])
-            );
-        end
-        assign read_data_q2 = bank_rd_out[bank_sel_q2];
-    end else if (DATA_WIDTH == 1024 && NUM_ENTRIES == 16) begin : gen_sram
-        // 16 entries is too small for a macro; use flip-flops with the same
-        // 1-cycle read latency so the pipeline timing is unchanged.
-        // ram_style="registers" tells yosys not to infer this as RAM.
+    end else if (DATA_WIDTH == 128 && NUM_ENTRIES <= 512) begin : gen_sram
+        fakeram_512x128 sram (
+            .rw0_clk(clk_i),
+            .rw0_ce_in(fakeram_ce),
+            .rw0_we_in(fakeram_we),
+            .rw0_addr_in(9'(request_addr_q1)),
+            .rw0_wd_in(request_w_data_q1),
+            .rw0_rd_out(read_data_q2)
+        );
+    end else if (NUM_ENTRIES <= 16) begin : gen_sram
+        // Too shallow for a macro; flip-flops with the same 1-cycle read
+        // latency so the pipeline timing is unchanged. ram_style="registers"
+        // keeps yosys from inferring a $mem.
         (* ram_style = "registers" *)
         reg [DATA_WIDTH-1:0] mem_ff [0:NUM_ENTRIES-1];
         always_ff @(posedge clk_i) begin
@@ -179,6 +170,9 @@ generate
             if (!stall2 && read_valid_q1)
                 read_data_q2 <= mem_ff[request_addr_q1];
         end
+    end else begin : gen_unmapped
+        $error("ternip_pipelined_mem: no FakeRAM mapping for DATA_WIDTH=%0d NUM_ENTRIES=%0d; add a branch to ternip_pipelined_mem_fakeram.v",
+               DATA_WIDTH, NUM_ENTRIES);
     end
 endgenerate
 
