@@ -50,6 +50,33 @@ Every platform's earlier liteeth QoR, including the 2026-11 bazeltuner result
 (asap7 900 ps / util 45 / density 0.55), measured the pruned design and must be
 re-established.
 
+**Accepted baseline (2026-11-24, `abd15446`, knobs unchanged).** These closes
+are the new liteeth baseline, including the timing loss; PPA is being done
+separately. Use the per-clock `finish__timing__fmax__clock:clk` — the headline
+`finish__timing__fmax` now reports the fastest of the five clocks (a GTH clock)
+and overstates liteeth about 2×.
+
+| platform | flops | sys-clock Fmax | setup WS | hold WS | vs published (webpage) |
+|---|---:|---:|---:|---:|---|
+| asap7 (900 ps) | 3,295 | 1.017 GHz | −83 ps | −255 ps | 1.09 GHz → 1.02 GHz (−6 %); die 206,690 → 175,046 µm² (tuned util 45) |
+| nangate45 (1.66 ns) | 3,295 | 0.673 GHz | +0.17 ns | −0.027 ns | 0.68 → 0.67 GHz; die unchanged |
+
+Starting points for the PPA pass:
+- asap7 worst path: `udpcore_tx_fifo_consume[3]` → `u_storage_64w1024d_5/r0_addr_in[3]`,
+  575 ps of it one buffered wire (logic cluster bottom-left, that FIFO top-left)
+  plus ~140 ps of clock skew (the macro's clock arrives earlier than the
+  register tree's). Macro setup is 50 ps; splitting the FIFOs into smaller banks
+  would not fix it (it adds periphery area and a read mux, and the address bus
+  still fans out to every bank). A floorplan keeping the logic next to its
+  FIFOs, and balancing the macro clock pins, are the levers; relaxing the
+  clock to ~1,080 ps (1.1 × the 983 ps achieved) closes it as is.
+- RTLMP's placement got worse on both platforms after the change (nangate45:
+  logic squeezed into a thin channel between the two large FIFOs, top-left
+  quadrant empty, +28 % repair buffers).
+- Hold violations are on system-clock IO into FIFO macros (`udp0_sink_last` on
+  nangate45; −315 ps already on the published asap7 build): ideal-clock input
+  delays against propagated macro clocks.
+
 ## Hermetic RTL generation (2026-07, gallery-style)
 
 `liteeth_udp_usp_gth_sgmii.v` is generated hermetically by Bazel, not a
