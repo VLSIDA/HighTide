@@ -22,19 +22,23 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
+        "TAPCELL_TCL": [":tapcell.tcl"],  # 30 um macro halo (row cut)
     },
     arguments = {
         "SYNTH_HDL_FRONTEND": "slang",
         "SYNTH_HIERARCHICAL": "0",
         "VERILOG_INCLUDE_DIRS": "designs/src/ternip external/+http_archive+ternip_src/rtl external/+http_archive+basejump_stl_src/bsg_misc external/+http_archive+basejump_stl_src/bsg_dataflow external/+http_archive+basejump_stl_src/bsg_mem",
         "VERILOG_DEFINES": "-DCONFIG_FILENAME=\\\"config/hightide.svh\\\" -DSYNTHESIS",
-        # 65 / 0.70 was tuned on the memoryless netlist. With the memories and
-        # datapath restored (2026-11-24, 197K comb cells) GRT fails GRT-0116
-        # on met1/met2 (local std-cell congestion; met3-5 at 15-17%, GPL
-        # weighted congestion 1.24). Back off; push up after a close.
-        "CORE_UTILIZATION": "45",
-        "PLACE_DENSITY": "0.50",
-        "RTLMP_MIN_CHANNEL_SIZE": "20 20",  # was MACRO_PLACE_HALO 10 10 (halo x,y ~ channel 2x,2y)
+        # Manual floorplan (macros.tcl), 2026-11-24. With the memories
+        # restored, RTLMP at util 65 packed the 9 fakeram_512x128 20 um apart
+        # with pins facing on every edge and split the vector register banks
+        # across the die -> GRT-0116 on met1/met2. Same area as that util-65
+        # die (15.33 mm2), made wider so 5 macros fit in the top row and all
+        # 128-pin S edges face the middle band. Utilization is unchanged.
+        "DIE_AREA": "0 0 4400 3484",
+        "CORE_AREA": "1.38 2.72 4398.6 3481.28",
+        "PLACE_DENSITY": "0.70",
         "TNS_END_PERCENT": "100",
         # importvector (4096 x 10 = 40960 bits) is flip-flops in the wrapper
         # (depth 10 is below fakeram's minimum); yosys still counts the

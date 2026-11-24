@@ -40,6 +40,23 @@ gt2n 117.39 × 73.44 µm. Expect a much larger design than the 2,399-flop
 numbers below, since logic downstream of the memories was likely pruned
 too; every platform needs re-closing and its old QoR is void.
 
+Re-close so far:
+- **nangate45**: closes unchanged at util 70 / 1.86 ns — setup WS +0.034 ns,
+  hold +0.027 ns, TNS 0; 71,708 flops, 9 macros, 197K comb cells; period_min
+  1.83 ns (548 MHz, vs 1.49 ns on the memoryless design).
+- **sky130hd — manual floorplan, utilization unchanged**: RTLMP at util 65
+  packed the 9 macros 20 µm apart (sky130 fakeram pins sit on all four edges:
+  N 67, S 128, W 37, E 36) and split the vector-register banks across the die
+  → GRT-0116 on met1/met2. Lowering util was the wrong fix (it was briefly
+  tried, `3e3a4fa1`, and reverted before it ran). `macros.tcl` now places banks
+  0–3 + the export buffer in a top row (R0) and banks 4–7 in a bottom row (MX),
+  all 128-pin S edges facing the middle band that holds the bank read mux;
+  200 µm channels, 100 µm outer margins; `tapcell.tcl` adds a 30 µm row-cut
+  halo per macro. Die 4400 × 3484 µm = the util-65 die's area (15.33 mm²),
+  made wider so no S edges face each other; PLACE_DENSITY back to 0.70.
+- **gt2n**: util 80 → 60 (`9d7053c6`) after MPL-0003 at macro placement;
+  revisit with a floorplan rather than util if it congests.
+
 ## SRAM macro rename to platform-neutral `fakeram_*` (2026-10)
 
 Renamed `fakeram7_512x16` → `fakeram_512x16` on all three platforms (same
