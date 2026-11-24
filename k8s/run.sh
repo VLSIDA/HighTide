@@ -13,7 +13,9 @@
 #   ./k8s/run.sh --delete --design lfsr # delete lfsr across all platforms
 #
 # Options:
-#   --branch BRANCH    Git branch to build (default: current branch)
+#   --branch BRANCH    Git branch to build (default: main, NOT the checked-out
+#                      branch — pass --branch when building any other branch,
+#                      or the pod builds main and cache-replays its results)
 #   --cpu NUM          CPU request per job (overrides design_resources.conf)
 #   --mem SIZE         Memory request per job (overrides design_resources.conf)
 #   --upload-artifacts Save build artifacts (bazel-bin) to the hightide-artifacts PVC for debug
