@@ -1,0 +1,3 @@
+# Checked by tools/check_sram_usage.py after synthesis (see generate-sram skill).
+# One 1 Mbit cluster memory per 4x4 mesh endpoint (designs/src/floonoc/DECISIONS.md)
+fakeram_w64_l16384 16

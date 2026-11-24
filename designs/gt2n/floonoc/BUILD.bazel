@@ -1,5 +1,9 @@
 load("//:defs.bzl", "hightide_design")
 
+filegroup(name = "sram_lefs", srcs = glob(["sram/lef/*.lef"]))
+
+filegroup(name = "sram_libs", srcs = glob(["sram/lib/*.lib"]))
+
 hightide_design(
     name = "floonoc",
     top = "floonoc_mesh_top",
@@ -7,19 +11,21 @@ hightide_design(
     verilog_files = ["//designs/src/floonoc:rtl"],
     sources = {
         "SDC_FILE": [":constraint.sdc"],
-        "FOOTPRINT_TCL": [":io.tcl"],
+        "ADDITIONAL_LEFS": [":sram_lefs"],
+        "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
     },
     stage_data = {"synth": ["//designs/src/floonoc:rtl_data"]},
     arguments = {
         "SYNTH_HDL_FRONTEND": "slang",
         "VERILOG_INCLUDE_DIRS": "external/+http_archive+pulp_common_cells_src/include external/+http_archive+pulp_apb_src/include external/+http_archive+pulp_axi_src/include external/+http_archive+pulp_axi_stream_src/include external/+http_archive+pulp_obi_src/include external/+http_archive+pulp_register_interface_src/include external/+http_archive+floonoc_src/hw/include",
         "VERILOG_DEFINES": "-D VERILATOR",
-        # Die sized for logic density; io.tcl's pin placement is die-size-parametric
-        # (queries ord::get_die_area at build time), so no manual re-tuning needed
-        # when resizing. Pin-fit floor: 1598 × M3_pitch 0.028 + 2×end_margin(5) =
-        # 54.7 µm minimum die edge — far below the size used here.
-        "DIE_AREA": "0 0 80 80",
-        "CORE_AREA": "6 6 74 74",
+        # HighTide#254: the mesh is no longer hollowed (the cluster stub carries
+        # real logic + a 1 Mbit fakeram per endpoint), so the old 80x80 die and
+        # its io.tcl are void. Mesh-tiled floorplan (macros.tcl) on the util-40
+        # die of the restored netlist (2.28 mm2 cell area), as on asap7/n45.
+        "DIE_AREA": "0 0 2388.246 2388.24",
+        "CORE_AREA": "1.008 1.008 2387.238 2387.232",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
         "TNS_END_PERCENT": "100",
