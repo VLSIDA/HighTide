@@ -36,7 +36,10 @@ hightide_design(
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
         "TNS_END_PERCENT": "100",
-        "SYNTH_MEMORY_MAX_BITS": "16384",
+        # importvector (4096 x 10 = 40960 bits) is flip-flops in the wrapper
+        # (depth 10 is below fakeram's minimum); yosys still counts the
+        # ram_style="registers" array against this threshold.
+        "SYNTH_MEMORY_MAX_BITS": "40960",
     },
     stage_data = {"synth": ["//designs/src/ternip:rtl_data"]},
 )

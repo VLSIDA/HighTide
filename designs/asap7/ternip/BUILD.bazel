@@ -32,10 +32,10 @@ hightide_design(
         "PLACE_DENSITY": "0.75",
         "RTLMP_MIN_CHANNEL_SIZE": "8 8",  # was MACRO_PLACE_HALO 4 4 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
-        # importvector (16 × 1024 = 16384 bits) is implemented as flip-flops in
-        # the wrapper; ram_style="registers" prevents instantiation but yosys
-        # still emits a $mem cell that trips this threshold without the bump.
-        "SYNTH_MEMORY_MAX_BITS": "16384",
+        # importvector (4096 x 10 = 40960 bits) is flip-flops in the wrapper
+        # (depth 10 is below fakeram's minimum); yosys still counts the
+        # ram_style="registers" array against this threshold.
+        "SYNTH_MEMORY_MAX_BITS": "40960",
     },
     stage_data = {"synth": ["//designs/src/ternip:rtl_data"]},
 )
