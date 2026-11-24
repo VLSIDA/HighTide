@@ -11,7 +11,10 @@
 # so after any local build of a big design, run this to publish its large
 # artifacts. Objects already in the bucket are skipped.
 #
-# Usage: s3-backfill.sh [--min-size-mb N] [--dry-run] [--cache-dir DIR]
+# Usage: s3-backfill.sh [--min-size-mb N] [--ac-days N] [--dry-run] [--cache-dir DIR]
+#   --ac-days N  only consider disk-cache entries modified in the last N days,
+#                in BOTH passes (0 = no bound; --days is an alias). Unbounded,
+#                a long-lived host re-HEADs every big blob it ever built.
 # Credentials: source ~/.hightide-r2-s3-env (AWS_ACCESS_KEY_ID,
 # AWS_SECRET_ACCESS_KEY, R2_ENDPOINT), or have them in the environment.
 
@@ -30,7 +33,7 @@ while [[ $# -gt 0 ]]; do
     --min-size-mb) MIN_MB="$2"; shift 2 ;;
     --dry-run)     DRY_RUN=1; shift ;;
     --cache-dir)   CACHE_DIR="$2"; shift 2 ;;
-    --ac-days)     AC_DAYS="$2"; shift 2 ;;
+    --ac-days|--days) AC_DAYS="$2"; shift 2 ;;
     *) echo "unknown arg: $1" >&2; exit 1 ;;
   esac
 done
@@ -47,7 +50,13 @@ fi
 _AWSCFG=$(mktemp)
 printf '[default]\ns3 =\n  multipart_chunksize = 64MB\n' > "$_AWSCFG"
 export AWS_CONFIG_FILE="$_AWSCFG"
-trap 'rm -f "$_AWSCFG"' EXIT
+# Hashes of every big blob that is in the bucket after pass 1 (uploaded now
+# or already present): pass 2 publishes the AC entries that reference them.
+_BIG=$(mktemp)
+trap 'rm -f "$_AWSCFG" "$_BIG"' EXIT
+
+MTIME=()
+[[ "$AC_DAYS" -gt 0 ]] && MTIME=(-mtime -"$AC_DAYS")
 
 uploaded=0 skipped=0 bytes=0 failed=0
 for kind in cas ac; do
@@ -59,6 +68,7 @@ for kind in cas ac; do
     if aws s3api head-object --bucket "$BUCKET" --key "$key" \
          --endpoint-url "$R2_ENDPOINT" >/dev/null 2>&1; then
       skipped=$((skipped + 1))
+      [[ $kind == cas ]] && echo "$hash" >> "$_BIG"
       continue
     fi
     # The disk-cache GC can delete a candidate between find and here.
@@ -80,7 +90,8 @@ for kind in cas ac; do
     fi
     uploaded=$((uploaded + 1))
     bytes=$((bytes + size))
-  done < <(find "$CACHE_DIR/$kind" -type f -size +"${MIN_MB}"M 2>/dev/null)
+    [[ $kind == cas ]] && echo "$hash" >> "$_BIG"
+  done < <(find "$CACHE_DIR/$kind" -type f -size +"${MIN_MB}"M "${MTIME[@]}" 2>/dev/null)
 done
 
 # Second pass: action-cache entries, ALL sizes. When an action has an
@@ -89,19 +100,21 @@ done
 # cache hits even though the pass above published their blobs. AC files
 # are tiny; one that references a missing CAS blob is harmless (bazel
 # falls back to executing the action).
+#
+# Only ACs that reference a big blob can be missing (bazel uploads the
+# rest itself), and an ActionResult stores each output digest as a hex
+# string, so a fixed-string grep for the pass-1 hashes finds exactly the
+# ACs to publish (~6 s over 45k entries on donut). This replaced a full
+# listing of the bucket's ac/ prefix + a grep per entry, which grew with
+# the bucket and stalled runs for hours.
 ac_up=0 ac_skip=0
-if [[ -d "$CACHE_DIR/ac" ]]; then
-  # One paginated listing of the ac/ prefix instead of a HEAD per entry
-  # (a fresh pod's disk cache holds ~18k ACs; per-file HEADs took ~30 min).
-  _AC_HAVE=$(mktemp)
-  aws s3api list-objects-v2 --bucket "$BUCKET" --prefix ac/ \
-    --endpoint-url "$R2_ENDPOINT" --query 'Contents[].Key' --output text 2>/dev/null \
-    | tr '\t' '\n' | sort > "$_AC_HAVE" || true
+if [[ -d "$CACHE_DIR/ac" && -s "$_BIG" ]]; then
   while IFS= read -r f; do
     hash=$(basename "$f")
     [[ "$hash" =~ ^[0-9a-f]{64}$ ]] || continue
     key="ac/$hash"
-    if grep -qxF "$key" "$_AC_HAVE"; then
+    if aws s3api head-object --bucket "$BUCKET" --key "$key" \
+         --endpoint-url "$R2_ENDPOINT" >/dev/null 2>&1; then
       ac_skip=$((ac_skip + 1)); continue
     fi
     if [[ $DRY_RUN -eq 1 ]]; then
@@ -110,9 +123,10 @@ if [[ -d "$CACHE_DIR/ac" ]]; then
            --endpoint-url "$R2_ENDPOINT" --no-progress >/dev/null; then
       echo "AC upload FAILED: $key"; failed=$((failed + 1)); continue
     fi
+    echo "uploaded $key"
     ac_up=$((ac_up + 1))
-  done < <(find "$CACHE_DIR/ac" -type f -mtime -"$AC_DAYS" 2>/dev/null)
-  rm -f "$_AC_HAVE"
+  done < <(find "$CACHE_DIR/ac" -type f "${MTIME[@]}" -print0 2>/dev/null \
+             | xargs -0 -r grep -lF -f "$_BIG" 2>/dev/null || true)
 fi
 
 echo "done: $uploaded uploaded ($((bytes / 1024 / 1024)) MB), $skipped already present, $failed failed; AC: $ac_up uploaded, $ac_skip present"
