@@ -28,7 +28,7 @@ set_false_path -from [get_ports sys_reset]
 # --- GTH transceiver, off chip (designs/src/liteeth/dev/gth_offchip.py) ------
 # Its recovered clocks drive the PCS TX/RX domains: full rate straight through
 # BUFG_GT (DIV 0) and half rate through BUFG_GT's divider (DIV 1). Standard
-# gigabit Ethernet (1000BASE-X, 1.25 Gbaud): 125 MHz full rate = 8 ps here,
+# gigabit Ethernet (1000BASE-X, 1.25 Gbaud): 125 MHz full rate = 8000 ps (8 ns),
 # 62.5 MHz half rate. Independent of the system clock (asynchronous).
 set gth_period 8000
 create_clock -name gth_tx -period $gth_period [get_ports gth_txoutclk]
