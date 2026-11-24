@@ -1,0 +1,5 @@
+# Checked by tools/check_sram_usage.py after synthesis (see generate-sram skill).
+# vector_registers 8 banks + tmatmul export 1 (designs/src/ternip/DECISIONS.md)
+fakeram_512x128 9
+# tmatmul import buffer 4096 x 10 is flip-flops
+flops >= 40960

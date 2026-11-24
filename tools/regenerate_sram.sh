@@ -28,6 +28,15 @@ if [[ ! -f "$CFG" ]]; then
   echo "error: no cfg at $CFG" >&2
   exit 1
 fi
+# bsg_fakeram reads only camelCase snapWidth_nm/snapHeight_nm and silently uses
+# a 1 nm grid on the snake_case spelling (CLAUDE.md bug table). Refuse to
+# generate off-grid macros; fixing the keys is the intended path.
+if grep -qE '"snap_(width|height)_nm"' "$CFG"; then
+  echo "error: $CFG uses snake_case snap_width_nm/snap_height_nm, which bsg_fakeram ignores." >&2
+  echo "       Rename them to snapWidth_nm/snapHeight_nm, regenerate, and drop the cfg from" >&2
+  echo "       SNAKE_CASE_ALLOWLIST in tools/check_sram_cfg.py." >&2
+  exit 1
+fi
 # Analytical tech nodes (7, 130, 2) skip CACTI entirely — only check if needed.
 _TECH_NM=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['tech_nm'])" "$CFG" 2>/dev/null || echo "0")
 if [[ "$_TECH_NM" != "7" && "$_TECH_NM" != "130" && "$_TECH_NM" != "2" ]]; then
@@ -57,4 +66,13 @@ for d in "$OUT"/*/; do
   cp "$d/$name.lib" "$DST_LIB/"
 done
 
+# wd_in pins are inputs by definition; an OUTPUT one is the bsg_fakeram
+# side-vs-function bug (pre-c83ecb4) that shorts write-data buses in PnR.
+bad_wd=$(grep -B1 -h 'DIRECTION[[:space:]]\+OUTPUT' "$DST_LEF"/*.lef | grep -o '[A-Za-z0-9_]*wd_in\[[0-9]*\]' || true)
+if [[ -n "$bad_wd" ]]; then
+  echo "error: generated LEFs declare $(wc -l <<<"$bad_wd") wd_in pin(s) DIRECTION OUTPUT; check the bsg_fakeram pin" >&2
+  exit 1
+fi
+
 echo "regenerated $(ls "$OUT" | wc -l) macros for $DESIGN/$PLAT -> $DST_LEF, $DST_LIB"
+echo "next: after synthesis, run tools/check_sram_usage.py $PLAT $DESIGN to confirm every macro is instantiated"
