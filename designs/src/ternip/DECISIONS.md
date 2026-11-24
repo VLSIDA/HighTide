@@ -61,6 +61,16 @@ Re-close so far:
   two-row layout as sky130hd: die 630.9 × 196.7 µm (124,107 µm² = the util-80
   area; 3.2:1 because 5 macros must fit in a row), 8 µm channels, 40 µm
   middle band; bank → mux max 208 µm. PLACE_DENSITY back to 0.85.
+- **asap7 — accepted baseline at the old 953 ps clock (2026-11-24, `0bd6b8e8`,
+  knobs unchanged; PPA done separately)**: closes to `_final` with setup WS
+  −102 ps, TNS −19.3 ns, hold +24 ps; 71,708 flops, 9 macros, 267K comb
+  cells, die 231,505 µm² (published memoryless build: 3,677 µm²), 235 mW.
+  System Fmax 0.948 GHz vs 1.17 GHz published (−19 %, matching nangate45's
+  −18 %: the real memory paths and datapath are back). RTLMP's placement is
+  reasonable here, unlike sky130hd: banks 0–3 down the left edge, 4–7 down
+  the right, export buffer top-right, datapath in the central column between
+  them, i.e. the bank-aware arrangement rotated 90°. For the PPA pass:
+  ~1,160 ps (1.1 × the ~1,054 ps achieved) closes it as is.
 
 ## SRAM macro rename to platform-neutral `fakeram_*` (2026-10)
 
