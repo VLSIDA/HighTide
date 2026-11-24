@@ -28,8 +28,12 @@ hightide_design(
         "SYNTH_HIERARCHICAL": "0",
         "VERILOG_INCLUDE_DIRS": "designs/src/ternip external/+http_archive+ternip_src/rtl external/+http_archive+basejump_stl_src/bsg_misc external/+http_archive+basejump_stl_src/bsg_dataflow external/+http_archive+basejump_stl_src/bsg_mem",
         "VERILOG_DEFINES": "-DCONFIG_FILENAME=\\\"config/hightide.svh\\\" -DSYNTHESIS",
-        "CORE_UTILIZATION": "65",
-        "PLACE_DENSITY": "0.70",
+        # 65 / 0.70 was tuned on the memoryless netlist. With the memories and
+        # datapath restored (2026-11-24, 197K comb cells) GRT fails GRT-0116
+        # on met1/met2 (local std-cell congestion; met3-5 at 15-17%, GPL
+        # weighted congestion 1.24). Back off; push up after a close.
+        "CORE_UTILIZATION": "45",
+        "PLACE_DENSITY": "0.50",
         "RTLMP_MIN_CHANNEL_SIZE": "20 20",  # was MACRO_PLACE_HALO 10 10 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
         # importvector (4096 x 10 = 40960 bits) is flip-flops in the wrapper
