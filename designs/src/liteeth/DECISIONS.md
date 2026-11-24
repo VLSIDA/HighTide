@@ -40,7 +40,9 @@ ties `BUFG_GT`'s `CE/CEMASK/CLR/CLRMASK` to the Xilinx defaults, and
 `gth_rxoutclk` and generated `/2` clocks `gth_tx_half`/`gth_rx_half` on the
 `BUFG_GT_1`/`BUFG_GT_3` divider outputs, all asynchronous to `clk`. They are
 constrained at the system clock period as a stress test (real 1000BASE-X runs
-them at 125 MHz). RX data/ctrl inputs are timed against `gth_rx_half`, TX
+them at 125 MHz); this is deliberate and was confirmed by the maintainer
+(2026-11-24): keep `gth_period = clk_period` when retuning the clock. RX
+data/ctrl inputs are timed against `gth_rx_half`, TX
 data/ctrl outputs against `gth_tx_half`; resets, comma-align and status ports
 are false-pathed. Checked on asap7 at floorplan: 0 unclocked registers, all
 four GTH clock groups time real paths; the only unconstrained endpoints are
