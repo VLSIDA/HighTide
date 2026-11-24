@@ -39,10 +39,10 @@ ties `BUFG_GT`'s `CE/CEMASK/CLR/CLRMASK` to the Xilinx defaults, and
 **SDC (all platforms).** Clocks `gth_tx`/`gth_rx` on `gth_txoutclk`/
 `gth_rxoutclk` and generated `/2` clocks `gth_tx_half`/`gth_rx_half` on the
 `BUFG_GT_1`/`BUFG_GT_3` divider outputs, all asynchronous to `clk`. They are
-constrained at the system clock period as a stress test (real 1000BASE-X runs
-them at 125 MHz); this is deliberate and was confirmed by the maintainer
-(2026-11-24): keep `gth_period = clk_period` when retuning the clock. RX
-data/ctrl inputs are timed against `gth_rx_half`, TX
+constrained at standard gigabit rates (1000BASE-X, 1.25 Gbaud): `gth_period` =
+8 ns (125 MHz) full rate, 16 ns (62.5 MHz) half rate, on every platform and
+independent of the system clock (maintainer's call, 2026-11-24; an earlier
+draft used the system period as a stress test). RX data/ctrl inputs are timed against `gth_rx_half`, TX
 data/ctrl outputs against `gth_tx_half`; resets, comma-align and status ports
 are false-pathed. Checked on asap7 at floorplan: 0 unclocked registers, all
 four GTH clock groups time real paths; the only unconstrained endpoints are
