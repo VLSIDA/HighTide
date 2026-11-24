@@ -69,7 +69,7 @@ Use `tools/bsg_fakeram/example_cfgs/freepdk45.cfg` as the base config (tech_nm: 
    ```
    Use the platform-neutral `fakeram_` prefix on every platform (the old `fakeram7_`/`fakeram45_`/`fakeram130_` prefixes were retired in 2026-10), so one wrapper binds on all platforms.
 
-3. **Run `tools/regenerate_sram.sh <design> <platform>`**. It runs bsg_fakeram on the cfg (building CACTI only where needed) and copies the `.lef`/`.lib` into `designs/<platform>/<design>/sram/{lef,lib}/`; the behavioral `.v` stays under `dev/generated/sram/<platform>/`. Delete LEF/LIBs for macros the design no longer uses, and check `grep -B1 'DIRECTION OUTPUT' <lef> | grep wd_in` prints nothing (the `wd_in` direction bug).
+3. **Run `tools/regenerate_sram.sh <design> <platform>`**. It runs bsg_fakeram on the cfg (building CACTI only where needed), replaces everything in `designs/<platform>/<design>/sram/{lef,lib}/` with the new `.lef`/`.lib`, and keeps the behavioral `.v` under `dev/generated/sram/<platform>/`. It refuses a cfg with snake_case snap keys and fails if a generated LEF has the `wd_in` direction bug. Then run `tools/check_sram_cfg.py` (the same lint CI runs): it checks snap keys and that each cfg's macros match its committed LEFs. A regeneration that changes only the LIB `date` line is noise; `git checkout` it.
 
 4. **Check sizes**: `tools/diff_sram_size.sh <design> <platform>` flags area changes over 25 % or aspect changes over 2× against git HEAD. Big macros on sky130hd add up fast (a 64 Kb macro is ~0.76 mm² there).
 
@@ -86,7 +86,18 @@ Use `tools/bsg_fakeram/example_cfgs/freepdk45.cfg` as the base config (tech_nm: 
    ```
 
 6. **Verify after synthesis that every memory has storage (mandatory).** A
-   clean flow proves nothing here, so check numbers.
+   clean flow proves nothing here, so check numbers. Write
+   `designs/<platform>/<design>/sram/expected_macros.txt` (one `NAME COUNT`
+   per macro, plus `flops >= N` for the memory bits mapped to flip-flops;
+   see `designs/asap7/ternip/sram/expected_macros.txt`), build `:<name>_synth`,
+   and run:
+   ```bash
+   tools/check_sram_usage.py <platform> <design>      # e.g. asap7 ternip, sky130hd NVDLA/partition_c
+   ```
+   It exits 1 if any macro in the design's `ADDITIONAL_LEFS` is never
+   instantiated, a count differs from `expected_macros.txt`, or flops fall
+   below the floor. Every k8s build runs it too and prints the result under
+   `=== SRAM usage check ===` in the pod log (advisory, never fails the job).
 
 ## Memories that silently vanish
 
@@ -122,16 +133,20 @@ Rules:
   DECISIONS.md or a previous wrapper: width and depth at every instantiation
   under the suite's config header/defines. Re-check whenever the config
   changes.
-- **After synthesis, compare against expectations**, using
-  `reports/<platform>/<design>/base/synth_stat.txt`:
-  - macro instances per macro name == the count the wrapper should produce;
-  - every LEF in `sram/lef/` is instantiated (an unused LEF is a red flag);
-  - flop count ≥ the memory bits you mapped to flip-flops, and in line with
-    the design's size (a large accelerator with a few thousand flops is
-    hollow);
-  - `synth_mocked_memories.txt` empty does **not** mean the memories exist.
-- Record the expected macro count and shapes in the design's DECISIONS.md so
-  the next upgrade can re-check them.
+- **After synthesis, compare against expectations** with
+  `tools/check_sram_usage.py`, which reads
+  `reports/<platform>/<design>/base/synth_stat.txt` and checks:
+  - macro instances per macro name == the counts in `expected_macros.txt`;
+  - every macro in the design's `ADDITIONAL_LEFS` is instantiated (an
+    unused LEF is the classic symptom);
+  - flop count ≥ the `flops >=` floor (the memory bits you mapped to
+    flip-flops).
+
+  Then judge by eye whether the printed flop count fits the design's size;
+  the tool can't (a large accelerator with a few thousand flops is hollow).
+  An empty `synth_mocked_memories.txt` does **not** mean the memories exist.
+- Record the shapes and their mapping in the design's DECISIONS.md and the
+  counts in `sram/expected_macros.txt`, so the next upgrade re-checks them.
 
 ## Important Notes
 
