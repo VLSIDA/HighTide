@@ -54,8 +54,13 @@ Re-close so far:
   200 µm channels, 100 µm outer margins; `tapcell.tcl` adds a 30 µm row-cut
   halo per macro. Die 4400 × 3484 µm = the util-65 die's area (15.33 mm²),
   made wider so no S edges face each other; PLACE_DENSITY back to 0.70.
-- **gt2n**: util 80 → 60 (`9d7053c6`) after MPL-0003 at macro placement;
-  revisit with a floorplan rather than util if it congests.
+- **gt2n — manual floorplan at the util-80 area**: at util 80 the 9 macros
+  are 63% of the core and RTLMP fails MPL-0003; the brief util 80 → 60
+  workaround (`9d7053c6`) let RTLMP place them but scattered the banks (bank
+  → read-mux max 321 µm, banks 0/1 and 3/5 with S edges 8 µm apart). Same
+  two-row layout as sky130hd: die 630.9 × 196.7 µm (124,107 µm² = the util-80
+  area; 3.2:1 because 5 macros must fit in a row), 8 µm channels, 40 µm
+  middle band; bank → mux max 208 µm. PLACE_DENSITY back to 0.85.
 
 ## SRAM macro rename to platform-neutral `fakeram_*` (2026-10)
 

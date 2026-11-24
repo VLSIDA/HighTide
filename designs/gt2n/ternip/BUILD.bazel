@@ -22,20 +22,22 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
     },
     arguments = {
         "SYNTH_HDL_FRONTEND": "slang",
         "SYNTH_HIERARCHICAL": "0",
         "VERILOG_INCLUDE_DIRS": "designs/src/ternip external/+http_archive+ternip_src/rtl external/+http_archive+basejump_stl_src/bsg_misc external/+http_archive+basejump_stl_src/bsg_dataflow external/+http_archive+basejump_stl_src/bsg_mem",
         "VERILOG_DEFINES": "-DCONFIG_FILENAME=\\\"config/hightide.svh\\\" -DSYNTHESIS",
-        # gt2n port 2026-11-16 ran util 80 / density 0.85 on the memoryless
-        # netlist. With the 9 fakeram_512x128 macros restored (2026-11-24)
-        # that fails MPL-0003 "no valid tilings for mixed cluster: root";
-        # nangate45 (70) and sky130hd (65) clear macro placement. Back off to
-        # 60 / 0.65 with asap7's channel minimum; push util up after a close.
-        "CORE_UTILIZATION": "60",
-        "PLACE_DENSITY": "0.65",
-        "RTLMP_MIN_CHANNEL_SIZE": "8 8",
+        # Manual floorplan (macros.tcl), 2026-11-24, at the util-80 area the
+        # gt2n port chose (BSPDN frees frontside tracks). With the 9
+        # fakeram_512x128 restored they are 63% of the core: RTLMP fails
+        # MPL-0003 at util 80 and scatters the vector-register banks at 60.
+        # Banks 0-3 + export on top (R0), 4-7 below (MX), S edges facing the
+        # middle band with the read mux. 630.9 x 196.7 um = 124,107 um2.
+        "DIE_AREA": "0 0 630.924 196.704",
+        "CORE_AREA": "1.008 1.008 629.916 195.696",
+        "PLACE_DENSITY": "0.85",
         "MAX_ROUTING_LAYER": "M11",
         "MIN_CLK_ROUTING_LAYER": "M4",
         "TNS_END_PERCENT": "100",
