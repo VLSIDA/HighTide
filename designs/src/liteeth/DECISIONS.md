@@ -60,8 +60,8 @@ and overstates liteeth about 2×.
 
 | platform | flops | sys-clock Fmax | setup WS | hold WS | vs published (webpage) |
 |---|---:|---:|---:|---:|---|
-| asap7 (900 ps) | 3,295 | 1.017 GHz | −83 ps | −255 ps | 1.09 GHz → 1.02 GHz (−6 %); die 206,690 → 175,046 µm² (tuned util 45) |
-| nangate45 (1.66 ns) | 3,295 | 0.673 GHz | +0.17 ns | −0.027 ns | 0.68 → 0.67 GHz; die unchanged |
+| asap7 (900 ps) | 3,295 | 1.051 GHz | −51 ps (TNS −65 ps) | −216 ps | 1.09 GHz → 1.05 GHz (−4 %); die 206,690 → 175,046 µm² (tuned util 45). Gigabit PHY clocks (`91727fe0`); the stress-clock run was 1.017 GHz / −83 ps |
+| nangate45 (1.66 ns) | 3,295 | 0.673 GHz | +0.17 ns | −0.027 ns | 0.68 → 0.67 GHz; die unchanged. Identical with gigabit PHY clocks (`91727fe0`) |
 | gt2n (1450 ps, GRT parasitics) | 3,295 | 0.722 GHz | +65 ps | — | vs `c352728` (no webpage build): 697 → 722 MHz (+3.6 %); manual macros.tcl, so placement unchanged |
 
 Starting points for the PPA pass:
