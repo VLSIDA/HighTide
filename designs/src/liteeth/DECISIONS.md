@@ -60,6 +60,7 @@ and overstates liteeth about 2×.
 |---|---:|---:|---:|---:|---|
 | asap7 (900 ps) | 3,295 | 1.017 GHz | −83 ps | −255 ps | 1.09 GHz → 1.02 GHz (−6 %); die 206,690 → 175,046 µm² (tuned util 45) |
 | nangate45 (1.66 ns) | 3,295 | 0.673 GHz | +0.17 ns | −0.027 ns | 0.68 → 0.67 GHz; die unchanged |
+| gt2n (1450 ps, GRT parasitics) | 3,295 | 0.722 GHz | +65 ps | — | vs `c352728` (no webpage build): 697 → 722 MHz (+3.6 %); manual macros.tcl, so placement unchanged |
 
 Starting points for the PPA pass:
 - asap7 worst path: `udpcore_tx_fifo_consume[3]` → `u_storage_64w1024d_5/r0_addr_in[3]`,
