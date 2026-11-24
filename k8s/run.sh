@@ -263,11 +263,14 @@ for entry in "${DESIGNS[@]}"; do
   # Resolve resources: CLI flag > design entry > defaults entry > fallback.
   design_id="$platform/$leaf_name"
   if [[ -n "$CLI_CPU" ]]; then
+    # limit == request: NRP policy (limits within 20% of requests), and an
+    # integer request == limit gives Guaranteed QoS, i.e. an exclusive
+    # cpuset, so OpenROAD's thread count == the request.
     cpu_request="$CLI_CPU"
-    cpu_limit="$((CLI_CPU * 2))"
+    cpu_limit="$CLI_CPU"
   else
     cpu_request=$(read_resource cpu_req "$design_id" 4)
-    cpu_limit=$(read_resource cpu_lim "$design_id" "$((cpu_request * 2))")
+    cpu_limit=$(read_resource cpu_lim "$design_id" "$cpu_request")
   fi
   if [[ -n "$CLI_MEM" ]]; then
     mem_request="$CLI_MEM"
