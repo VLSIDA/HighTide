@@ -5,6 +5,51 @@ Per-platform notes for the `liteeth` design (Verilog top
 configured with a UDP endpoint over the Xilinx UltraScale+ GTH-SerDes
 SGMII PHY.
 
+## GTH transceiver moved off chip (2026-11-24) — all earlier QoR is void
+
+**What was wrong.** The generated core instantiates a Xilinx GTHE4_CHANNEL (FPGA
+hard IP). Since `b6e9cf94` (2025-11) it was replaced by
+`libraries/xilinx/GTHE4_CHANNEL_DUMMY.v`, which has no serializer/deserializer:
+its `TXDATA` was declared 5 bits (the core connects 16) and fed nothing, its
+serial output just echoed the serial input, and with `LOOPBACK`/`RXPRBSSEL`
+tied 0 by the generator its `RXDATA` was constant 0. Synthesis therefore pruned
+the PCS (8b/10b encode/decode and PCS state machines): asap7 2,991 flops →
+3,295 once fixed (+10 %; the UDP/IP/MAC/DHCP logic was always present). Found
+by the 2026-11-24 memory/pruning audit; the macro count was unaffected because
+the FIFO macros carry `(* keep *)`, though the RX CDC FIFO's write port was
+tied to constants.
+
+A second, older bug: LiteX instantiates `BUFG_GT` with only `DIV/I/O`. The
+stand-in's unconnected `CE/CEMASK/CLR/CLRMASK` floated, synthesis held its
+divider in reset, and the `DIV=1` half-rate TX/RX clocks were **constant 0** —
+the PCS half-rate domains were never clocked in any build.
+
+**Fix (`dev/gth_offchip.py`, run by the `gen_liteeth_core` genrule).** The GTH
+instance is deleted and its PCS-side interface becomes 21 `gth_*` chip ports,
+as in an ASIC with an external SerDes: 12 outputs (`gth_txdata[15:0]`,
+`gth_txctrl0/1`, GT resets, PLL power-down, comma-align enables, forwarded
+TX/RX user clocks) and 9 inputs (`gth_rxdata[15:0]`, `gth_rxctrl0/1`,
+`gth_cplllock`, `gth_gtpowergood`, `gth_rx/txresetdone`, `gth_rx/txoutclk`).
+Constant tie-offs and GTH outputs nothing reads are dropped; the serial pins
+and `sgmii_refclk` (which only fed the GTH) leave the chip. The script also
+ties `BUFG_GT`'s `CE/CEMASK/CLR/CLRMASK` to the Xilinx defaults, and
+`BUFG_GT.v`'s divider now divides by `DIV+1` (it divided by `2*(DIV+1)`).
+`GTHE4_CHANNEL_DUMMY.v` is no longer synthesized (kept for port directions).
+
+**SDC (all platforms).** Clocks `gth_tx`/`gth_rx` on `gth_txoutclk`/
+`gth_rxoutclk` and generated `/2` clocks `gth_tx_half`/`gth_rx_half` on the
+`BUFG_GT_1`/`BUFG_GT_3` divider outputs, all asynchronous to `clk`. They are
+constrained at the system clock period as a stress test (real 1000BASE-X runs
+them at 125 MHz). RX data/ctrl inputs are timed against `gth_rx_half`, TX
+data/ctrl outputs against `gth_tx_half`; resets, comma-align and status ports
+are false-pathed. Checked on asap7 at floorplan: 0 unclocked registers, all
+four GTH clock groups time real paths; the only unconstrained endpoints are
+those false paths, the forwarded user-clock outputs, and `sys_reset`.
+
+Every platform's earlier liteeth QoR, including the 2026-11 bazeltuner result
+(asap7 900 ps / util 45 / density 0.55), measured the pruned design and must be
+re-established.
+
 ## Hermetic RTL generation (2026-07, gallery-style)
 
 `liteeth_udp_usp_gth_sgmii.v` is generated hermetically by Bazel, not a

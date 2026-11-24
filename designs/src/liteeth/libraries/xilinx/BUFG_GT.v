@@ -59,7 +59,11 @@ module BUFG_GT
             if (div_value == 3'b001) begin
                 clk_div_reg <= 1'b1;
             end else begin
-                if (div_counter == (div_value - 1)) begin
+                // Toggle every div_value/2 input edges so the output period is
+                // div_value input periods (BUFG_GT DIV=n divides by n+1). The
+                // old compare against div_value-1 toggled every div_value
+                // edges, i.e. divided by 2*div_value (DIV=1 gave /4, not /2).
+                if (div_counter == ((div_value >> 1) - 1)) begin
                     div_counter <= 3'b000;
                     clk_div_reg <= ~clk_div_reg;
                 end else begin
