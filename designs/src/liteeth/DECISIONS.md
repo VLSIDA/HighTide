@@ -74,6 +74,17 @@ Starting points for the PPA pass:
   still fans out to every bank). A floorplan keeping the logic next to its
   FIFOs, and balancing the macro clock pins, are the levers; relaxing the
   clock to ~1,080 ps (1.1 × the 983 ps achieved) closes it as is.
+- asap7 manual floorplan — DONE 2026-11-24 (`designs/asap7/liteeth/macros.tcl`),
+  adapted from the bt-study-fp sweep agent's layout: the two 64w1024d FIFOs
+  stacked with a 70 µm logic band between, north edges (clk/ce/we + 63
+  rd_out) facing the band (bottom R0, top MX), the three 64w64d FIFOs in a row
+  inside the band at the left; side margins 10 µm (address pins, where the
+  critical path ends, sit on the W/E edges). Die 255.0 × 376.9 µm = util 0.82
+  incl. macros (was RTLMP at util 0.45, core 0.173 mm²).
+- nangate45 manual floorplan — DONE 2026-11-24: the two 64w1024d FIFOs side by
+  side along the bottom (MX, 96-pin S edges up), the three 64w64d FIFOs along
+  the top (R0), 84 µm logic band; 40 µm channels, 20 µm margins. Die 624.9 ×
+  757.2 µm at util 0.70 (core 0.547 → 0.473 mm²).
 - sky130hd manual floorplan — DONE 2026-11-24 (`designs/sky130hd/liteeth/macros.tcl`,
   `tapcell.tcl`): the two 64w1024d buffers along the bottom (MX, 96-pin S edges
   up), the three 64w64d FIFOs centered along the top (R0, S edges down), a 365 µm

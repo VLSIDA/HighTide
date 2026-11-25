@@ -31,18 +31,19 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
     },
     arguments = {
         "VERILOG_DEFINES": "-D USE_ASAP7_CELLS",
-        # bazeltuner TPE campaign 2026-11-19 (47 trials, fmax objective,
-        # liteeth_asap7.json): 900ps/45/0.55 with tight 4um RTLMP channels
-        # dominates the old 1022ps/38/0.30 fallback on every axis —
-        # +15.9% Fmax (1.134 GHz, WS +18ps clean), -15.6% core area,
-        # equal power. Density 0.55 (the value the 2026-05 sweep had to
-        # abandon to RSZ-0074) routes fine on this pin with 4um channels.
-        "CORE_UTILIZATION": "45",
+        # Manual floorplan (macros.tcl), 2026-11-24, adapted from the sweep
+        # agent's stacked layout: die 255.0 x 376.9 um = util 0.82 incl
+        # macros (was CORE_UTILIZATION 45 via RTLMP, which put the logic far
+        # from the FIFOs: a 575 ps wire on the critical path). The 2026-11-19
+        # bazeltuner result (900ps/45/0.55/4um) measured the GTH-stub
+        # netlist and is void; clock and density stay at its values.
+        "DIE_AREA": "0 0 254.988 376.92",
+        "CORE_AREA": "1.08 1.08 253.908 375.84",
         "PLACE_DENSITY": "0.55",
-        "RTLMP_MIN_CHANNEL_SIZE": "4 4",
         "SKIP_CTS_REPAIR_TIMING": "1",
         "SKIP_INCREMENTAL_REPAIR": "1",
     },
