@@ -54,6 +54,12 @@ Re-close so far:
   200 µm channels, 100 µm outer margins; `tapcell.tcl` adds a 30 µm row-cut
   halo per macro. Die 4400 × 3484 µm = the util-65 die's area (15.33 mm²),
   made wider so no S edges face each other; PLACE_DENSITY back to 0.70.
+  **Closed 2026-11-25 (k8s, `8a6acf5`)**: `_final` at the unchanged 8.43 ns
+  clock with setup WS −0.37 ns, TNS −1.82 ns (accepted baseline, PPA done
+  separately), hold +0.030 ns; Fmax 113.7 MHz vs 125 MHz published
+  (−9 %); 71,708 flops, 9 macros, util 0.68, 0.80 W. Worst path is inside
+  the flop-array import buffer (`tmatmul.importvector.read_data_q2` →
+  `read_data_o`), not a macro path. Detailed route took ~16 h on 4 cores.
 - **gt2n — manual floorplan at the util-80 area**: at util 80 the 9 macros
   are 63% of the core and RTLMP fails MPL-0003; the brief util 80 → 60
   workaround (`9d7053c6`) let RTLMP place them but scattered the banks (bank
