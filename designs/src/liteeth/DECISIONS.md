@@ -63,7 +63,7 @@ and overstates liteeth about 2×.
 | asap7 (900 ps) | 3,295 | 1.051 GHz | −51 ps (TNS −65 ps) | −216 ps | 1.09 GHz → 1.05 GHz (−4 %); die 206,690 → 175,046 µm² (tuned util 45). Gigabit PHY clocks (`91727fe0`); the stress-clock run was 1.017 GHz / −83 ps |
 | nangate45 (1.66 ns) | 3,295 | 0.673 GHz | +0.17 ns | −0.027 ns | 0.68 → 0.67 GHz; die unchanged. Identical with gigabit PHY clocks (`91727fe0`) |
 | sky130hd (10 ns) | 3,295 | 0.121 GHz | +1.57 ns | +0.13 ns | 0.10 → 0.12 GHz (+21 %); die 9.58 → 11.09 mm² from the 2026-11 upgrade's util 52 → 45 (routability), not this change. Gigabit PHY clocks (`91727fe0`) |
-| gt2n (1450 ps, GRT parasitics) | 3,295 | 0.722 GHz | +65 ps | — | vs `c352728` (no webpage build): 697 → 722 MHz (+3.6 %); manual macros.tcl, so placement unchanged |
+| gt2n (1450 ps, GRT parasitics) | 3,295 | 0.731 GHz | +82 ps | +0.01 ps | vs `c352728` (no webpage build): 697 → 731 MHz (+4.9 %); manual macros.tcl, so placement unchanged. Gigabit PHY clocks (`91727fe0`); the stress-clock run was 0.722 GHz / +65 ps |
 
 Starting points for the PPA pass:
 - asap7 worst path: `udpcore_tx_fifo_consume[3]` → `u_storage_64w1024d_5/r0_addr_in[3]`,
