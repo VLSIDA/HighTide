@@ -60,7 +60,7 @@ and overstates liteeth about 2×.
 
 | platform | flops | sys-clock Fmax | setup WS | hold WS | vs published (webpage) |
 |---|---:|---:|---:|---:|---|
-| asap7 (900 ps) | 3,295 | 1.088 GHz | −19 ps (TNS −49 ps) | −122 ps | 1.09 GHz → 1.09 GHz (matches published); manual floorplan (`18e270d4`): die 175,046 → 96,110 µm² (−45 %; published 206,690), repair buffers 954 → 771, power 0.0357 → 0.0343 W. Worst path is now `core_ip_rx_depacketizer_header[79]` → the RX CDC FIFO `u_storage_64w64d_1` (the 575 ps wire is gone). (RTLMP util 0.45: 1.051 GHz / −51 ps / hold −216 ps) |
+| asap7 (810 ps) | 3,295 | **1.252 GHz** | +11.6 ps (TNS 0) | −16 ps | 1.09 → 1.25 GHz (+15 %): 2026-11-25 PPA scout config (below) on the manual floorplan. At 900 ps before the scout: 1.088 GHz / −19 ps (TNS −49 ps) / hold −122 ps; manual floorplan (`18e270d4`): die 175,046 → 96,110 µm² (−45 %; published 206,690), repair buffers 954 → 771, power 0.0357 → 0.0343 W. Worst path is now `core_ip_rx_depacketizer_header[79]` → the RX CDC FIFO `u_storage_64w64d_1` (the 575 ps wire is gone). (RTLMP util 0.45: 1.051 GHz / −51 ps / hold −216 ps) |
 | nangate45 (1.66 ns) | 3,295 | 0.689 GHz | +0.21 ns | +0.016 ns | 0.68 → 0.69 GHz; manual floorplan (`18e270d4`): die 551,938 → 473,221 µm² (−14 %), power 0.124 → 0.114 W, repair buffers 873 → 789, hold now clean. (RTLMP at util 0.60: 0.673 GHz, hold −0.027 ns) |
 | sky130hd (10 ns) | 3,295 | 0.138 GHz | +2.77 ns | −0.016 ns | 0.10 → 0.14 GHz (+38 %); manual floorplan (`5c58ca05`): die 11.09 → 7.86 mm² (−29 %; published 9.58 mm²), repair buffers 1,017 → 856, power unchanged (0.069 W). (RTLMP at util 0.45: 0.121 GHz, +1.57 ns, hold +0.13 ns) |
 | gt2n (1450 ps, GRT parasitics) | 3,295 | 0.731 GHz | +82 ps | +0.01 ps | vs `c352728` (no webpage build): 697 → 731 MHz (+4.9 %); manual macros.tcl, so placement unchanged. Gigabit PHY clocks (`91727fe0`); the stress-clock run was 0.722 GHz / +65 ps |
@@ -81,6 +81,34 @@ Starting points for the PPA pass:
   inside the band at the left; side margins 10 µm (address pins, where the
   critical path ends, sit on the W/E edges). Die 255.0 × 376.9 µm = util 0.82
   incl. macros (was RTLMP at util 0.45, core 0.173 mm²).
+- asap7 PPA on the manual floorplan — 2026-11-25 scout wave (bazeltuner, 41
+  one-parameter trials + reference at global route, then stepwise
+  combinations, then `_final`). With the macros fixed the placement-seed noise
+  band is 1.9 % of PPA (fmax / (core area × energy)); under RTLMP the same
+  design had a 10 % floorplan band and most single-parameter verdicts were
+  macro-placement luck. Adopted: **clock 900 → 810 ps, `SYNTH_HIERARCHICAL=1`,
+  `SKIP_CTS_REPAIR_TIMING` and `SKIP_INCREMENTAL_REPAIR` removed,
+  `PLACE_DENSITY` 0.55 → 0.65.** `_final`, same die (core 94,750 µm²):
+
+  | | before (900 ps) | after (810 ps) |
+  |---|---:|---:|
+  | system-clock Fmax | 1.088 GHz | **1.252 GHz (+15.1 %)** |
+  | setup WS / TNS | −19 ps / −49 ps | **+11.6 ps / 0** |
+  | hold WS / violations | −122 ps / 217 | −16 ps / 20 |
+  | power | 34.3 mW | 37.8 mW (energy per cycle 30.9 → 30.6 pJ) |
+  | std cells | 25,768 | 27,156 (+5.4 %) |
+  | DRC / antenna | 0 / 0 | 0 / 0 |
+
+  Each of the three main changes is needed: at global route, repair on alone
+  is +6.5 % PPA, + clock 810 is +9.7 %, + hierarchical synthesis is +17.7 %;
+  removing any one from the set costs 4–9 %. Density 0.65 / 0.75 is within
+  the noise band at global route, but at `_final` the 0.55 variant of the same
+  config missed setup (1.168 GHz, WS −46 ps), so 0.65 is the committed value.
+  The remaining hold violations are the system-clock IO → FIFO-macro paths
+  noted above. Tried and dropped: `GPL_KEEP_OVERFLOW=0.2` (+5 % alone, −3 %
+  in combination), clock 760 ps (no better than 810), `ABC_AREA=1` (−2.7 %),
+  density 0.45 (−2.5 %), `CTS_CLUSTER_SIZE=10` (−5 %), relaxing the clock
+  (−5 % at 990 ps); `GPL_TIMING_DRIVEN=0` is −60 %.
 - nangate45 manual floorplan — DONE 2026-11-24: the two 64w1024d FIFOs side by
   side along the bottom (MX, 96-pin S edges up), the three 64w64d FIFOs along
   the top (R0), 84 µm logic band; 40 µm channels, 20 µm margins. Die 624.9 ×
@@ -160,10 +188,12 @@ FakeRAM macros live at `designs/<platform>/liteeth/sram/{lef,lib}/`.
   OpenROAD 299f3015 upgrade (2026-06-04).
   - **nangate45 / sky130hd**: `SKIP_INCREMENTAL_REPAIR` **removed** — post-GRT repair now
     runs without crashing and QoR is unchanged.
-  - **asap7**: `SKIP_CTS_REPAIR_TIMING` + `SKIP_INCREMENTAL_REPAIR` **kept** — not because
-    of the crash (it no longer crashes) but because re-enabling repair_timing on this design
-    makes the new resizer over-buffer (cells +37%, buf/inv ×3.3) for only a marginal close.
-    Skipping repair gives strictly better QoR. See [HighTide#75](https://github.com/VLSIDA/HighTide/issues/75).
+  - **asap7**: `SKIP_CTS_REPAIR_TIMING` + `SKIP_INCREMENTAL_REPAIR` **removed 2026-11-25**.
+    They had been kept because repair_timing over-buffered the old (GTH-stub, RTLMP) design
+    (cells +37%, buf/inv ×3.3) for only a marginal close. On the GTH-off-chip netlist with
+    the manual floorplan, repair on is +6.5 % PPA alone and, with the 810 ps clock and
+    hierarchical synthesis, closes setup at 1.252 GHz for +5.4 % cells. See
+    [HighTide#75](https://github.com/VLSIDA/HighTide/issues/75).
 
 ## asap7
 

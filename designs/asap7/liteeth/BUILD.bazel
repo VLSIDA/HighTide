@@ -40,11 +40,16 @@ hightide_design(
         # macros (was CORE_UTILIZATION 45 via RTLMP, which put the logic far
         # from the FIFOs: a 575 ps wire on the critical path). The 2026-11-19
         # bazeltuner result (900ps/45/0.55/4um) measured the GTH-stub
-        # netlist and is void; clock and density stay at its values.
+        # netlist and is void.
         "DIE_AREA": "0 0 254.988 376.92",
         "CORE_AREA": "1.08 1.08 253.908 375.84",
-        "PLACE_DENSITY": "0.55",
-        "SKIP_CTS_REPAIR_TIMING": "1",
-        "SKIP_INCREMENTAL_REPAIR": "1",
+        # One-parameter scout wave on the manual floorplan (2026-11-25, see
+        # DECISIONS.md): clock 900 -> 810 ps, hierarchical synthesis, and
+        # CTS + post-GRT repair_timing back on (SKIP_CTS_REPAIR_TIMING /
+        # SKIP_INCREMENTAL_REPAIR removed). Final: 1.252 GHz system clock,
+        # setup clean, 0 DRC. Density 0.55 -> 0.65 is PPA-neutral at global
+        # route but is the variant that closed setup at final.
+        "SYNTH_HIERARCHICAL": "1",
+        "PLACE_DENSITY": "0.65",
     },
 )
