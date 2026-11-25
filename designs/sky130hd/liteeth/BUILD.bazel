@@ -31,12 +31,18 @@ hightide_design(
         "SDC_FILE": [":constraint.sdc"],
         "ADDITIONAL_LEFS": [":sram_lefs"],
         "ADDITIONAL_LIBS": [":sram_libs"],
+        "MACRO_PLACEMENT_TCL": [":macros.tcl"],
+        "TAPCELL_TCL": [":tapcell.tcl"],  # 30 um macro halo (row cut)
     },
     arguments = {
         "VERILOG_DEFINES": "-D USE_SKY130HD_CELLS",
-        "CORE_UTILIZATION": "45",  # 52 routed on OpenROAD b65c274c; 687848dd GRT overflows (63 viols) - relax for routability
-        "PLACE_DENSITY": "0.57",
-        "RTLMP_MIN_CHANNEL_SIZE": "60 60",  # was MACRO_PLACE_HALO 30 30 (halo x,y ~ channel 2x,2y)
+        # Manual floorplan (macros.tcl), 2026-11-24, at util 0.65 of the
+        # restored netlist's cell area (was CORE_UTILIZATION 45 via RTLMP,
+        # which left 54% of the core empty): the two 64w1024d buffers along
+        # the bottom, the three 64w64d FIFOs along the top, logic between.
+        "DIE_AREA": "0 0 2678.52 2935.94",
+        "CORE_AREA": "1.38 2.72 2677.14 2932.48",
+        "PLACE_DENSITY": "0.65",
         "ROUTING_LAYER_ADJUSTMENT": "0.2",
         # RSZ-0074 SKIP_INCREMENTAL_REPAIR workaround removed on the
         # bazel-orfs 553c1c3 / OpenROAD 299f3015 upgrade — the OpenSTA

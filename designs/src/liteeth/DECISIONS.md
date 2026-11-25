@@ -74,7 +74,12 @@ Starting points for the PPA pass:
   still fans out to every bank). A floorplan keeping the logic next to its
   FIFOs, and balancing the macro clock pins, are the levers; relaxing the
   clock to ~1,080 ps (1.1 × the 983 ps achieved) closes it as is.
-- sky130hd wants a manual floorplan at higher utilization (maintainer,
+- sky130hd manual floorplan — DONE 2026-11-24 (`designs/sky130hd/liteeth/macros.tcl`,
+  `tapcell.tcl`): the two 64w1024d buffers along the bottom (MX, 96-pin S edges
+  up), the three 64w64d FIFOs centered along the top (R0, S edges down), a 365 µm
+  logic band between, 150 µm channels, 100 µm outer margins, 30 µm row-cut halo;
+  die 2678.5 × 2935.9 µm at util 0.65 (core 7.86 mm², −29 %), PLACE_DENSITY
+  0.65. Original note: sky130hd wants a manual floorplan at higher utilization (maintainer,
   2026-11-24). The core is 11.06 mm² for 4.83 mm² of macros (2 ×
   `fakeram_1rw1r_64w1024d` 1164 × 1896 µm + 3 × `64w64d` 291 × 476 µm) and
   0.28 mm² of std cells, i.e. 54 % empty: RTLMP stacks the small FIFOs down
