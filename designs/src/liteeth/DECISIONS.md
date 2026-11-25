@@ -74,6 +74,17 @@ Starting points for the PPA pass:
   still fans out to every bank). A floorplan keeping the logic next to its
   FIFOs, and balancing the macro clock pins, are the levers; relaxing the
   clock to ~1,080 ps (1.1 × the 983 ps achieved) closes it as is.
+- sky130hd wants a manual floorplan at higher utilization (maintainer,
+  2026-11-24). The core is 11.06 mm² for 4.83 mm² of macros (2 ×
+  `fakeram_1rw1r_64w1024d` 1164 × 1896 µm + 3 × `64w64d` 291 × 476 µm) and
+  0.28 mm² of std cells, i.e. 54 % empty: RTLMP stacks the small FIFOs down
+  the left edge, squeezes the logic into a strip beside them, and leaves the
+  top-right empty. Sketch: util ~65–70 % (core ~7.3–7.9 mm², −30 %), the two
+  large FIFOs side by side along one edge, the three CDC FIFOs on the
+  opposite edge, logic in the band between; sky130 fakeram pins sit on all
+  four edges, so keep ≥100–200 µm channels and a row-cut halo (see
+  ternip-sky130hd's `macros.tcl`/`tapcell.tcl`). The same idea likely helps
+  nangate45 and asap7.
 - RTLMP's placement got worse on both platforms after the change (nangate45:
   logic squeezed into a thin channel between the two large FIFOs, top-left
   quadrant empty, +28 % repair buffers).
