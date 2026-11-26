@@ -269,6 +269,28 @@ The FF stubs are emitted by `designs/src/NVDLA/dev/gen_ff_rams.py` into `designs
 - **SDC fix**: replaced `set_false_path -to [get_pin */RESETN|/SETN]` (asap7 pin names, silent no-ops on sky130hd) with port-level `-from` false-paths; added `set_ideal_network [get_nets {nvdla_core_rstn}]`.
 - WNS +0.03 ns, Fmax **66.80 MHz** (`period_min` 14.97 ns vs 15 ns), 0 DRC violations, `CORE_UTILIZATION` 25, `PLACE_DENSITY` 0.20, ~265 k logic cells, core 128.9 mm².
 
+### partition_c: DRT stall at one macro corner on the 2026-11 pin (2026-11-26)
+- **Symptom**: local build (2026-11-23 → 25) spent 44 h in detailed route; violations fell
+  513K → 408 by iteration 40, then stayed at exactly 408 for 10 iterations (~1.5–3 h each).
+  Stopped at iteration 50. Log, all DRC reports and `5_1_grt.odb` kept in
+  `scratch/pc_sky_diag/` (local, gitignored).
+- **Where**: all remaining violations (322 shorts + 86 spacing, met1–met4) in a 120 × 100 µm
+  patch at the top-right corner of `cbuf_ram_bank13_ram1` (MX at 4692.57, 4533.6). That corner
+  held most violations from iteration 10 on; every other area cleared.
+- **Why**: the cdma shared buffer (48,073 cells, incl. the 16 `nv_ram_rws_16x64` FF arrays the
+  2026-07 note above already flagged) placed itself as a ~2 mm blob **centred on**
+  bank13_ram1 (centroid 5273, 5079), so its wires wrap that macro, funnelling through its
+  top-right corner, where a met3 `w0_wd_in[16]` pin sits 4 µm from the corner. Not cell
+  crowding (density 0.13–0.30 there) and not channel width (550 / 900 µm around it).
+  Aggravated by GRT antenna repair: 5 rounds inserted 47,131 diodes (+20K jumpers), later
+  rounds restacking on nets already repaired (up to 27 diodes on one shared-buffer net),
+  120 of them in the hotspot. The 0.10 GRT layer adjustment (`pre_global_route.tcl`) had let
+  GRT pass over the same macro-escape overflow that DRT then could not resolve.
+- **Fix (trial)**: bank13_ram1 moved out of the grid into the free band above the top row
+  (R90 at 6450.01, 10688.96, 64-pin S edge facing right into open space) so the shared
+  buffer gets a solid region; `MAX_REPAIR_ANTENNAS_ITER_GRT` 5 → 2. If it closes, retry the
+  GRT layer adjustment at the platform's 0.20.
+
 ## gt2n
 
 ### partition_a: repair_clock_inverters SEGV strip (2026-11 pin)

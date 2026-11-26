@@ -31,7 +31,14 @@ place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank11_ram1/r_nv_ram_rws_256
 place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank12_ram0/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {400.050 4533.600} -orientation MX
 place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank12_ram1/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {1830.890 4533.600} -orientation MX
 place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank13_ram0/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {3261.730 4533.600} -orientation MX
-place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank13_ram1/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {4692.570 4533.600} -orientation MX
+# 2026-11-26: bank13_ram1 moved out of the grid. The cdma shared buffer
+# (48K cells) placed itself around this grid site, and its wires all
+# wrapped this macro's top-right corner (a met3 pin 4 um from it): 408
+# shorts/spacing violations there that DRT could not clear in 50
+# iterations. Now in the free band above the top row, rotated R90 so it
+# fits (865 x 531 um) with its 64-pin LEF S edge facing right into open
+# space; the shared buffer gets the vacated site.
+place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank13_ram1/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {6450.010 10688.960} -orientation R90
 place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank14_ram0/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {6123.410 4533.600} -orientation MX
 place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank14_ram1/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {7554.250 4533.600} -orientation MX
 place_macro -macro_name {u_NV_NVDLA_cbuf/u_cbuf_ram_bank15_ram0/r_nv_ram_rws_256x64/ram_Inst_256X64/sram} -location {8985.090 4533.600} -orientation MX

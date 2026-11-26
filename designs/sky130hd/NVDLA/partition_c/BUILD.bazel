@@ -53,5 +53,10 @@ hightide_design(
         # dbTechLayer); the repair is just chasing phantoms. Skip it and
         # waive the 1 real violation. Same fix as partition_o.
         "SKIP_ANTENNA_REPAIR_POST_DRT": "1",
+        # GRT antenna repair: 5 rounds inserted 47K diodes, later rounds
+        # restacking diodes on nets already fixed (up to 27 on one net),
+        # 120 of them in the bank13_ram1 DRC hotspot. Rounds 3-5 added
+        # 11.7K diodes for ~600-800 violations; cap at 2 (2026-11-26).
+        "MAX_REPAIR_ANTENNAS_ITER_GRT": "2",
     },
 )
