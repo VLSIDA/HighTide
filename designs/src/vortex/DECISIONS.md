@@ -104,3 +104,30 @@ All three platforms re-validated 2026-11-16 on NRP (first jobs through the new
   121 621 logic cells (+28.5 %)** — same yosys-0.64 FF-fallback growth as nangate45;
   `ABC_AREA=1` reverted (made it 159 164). Reaches `_final`; flagged QoR regression (cells +
   setup), neither recoverable via flow knobs without RTL/SDC changes.
+
+### PPA: util 30 -> 48 (2026-11-25)
+
+Found by a one-parameter scout wave from the committed config (probes read at
+global route, judged against a noise band measured from replicates of the
+baseline: 9.5 % up to placement, 0.4 % after), a stepwise combination round,
+and `_final` builds. Clock stays at 10 ns.
+
+| at `_final` | before (util 30) | after (util 48) |
+|---|---:|---:|
+| Fmax | 100.0 MHz | 99.7 MHz |
+| Core area | 29.55 mm2 | 18.48 mm2 (-37.5 %) |
+| Power | 430.5 mW | 418.1 mW |
+| Setup WS / TNS / endpoints | -0.4 ps / -0.4 ps / 1 | -34 ps / -81 ps / 6 |
+| Hold WS / violations | +59 ps / 0 | +160 ps / 0 |
+| Detailed-route violations | 0 | 0 |
+
+- **Setup is 34 ps short on 6 endpoints** (the baseline is 0.4 ps short on 1).
+  Tightening or relaxing the target does not close it at util 48: 9.5 ns gives
+  104.3 MHz with WS -92 ps (9 endpoints), 9.25 ns 106.6 MHz with -135 ps (13),
+  9.0 ns 109.3 MHz with -146 ps (26). The flow tracks the target and stays
+  about 1 % short each time.
+- **Util 54** routes clean but loses setup at `_final` (94.8 MHz, WS -553 ps
+  at 10 ns; -281 ps at 9.5 ns; -508 ps at 9 ns) although it met setup at global
+  route. **Util 60** fails global route (GRT-0116 congestion); **66 and 72**
+  fail RTLMP (MPL-0065).
+- Nothing else cleared the noise band. `GLOBAL_ROUTE_USE_CUGR=1` hurt (-17.8 %).

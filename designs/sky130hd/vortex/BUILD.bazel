@@ -40,7 +40,10 @@ hightide_design(
         "SYNTH_HIERARCHICAL": "0",
         "VERILOG_DEFINES": "-DSYNTHESIS -DSV_DPI -DMEM_BLOCK_SIZE=16 -DMAX_FANOUT=32 -DLATENCY_IMUL=5",
         "VERILOG_INCLUDE_DIRS": _INCLUDE_DIRS,
-        "CORE_UTILIZATION": "30",
+        # PPA scout wave 2026-11-25 (DECISIONS.md, sky130hd): util 30 -> 48.
+        # 54 loses 0.3-0.55 ns of setup at _final, 60 fails GRT (GRT-0116),
+        # 66+ fails RTLMP (MPL-0065).
+        "CORE_UTILIZATION": "48",
         "PLACE_DENSITY_LB_ADDON": "0.30",
         "RTLMP_MIN_CHANNEL_SIZE": "160 160",  # was MACRO_PLACE_HALO 80 80 (halo x,y ~ channel 2x,2y)
         "TNS_END_PERCENT": "100",
