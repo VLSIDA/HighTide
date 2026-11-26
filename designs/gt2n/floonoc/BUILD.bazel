@@ -30,5 +30,9 @@ hightide_design(
         "MIN_CLK_ROUTING_LAYER": "M4",
         "TNS_END_PERCENT": "100",
         "HOLD_SLACK_MARGIN": "10",
+        # improve_placement (DPO) is single-threaded and ran 15+ h without
+        # finishing on the restored mesh (1.7M movable, 6.1M fixed cells);
+        # the liteeth-asap7 scout measured it at under 0.5 % PPA.
+        "ENABLE_DPO": "0",
     },
 )
