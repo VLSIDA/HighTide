@@ -9,3 +9,20 @@ filegroup(
     ],
     visibility = ["//visibility:public"],
 )
+
+# Upstream verification testbenches, fetched with the RTL (verify-design
+# skill). The cocotb segment (tb/lfsr_prbs_gen/test_lfsr_prbs_gen.py) is the
+# design's verification surface, wired up in BUILD.bazel's lfsr_cocotb.
+# Upstream's tb/test_*.v harnesses are myhdl-coupled (they $from/$to_myhdl)
+# and out of scope; only the cocotb test module is exposed here.
+filegroup(
+    name = "sim_sources",
+    srcs = glob([
+        "tb/**/*.v",
+        "tb/**/*.py",
+        "tb/**/Makefile",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
+
